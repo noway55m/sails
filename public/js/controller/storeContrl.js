@@ -54,7 +54,7 @@ function StoreListCtrl($scope, Store, $rootScope) {
 
 	// Show stores while floor collapse open
 	$(".floor").on("shown.bs.collapse", function(){
-		
+
 		// Get current select floor
 		$scope.currentSelectedFloor = this.id.replace("layer", "");
 		console.log($scope.currentSelectedFloor);
@@ -65,15 +65,54 @@ function StoreListCtrl($scope, Store, $rootScope) {
 				break;
 			}
 		}
-				
-		$rootScope.floors[j].stores = Store.list({			
+
+		$rootScope.floors[j].stores = Store.list({
 			buildingId: $rootScope.building._id,
     		floor: $scope.currentSelectedFloor
-    		
+
 		});
-			
-	});		
-	
+
+	});
+
 }
+
+// Function list stores controller
+function StoreListCtrl($scope, Store, $rootScope) {
+
+//  $scope.stores = Store.list();
+//  $scope.addStore= function(d) {
+//  }
+
+    // Show stores while floor collapse open
+    $(".floor").on("shown.bs.collapse", function(){
+
+        // Get current select floor
+        $scope.currentSelectedFloor = this.id.replace("layer", "");
+        console.log($scope.currentSelectedFloor);
+        var j = 0;
+        for(var i=0; i<$rootScope.floors.length; i++){
+            if($rootScope.floors[i].layer == $scope.currentSelectedFloor){
+                j = i;
+                break;
+            }
+        }
+
+        $rootScope.floors[j].stores = Store.list({
+            buildingId: $rootScope.building._id,
+            floor: $scope.currentSelectedFloor
+
+        });
+
+    });
+
+}
+
+// Function for show specific store
+function StoreShowCtrl($scope, $location, Store, $rootScope){
+    var url = $location.absUrl(),
+    id = url.substring(url.lastIndexOf("/") + 1, url.length);
+    $scope.building = Store.get({ id : id });
+}
+
 
 // StoreListCtrl.$inject = ['$scope', 'Building'];

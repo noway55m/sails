@@ -10,14 +10,14 @@ var express = require('express')
   , user = require('./routes/user')
   , building = require('./routes/building')
   , floor = require('./routes/floor')
-  , store = require('./routes/store')  
+  , store = require('./routes/store')
   , http = require('http')
   , https = require('https')
   , path = require('path')
   , passport = require('./config/passportSetup')
   , bootstrap = require('./config/bootstrap')
   , flash = require('connect-flash');
-  
+
 
 var app = express();
 
@@ -39,7 +39,7 @@ app.engine('html', require('ejs').renderFile);
 
 
 // all environments
-app.set('port', process.env.PORT || 80);
+app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.favicon());
