@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	</head>
+	<body>
+	
+		<!-- Fixed Top Navigation Bar -->
+		<div class="navbar navbar-default navbar-fixed-top">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse"
+						data-target=".navbar-collapse">
+						<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+							class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="/">Sails</a>
+				</div>
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="#">Home</a></li>
+						<li><a href="#about">About</a></li>
+						<li><a href="#contact">Contact</a></li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<% if(url == "/"){ %>
+							<li><a href="/login">Sign in or Register</a></li>
+						<% } else if (url == "/login" || url == "/register"){ %>
+							<li><a href="/login"></a></li> 							 							
+						<% } else if (url == "/user"){ %>
+							<li><a href="/logout"><%= user.username%> | Logout</a></li> 						
+						<% } %>
+					</ul>
+				</div>
+				<!--/.nav-collapse -->
+			</div>
+		</div>
+	
+	</body>
+</html>

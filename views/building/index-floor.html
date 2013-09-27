@@ -1,0 +1,82 @@
+<!-- Main Index Floor Block Html -->
+
+<!-- Custom CSS Stylesheet -->
+<style>
+.basic-block {
+	background-color: #f7f7f9;
+	position: relative;
+	border-radius: 10px;
+	margin: 15px auto;
+}
+
+#addUpFloor, #addDownFloor{
+	cursor: pointer;
+}
+</style>
+	
+<div class="basic-block" ng-controller="FloorListCtrl">
+
+<!-- Add store dialog and trigger button -->
+<% include ../store/add-store-dialog.html %>
+	
+	<span id="addUpFloor" class="glyphicon glyphicon-plus" ng-click="addUpFloor()"></span>	
+	<div id="index-floor" class="panel-collapse collapse in">
+		<div class="panel-body">
+			<div class="panel-group" id="index-upfloor-accordion" ng-repeat="floor in floorUp">
+			
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<a class="accordion-toggle" data-toggle="collapse" data-parent="#index-upfloor-accordion" 
+								href="#layer{{floor.layer}}" ng-bind="floor.layer"></a><span> F</span>
+						</h4>
+					</div>
+				</div>
+				<div id="layer{{floor.layer}}" class="panel-collapse collapse floor">
+					<div class="panel-body" ng-controller="StoreListCtrl">
+						<div ng-repeat="store in floor.stores">	
+							<a href="/user/store/show/{{store._id}}">
+								<img alt=store icon ng-src="store.icon" /> 
+								<span >{{store.name}}</span>
+							</a>							
+						</div>					
+					</div>	
+				</div>		
+	
+			</div>
+		</div>
+	</div>
+	
+	<hr />
+	
+	<span id="addDownFloor" class="glyphicon glyphicon-plus" ng-click="addDownFloor()"></span>
+	<div id="index-layer" class="panel-collapse collapse in">
+		<div class="panel-body">	
+			<div class="panel-group" id="index-downfloor-accordion" ng-repeat="floor in floorDown">
+	
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<span>B </span><a class="accordion-toggle" data-toggle="collapse" data-parent="#index-downfloor-accordion"
+								href="#layer{{floor.layer}}" ng-bind="Math.abs(floor.layer)"></a>
+						</h4>
+					</div>
+				</div>
+				<div id="layer{{floor.layer}}" class="panel-collapse collapse floor">
+					<div class="panel-body" ng-controller="StoreListCtrl">
+						<div ng-repeat="store in floor.stores">	
+							<a href="/user/store/show/{{store._id}}">
+								<img alt=store icon ng-src="store.icon" /> 
+								<span >{{store.name}}</span>
+							</a>							
+						</div>					
+					</div>					
+				</div>		
+	
+			</div>
+	
+		</div>
+	</div>
+	
+	
+</div>

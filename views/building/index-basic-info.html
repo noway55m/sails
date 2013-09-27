@@ -1,0 +1,114 @@
+<!-- Main Index Basic Infor Block Html -->
+
+<!-- Custom CSS Stylesheet -->
+<style>
+	.basic-block {
+		background-color: #f7f7f9;
+		position: relative;
+		border-radius: 10px;
+		box-shadow: 5px 5px 5px #888888;
+	}
+	.edit-block {
+		max-width: 900px; 
+		margin: 12px auto;
+	}
+	
+	#building-index-basic-edit-button{
+		display: none; 
+		position: absolute; 
+		right:20px; 
+		top:8px;
+		cursor: pointer;
+	}
+	
+	.title{
+	  font-size: 12px;
+	  font-style: italic;
+	}
+	
+</style>
+
+<!-- Main HTML body -->
+
+<!-- Building Index Basic Information Display Block -->
+<div id="building-index-basic-display" class="row basic-block">
+	
+	<!-- Image icon and name -->
+	<div class="col-xs-12 col-sm-3 col-md-2" style="text-align:center;padding:15px 5px;">
+		<img ng-src="{{building.icon}}" alt="" style="width: 100px; height: 100px;" />
+		<div>
+			<span class="title">Name:</span>
+			<span ng-bind="building.name"></span>					
+		</div>
+	</div>
+	
+	<!-- Description -->
+	<div class="col-xs-12 col-sm-8 col-md-9">
+		<span class="title">Description</span>
+		<p ng-bind="building.desc" style="padding:10px;"></p>
+	</div>
+	
+	<!-- Edit trigger button -->
+	<span id="building-index-basic-edit-button" class="glyphicon glyphicon-edit"></span>
+	
+</div>
+
+<!-- Building Index Basic Information Edit Block -->
+<div id="building-index-basic-edit" class="row basic-bloc" style="display: none;">
+	
+	<!-- Cancel edit button -->
+	<button id="building-index-basic-edit-cancel-button" type="button" class="close">x</button>
+
+	<!-- Name and description -->
+	<div id="update-form" class="edit-block">
+		<input id="update-form-id" type="hidden" name="id" ng-model="building.id" >
+		<label for="name" style="display: inline;">Name</label> 
+		<input id="update-form-name" class="form-control" placeholder="Give name for your building" name="name" ng-model="building.name"> 
+		<label for="desc">Description</label>
+		<textarea id="update-form-desc" class="form-control" placeholder="Give some description about your building" name="desc" ng-model="building.desc"></textarea>		
+		<label for="public">Public</label>		
+		<input type="checkbox" name="pub" ng-model="building.public"><br/>				
+		<a id="update-form-save" class="btn btn-md btn-primary" href="#" id="edit-building-button-save-name" disabled>save</a>
+	</div>
+	<hr />
+
+	<!-- Map zip upload area -->
+	<div class="edit-block">
+		<form id="mapzip-form" name="form" action="/user/building/uploadMapzip" method="POST" enctype="multipart/form-data">
+			<input type="hidden" name="id" ng-model="building.id" >
+			<label for="mapzip">Upload map zip package</label>
+			<p class="text-muted" style="display:inline;font-size:12px">
+				( <strong>last update time: </strong><span id="mapzip-updateTime">2013/7/21 10:20</span>)
+				<!-- Error msg -->
+				<div class="alert alert-danger" style="display: none;" id="mapzip-upload-error-dialog">
+					<span class="label label-danger">Error</span> <span class="errorText"></span>
+				</div>				
+			</p>			
+			<input type="file" class="form-control" placeholder="name" name="mapzip" value="" id="mapzip-file">
+			<button class="btn btn-md btn-primary" href="#" id="edit-building-button-save-mapzip" style="display:none;">Upload</button>
+			
+			
+		</form>
+	</div>
+
+	<hr />
+
+	<!-- Icons upload area -->
+	<div class="edit-block">
+		<form id="image-form" name="form" action="/user/building/uploadImage" method="POST" enctype="multipart/form-data">
+			<input type="hidden" name="id" ng-model="building.id" >			
+			<label for="image">Upload icon image:</label>
+			<img id="edit-building-icon" ng-src="{{building.icon}}" alt="icon" style="width:100px;"/>
+			<!-- Error msg -->
+			<div class="alert alert-danger" style="display: none;" id="image-upload-error-dialog">
+				<span class="label label-danger">Error</span> <span class="errorText"></span>
+			</div>				
+			<input type="file" class="form-control" placeholder="name" name="image" value="" id="image-file">
+			<button class="btn btn-md btn-primary" id="edit-building-button-save-image" style="display:none;">Upload</button>
+		</form>
+	</div>
+	
+</div>
+
+<!-- Main Logic Javascript -->
+<script src="/js/building/index-basic-info.js"></script>

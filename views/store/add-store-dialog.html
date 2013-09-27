@@ -1,0 +1,90 @@
+<style>
+	#add-store-form label{
+		font-size:14px;
+	}
+	
+	#add-store-form .form-group{
+		margin: 3px auto;
+	}
+	
+</style>
+
+<!-- Trigger button -->
+<a data-toggle="modal" class="btn btn-default" href="#add-store-dialog">Add Store</a>
+	
+ <!-- Add Store Dialog -->
+ <div class="modal fade" id="add-store-dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+     <div class="modal-content">
+     
+     	<!-- Header -->
+       <div class="modal-header">
+         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+         <h4 class="modal-title">Add New Store</h4>
+         <p>Please kindly finish following fields about your store.</p>
+       </div>
+	   
+	   <form id="add-store-form" role="form" method="post" action="/user/store/create" enctype="multipart/form-data" onsubmit="return addStoreSubmitForm()">
+       
+	       <!-- Body -->
+	       <div class="modal-body">
+		       	  
+		       	  <input type="hidden" class="form-control" placeholder="Store Name" name="id" value="<%= building.id %>">
+		       	  <input type="hidden" class="form-control" placeholder="Store Name" name="floor" value="">
+		       	  	
+			  	  <!-- text fields -->			  
+				  <div class="form-group">
+				    <label for="name">Name</label>
+				    <input class="form-control" placeholder="Store Name" name="name" value="">
+				  </div>				  				  		  
+				  <div class="form-group">
+				    <label for="phone">Phone</label>
+				    <input class="form-control" placeholder="Store Phone" name="phone" value="">
+				  </div>		  
+				  <div class="form-group">
+				    <label for="memo">Memo</label>
+				    <input class="form-control" placeholder="Store Memo" name="memo" value="">
+				  </div>		  		  
+				  <div class="form-group">
+				    <label for="link">link</label>
+				    <input class="form-control" placeholder="Store Official Site Link" name="link" value="">
+				  </div>
+				  
+				  <!-- Select floor -->
+				  <div class="form-group">
+				    <label for="floor">Floor</label>
+				    <select ng-repeat="floor in floors">
+					    <option value="{{floor.layer}}">B{{Math.abs(floor.layer)}}</option>					 					    
+					    <option value="<%= j %>"><%= j %></option>					 					    
+					 </select>   
+				  </div>				  
+				  
+				  <!-- Select Icon -->		  
+				  <div class="form-group">
+				    <label for="name">Icon</label>
+				    <input type="file" class="form-control" placeholder="Upload Image For Your Store" name="icon" value="">
+				  </div>
+				 
+				  <!-- error msg -->
+				  <div class="alert alert-danger" style="display:none;" id="add-store-dialog-error-msg">
+				  	<span class="label label-danger">Error</span>
+				  	<span class="errorText"></span>
+				  </div>				 
+				  		  		  			  			    
+	       </div>
+       
+	       <!-- Footer -->
+	       <div class="modal-footer">
+	         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	         <button type="submit" class="btn btn-primary">Add</button>
+	       </div>
+	       
+	</form>            
+       
+     </div><!-- /.modal-content -->
+   </div><!-- /.modal-dialog -->
+ </div><!-- /.modal -->
+ 
+ 
+ <script src="/js/utility.js"></script>
+ <script type="text/javascript" src="/js/store/add-store-dialog.js"></script>

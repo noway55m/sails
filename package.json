@@ -1,0 +1,21 @@
+{
+  "name": "sails",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "3.2.5",
+    "jade": "*",
+    "mongoose": "3.6.19",
+    "passport": "0.1.17",
+    "passport-local": "0.1.6",
+    "passport-oauth": "1.0.0",
+    "ejs": "0.8.4",
+    "log4js": "0.6.8",
+    "node-uuid": "1.4.1",
+    "connect-flash" : "0.1.1",
+    "nodemailer" : "0.5.2"
+  }
+}

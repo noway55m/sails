@@ -1,0 +1,81 @@
+<html>
+<head lang="en">
+
+    <title>{{store.name}}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
+    <link href="/stylesheets/bootstrap-theme.min.css" rel="stylesheet">
+
+	<style>
+		#add-store-form label{
+			font-size:14px;
+		}
+		
+		#add-store-form .form-group{
+			margin: 3px auto;
+		}
+		
+	</style>
+</head>
+<body>
+	
+	<div class="container">
+	   
+	   <form id="edit-store-form" role="form" method="post" action="/user/store/create" enctype="multipart/form-data" onsubmit="return addStoreSubmitForm()">
+		       	  
+		       	  <input type="hidden" class="form-control" placeholder="Store Name" name="id" value="<%= building.id %>">
+		       	  <input type="hidden" class="form-control" placeholder="Store Name" name="floor" value="">
+		       	  	
+			  	  <!-- text fields -->			  
+				  <div class="form-group">
+				    <label for="name">Name</label>
+				    <input class="form-control" placeholder="Store Name" name="name" value="">
+				  </div>				  				  		  
+				  <div class="form-group">
+				    <label for="phone">Phone</label>
+				    <input class="form-control" placeholder="Store Phone" name="phone" value="">
+				  </div>		  
+				  <div class="form-group">
+				    <label for="memo">Memo</label>
+				    <input class="form-control" placeholder="Store Memo" name="memo" value="">
+				  </div>		  		  
+				  <div class="form-group">
+				    <label for="link">link</label>
+				    <input class="form-control" placeholder="Store Official Site Link" name="link" value="">
+				  </div>
+				  
+				  <!-- Select floor -->
+				  <div class="form-group">
+				    <label for="floor">Floor</label>
+				    <select>
+					    <% for(var i=1; i<=building.downfloor; i++){ %>
+						    <option value="-<%= i %>">B<%= i %></option>					 					    
+						 <% } %>			    
+					    <% for(var j=1; j<=building.upfloor; j++){ %>
+						    <option value="<%= j %>"><%= j %></option>					 					    
+						 <% } %>
+					 </select>   
+				  </div>				  
+				  
+				  <!-- Select Icon -->		  
+				  <div class="form-group">
+				    <label for="name">Icon</label>
+				    <input type="file" class="form-control" placeholder="Upload Image For Your Store" name="icon" value="">
+				  </div>
+				 
+				  <!-- error msg -->
+				  <div class="alert alert-danger" style="display:none;" id="add-store-dialog-error-msg">
+				  	<span class="label label-danger">Error</span>
+				  	<span class="errorText"></span>
+				  </div>				 
+   
+	</form>            
+       
+</div>
+ 
+	 <script src="/js/utility.js"></script>
+	 <script type="text/javascript" src="/js/store/edit-store-dialog.js"></script>
+</body>
+ 
+</html> 
