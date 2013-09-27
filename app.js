@@ -111,3 +111,5 @@ http.createServer(app).listen(app.get('port'), function(){
 
 // Execute pre-process step
 bootstrap();
+
+console.log('test');
