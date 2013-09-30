@@ -1,4 +1,51 @@
-/**/
+body {
+  min-height: 2000px;
+  padding-top: 70px;
+}
 
+.display-block {
+	background-color: #f7f7f9;
+	position: relative;
+	border-radius: 10px;
+	box-shadow: 5px 5px 5px #888888;
+	margin-top:20px;
+}
+.edit-block {
+	max-width: 900px;
+	margin: 12px auto;
+	display:none;
+}
 
-/**/
+.icon{
+	width:100px;
+	height:100px;
+}
+
+.title{
+  font-size: 12px;
+  font-style: italic;
+  width: 50px;
+  margin-right: 3px;
+  display: inline-block;
+}
+
+.error-msg{
+	display: none;
+}
+
+.modal label{
+	font-size:14px;
+}
+
+.modal .form-group{
+	margin: 3px auto;
+}
+
+.edit-button{
+	display: none;
+	position: absolute;
+	right:20px;
+	top:8px;
+	cursor: pointer;
+}
+
