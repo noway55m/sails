@@ -1,30 +1,26 @@
 $(document).ready(function(){
+		
+	// Control edit button toggle
+	editButonToggle();
 	
-	$(document).ready(function(){
-		
-		// Control edit button toggle
-		editButonToggle();
-		
-		// Display and edit mode control
-		editAndDisplayModeChange();
-		
-		// Setup update form 
-		updateFormControl();
-		
-		// Setup mapzip form
-		mapzipFormControl();		
-		
-		// Setup image form
-		imageFormControl();
-		
-	});
+	// Display and edit mode control
+	editAndDisplayModeChange();
 	
+	// Setup update form 
+	updateFormControl();
+	
+	// Setup mapzip form
+	mapzipFormControl();		
+	
+	// Setup image form
+	imageFormControl();
+		
 });
 
 // Function for display "edit" button
 function editButonToggle(){
 	var editButton = $("#building-index-basic-edit-button");
-	$("#building-index-basic-display").on('mouseenter', function(){
+	$("#building-index-basic-display").on('mouseenter', function(){		
 		editButton.toggle(600);
 	}).on('mouseleave', function(){
 		$("#building-index-basic-edit-button").toggle(600);
@@ -37,7 +33,7 @@ function editAndDisplayModeChange(){
 		displayMode = $("#building-index-basic-display");
 	$("#building-index-basic-edit-button").on('click', function(){
 		editMode.fadeIn();
-		displayMode.hide();					
+		displayMode.hide();
 	});
 	$("#building-index-basic-edit-cancel-button").on('click', function(){
 		editMode.hide();
