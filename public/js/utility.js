@@ -16,7 +16,7 @@ Utility.getInstance = function() {
 Utility.prototype.fieldValidate = function(value, fieldObj, errorMsgObj, regExpressFormat){
 
     var format = regExpressFormat,
-        fieldName = $("label[for=" + fieldObj.attr("name") + "]").text(),
+        fieldName = fieldObj.prev().text(),
         result = false;
     
     if(!fieldName)
@@ -35,7 +35,9 @@ Utility.prototype.fieldValidate = function(value, fieldObj, errorMsgObj, regExpr
 
     // Show error info
     if(!result){
-        errorMsgObj.css({display: ""});
+    	console.log("dklsfjlsdflasdfjlsadjfljsdaljf")
+    	console.log(errorMsgObj);
+        errorMsgObj.show();
         fieldObj.focus();
         fieldObj.select();
     }

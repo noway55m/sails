@@ -1,1 +1,1 @@
-var app = angular.module('sails', ['ngResource', 'buildingServices', 'floorServices', 'storeServices']);
+var app = angular.module('sails', ['ngResource', 'buildingServices', 'floorServices', 'storeServices', 'adServices']);
