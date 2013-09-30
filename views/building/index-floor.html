@@ -1,33 +1,21 @@
-<!-- Main Index Floor Block Html -->
-
-<!-- Custom CSS Stylesheet -->
-<style>
-.basic-block {
-	background-color: #f7f7f9;
-	position: relative;
-	border-radius: 10px;
-	margin: 15px auto;
-}
-
-#addUpFloor, #addDownFloor{
-	cursor: pointer;
-}
-</style>
-
-<div class="basic-block" ng-controller="FloorListCtrl">
+<!-- Floors Block include in building/index.html -->
+<div class="display-block" ng-controller="FloorListCtrl">
 
 	<!-- Add store dialog and trigger button -->
 	<% include ../store/add-store-dialog.html %>
-		
-	<a data-toggle="modal" class="btn btn-default" href="#" id="addUpFloor" ng-click="addUpFloor()">
+
+	<!-- Add floor, add basement and add store buttons -->
+	<a data-toggle="modal" class="btn btn-default" href="#" ng-click="addFloor()">
 		<span  class="glyphicon glyphicon-plus" ></span> Add Floor
 	</a>
-	<a data-toggle="modal" class="btn btn-default" href="#" id="addDownFloor" ng-click="addDownFloor()">
+	<a data-toggle="modal" class="btn btn-default" href="#" ng-click="addBasement()">
 		<span  class="glyphicon glyphicon-plus" ></span> Add Basement
-	</a>	
+	</a>
 	<a data-toggle="modal" class="btn btn-default" href="#add-store-dialog">
-		<span  class="glyphicon glyphicon-plus" ></span> Add Store
-	</a>	
+		<span class="glyphicon glyphicon-plus" ></span> Add Store
+	</a>
+
+	<!-- List floors block -->
 	<div id="index-floor" class="panel-collapse collapse in">
 		<div class="panel-body">
 			<div class="panel-group" id="index-upfloor-accordion" ng-repeat="floor in floorUp">
@@ -54,6 +42,8 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- List basements block -->
 	<div id="index-layer" class="panel-collapse collapse in">
 		<div class="panel-body">
 			<div class="panel-group" id="index-downfloor-accordion" ng-repeat="floor in floorDown">
