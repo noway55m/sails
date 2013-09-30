@@ -9,7 +9,7 @@ var storeSchema = new Schema({
 	
     name: String, // *require and unique
     
-    icon: Number, 
+    icon: String, 
     
     link: String,
     
