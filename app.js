@@ -11,6 +11,7 @@ var express = require('express')
   , building = require('./routes/building')
   , floor = require('./routes/floor')
   , store = require('./routes/store')
+  , ad = require('./routes/ad')  
   , http = require('http')
   , https = require('https')
   , path = require('path')
@@ -87,11 +88,18 @@ app.spost('/user/floor/update', floor.update);
 
 //----------------------------------
 app.sget('/user/store/show/:id', store.index);
-app.sget('/user/floor/read/:id', store.read);
+app.sget('/user/store/read/:id', store.read);
 app.sget('/user/store/list', store.list);
 app.spost('/user/store/create', store.create);
 app.spost('/user/store/update', store.update);
+app.spost('/user/store/uploadImage', store.uploadImage);
 
+//----------------------------------
+
+app.sget('/user/ad/list', ad.list);
+app.spost('/user/ad/create', ad.create);
+app.spost('/user/ad/update', ad.update);
+app.spost('/user/ad/uploadImage', ad.uploadImage);
 //----------------------------------
 
 
