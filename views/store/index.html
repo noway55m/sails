@@ -1,81 +1,226 @@
-<html>
-<head lang="en" ng-app="sails" ng-controller="">
-
-    <title>{{store.name}}</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
-    <link href="/stylesheets/bootstrap-theme.min.css" rel="stylesheet">
-
-	<style>
-		#add-store-form label{
-			font-size:14px;
-		}
-
-		#add-store-form .form-group{
-			margin: 3px auto;
-		}
-
-	</style>
-</head>
+<!DOCTYPE html>
+<html lang="en" ng-app="sails" ng-controller="StoreShowCtrl">
+	<head>
+	
+	    <title ng-bind="store.name"></title>
+	
+	    <!-- Bootstrap core CSS -->
+	    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
+	    <link href="/stylesheets/bootstrap-theme.min.css" rel="stylesheet">
+	    <link href="/stylesheets/datepicker.css" rel="stylesheet">
+	
+	    <!-- Custom styles for this template -->
+	    <link href="/stylesheets/navbar-fixed-top.css" rel="stylesheet">
+	
+	    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	    <!--[if lt IE 9]>
+	      <script src="../js/html5shiv.js"></script>
+	      <script src="../js/respond.min.js"></script>
+	    <![endif]-->
+	    <script src="/js/jquery-1.10.2.js"></script>    
+		<style>
+		
+			#add-store-form label{
+				font-size:14px;
+			}
+	
+			#add-store-form .form-group{
+				margin: 3px auto;
+			}
+			.display-block {
+				background-color: #f7f7f9;
+				position: relative;
+				border-radius: 10px;
+				box-shadow: 5px 5px 5px #888888;
+			}
+			.edit-block {
+				max-width: 900px; 
+				margin: 12px auto;
+				display:none;
+			}
+			
+			#store-edit-button, .edit-button{
+				display: none; 
+				position: absolute; 
+				right:20px; 
+				top:8px;
+				cursor: pointer;
+			}
+			
+			.title{
+			  font-size: 12px;
+			  font-style: italic;
+			  width: 50px;
+			  margin-right: 3px;
+			  display: inline-block;
+			}
+			
+			.error-msg{
+				display: none;
+			}
+			
+			.modal label{
+				font-size:14px;
+			}
+		
+			.modal .form-group{
+				margin: 3px auto;
+			}			
+				
+		</style>
+		
+	</head>
 <body>
 
+
+    <!-- Fixed Top Navigation Bar -->
+	<% include ../layout/top-navbar.html %>
+	
 	<div class="container">
+		
+		<!-- Navigator bar to display current store of floor of specific building -->
+		<ol class="breadcrumb">
+		  <li><a href="/user/building/show/{{store.buildingId}}">Building</a></li>
+		  <li>
+		  	<a href="/user/building/show/{{store.buildingId}}" ng-show="up">
+		  		<span ng-bind="store.floor"></span> F
+		  	</a>	  
+		  	<a href="/user/building/show/{{store.buildingId}}" ng-show="!up">
+		  		B <span ng-bind="Math.abs(store.floor)"></span>		  	
+		  	</a>
+		  </li>
+		  <li class="active" ng-bind="store.name"></li>
+		</ol>		
+		
+		<div class="jumbotron">
+		
+			<!-- Display Block -->
+			<div id="index-store-display" class="row display-block">
+				
+				<!-- Image icon and name -->
+				<div class="col-xs-12 col-sm-3 col-md-2" style="text-align:center;padding:15px 5px;">
+					<img ng-src="/<%= imagePath %>/{{store.icon}}" alt="" style="width: 100px; height: 100px;" />
+					<div>
+						<span class="title">Name:</span>
+						<span ng-bind="store.name"></span>					
+					</div>
+				</div>
+				
+				<!-- Link, Phone and Memo -->
+				<div class="col-xs-12 col-sm-8 col-md-9">
+					<div>
+						<span class="title">Link</span>
+						<span ng-bind="store.link"></span>				
+					</div>
+					<div>
+						<span class="title">Phone</span>
+						<span ng-bind="store.phone"></span>				
+					</div>
+					<hr>
+					<span class="title">Memo</span>
+					<p ng-bind="store.memo" style="padding:10px;"></p>
+				</div>
+				
+				<!-- Edit trigger button -->
+				<span class="glyphicon glyphicon-edit edit-button"></span>
+				
+			</div>
+			<hr/>
+				
+			<!-- Edit Block -->
+			<div id="index-store-edit" class="row edit-block">
+		
+				<!-- Cancel edit button -->
+				<button type="button" class="close close-button">x</button>
+				
+				<!-- Form -->
+				<div class="edit-block">
+												
+					<!-- text fields -->
+					<div class="form-group">
+						<label for="name">Name</label>
+						<input class="form-control" placeholder="Store Name" name="name" ng-model="store.name">
+					</div>
+					<div class="form-group">
+						<label for="phone">Phone</label>
+						<input class="form-control" placeholder="Store Phone" name="phone" ng-model="store.phone">
+					</div>
+					<div class="form-group">
+						<label for="memo">Memo</label>
+						<input class="form-control" placeholder="Store Memo" name="memo" ng-model="store.memo">
+					</div>
+					<div class="form-group">
+						<label for="link">link</label>
+						<input class="form-control" placeholder="Store Official Site Link" name="link" ng-model="store.link">
+					</div>
+					<div class="form-group">
+						<label for="floor">Floor</label>
+						<select name="floor" id="store-floor"> <!-- Select can't use ng-model on my two different array condition -->
+						    <option value="{{floor.layer}}" ng-repeat="floor in floorUp">{{Math.abs(floor.layer)}} F</option>
+						    <option value="{{floor.layer}}" ng-repeat="floor in floorDown">B {{Math.abs(floor.layer)}}</option>					    												
+						</select>  					
+					</div>
+					
+					<!-- error msg -->
+					<div class="alert alert-danger error-msg" id="edit-store-dialog-error-msg">
+						  	<span class="label label-danger">Error</span>
+						  	<span class="errorText"></span>
+					</div>						
+					<button class="btn btn-md btn-primary" href="#" id="edit-store-button-update" 
+						data-loading-text="Updating" ng-click="updateStore()">Update</button>
+							
+				</div>
+				<hr/>
+				
+				<!-- Icons upload area -->
+				<div class="edit-block">
+					<form id="image-form" name="form" action="/user/store/uploadImage" method="POST" enctype="multipart/form-data"
+						onsubmit="return uploadImage()">
+						<input type="hidden" class="form-control" placeholder="Store Name" name="id" value="{{store._id}}">						
+						<label for="image">Upload icon image:</label>
+						<img id="edit-store-icon" ng-src="" alt="icon" style="width:100px;"/>
+						<!-- Error msg -->
+						<div class="alert alert-danger" style="display: none;" id="image-upload-error-dialog">
+							<span class="label label-danger">Error</span> <span class="errorText"></span>
+						</div>				
+						<input type="file" class="form-control" placeholder="name" name="image" value="" id="image-file">
+						<button class="btn btn-md btn-primary" id="edit-store-button-save-image" style="display:none;">Upload</button>
+					</form>
+				</div>					
+				
+			</div>
+			
+			
+			<!-- Ads Block -->	
+			<% include ../ad/ads-block.html	%>		
+			
+			
+		</div>
 
-	   <form id="edit-store-form" role="form" method="post" action="/user/store/create" enctype="multipart/form-data" onsubmit="return addStoreSubmitForm()">
+	</div>
 
-		       	  <input type="hidden" class="form-control" placeholder="Store Name" name="id" value="<%= building.id %>">
-		       	  <input type="hidden" class="form-control" placeholder="Store Name" name="floor" value="">
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/building/index.js"></script>
+    <script src="/js/jquery.form.min.js"></script>
+    <script src="/js/utility.js"></script>
+    <script src="/js/bootstrap-datepicker.js"></script>
 
-			  	  <!-- text fields -->
-				  <div class="form-group">
-				    <label for="name">Name</label>
-				    <input class="form-control" placeholder="Store Name" name="name" value="">
-				  </div>
-				  <div class="form-group">
-				    <label for="phone">Phone</label>
-				    <input class="form-control" placeholder="Store Phone" name="phone" value="">
-				  </div>
-				  <div class="form-group">
-				    <label for="memo">Memo</label>
-				    <input class="form-control" placeholder="Store Memo" name="memo" value="">
-				  </div>
-				  <div class="form-group">
-				    <label for="link">link</label>
-				    <input class="form-control" placeholder="Store Official Site Link" name="link" value="">
-				  </div>
 
-				  <!-- Select floor -->
-				  <div class="form-group">
-				    <label for="floor">Floor</label>
-				    <select>
-					    <% for(var i=1; i<=building.downfloor; i++){ %>
-						    <option value="-<%= i %>">B<%= i %></option>
-						 <% } %>
-					    <% for(var j=1; j<=building.upfloor; j++){ %>
-						    <option value="<%= j %>"><%= j %></option>
-						 <% } %>
-					 </select>
-				  </div>
-
-				  <!-- Select Icon -->
-				  <div class="form-group">
-				    <label for="name">Icon</label>
-				    <input type="file" class="form-control" placeholder="Upload Image For Your Store" name="icon" value="">
-				  </div>
-
-				  <!-- error msg -->
-				  <div class="alert alert-danger" style="display:none;" id="add-store-dialog-error-msg">
-				  	<span class="label label-danger">Error</span>
-				  	<span class="errorText"></span>
-				  </div>
-
-	</form>
-
-</div>
-
-	 <script src="/js/utility.js"></script>
-	 <script type="text/javascript" src="/js/store/edit-store-dialog.js"></script>
+    <!-- AngularJS relative -->
+    <script src="/js/angular.min.js"></script>
+	<script src="/js/app.js"></script>
+    <script src="/js/controller/buildingContrl.js"></script>
+    <script src="/js/controller/floorContrl.js"></script>
+    <script src="/js/controller/storeContrl.js"></script>
+    <script src="/js/controller/adContrl.js"></script>    
+	<script src="/js/angular-resource.js"></script>	 
+	
+	<!-- Pre Register Handler -->
+	<script src="/js/pre-register-handler.js"></script>	 
+	 	 
 </body>
 
 </html>
