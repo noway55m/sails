@@ -11,7 +11,7 @@ var express = require('express')
   , building = require('./routes/building')
   , floor = require('./routes/floor')
   , store = require('./routes/store')
-  , ad = require('./routes/ad')  
+  , ad = require('./routes/ad')
   , http = require('http')
   , https = require('https')
   , path = require('path')
@@ -79,6 +79,8 @@ app.sget('/user/building/list', building.list);
 
 app.spost('/user/building/uploadMapzip', building.uploadMapzip);
 app.spost('/user/building/uploadImage', building.uploadImage);
+
+app.sget('/building/map/:filename', building.getMapzip);
 
 //----------------------------------
 app.sget('/user/floor/read/:id', floor.read);
