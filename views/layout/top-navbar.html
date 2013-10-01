@@ -3,7 +3,7 @@
 	<head>
 	</head>
 	<body>
-	
+
 		<!-- Fixed Top Navigation Bar -->
 		<div class="navbar navbar-default navbar-fixed-top">
 			<div class="container">
@@ -17,7 +17,7 @@
 				</div>
 				<div class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
-						<li class="active"><a href="#">Home</a></li>
+						<li class="active"><a href="/">Home</a></li>
 						<li><a href="#about">About</a></li>
 						<li><a href="#contact">Contact</a></li>
 					</ul>
@@ -25,15 +25,15 @@
 						<% if(url == "/"){ %>
 							<li><a href="/login">Sign in or Register</a></li>
 						<% } else if (url == "/login" || url == "/register"){ %>
-							<li><a href="/login"></a></li> 							 							
+							<li><a href="/login"></a></li>
 						<% } else { %>
-							<li><a href="/logout"><%= user.username%> | Logout</a></li> 						
+							<li><a href="/logout"><%= user.username%> | Logout</a></li>
 						<% } %>
 					</ul>
 				</div>
 				<!--/.nav-collapse -->
 			</div>
 		</div>
-	
+
 	</body>
 </html>

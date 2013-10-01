@@ -29,12 +29,12 @@
 
 			<!-- Navigator bar to display current store of floor of specific building -->
 			<ol class="breadcrumb">
-			  <li><a href="/user/building/show/{{store.buildingId}}">Building</a></li>
+			  <li><a href="/building/show/{{store.buildingId}}">Building</a></li>
 			  <li>
-			  	<a href="/user/building/show/{{store.buildingId}}" ng-show="up">
+			  	<a href="/building/show/{{store.buildingId}}" ng-show="up">
 			  		<span ng-bind="store.floor"></span> F
 			  	</a>
-			  	<a href="/user/building/show/{{store.buildingId}}" ng-show="!up">
+			  	<a href="/building/show/{{store.buildingId}}" ng-show="!up">
 			  		B <span ng-bind="Math.abs(store.floor)"></span>
 			  	</a>
 			  </li>
@@ -48,7 +48,7 @@
 
 					<!-- Image icon and name -->
 					<div class="col-xs-12 col-sm-3 col-md-2" style="text-align:center;padding:15px 5px;">
-						<img ng-show="store.icon" ng-src="/<%= imagePath %>/{{building.icon}}" alt="Image Icon" style="width:100px;"/>
+						<img ng-show="store.icon" ng-src="/<%= imagePath %>/{{store.icon}}" alt="Image Icon" style="width:100px;"/>
 				  		<img ng-hide="store.icon" src="/img/no-image.png" alt="Image Icon"  style="width:100px;"/>
 						<div>
 							<span class="title">Name:</span>
@@ -124,7 +124,7 @@
 
 					<!-- Icons upload area -->
 					<div class="edit-block">
-						<form id="image-form" name="form" action="/user/store/uploadImage" method="POST" enctype="multipart/form-data"
+						<form id="image-form" name="form" action="/store/uploadImage" method="POST" enctype="multipart/form-data"
 							onsubmit="return uploadImage()">
 							<input type="hidden" class="form-control" placeholder="Store Name" name="id" value="{{store._id}}">
 							<label for="image">Upload icon image:</label>
@@ -142,10 +142,8 @@
 
 				</div>
 
-
 				<!-- Ads Block -->
-				<% include ../ad/ads-block.html	%>
-
+				<% include ../ad/ad-list.html	%>
 
 			</div>
 

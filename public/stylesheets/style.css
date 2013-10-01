@@ -49,3 +49,25 @@ body {
 	cursor: pointer;
 }
 
+/* Icon wrapper while list */
+.belement{
+	height:150px;
+	text-align:center;
+}
+.default-icon{
+	width:100px;
+	height:100px;
+	display:block;
+	margin:8px auto;
+}
+
+
+/******************* Ad New Building Block in building/building-list.html *********************/
+#add-building-block{
+	width:100%;
+	min-width: 280px;
+}
+#add-building-block .form-control{
+	max-width:280px;
+	display:inline;
+}

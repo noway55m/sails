@@ -115,7 +115,7 @@ function AdListCtrl($scope, Ad, $rootScope) {
 
 	// Function for create new ad
 	$scope.addAd = function(e){
-
+	    console.log("lsdjflsafjsld")
 		var addButton = angular.element(e.currentTarget),
 			closeButton = addButton.prev(),
 			closeButtonTop = addButton.parent().prev().prev().find(".close"),

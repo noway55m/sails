@@ -155,7 +155,7 @@ function addStore(){
 				// Enable all fields
 				$("#add-store-form input").removeAttr('disabled');
 			}else{
-				window.location = "/user/store/show/" + responseText._id;
+				window.location = "/store/show/" + responseText._id;
 			}
 		},
 

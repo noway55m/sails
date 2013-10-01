@@ -15,30 +15,6 @@ var	resource_path = "./resource/",
 	image_path = "public/" + public_image_path;
 
 /*
- * GET Interface of list buildings
- */
-exports.list = function(req, res) {
-
-	Building.find({
-
-		userId: req.user.id
-
-	}, function(err, buildings){
-
-		if(err)
-			log.error(err);
-
-		console.log(buildings);
-
-		res.send(200, buildings);
-
-	});
-
-};
-
-
-
-/*
  * GET Page of specific building
  */
 exports.index = function(req, res) {
@@ -49,7 +25,7 @@ exports.index = function(req, res) {
 			log.error(err);
 
 		if (building) {
-			
+
 			Floor.find({
 
 				buildingId: building.id
@@ -87,23 +63,133 @@ exports.index = function(req, res) {
 
 };
 
+
+/*
+ * GET Interface of list buildings or buildings of specific user
+ */
+exports.list = function(req, res) {
+
+    // Check user role for check with administration permission
+    var queryJson = null;
+    if(req.user.role !== 1)
+        queryJson = { userId: req.user.id };
+
+    Building.find(queryJson, function(err, buildings){
+
+        if(err)
+            log.error(err);
+
+        res.send(200, buildings);
+    });
+
+};
+
+
+/*
+ * POST Interface of create new building
+ */
+exports.create = function(req, res) {
+
+    if(req.body.name){
+
+        new Building({
+
+            name: req.body.name,
+            desc: req.body.desc,
+            userId: req.user.id,
+            pub: false
+
+        }).save(function(err, building){
+
+            if(building){
+
+                res.send(200, {
+                    building: building
+                });
+
+            }else{
+
+                res.send(400, {
+                    msg: "Server error"
+                });
+
+            }// end if
+
+        });
+
+    }
+
+};
+
+
 /*
  * GET Interface for get building info
  */
 exports.read = function(req, res){
 
-	Building.findById(req.params.id, function(err, building) {
+    // Get building
+    Building.findById(req.params.id, function(err, building) {
 
-		if(err)
-			log.error(err);
+        if(err)
+            log.error(err);
 
-		console.log(building);
-		if(building)
-			res.send(200, building);
+        if(building){
 
-	});
+            // Check permission
+            if(building.userId == req.user.id || req.user.role == 1)
+                res.send(200, building);
+            else
+                res.send(400, { msg: "You have no permission to access building: " + building.id });
+        }
 
-}
+    });
+
+};
+
+
+/*
+ * POST Interface of update specific building
+ */
+exports.update = function(req, res) {
+
+    if(req.body._id){
+
+        // Get building
+        Building.findById(req.body._id, function(err, building){
+
+            if(err)
+                log.error(err);
+
+            if(building){
+
+                // Check permission
+                if(building.userId == req.user.id || req.user.role == 1){
+                    building.name = req.body.name;
+                    building.desc = req.body.desc;
+                    building.pub = req.body.pub;
+                    building.save(function(){
+                        res.send(200, building);
+                    });
+                }else{
+                    res.send(400, { msg: "You have no permission to access building: " + building.id });
+                }
+
+            }
+
+        });
+
+    }
+
+};
+
+
+/*
+ * GET Interface of delete specific building
+ */
+exports.del = function(req, res) {
+
+};
+
 
 /*
  * GET Interface for get mapzip file of specific building
@@ -129,7 +215,7 @@ exports.getMapzip = function(req, res){
             // We replaced all the event handlers with a simple call to util.pump()
             // util.pump(readStream, res);
             readStream.pipe(res);
-            
+
         }catch(e){
 
             log.error(e);
@@ -143,14 +229,14 @@ exports.getMapzip = function(req, res){
  * POST Interface for upload mapzip
  */
 exports.uploadMapzip = function(req, res) {
-	
+
 	if(req.body.id && req.files.mapzip){
 
 		// Get file name and extension
 		var fileName = req.files.mapzip.name;
 		var extension = path.extname(fileName).toLowerCase() === '.zip' ? ".zip" : null ||
 						path.extname(fileName).toLowerCase() === '.rar' ? ".rar" : null;
-		
+
 		// Check file format by extension
 		if(extension){
 
@@ -225,7 +311,7 @@ exports.uploadMapzip = function(req, res) {
  * POST Interface of upload image
  */
 exports.uploadImage = function(req, res) {
-	
+
 	console.log(req.body);
 	if(req.body._id && req.files.image){
 
@@ -234,9 +320,9 @@ exports.uploadImage = function(req, res) {
 		var extension = path.extname(fileName).toLowerCase() === '.png' ? ".png" : null ||
 						path.extname(fileName).toLowerCase() === '.jpg' ? ".jpg" : null ||
 						path.extname(fileName).toLowerCase() === '.gif' ? ".gif" : null;
-		
+
 		console.log(extension);
-		
+
 		// Check file format by extension
 		if(extension){
 
@@ -306,80 +392,4 @@ exports.uploadImage = function(req, res) {
 	}
 
 };
-
-
-/*
- * POST Interface of create new building
- */
-exports.create = function(req, res) {
-
-	if(req.body.name){
-
-		new Building({
-
-			name: req.body.name,
-			desc: req.body.desc,
-			userId: req.user.id,
-			pub: false
-
-		}).save(function(err, building){
-
-			if(building){
-				
-				res.send(200, {
-					building: building
-				});
-
-			}else{
-
-				res.send(400, {
-					msg: "Server error"
-				});
-
-			}// end if
-
-		});
-
-	}
-
-};
-
-
-/*
- * POST Interface of update specific building
- */
-exports.update = function(req, res) {
-
-	if(req.body._id){
-
-		Building.findById(req.body._id, function(err, building){
-
-			if(err)
-				log.error(err);
-
-			if(building){
-
-				building.name = req.body.name;
-				building.desc = req.body.desc;
-				building.pub = req.body.pub;				
-				building.save(function(){
-					res.send(200, building);
-				});
-
-			}
-
-		});
-
-	}
-
-};
-
-
-/*
- * GET Interface of delete specific building
- */
-exports.del = function(req, res) {
-
-};
-
 
