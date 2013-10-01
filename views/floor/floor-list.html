@@ -1,0 +1,76 @@
+<!-- Floors list include in building/index.html -->
+<div class="display-block" ng-controller="FloorListCtrl">
+
+	<!-- Add store dialog and trigger button -->
+	<% include ../store/store-add-dialog.html %>
+
+	<!-- Add floor, add basement and add store buttons -->
+	<a data-toggle="modal" class="btn btn-default" href="#" ng-click="addFloor()">
+		<span  class="glyphicon glyphicon-plus" ></span> Add Floor
+	</a>
+	<a data-toggle="modal" class="btn btn-default" href="#" ng-click="addBasement()">
+		<span  class="glyphicon glyphicon-plus" ></span> Add Basement
+	</a>
+	<a data-toggle="modal" class="btn btn-default" href="#add-store-dialog">
+		<span class="glyphicon glyphicon-plus" ></span> Add Store
+	</a>
+
+	<!-- List floors block -->
+	<div id="index-floor" class="panel-collapse collapse in">
+		<div class="panel-body">
+			<div class="panel-group" id="index-upfloor-accordion" ng-repeat="floor in floorUp">
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<a class="accordion-toggle" data-toggle="collapse" data-parent="#index-upfloor-accordion"
+								href="#layer{{floor.layer}}" ng-bind="floor.layer"></a><span> F</span>
+						</h4>
+					</div>
+				</div>
+				<div id="layer{{floor.layer}}" class="panel-collapse collapse floor">
+					<div class="panel-body" ng-controller="StoreListCtrl">
+						<div ng-repeat="store in floor.stores">
+							<a href="/store/show/{{store._id}}">
+								<img alt="Store Icon" ng-src="/<%= imagePath %>/{{store.icon}}" />
+								<span >{{store.name}}</span>
+							</a>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- List basements block -->
+	<div id="index-layer" class="panel-collapse collapse in">
+		<div class="panel-body">
+			<div class="panel-group" id="index-downfloor-accordion" ng-repeat="floor in floorDown">
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">
+							<span>B </span><a class="accordion-toggle" data-toggle="collapse" data-parent="#index-downfloor-accordion"
+								href="#layer{{floor.layer}}" ng-bind="Math.abs(floor.layer)"></a>
+						</h4>
+					</div>
+				</div>
+				<div id="layer{{floor.layer}}" class="panel-collapse collapse floor">
+					<div class="panel-body" ng-controller="StoreListCtrl">
+						<div ng-repeat="store in floor.stores">
+							<a href="/store/show/{{store._id}}">
+								<img alt="Store Icon" ng-src="/<%= imagePath %>/{{store.icon}}" />
+								<span >{{store.name}}</span>
+							</a>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+
+
+</div>

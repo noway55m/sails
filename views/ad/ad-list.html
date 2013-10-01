@@ -1,0 +1,117 @@
+<!-- Ad list include in page 'store/index.html' -->
+<div id="adds-list" class="row" ng-controller="AdListCtrl">
+
+	<!-- Add ad dialog block-->
+	<a data-toggle="modal" class="btn btn-default" href="#ad-add-dialog" id="add-ad">
+		<span  class="glyphicon glyphicon-plus"></span> Add Advertisement
+	</a>
+	<% include ../ad/ad-add-dialog.html %>
+
+	<!-- Ads list block -->
+	<div ng-repeat="ad in ads">
+
+			<div id="{{ad._id}}" class="display-block">
+
+				<!-- Edit trigger button -->
+				<span class="glyphicon glyphicon-edit edit-button"></span>
+
+				<!-- Display block -->
+				<div>
+					<div>
+						<div class="row" style="text-align:center;">
+							<img ng-src="{{ad.image}}" alt="Add Promotion Image" />
+						</div>
+						<hr/>
+						<div class="row">
+							<div class="col-xs-12 col-sm-3 col-md-2">
+								<div>
+									<span class="title">Name</span>
+									<span ng-bind="ad.name"></span>
+								</div>
+								<div>
+									<span class="title">Price</span>
+									<span ng-bind="ad.price"></span>
+								</div>
+							</div>
+							<div class="col-xs-12 col-sm-9 col-md-10">
+								<div>
+									<span class="title">Description</span>
+									<p ng-bind="ad.desc"></p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<hr>
+				<div class="row" style="text-align:center;">
+					<span class="title">Start Date</span>
+					<span ng-bind="ad.startTime"></span>
+					<span class="title">End Date</span>
+					<span ng-bind="ad.endTime"></span>
+				</div>
+			</div>
+
+			<!-- Edit block -->
+			<div id="{{ad._id}}" class="row edit-block edit">
+
+				<!-- Cancel edit button -->
+				<button type="button" class="close close-button">x</button>
+				<div>
+
+					<!-- Info fields -->
+					<div>
+						<div class="form-group">
+							<label for="name">Name</label>
+							<input class="form-control" placeholder="Ad Name" name="name" ng-model="ad.name">
+						</div>
+						<div class="form-group">
+							<label for="price">Price</label>
+							<input class="form-control" placeholder="Ad Price" name="price" ng-model="ad.price">
+						</div>
+						<div class="form-group">
+						  <label for="desc">Desc</label>
+						  <input class="form-control" placeholder="Ad Description" name="desc" ng-model="ad.desc">
+						</div>
+
+						<div class="form-group">
+						  <label for="startTime">Start Time</label>
+						  <input class="form-control" placeholder="Start Time" name="startTime" ng-model="ad.startTime"
+						  	data-provide="datepicker">
+						</div>
+
+						<div class="form-group">
+						  <label for="endTime">End Time</label>
+						  <input class="form-control" placeholder="End Time" name="endTime" ng-model="ad.endTime"
+						  	data-provide="datepicker">
+						</div>
+
+						<!-- error msg -->
+						<div class="alert alert-danger error-msg">
+						  	<span class="label label-danger">Error</span>
+						  	<span class="errorText"></span>
+						</div>
+						<button class="btn btn-md btn-primary" href="#" data-loading-text="Updating"
+							ng-click="updateAd($event)">Update</button>
+					</div>
+					<hr>
+
+					<!-- Image field -->
+					<form name="form" action="/ad/uploadImage" method="POST" enctype="multipart/form-data">
+						<input type="hidden" name="id" value="{{ad._id}}">
+						<label for="image">Upload Ad Image</label>
+						<img ng-src="{{ad.image}}" alt="Ad Image" style="width:100px;"/>
+						<div class="alert alert-danger error-msg">
+							<span class="label label-danger">Error</span> <span class="errorText"></span>
+						</div>
+						<input type="file" class="form-control upload-file" placeholder="Ad Promotion Image" name="image">
+					</form>
+					<button class="btn btn-md btn-primary" style="display:none;" ng-click="uploadAdImage($event)"
+						data-loading-text="Uploading...">Upload</button>
+
+				</div>
+
+			</div>
+
+		<hr/>
+	</div>
+</div>
