@@ -116,15 +116,15 @@ function AdListCtrl($scope, Ad, $rootScope) {
 			uploadButton = angular.element(e.currentTarget),
 			form = uploadButton.prev(),
 			inputFields = form.find("input"),
-			errorMsgObj = form.find('.error-msg'),
-			imgTag = form.find("img");
+			errorMsgObj = form.find('.error-msg');
 	
 		// Ajax from setup
 		var options = {
 	
 			beforeSend : function(){ // pre-submit callback
 				inputFields.attr('disabled');
-				errorMsgObj.hide();			
+				errorMsgObj.hide();
+				uploadButton.button("loading");
 				return true;
 			}, 
 			uploadProgress : function(event, position, total, percent){},
@@ -142,6 +142,7 @@ function AdListCtrl($scope, Ad, $rootScope) {
 				}			
 				
 				// Hide button
+				uploadButton.button("reset");				
 				uploadButton.hide();
 				return true;				
 			}, 
