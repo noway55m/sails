@@ -1,20 +1,3 @@
-<!-- Main Index Basic Infor Block Html -->
-
-<!-- Custom CSS Stylesheet -->
-<style>
-
-	#building-index-basic-edit-button{
-		position: absolute;
-		right:20px;
-		top:8px;
-		cursor: pointer;
-		display:none;
-	}
-
-</style>
-
-<!-- Main HTML body -->
-
 <!-- Building Index Basic Information Display Block -->
 <div id="building-index-basic-display" class="row display-block">
 
@@ -23,7 +6,7 @@
 
 	<!-- Display block -->
 	<div class="col-xs-12 col-sm-3 col-md-2" style="text-align:center;padding:15px 5px;">
-		<img ng-src="{{building.icon}}" alt="Building Icon" class="icon" />
+		<img ng-src="/<%= imagePath %>/{{building.icon}}" alt="Building Icon" class="icon" />
 		<div>
 			<span class="title">Name:</span>
 			<span ng-bind="building.name"></span>
@@ -45,64 +28,47 @@
 	<!-- Cancel edit button -->
 	<button type="button" class="close close-button">x</button>
 
-	<!-- Name and description -->
+	<!-- Form -->
 	<div id="update-form" class="edit-block">
-
-		<input id="update-form-id" type="hidden" name="id" ng-model="building.id" >
-		<div>
-			<label for="name" style="display: inline;">Name</label>
-			<input id="update-form-name" class="form-control" placeholder="Give name for your building" name="name" ng-model="building.name">
+		
+		<!-- Input Fields -->
+		<input type="hidden" name="id" value="{{building._id}}">
+		<div class="form-group">
+			<label for="name">Name</label>
+			<input id="update-form-name" class="form-control" placeholder="Building Name" name="name" ng-model="building.name">
 		</div>
-		<div>
+		<div class="form-group">
 			<label for="desc">Description</label>
-			<textarea id="update-form-desc" class="form-control" placeholder="Give some description about your building" name="desc" ng-model="building.desc"></textarea>
+			<textarea id="update-form-desc" class="form-control" placeholder="Building Description" name="desc" ng-model="building.desc"></textarea>
 		</div>
-		<div>
-			<label for="public">Public</label>
-			<input type="checkbox" name="pub" ng-model="building.public"><br/>
+		<div class="form-group">
+			<label for="pub">Public</label>
+			<input type="checkbox" name="pub" ng-model="building.pub"><br/>
 		</div>
-
-		<button id="update-form-save" class="btn btn-md btn-primary" href="#" data-loading-text="Updating"
-			ng-click="updateAd($event)" disabled>Update</button>
+		<!-- error msg -->
+		<div class="alert alert-danger error-msg">
+		  	<span class="label label-danger">Error</span>
+		  	<span class="errorText"></span>
+		</div>
+		<button class="btn btn-md btn-primary" data-loading-text="Updating" ng-click="updateBuilding($event)">Update</button>
 
 	</div>
-	<hr />
-
-	<!-- Map zip upload area -->
-	<div class="edit-block">
-		<form id="mapzip-form" name="form" action="/user/building/uploadMapzip" method="POST" enctype="multipart/form-data">
-			<input type="hidden" name="id" ng-model="building.id" >
-			<label for="mapzip">Upload map zip package</label>
-			<p class="text-muted" style="display:inline;font-size:12px">
-				( <strong>last update time: </strong><span id="mapzip-updateTime">2013/7/21 10:20</span>)
-				<!-- Error msg -->
-				<div class="alert alert-danger" style="display: none;" id="mapzip-upload-error-dialog">
-					<span class="label label-danger">Error</span> <span class="errorText"></span>
-				</div>
-			</p>
-			<input type="file" class="form-control" placeholder="name" name="mapzip" value="" id="mapzip-file">
-			<button class="btn btn-md btn-primary" href="#" id="edit-building-button-save-mapzip" style="display:none;">Upload</button>
-		</form>
-	</div>
-
 	<hr />
 
 	<!-- Icons upload area -->
 	<div class="edit-block">
 		<form id="image-form" name="form" action="/user/building/uploadImage" method="POST" enctype="multipart/form-data">
-			<input type="hidden" name="id" ng-model="building.id" >
+			<input type="hidden" name="_id" value="{{building._id}}" >
 			<label for="image">Upload icon image:</label>
-			<img id="edit-building-icon" ng-src="{{building.icon}}" alt="icon" style="width:100px;"/>
+			<img id="edit-building-icon" ng-src="/<%= imagePath %>/{{building.icon}}" alt="icon" style="width:100px;"/>
 			<!-- Error msg -->
 			<div class="alert alert-danger" style="display: none;" id="image-upload-error-dialog">
 				<span class="label label-danger">Error</span> <span class="errorText"></span>
 			</div>
-			<input type="file" class="form-control" placeholder="name" name="image" value="" id="image-file">
-			<button class="btn btn-md btn-primary" id="edit-building-button-save-image" style="display:none;">Upload</button>
+			<input type="file" class="form-control upload-file" placeholder="Building Icon" name="image">
 		</form>
+		<button class="btn btn-md btn-primary" style="display:none;" ng-click="uploadBuildingImage($event)">Upload</button>
+		
 	</div>
 
 </div>
-
-<!-- Main Logic Javascript -->
-<script src="/js/building/index-basic-info.js"></script>
