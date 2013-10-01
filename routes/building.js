@@ -10,8 +10,9 @@ var log = require('log4js').getLogger(),
 
 // Static variable
 var	resource_path = "./resource/",
+	public_image_path = "client-image",
 	mapzip_path = resource_path + "mapzip",
-	image_path = "public/client-image";
+	image_path = "public/" + public_image_path;
 
 /*
  * GET Interface of list buildings
@@ -42,23 +43,13 @@ exports.list = function(req, res) {
  */
 exports.index = function(req, res) {
 
-//	res.render("building/index.html", {
-//		url: req.url.toString(),
-//		user: req.user
-//	});
-//
 	Building.findById(req.params.id, function(err, building) {
 
 		if (err)
 			log.error(err);
 
 		if (building) {
-
-			if(building.icon)
-				building.icon = "/client-image/" + building.icon;
-			else
-				building.icon = "/img/sails.png";
-
+			
 			Floor.find({
 
 				buildingId: building.id
@@ -68,7 +59,6 @@ exports.index = function(req, res) {
 				if (err)
 					log.error(err);
 
-				console.log(floors);
 				var floorUp = [];
 				var floorDown = [];
 				floors.forEach(function(floor){
@@ -80,22 +70,16 @@ exports.index = function(req, res) {
 
 				});
 
-//				console.log("floorUp:")
-//				console.log(floorUp);
-//				console.log("floorDown:")
-//				console.log(floorDown);
-
 				res.render("building/index.html", {
 					url: req.url.toString(), // use in layout for identify display info
 					user: req.user,
 					building: building,
 					floorUp: floorUp,
-					floorDown: floorDown
+					floorDown: floorDown,
+					imagePath: public_image_path
 				});
 
 			});
-
-
 
 		}
 
@@ -143,8 +127,9 @@ exports.getMapzip = function(req, res){
             var readStream = fs.createReadStream(filePath);
 
             // We replaced all the event handlers with a simple call to util.pump()
-            util.pump(readStream, res);
-
+            // util.pump(readStream, res);
+            readStream.pipe(res);
+            
         }catch(e){
 
             log.error(e);
@@ -158,14 +143,14 @@ exports.getMapzip = function(req, res){
  * POST Interface for upload mapzip
  */
 exports.uploadMapzip = function(req, res) {
-
+	
 	if(req.body.id && req.files.mapzip){
 
 		// Get file name and extension
 		var fileName = req.files.mapzip.name;
 		var extension = path.extname(fileName).toLowerCase() === '.zip' ? ".zip" : null ||
 						path.extname(fileName).toLowerCase() === '.rar' ? ".rar" : null;
-
+		
 		// Check file format by extension
 		if(extension){
 
@@ -240,15 +225,18 @@ exports.uploadMapzip = function(req, res) {
  * POST Interface of upload image
  */
 exports.uploadImage = function(req, res) {
-
-	if(req.body.id && req.files.image){
+	
+	console.log(req.body);
+	if(req.body._id && req.files.image){
 
 		// Get file name and extension
 		var fileName = req.files.image.name;
 		var extension = path.extname(fileName).toLowerCase() === '.png' ? ".png" : null ||
 						path.extname(fileName).toLowerCase() === '.jpg' ? ".jpg" : null ||
 						path.extname(fileName).toLowerCase() === '.gif' ? ".gif" : null;
-
+		
+		console.log(extension);
+		
 		// Check file format by extension
 		if(extension){
 
@@ -271,7 +259,7 @@ exports.uploadImage = function(req, res) {
 				var targetPath = path.resolve(image_path + "/" + targetFileName);
 				log.info("targetPath: " + targetPath);
 
-				Building.findById(req.body.id, function(error, building){
+				Building.findById(req.body._id, function(error, building){
 
 					if(building){
 
@@ -288,7 +276,7 @@ exports.uploadImage = function(req, res) {
 
 									building.icon = targetFileName;
 									building.save(function(){
-										res.send(200, "/client-image/" + targetFileName);
+										res.send(200, targetFileName);
 									});
 								}
 							});
@@ -296,7 +284,7 @@ exports.uploadImage = function(req, res) {
 						}else{
 
 							log.info("Same");
-							res.send(200, "/client-image/" + targetFileName);
+							res.send(200, targetFileName);
 						}
 
 					}else{
@@ -327,34 +315,20 @@ exports.create = function(req, res) {
 
 	if(req.body.name){
 
-		var name = req.body.name;
-			desc = req.body.desc;
-
 		new Building({
 
-			name: name ? name : "",
-			desc: desc ? desc : "",
-			userId: req.user.id
+			name: req.body.name,
+			desc: req.body.desc,
+			userId: req.user.id,
+			pub: false
 
 		}).save(function(err, building){
 
 			if(building){
-
-				new Floor({
-
-				    layer: 1,
-
-				    buildingId: building.id
-
-				}).save(function(err, floor){
-
-					res.send(200, {
-						building: building
-					});
-
-
+				
+				res.send(200, {
+					building: building
 				});
-
 
 			}else{
 
@@ -376,9 +350,9 @@ exports.create = function(req, res) {
  */
 exports.update = function(req, res) {
 
-	if(req.body.id){
+	if(req.body._id){
 
-		Building.findById(req.body.id, function(err, building){
+		Building.findById(req.body._id, function(err, building){
 
 			if(err)
 				log.error(err);
@@ -387,8 +361,9 @@ exports.update = function(req, res) {
 
 				building.name = req.body.name;
 				building.desc = req.body.desc;
+				building.pub = req.body.pub;				
 				building.save(function(){
-					res.send(200, {msg: "ok"});
+					res.send(200, building);
 				});
 
 			}
@@ -399,12 +374,12 @@ exports.update = function(req, res) {
 
 };
 
+
 /*
  * GET Interface of delete specific building
  */
 exports.del = function(req, res) {
 
 };
-
 
 
