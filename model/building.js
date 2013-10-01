@@ -11,7 +11,12 @@ var buildingSchema = new Schema({
     
     type: Number, // hotel, airport ..
     
-    pub: Boolean, // true: public, false: private
+    pub: { // true: public, false: private
+    	
+    	type: Boolean,
+    	default: false
+    	
+    }, 
     
     upfloor: {
     	
