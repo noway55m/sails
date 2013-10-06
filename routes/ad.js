@@ -6,7 +6,31 @@ var log = require('log4js').getLogger(),
 
 // Static variable
 var	resource_path = "./resource/",
-	image_path = "public/client-image";
+	public_image_path = "client-image",
+	mapzip_path = resource_path + "mapzip",
+	image_path = "public/" + public_image_path;
+
+/*
+ * GET Page of specific building
+ */
+exports.show = function(req, res) {
+
+	Ad.findById(req.params._id, function(err, ad) {
+
+		if (err)
+			log.error(err);
+		
+		if(ad)
+			res.render("ad/ad-show.html", {
+				url: req.url.toString(), // use in layout for identify display info
+				user: req.user,
+				ad: ad,
+				imagePath: public_image_path
+			});
+
+	});
+
+};
 
 // Interface for list the ads of store
 exports.list = function(req, res) {
@@ -27,7 +51,7 @@ exports.list = function(req, res) {
 
 	}
 
-}
+};
 
 // Interface for create the new ad of store
 exports.create = function(req, res){
@@ -47,7 +71,7 @@ exports.create = function(req, res){
 		
 	}
 		
-}
+};
 
 // Interface for create the new store in specific floor of specific building
 exports.update = function(req, res){
@@ -76,15 +100,15 @@ exports.update = function(req, res){
 
 		});
 	}
-}		
+};		
 
 
 /*
  * POST Interface of upload image
  */
 exports.uploadImage = function(req, res) {
-
-	if(req.body.id && req.files.image){
+	
+	if(req.body._id && req.files.image){
 		
 		// Get file name and extension
 		var fileName = req.files.image.name;
@@ -114,7 +138,7 @@ exports.uploadImage = function(req, res) {
 				var targetPath = path.resolve(image_path + "/" + targetFileName);
 				log.info("targetPath: " + targetPath);
 				
-				Ad.findById(req.body.id, function(error, ad){
+				Ad.findById(req.body._id, function(error, ad){
 					
 					if(ad){
 						
@@ -131,7 +155,7 @@ exports.uploadImage = function(req, res) {
 									
 									ad.image = targetFileName;
 									ad.save(function(){
-										res.send(200, "/client-image/" + targetFileName);																			
+										res.send(200, targetFileName);																			
 									});
 								}										
 							});								
@@ -139,7 +163,7 @@ exports.uploadImage = function(req, res) {
 						}else{
 							
 							log.info("Same");
-							res.send(200, "/client-image/" + targetFileName);							
+							res.send(200,  targetFileName);							
 						}						
 						
 					}else{

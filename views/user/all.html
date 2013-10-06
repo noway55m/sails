@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sails" ng-controller="UserListCtrl">
+	<head>
+	
+		<!-- Head meta, css or library include -->
+		<% include ../layout/head-include.html %>
+		
+		<!-- Title -->
+		<title>All User</title>
+	
+	</head>
+	<body>
+	
+		<!-- Fixed Top Navigation Bar Template -->
+		<% include ../layout/top-navbar.html %>
+	
+		<!-- Main Container -->
+		<div class="container">
+			
+			<!-- User Add Dialog Template -->
+			<% include ../user/user-add-dialog.html %>
+
+			<!-- User Update Dialog Template -->
+			<% include ../user/user-update-dialog.html %>
+
+			<!-- User Change Password Dialog Template -->
+			<% include ../user/user-change-password-dialog.html %>
+						
+			<!-- User List Template -->
+			<% include ../user/user-list.html %>
+	
+		</div>
+	
+	
+		<!-- Body library include -->
+		<% include ../layout/body-include.html	%>
+	
+	    <!-- Controller -->
+	    <script src="/js/controller/userContrl.js"></script>
+	
+	</body>
+</html>

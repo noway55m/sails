@@ -9,179 +9,158 @@ var	resource_path = "./resource/",
 	public_image_path = "client-image",
 	image_path = "public/" + public_image_path;	
 
-// Interface for show the store in the floor of specific building
-exports.index = function(req, res) {
+// Page for show the store in the floor of specific building
+exports.show = function(req, res) {
+	
+	Store.findById(req.params._id, function(error, store){
+		
+		if(error)
+			log.error(error);
+		
+		if(store)
+			res.render("store/index.html", {
+				url: req.url.toString(), // use in layout for identify display info
+				user: req.user,
+				imagePath: public_image_path
+			});
+		
+	});
 
-	if (req.params.id) {
+};
 
-		Store.findById(req.params.id, function(error, store){
-			
-			if(error)
-				log.error(error);
-			
-			if(store)
-				res.render("store/index.html", {
-					url: req.url.toString(), // use in layout for identify display info
-					user: req.user,
-					imagePath: public_image_path
-				});
-			
-		});
-
-	}
-
-}
-
-// Interface for read the store in the floor of specific building
+// GET¡@Interface for read the store in the floor of specific building
 exports.read = function(req, res) {
 	
-	console.log(req.params);
-	if (req.params.id) {
+	Store.findById(req.params._id, function(error, store){
+		
+		if(error)
+			log.error(err);
+		
+		if(store)
+			res.send(200, store);
+		
+	});
 
-		Store.findById(req.params.id, function(error, store){
-			
-			if(error)
-				log.error(err);
-			
-			if(store)
-				res.send(200, store);
-			
-		});
+};
 
-	}
-
-}
 
 // Interface for list the stores in specific floor of specific building
 exports.list = function(req, res) {
-
-	log.info(req.query);
-	if (req.query.buildingId && req.query.floor) {
+	
+	if (req.query.floorId) {
 
 		Store.find({
 			
-			floor : parseInt(req.query.floor),
-			buildingId : req.query.buildingId
+			floorId : req.query.floorId
 		
 		}, function(error, stores) {
 			
-			console.log(stores);
 			res.send(200, stores);
 
 		});
 
 	}
 
-}
+};
 
-// Interface for create the new store in specific floor of specific building
+
+// POST Interface for create the new store in specific floor of specific building
 exports.create = function(req, res){
 	
-	log.info(req.body);
-	if(req.body.name && req.body.floor && req.body.buildingId){
+	if(req.body.name && req.body.floorId){
 		
-		if(req.files.icon){
+		Store.find({
 			
-			// Get file name and extension
-			var fileName = req.files.icon.name;
-			var extension = path.extname(fileName).toLowerCase() === '.png' ? ".png" : null ||
-							path.extname(fileName).toLowerCase() === '.jpg' ? ".jpg" : null ||
-							path.extname(fileName).toLowerCase() === '.gif' ? ".gif" : null;
-			console.log(extension);
-											
-			// Check file format by extension
-			if(extension){
+			name: req.body.name,
+			floorId: req.body.floorId
+			
+		}, function(err, stores){
+			
+			if(err)
+				log.error(err);
+			
+			if(stores.length > 0){
 				
-				var tmpPath = req.files.icon.path;
-				log.info("tmpPath: " + tmpPath);
-				
-				// Read file and prepare hash
-				var md5sum = crypto.createHash('md5'),
-					stream = fs.ReadStream(tmpPath);
-				
-				// Set target file name by hash the file
-				var targetFileName;
-				stream.on('data', function(d) {
-					md5sum.update(d);
-				});	
-				
-				stream.on('end', function() {
-					
-					targetFileName = md5sum.digest('hex')  + extension;
-					var targetPath = path.resolve(image_path + "/" + targetFileName);
-					log.info("targetPath: " + targetPath);
-					new Store({						
-					    name: req.body.name,					    		    
-					    link: req.body.link,					    
-					    phone: req.body.phone,					    
-					    memo: req.body.memo,					    
-					    icon: targetFileName, 					    		    
-					    floor: req.body.floor,					    
-					    buildingId: req.body.buildingId												
-					}).save(function(error, store){						
-						res.send(200, store);					
-					});										
-					
+				res.json(200, {
+					msg: "Store name is duplicate!"
 				});
 				
-			}else{				
-				res.send(200, { msg: "Icon format should be png, jpg or gif" });				
-			}				
-						
-		}else{
+			}else{
+				
+				new Store({				
+				    name: req.body.name,
+				    link: req.body.link,			    
+				    phone: req.body.phone,			    
+				    memo: req.body.memo,			    		    
+				    floorId: req.body.floorId,				    
+				}).save(function(error, store){				
+					res.send(200, store);			
+				});	
+				
+			}
 			
-			new Store({				
-			    name: req.body.name,
-			    link: req.body.link,			    
-			    phone: req.body.phone,			    
-			    memo: req.body.memo,			    		    
-			    floor: req.body.floor,			    
-			    buildingId: req.body.buildingId								
-			}).save(function(error, store){				
-				res.send(200, store);			
-			});				
-			
-		}
-		
+		});
+				
 	}
 		
-}
+};
 
-// Interface for create the new store in specific floor of specific building
+// POST Interface for create the new store in specific floor of specific building
 exports.update = function(req, res){
 	
-	log.info(req.body);
-	if(req.body._id && req.body.buildingId && req.body.floor && req.body.name && 
-			req.body.phone && req.body.link && req.body.memo){
+	if(req.body._id && req.body.name){
 		
 		Store.findById(req.body._id, function(err, store) {
 			
 			if (err)
 				log.error(err);
 			
-			if (store) {				
-				store.name = req.body.name;
-				store.phone = req.body.phone;				
-				store.link = req.body.link;
-				store.memo = req.body.memo;
-				store.floor = req.body.floor;
-				// store.buildingId = req.body.buildingId;				
-				store.save(function(){
-					res.send(200, store);
+			if(store){
+				
+				Store.find({
+					
+					name: req.body.name,
+					floorId: req.body.floorId
+					
+				}, function(err, stores){
+					
+					if(err)
+						log.error(err);
+					
+					if(stores.length > 1){
+						
+						res.json(200, {
+							msg: "Store name is duplicate!"
+						});
+						
+					}else{
+						
+						store.name = req.body.name;
+						store.phone = req.body.phone;				
+						store.link = req.body.link;
+						store.memo = req.body.memo;
+						//store.floorId = req.body.floorId;			
+						store.save(function(){
+							res.send(200, store);
+						});						
+						
+					}
+					
 				});
+				
 			}
 
 		});
+		
 	}
-}		
+	
+};		
 
 
-/*
- * POST Interface of upload image
- */
+// POST Interface of upload image
 exports.uploadImage = function(req, res) {
 
-	if(req.body.id && req.files.image){
+	if(req.body._id && req.files.image){
 		
 		// Get file name and extension
 		var fileName = req.files.image.name;
@@ -211,7 +190,7 @@ exports.uploadImage = function(req, res) {
 				var targetPath = path.resolve(image_path + "/" + targetFileName);
 				log.info("targetPath: " + targetPath);
 				
-				Store.findById(req.body.id, function(error, store){
+				Store.findById(req.body._id, function(error, store){
 					
 					if(store){
 						
@@ -228,7 +207,7 @@ exports.uploadImage = function(req, res) {
 									
 									store.icon = targetFileName;
 									store.save(function(){
-										res.send(200, "/client-image/" + targetFileName);																			
+										res.send(200, targetFileName);																			
 									});
 								}										
 							});								
@@ -236,7 +215,7 @@ exports.uploadImage = function(req, res) {
 						}else{
 							
 							log.info("Same");
-							res.send(200, "/client-image/" + targetFileName);							
+							res.send(200, targetFileName);							
 						}						
 						
 					}else{

@@ -24,19 +24,17 @@
 					<div class="panel-heading">
 						<h4 class="panel-title">
 							<a class="accordion-toggle" data-toggle="collapse" data-parent="#index-upfloor-accordion"
-								href="#layer{{floor.layer}}" ng-bind="floor.layer"></a><span> F</span>
+								href="#{{floor._id}}" ng-bind="floor.layer"></a><span> F</span>
+							
+							<!-- Show link -->
+							<span><a href="/floor/show/{{floor._id}}">details</a></span>								
 						</h4>
 					</div>
 				</div>
-				<div id="layer{{floor.layer}}" class="panel-collapse collapse floor">
-					<div class="panel-body" ng-controller="StoreListCtrl">
-						<div ng-repeat="store in floor.stores">
-							<a href="/store/show/{{store._id}}">
-								<img alt="Store Icon" ng-src="/<%= imagePath %>/{{store.icon}}" />
-								<span >{{store.name}}</span>
-							</a>
-						</div>
-					</div>
+				
+				<!-- Stores Block -->
+				<div id="{{floor._id}}" class="panel-collapse collapse floor">
+					<% include ../store/store-list.html	%>
 				</div>
 
 			</div>
@@ -52,21 +50,19 @@
 					<div class="panel-heading">
 						<h4 class="panel-title">
 							<span>B </span><a class="accordion-toggle" data-toggle="collapse" data-parent="#index-downfloor-accordion"
-								href="#layer{{floor.layer}}" ng-bind="Math.abs(floor.layer)"></a>
+								href="#{{floor._id}}" ng-bind="Math.abs(floor.layer)"></a>
+							
+							<!-- Show link -->
+							<span><a href="/floor/show/{{floor._id}}">details</a></span>
 						</h4>
 					</div>
 				</div>
-				<div id="layer{{floor.layer}}" class="panel-collapse collapse floor">
-					<div class="panel-body" ng-controller="StoreListCtrl">
-						<div ng-repeat="store in floor.stores">
-							<a href="/store/show/{{store._id}}">
-								<img alt="Store Icon" ng-src="/<%= imagePath %>/{{store.icon}}" />
-								<span >{{store.name}}</span>
-							</a>
-						</div>
-					</div>
+				
+				<!-- Stores Block -->
+				<div id="{{floor._id}}" class="panel-collapse collapse floor">
+					<% include ../store/store-list.html	%>
 				</div>
-
+				
 			</div>
 
 		</div>

@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="sails" ng-controller="StoreShowCtrl">
+<html lang="en" ng-app="sails" ng-controller="FloorShowCtrl">
 	<head>
 
-	    <title ng-bind="store.name"></title>
+	    <title ng-bind="floor.name"></title>
 
 	    <!-- Bootstrap core CSS -->
 	    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
 	    <link href="/stylesheets/bootstrap-theme.min.css" rel="stylesheet">
-	    <link href="/stylesheets/datepicker.css" rel="stylesheet">
 
 	    <!-- Custom styles for this template -->
 	    <link href="/stylesheets/style.css" rel="stylesheet">
@@ -29,16 +28,8 @@
 
 			<!-- Navigator bar to display current store of floor of specific building -->
 			<ol class="breadcrumb">
-			  <li><a href="/building/show/{{floor.buildingId}}">Building</a></li>
-			  <li>
-			  	<a href="/floor/show/{{store.floorId}}" ng-show="up">
-			  		<span ng-bind="floor.layer"></span> F
-			  	</a>
-			  	<a href="/floor/show/{{store.floorId}}" ng-show="!up">
-			  		B <span ng-bind="Math.abs(floor.layer)"></span>
-			  	</a>
-			  </li>
-			  <li class="active" ng-bind="store.name"></li>
+			  <li><a href="/floor/show/{{floor.buildingId}}">Building</a></li>
+			  <li class="active" ng-bind="floor.name"></li>
 			</ol>
 
 			<div class="jumbotron">
@@ -48,27 +39,16 @@
 
 					<!-- Image icon and name -->
 					<div class="col-xs-12 col-sm-3 col-md-2" style="text-align:center;padding:15px 5px;">
-						<img ng-show="store.icon" ng-src="/<%= imagePath %>/{{store.icon}}" alt="Store Icon" class="icon"/>
-				  		<img ng-hide="store.icon" src="/img/no-image.png" alt="Store Icon" class='icon'/>
 						<div>
 							<span class="title">Name:</span>
-							<span ng-bind="store.name"></span>
+							<span ng-bind="floor.name"></span>
 						</div>
 					</div>
 
 					<!-- Link, Phone and Memo -->
 					<div class="col-xs-12 col-sm-8 col-md-9">
-						<div>
-							<span class="title">Link</span>
-							<span ng-bind="store.link"></span>
-						</div>
-						<div>
-							<span class="title">Phone</span>
-							<span ng-bind="store.phone"></span>
-						</div>
-						<hr>
-						<span class="title">Memo</span>
-						<p ng-bind="store.memo" style="padding:10px;"></p>
+						<span class="title">Description</span>
+						<p ng-bind="floor.desc" style="padding:10px;"></p>
 					</div>
 
 					<!-- Edit trigger button -->
@@ -89,59 +69,40 @@
 						<!-- text fields -->
 						<div class="form-group">
 							<label for="name">Name</label>
-							<input class="form-control" placeholder="Store Name" name="name" ng-model="store.name">
+							<input class="form-control" placeholder="Floor Name" name="name" ng-model="store.name">
 						</div>
 						<div class="form-group">
-							<label for="phone">Phone</label>
-							<input class="form-control" placeholder="Store Phone" name="phone" ng-model="store.phone">
+							<label for="desc">Description</label>
+							<input class="form-control" placeholder="Floor Description" name="memo" ng-model="store.desc">
 						</div>
-						<div class="form-group">
-							<label for="memo">Memo</label>
-							<input class="form-control" placeholder="Store Memo" name="memo" ng-model="store.memo">
-						</div>
-						<div class="form-group">
-							<label for="link">link</label>
-							<input class="form-control" placeholder="Store official site link" name="link" ng-model="store.link">
-						</div>
-						<div class="form-group">
-							<label for="floor">Floor</label>
-							<select name="floor" id="store-floor"> <!-- Select can't use ng-model on my two different array condition -->
-							    <option value="{{floor.layer}}" ng-repeat="floor in floorUp">{{Math.abs(floor.layer)}} F</option>
-							    <option value="{{floor.layer}}" ng-repeat="floor in floorDown">B {{Math.abs(floor.layer)}}</option>
-							</select>
-						</div>
-
 						<!-- error msg -->
 						<div class="alert alert-danger error-msg">
 							  	<span class="label label-danger">Error</span>
 							  	<span class="errorText"></span>
 						</div>
 						<button class="btn btn-md btn-primary" href="#" data-loading-text="Updating"
-							ng-click="updateStore($event)">Update</button>
+							ng-click="updateFloor($event)">Update</button>
 
 					</div>
 					<hr/>
 
 					<!-- Icons upload area -->
 					<div class="edit-block">
-						<form name="form" action="/store/uploadImage" method="POST" enctype="multipart/form-data">
-							<input type="hidden" class="form-control" name="_id" value="{{store._id}}">
-							<label for="image">Upload icon image:</label>
-							<img ng-show="store.icon" ng-src="/<%= imagePath %>/{{store.icon}}" alt="Store Icon" class="icon"/>
-							<img ng-hide="store.icon" src="/img/no-image.png" alt="Store Icon" class="icon"/>							
+						<form name="form" action="/floor/uploadImage" method="POST" enctype="multipart/form-data">
+							<input type="hidden" class="form-control" name="_id" value="{{ad._id}}">
+							<label for="path">Upload "path.xml" here</label>
+							<input type="file" class="form-control upload-file" placeholder="upload path.xml" name="path">
+							<label for="map">Upload "path.xml" here</label>
+							<input type="file" class="form-control upload-file" placeholder="upload map.xml" name="map">							
 							<div class="alert alert-danger error-msg">
 								<span class="label label-danger">Error</span> <span class="errorText"></span>
 							</div>
-							<input type="file" class="form-control upload-file" placeholder="Add Store Icon" name="image">
 						</form>
-						<button class="btn btn-md btn-primary" style="display:none;" ng-click="uploadStoreImage($event)"
+						<button class="btn btn-md btn-primary" style="display:none;" ng-click="uploadFloorImage($event)"
 							data-loading-text="Uploading...">Upload</button>
 					</div>
 
 				</div>
-
-				<!-- Ads Block -->
-				<% include ../ad/ad-list.html	%>
 
 			</div>
 

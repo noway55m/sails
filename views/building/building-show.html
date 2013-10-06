@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sails" ng-controller="BuildingShowCtrl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="../../assets/ico/favicon.png">
+
+    <title>{{building.name}}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
+    <link href="/stylesheets/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/stylesheets/style.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.js"></script>
+      <script src="../js/respond.min.js"></script>
+    <![endif]-->
+    <script src="/js/jquery-1.10.2.js"></script>
+
+  </head>
+
+  <body>
+
+    <!-- Fixed Top Navigation Bar -->
+	<% include ../layout/top-navbar.html %>
+
+	<div class="container">
+
+		<!-- Main component for a primary marketing message or call to action -->
+		<div class="jumbotron">
+
+			<!-- Buidling basic info display and editor -->
+			<div id="building-index-basic-display" class="row display-block">
+			
+				<!-- Edit trigger button -->
+				<span class="glyphicon glyphicon-edit edit-button"></span>
+			
+				<!-- Display block -->
+				<div class="col-xs-12 col-sm-3 col-md-2" style="text-align:center;padding:15px 5px;">
+					<img ng-show="building.icon" ng-src="/<%= imagePath %>/{{building.icon}}" alt="Image Icon" style="width:100px;"/>
+					<img ng-hide="building.icon" src="/img/no-image.png" alt="Image Icon"  style="width:100px;"/>								
+					<div>
+						<span class="title">Name:</span>
+						<span ng-bind="building.name"></span>
+					</div>
+				</div>
+			
+				<!-- Description -->
+				<div class="col-xs-12 col-sm-8 col-md-9">
+					<span class="title">Description</span>
+					<p ng-bind="building.desc" style="padding:10px;"></p>
+				</div>
+			
+			
+			</div>
+			
+			<!-- Building Index Basic Information Edit Block -->
+			<div id="building-index-basic-edit" class="row edit-block">
+			
+				<!-- Cancel edit button -->
+				<button type="button" class="close close-button">x</button>
+			
+				<!-- Form -->
+				<div id="update-form" class="edit-block">
+			
+					<!-- Input Fields -->
+					<input type="hidden" name="id" value="{{building._id}}">
+					<div class="form-group">
+						<label for="name">Name</label>
+						<input id="update-form-name" class="form-control" placeholder="Building Name" name="name" ng-model="building.name">
+					</div>
+					<div class="form-group">
+						<label for="desc">Description</label>
+						<textarea id="update-form-desc" class="form-control" placeholder="Building Description" name="desc" ng-model="building.desc"></textarea>
+					</div>
+					<div class="form-group">
+						<label for="pub">Public</label>
+						<input type="checkbox" name="pub" ng-model="building.pub"><br/>
+					</div>
+					<!-- error msg -->
+					<div class="alert alert-danger error-msg">
+					  	<span class="label label-danger">Error</span>
+					  	<span class="errorText"></span>
+					</div>
+					<button class="btn btn-md btn-primary" data-loading-text="Updating" ng-click="updateBuilding($event)">Update</button>
+			
+				</div>
+				<hr/>
+			
+				<!-- Icons upload area -->
+				<div class="edit-block">
+					<form id="image-form" name="form" action="/building/uploadImage" method="POST" enctype="multipart/form-data">
+						<input type="hidden" name="_id" value="{{building._id}}" >
+						<label for="image">Upload icon image:</label>
+						<img id="edit-building-icon" ng-src="/<%= imagePath %>/{{building.icon}}" alt="icon" style="width:100px;"/>
+						<!-- Error msg -->
+						<div class="alert alert-danger" style="display: none;" id="image-upload-error-dialog">
+							<span class="label label-danger">Error</span> <span class="errorText"></span>
+						</div>
+						<input type="file" class="form-control upload-file" placeholder="Building Icon" name="image">
+					</form>
+					<button class="btn btn-md btn-primary" style="display:none;" ng-click="uploadBuildingImage($event)">Upload</button>
+			
+				</div>
+			
+			</div>
+
+			<!-- floors Block -->
+			<% include ../floor/floor-list.html %>
+
+		</div>
+
+	</div>
+	<!-- /container -->
+
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/building/index.js"></script>
+    <script src="/js/jquery.form.min.js"></script>
+    <script src="/js/utility.js"></script>
+
+
+    <!-- AngularJS relative -->
+    <script src="/js/angular.min.js"></script>
+	<script src="/js/app.js"></script>
+    <script src="/js/controller/buildingContrl.js"></script>
+    <script src="/js/controller/floorContrl.js"></script>
+    <script src="/js/controller/storeContrl.js"></script>
+    <script src="/js/controller/adContrl.js"></script>
+	<script src="/js/angular-resource.js"></script>
+
+	<!-- Pre Register Handler -->
+	<script src="/js/pre-register-handler.js"></script>
+
+
+  </body>
+</html>

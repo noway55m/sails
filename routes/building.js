@@ -17,52 +17,42 @@ var	resource_path = "./resource/",
 /*
  * GET Page of specific building
  */
-exports.index = function(req, res) {
+exports.show = function(req, res) {
 
-	Building.findById(req.params.id, function(err, building) {
+	Building.findById(req.params._id, function(err, building) {
 
 		if (err)
 			log.error(err);
 
-		if (building) {
-
-			Floor.find({
-
-				buildingId: building.id
-
-			}).sort({layer: -1}).execFind(function(error, floors){
-
-				if (err)
-					log.error(err);
-
-				var floorUp = [];
-				var floorDown = [];
-				floors.forEach(function(floor){
-
-					if(floor.layer >0 )
-						floorUp.push(floor);
-					else
-						floorDown.push(floor);
-
-				});
-
-				res.render("building/index.html", {
-					url: req.url.toString(), // use in layout for identify display info
-					user: req.user,
-					building: building,
-					floorUp: floorUp,
-					floorDown: floorDown,
-					imagePath: public_image_path
-				});
-
+		if (building)
+			res.render("building/building-show.html", {
+				url: req.url.toString(), // use in layout for identify display info
+				user: req.user,
+				building: building,
+				imagePath: public_image_path
 			});
-
-		}
 
 	});
 
 };
 
+// Get Interface of list public buildings 
+
+exports.listPublic = function(req, res){
+	
+    Building.find({
+    	
+    	public: true
+    	
+    }, function(err, buildings){
+
+        if(err)
+            log.error(err);
+
+        res.send(200, buildings);
+    });	
+	
+}; 
 
 /*
  * GET Interface of list buildings or buildings of specific user
@@ -128,7 +118,7 @@ exports.create = function(req, res) {
 exports.read = function(req, res){
 
     // Get building
-    Building.findById(req.params.id, function(err, building) {
+    Building.findById(req.params._id, function(err, building) {
 
         if(err)
             log.error(err);
@@ -225,6 +215,7 @@ exports.getMapzip = function(req, res){
 
 }
 
+
 /*
  * POST Interface for upload mapzip
  */
@@ -306,6 +297,7 @@ exports.uploadMapzip = function(req, res) {
 	}
 
 };
+
 
 /*
  * POST Interface of upload image

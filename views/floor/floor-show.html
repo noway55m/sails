@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sails" ng-controller="FloorShowCtrl">	
+	<head>
+	
+		<!-- Head meta, css or library include -->
+		<% include ../layout/head-include.html %>	
+		
+		<!-- Title -->
+		<title ng-bind="floor.name"></title>
+				
+	</head>
+	<body>
+
+	    <!-- Fixed Top Navigation Bar -->
+		<% include ../layout/top-navbar.html %>
+
+		<div class="container">
+
+			<!-- Navigation bar to display current floor of specific building -->
+			<ol class="breadcrumb">
+			  <li><a href="/building/show/{{floor.buildingId}}">Building</a></li>
+			  <li class="active">
+			  	<a href="#" ng-show="up">
+			  		<span ng-bind="floor.layer"></span> F
+			  	</a>
+			  	<a href="#" ng-show="!up">
+			  		B <span ng-bind="Math.abs(floor.layer)"></span>
+			  	</a>			  			  
+			  </li>
+			</ol>
+
+			<div class="jumbotron">
+
+				<!-- Display Block -->
+				<div class="row display-block">
+
+					<!-- Layer, name and description -->
+					<div class="col-xs-12 col-sm-3 col-md-2" style="text-align:center;padding:15px 5px;">
+					  	<div href="#" ng-show="up">
+					  		<span ng-bind="floor.layer"></span> F
+					  	</div>
+					  	<div href="#" ng-show="!up">
+					  		B <span ng-bind="Math.abs(floor.layer)"></span>
+					  	</div>																		
+						<div>
+							<span class="title">Name:</span>
+							<span ng-bind="floor.name"></span>
+						</div>
+					</div>
+					<div class="col-xs-12 col-sm-8 col-md-9">
+						<span class="title">Description</span>
+						<p ng-bind="floor.desc" style="padding:10px;"></p>
+					</div>
+										
+					<!-- Edit trigger button -->
+					<span class="glyphicon glyphicon-edit edit-button"></span>
+
+				</div>
+				<hr/>
+
+				<!-- Edit Block -->
+				<div class="row edit-block">
+
+					<!-- Cancel edit button -->
+					<button type="button" class="close close-button">x</button>
+
+					<!-- Form -->
+					<div class="edit-block">
+
+						<!-- text fields -->
+						<div class="form-group">
+							<label for="name">Name</label>
+							<input class="form-control" placeholder="Floor Name" name="name" ng-model="floor.name">
+						</div>
+						<div class="form-group">
+							<label for="desc">Description</label>
+							<input class="form-control" placeholder="Floor Description" name="desc" ng-model="floor.desc">
+						</div>				
+						
+						<!-- error msg -->
+						<div class="alert alert-danger error-msg">
+							  	<span class="label label-danger">Error</span>
+							  	<span class="errorText"></span>
+						</div>
+						<button class="btn btn-md btn-primary" data-loading-text="Updating"
+							ng-click="updateFloor($event)">Update</button>
+
+					</div>
+					<hr/>
+
+					<!-- Icons upload area -->
+					<div class="edit-block">
+						<form name="form" action="/floor/uploadMapAndPath" method="POST" enctype="multipart/form-data">
+							<input type="hidden" class="form-control" name="_id" value="{{floor._id}}">
+							<label for="path">Upload "path.xml" here</label>
+							<input type="file" class="form-control upload-file" placeholder="upload path.xml" name="path">
+							<label for="map">Upload "path.xml" here</label>
+							<input type="file" class="form-control upload-file" placeholder="upload map.xml" name="map">							
+							<div class="alert alert-danger error-msg">
+								<span class="label label-danger">Error</span> <span class="errorText"></span>
+							</div>
+						</form>
+						<button class="btn btn-md btn-primary" style="display:none;" ng-click="uploadMapAndPath($event)"
+							data-loading-text="Uploading...">Upload</button>
+					</div>
+
+				</div>
+
+				<!-- Stores Block -->
+				<div class="row display-block">
+					<% include ../store/store-list.html	%>
+				</div>
+				
+			</div>
+
+		</div>
+		
+		<!-- Body library include -->
+		<% include ../layout/body-include.html	%>
+
+	    <!-- Controller -->
+	    <script src="/js/controller/floorContrl.js"></script>
+	    <script src="/js/controller/storeContrl.js"></script>
+
+	</body>
+
+</html>
