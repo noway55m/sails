@@ -1,24 +1,12 @@
-<!-- Buildings list include in page 'user/index.html' -->
+<!-- Building List include in page 'user/index.html' -->
 <div class="jumbotron" ng-controller="BuildingListCtrl">
 
 	<!-- Title -->
 	<h3 style="display:inline;">My buildings</h3>
 
 	<!-- Add building form block -->
-	<div id="add-building-block">
+	<% include ../building/building-add.html %>
 
-		<!-- fields and button -->
-		<input class="form-control" placeholder="name" name="name" value="">
-		<input class="form-control" placeholder="description" name="desc" value="">
-		<button class="btn btn-primary" data-loading-text="Add..." id="add-new-building-button" ng-click="addBuilding()">Add New Building</button>
-
-		<!-- error msg -->
-		<div class="alert alert-danger" style="display: none;"
-			id="error-dialog">
-			<span class="label label-danger">Error</span> <span class="errorText"></span>
-		</div>
-
-	</div>
 	<br>
 
 	<!-- Buildings list -->

@@ -1,7 +1,7 @@
 <!-- User Update Dialog include in user/all.html -->
 <div class="modal fade" id="user-update-dialog" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
    <div class="modal-dialog">
-     <div class="modal-content" ng-controller="UserListCtrl">
+     <div class="modal-content">
 
      	<!-- Header -->
        <div class="modal-header">
@@ -12,14 +12,14 @@
 		<!-- Body -->
 		<div class="modal-body">
 			<div class="form-group">
-				<label for="floor">Role</label> 
+				<label for="floor">Role</label>
 				<select name="role" ng-model="selecedtUser.role">
 					<option value="<%= ROLES.ADMIN %>">Administrator</option>
 					<option value="<%= ROLES.DEVELOPER %>">Developer</option>
-					<option value="<%= ROLES.FREE %>">Free</option>					
+					<option value="<%= ROLES.FREE %>">Free</option>
 				</select>
 			</div>
-			
+
 			<!-- error msg -->
 			<div class="alert alert-danger error-msg">
 				<span class="label label-danger">Error</span>
@@ -29,8 +29,9 @@
 
        <!-- Footer -->
 		<div class="modal-footer">
-			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			<button type="submit" class="btn btn-primary" data-loading-text="Updating" 
+			<button type="button" class="btn btn-default" data-dismiss="modal"
+				ng-click="cancelUpdateUser()">Close</button>
+			<button type="submit" class="btn btn-primary" data-loading-text="Updating"
 				ng-click="updateUser($event)">Update</button>
 		</div>
 

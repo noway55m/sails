@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="sails" ng-controller="FloorShowCtrl">	
+<html lang="en" ng-app="sails" ng-controller="FloorShowCtrl">
 	<head>
-	
+
 		<!-- Head meta, css or library include -->
-		<% include ../layout/head-include.html %>	
-		
+		<% include ../layout/head-include.html %>
+
 		<!-- Title -->
 		<title ng-bind="floor.name"></title>
-				
+
 	</head>
 	<body>
 
@@ -25,7 +25,7 @@
 			  	</a>
 			  	<a href="#" ng-show="!up">
 			  		B <span ng-bind="Math.abs(floor.layer)"></span>
-			  	</a>			  			  
+			  	</a>
 			  </li>
 			</ol>
 
@@ -41,7 +41,7 @@
 					  	</div>
 					  	<div href="#" ng-show="!up">
 					  		B <span ng-bind="Math.abs(floor.layer)"></span>
-					  	</div>																		
+					  	</div>
 						<div>
 							<span class="title">Name:</span>
 							<span ng-bind="floor.name"></span>
@@ -51,7 +51,7 @@
 						<span class="title">Description</span>
 						<p ng-bind="floor.desc" style="padding:10px;"></p>
 					</div>
-										
+
 					<!-- Edit trigger button -->
 					<span class="glyphicon glyphicon-edit edit-button"></span>
 
@@ -75,8 +75,8 @@
 						<div class="form-group">
 							<label for="desc">Description</label>
 							<input class="form-control" placeholder="Floor Description" name="desc" ng-model="floor.desc">
-						</div>				
-						
+						</div>
+
 						<!-- error msg -->
 						<div class="alert alert-danger error-msg">
 							  	<span class="label label-danger">Error</span>
@@ -93,9 +93,9 @@
 						<form name="form" action="/floor/uploadMapAndPath" method="POST" enctype="multipart/form-data">
 							<input type="hidden" class="form-control" name="_id" value="{{floor._id}}">
 							<label for="path">Upload "path.xml" here</label>
-							<input type="file" class="form-control upload-file" placeholder="upload path.xml" name="path">
-							<label for="map">Upload "path.xml" here</label>
-							<input type="file" class="form-control upload-file" placeholder="upload map.xml" name="map">							
+							<input type="file" class="form-control upload-file" name="path">
+							<label for="map">Upload "map.xml" here</label>
+							<input type="file" class="form-control upload-file" name="map">
 							<div class="alert alert-danger error-msg">
 								<span class="label label-danger">Error</span> <span class="errorText"></span>
 							</div>
@@ -110,11 +110,11 @@
 				<div class="row display-block">
 					<% include ../store/store-list.html	%>
 				</div>
-				
+
 			</div>
 
 		</div>
-		
+
 		<!-- Body library include -->
 		<% include ../layout/body-include.html	%>
 

@@ -2,16 +2,16 @@ var utility = Utility.getInstance();
 
 // Controller for list stores
 function UserListCtrl($scope, User, $rootScope) {
-	
+
 	// List all users
 	$rootScope.users = User.list();
-	
+
 	// Function for select specific user
 	$scope.selectUser = function(user){
-		console.log(user);
-		$rootScope.selecedtUser = user; 
+		$rootScope.selecedtUser = user;
+		$rootScope.selecedtUserClone = angular.copy($rootScope.selecedtUser); // Clone user for future rollback
 	};
-	
+
 	// Function for create new user
 	$scope.addUser = function(e){
 		var addButton = angular.element(e.currentTarget),
@@ -79,9 +79,18 @@ function UserListCtrl($scope, User, $rootScope) {
 
 	};
 
-	// Function for update user info
-	$scope.updateUser = function(e){		
-		var updateButton = angular.element(e.currentTarget),
+	// Function for rollback selected user info
+	$scope.cancelUpdateUser = function(){
+	    angular.copy($rootScope.selecedtUserClone, $rootScope.selecedtUser);
+	};
+
+    // Function for update user info
+	$scope.updateUser = function(e){
+
+	    // Clone user info
+	    $rootScope.selecedtUserClone = angular.copy($rootScope.selecedtUser);
+
+	    var updateButton = angular.element(e.currentTarget),
 			form = updateButton.parent(),
 			inputFields = form.find("input");
 			errorMsgObj = form.find(".error-msg"),
@@ -89,7 +98,7 @@ function UserListCtrl($scope, User, $rootScope) {
 			utility = Utility.getInstance(),
 			roleObj = form.find("select");
 
-	
+
 		// Disable all fields before finish save
 		inputFields.attr('disabled', 'disabled');
 
@@ -109,9 +118,9 @@ function UserListCtrl($scope, User, $rootScope) {
 			inputFields.removeAttr('disabled');
 
 			// Clean all fields and close dialog
-			form.parent().parent().parent().modal('hide');			
-					
-			
+			form.parent().parent().parent().modal('hide');
+
+
 		}, function(res){
 
 			// Show error msg
@@ -123,11 +132,11 @@ function UserListCtrl($scope, User, $rootScope) {
 
 			// Enable all input fields
 			inputFields.removeAttr('disabled');
-	
-		});	
-		
-	};	
-	
+
+		});
+
+	};
+
 	// Function for change password of user
 	$scope.changePassword = function(e){
 		var changeButton = angular.element(e.currentTarget),
@@ -152,10 +161,10 @@ function UserListCtrl($scope, User, $rootScope) {
 
 			// Change user's password
 			User.changePassword({
-				
+
 				_id: $rootScope.selecedtUser._id,
 				password: passwordObj.val()
-				
+
 			}, function(res){
 
 				// Enable all fields
@@ -184,9 +193,9 @@ function UserListCtrl($scope, User, $rootScope) {
 
 		}
 
-	};	
-	
-	
+	};
+
+
 }
 
 // StoreListCtrl.$inject = ['$scope', 'Building'];

@@ -3,28 +3,29 @@ var utility = Utility.getInstance();
 // List buildings controller
 function BuildingListCtrl($scope, Building) {
 
+    // List all buildings
 	$scope.buildings = Building.list();
-	$scope.addBuilding = function(d) {
 
-		var addBlock = "#add-building-block",
-			inputs = $(addBlock + " input"),
-			buttons = $(addBlock + " button"),
+	// Function for add new building
+	$scope.addBuilding = function(e) {
+
+		var addButton = angular.element(e.currentTarget),
+		    form = addButton.parent(),
+			inputs = form.find("input"),
 			name = $(inputs[0]),
 			desc = $(inputs[1]),
-			errorMsgObj = $("#error-dialog");
+			errorMsgObj = form.find('.error-msg');
 
 		// Clean error msg
-		errorMsgObj.css({
-			display : "none"
-		});
-		errorMsgObj.children(".errorText").html("");
+		errorMsgObj.hide();
+		errorMsgObj.find(".errorText").text("");
 
 		// Check format
 		if (utility.emptyValidate(name, errorMsgObj)) {
 
 			// Disable all fields and buttons
 			inputs.attr("disabled", "disabled");
-			buttons.button('loading');
+			addButton.button('loading');
 
 			// Create new building
 			Building.create({
@@ -32,26 +33,26 @@ function BuildingListCtrl($scope, Building) {
 				name : name.val(),
 				desc : desc.val()
 
-			}, function(data) {
+			}, function(building) {
 
 				// Enable all fields and button
 				inputs.removeAttr("disabled").val("");
-				buttons.button("reset");
+				addButton.button("reset");
 
 				// Update local buildings
-				$scope.buildings.push(data.building);
+				$scope.buildings.push(building);
 
 			}, function(err) {
 
 				// Enable all fields and button
 				inputs.removeAttr("disabled");
-				buttons.removeAttr("disabled");
+				addButton.removeAttr("disabled");
 
 			});
 
 		}
 
-	}
+	};
 
 }
 
@@ -60,8 +61,15 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 	var url = $location.absUrl(),
 		id = url.substring(url.lastIndexOf("/") + 1, url.length);
 	$scope.building = Building.get({ _id : id }, function(building){
-		$rootScope.$emit('buildingFinishLoad', building);
+	    $rootScope.$emit('buildingFinishLoad', building);
+        $rootScope.buildingClone = angular.copy(building); // Clone user for  future rollback
 	});
+
+    // Function for rollback selected user info
+    $scope.cancelUpdateBuilding = function(){
+        console.log('sdlfjsldfj')
+        angular.copy($rootScope.buildingClone, $scope.building);
+    };
 
 	// Function for update building
 	$scope.updateBuilding = function(e){
@@ -88,7 +96,7 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 			// Set loading state of update button
 			updateButton.button('loading');
 
-			building.$save( function(){
+			building.$save( function(building){
 
 				// Set back normal state of update button
 				updateButton.button('reset');
@@ -97,6 +105,8 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 				inputFields.removeAttr('disabled');
 				descObj.removeAttr('disabled');
 
+				// Clone user info
+		        $rootScope.buildingClone = angular.copy(building);
 
 			}, function(res){
 
@@ -116,6 +126,55 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 		}
 
 	};
+
+
+    // Function for upload building image
+    $scope.uploadMapzip = function(e){
+
+        var building = this.building,
+            uploadButton = angular.element(e.currentTarget),
+            form = uploadButton.prev(),
+            inputFields = form.find("input"),
+            errorMsgObj = form.find('.error-msg');
+
+        // Ajax from setup
+        var options = {
+
+            beforeSend : function(){ // pre-submit callback
+                inputFields.attr('disabled');
+                errorMsgObj.hide();
+                uploadButton.button("loading");
+                return true;
+            },
+            uploadProgress : function(event, position, total, percent){},
+            success : function(res, statusText){ // post-submit callback
+
+                // Show error msg
+                if(res.msg){
+                    errorMsgObj.find(".errorText").text(res.msg);
+                    errorMsgObj.show();
+                }else{
+                    $scope.$apply(function () {
+                        building.mapzipUpdateTime = res.mapzipUpdateTime;
+                    });
+                }
+
+                // Hide button
+                uploadButton.button("reset");
+                uploadButton.hide();
+                return true;
+            },
+
+            clearForm : true
+
+        };
+
+        form.ajaxSubmit(options);
+
+        return false;
+
+    };
+
 
 	// Function for upload building image
 	$scope.uploadBuildingImage = function(e){
@@ -155,7 +214,7 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 				return true;
 			},
 
-			clearForm : true,
+			clearForm : true
 
 		};
 
@@ -163,7 +222,7 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 
 		return false;
 
-	}
+	};
 
 
 }
