@@ -12,7 +12,7 @@ var express = require('express')
   , floor = require('./routes/floor')
   , store = require('./routes/store')
   , ad = require('./routes/ad')
-  , test = require('./routes/test')  
+  , test = require('./routes/test')
   , http = require('http')
   , https = require('https')
   , path = require('path')
@@ -77,7 +77,7 @@ app.sget('/user/all', user.all); // only use in admin
 app.sget('/user/list', user.list); // only use in admin
 app.spost('/user/create', user.create);  // only use in admin
 app.spost('/user/update', user.update);  // only use in admin
-app.spost('/user/changePassword', user.changePassword);  
+app.spost('/user/changePassword', user.changePassword);
 
 //----------------------------------
 app.sget('/building/show/:_id', building.show);
@@ -87,7 +87,6 @@ app.spost('/building/update', building.update);
 app.spost('/building/delete', building.del);
 app.sget('/building/list', building.list);
 app.sget('/building/list/public', building.listPublic);
-app.spost('/building/uploadMapzip', building.uploadMapzip);
 app.spost('/building/uploadImage', building.uploadImage);
 app.sget('/building/map/:filename', building.getMapzip);
 
@@ -99,6 +98,8 @@ app.spost('/floor/create', floor.create);
 app.spost('/floor/update', floor.update);
 app.spost('/floor/uploadMapAndPath', floor.uploadMapAndPath);
 app.spost('/floor/uploadRenderAndRegion', floor.uploadRenderAndRegion);
+app.spost('/floor/uploadMapzip', floor.uploadMapzip);
+app.sget('/floor/getMapzip', floor.getMapzip);
 
 //----------------------------------
 app.sget('/store/show/:_id', store.show);

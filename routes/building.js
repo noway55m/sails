@@ -36,27 +36,24 @@ exports.show = function(req, res) {
 
 };
 
-// Get Interface of list public buildings 
-
+// Get Interface of list public buildings
 exports.listPublic = function(req, res){
-	
-    Building.find({
-    	
-    	public: true
-    	
-    }, function(err, buildings){
 
-        if(err)
+    Building.find({
+
+        pub : true
+
+    }, function(err, buildings) {
+
+        if (err)
             log.error(err);
 
         res.send(200, buildings);
-    });	
-	
-}; 
+    });
 
-/*
- * GET Interface of list buildings or buildings of specific user
- */
+};
+
+// GET Interface of list buildings or buildings of specific user
 exports.list = function(req, res) {
 
     // Check user role for check with administration permission
@@ -74,10 +71,7 @@ exports.list = function(req, res) {
 
 };
 
-
-/*
- * POST Interface of create new building
- */
+// POST Interface of create new building
 exports.create = function(req, res) {
 
     if(req.body.name){
@@ -86,16 +80,14 @@ exports.create = function(req, res) {
 
             name: req.body.name,
             desc: req.body.desc,
-            userId: req.user.id,
+            userId: req.user._id,
             pub: false
 
         }).save(function(err, building){
 
             if(building){
 
-                res.send(200, {
-                    building: building
-                });
+                res.send(200, building);
 
             }else{
 
@@ -111,10 +103,7 @@ exports.create = function(req, res) {
 
 };
 
-
-/*
- * GET Interface for get building info
- */
+// GET Interface for get building info
 exports.read = function(req, res){
 
     // Get building
@@ -136,10 +125,7 @@ exports.read = function(req, res){
 
 };
 
-
-/*
- * POST Interface of update specific building
- */
+// POST Interface of update specific building
 exports.update = function(req, res) {
 
     if(req.body._id){
@@ -172,136 +158,12 @@ exports.update = function(req, res) {
 
 };
 
-
-/*
- * GET Interface of delete specific building
- */
+// GET Interface of delete specific building
 exports.del = function(req, res) {
 
 };
 
-
-/*
- * GET Interface for get mapzip file of specific building
- */
-exports.getMapzip = function(req, res){
-
-    if(req.params.filename){
-
-        var fileName = req.params.filename,
-            filePath = mapzip_path + "/"+ fileName;
-            stat = fs.statSync(filePath);
-
-        try{
-
-            res.writeHead(200, {
-                "Content-type": "application/octet-stream",
-                "Content-disposition": "attachment; filename=" + fileName,
-                "Content-Length": stat.size
-            });
-
-            var readStream = fs.createReadStream(filePath);
-
-            // We replaced all the event handlers with a simple call to util.pump()
-            // util.pump(readStream, res);
-            readStream.pipe(res);
-
-        }catch(e){
-
-            log.error(e);
-
-        }
-    }
-
-}
-
-
-/*
- * POST Interface for upload mapzip
- */
-exports.uploadMapzip = function(req, res) {
-
-	if(req.body.id && req.files.mapzip){
-
-		// Get file name and extension
-		var fileName = req.files.mapzip.name;
-		var extension = path.extname(fileName).toLowerCase() === '.zip' ? ".zip" : null ||
-						path.extname(fileName).toLowerCase() === '.rar' ? ".rar" : null;
-
-		// Check file format by extension
-		if(extension){
-
-			var tmpPath = req.files.mapzip.path;
-			log.info("tmpPath: " + tmpPath);
-
-			// Read file and prepare hash
-			var md5sum = crypto.createHash('md5'),
-				stream = fs.ReadStream(tmpPath);
-
-			// Set target file name by hash the file
-			var targetFileName;
-			stream.on('data', function(d) {
-				md5sum.update(d);
-			});
-
-			stream.on('end', function() {
-
-				targetFileName = md5sum.digest('hex')  + extension;
-				var targetPath = path.resolve(mapzip_path + "/" + targetFileName);
-				log.info("targetPath: " + targetPath);
-
-				Building.findById(req.body.id, function(error, building){
-
-					if(building){
-
-						log.info("mapzip: " + building.mapzip);
-						log.info("targetName: " + targetFileName);
-						if(building.mapzip != targetFileName){
-
-							log.info("Update");
-							fs.rename(tmpPath, targetPath, function(err) {
-								if(err){
-									log.error(err);
-									res.send(200, "Server error, please try again later");
-								}else{
-
-									building.mapzip = targetFileName;
-									building.mapzipUpdateTime = new Date();
-									building.save(function(){
-										res.send(200, building.mapzipUpdateTime.toString());
-									});
-								}
-							});
-
-						}else{
-
-							log.info("Same");
-							res.send(200, building.mapzipUpdateTime.toString());
-						}
-
-					}else{
-
-						res.send(200, { msg: "This building does not exist" });
-
-					}//end if
-
-				});
-
-			});
-
-		}else{
-
-			res.send(200, { msg: "File extension should be .zip or .rar." });
-		}
-
-	}
-
-};
-
-
-/*
- * POST Interface of upload image
- */
+// POST Interface of upload image
 exports.uploadImage = function(req, res) {
 
 	console.log(req.body);
@@ -349,7 +211,9 @@ exports.uploadImage = function(req, res) {
 							fs.rename(tmpPath, targetPath, function(err) {
 								if(err){
 									log.error(err);
-									res.send(200, "Server error, please try again later");
+									res.send(200, {
+									    msg: "Server error, please try again later"
+									});
 								}else{
 
 									building.icon = targetFileName;
