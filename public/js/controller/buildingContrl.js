@@ -59,7 +59,7 @@ function BuildingListCtrl($scope, Building) {
 function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 	var url = $location.absUrl(),
 		id = url.substring(url.lastIndexOf("/") + 1, url.length);
-	$scope.building = Building.get({ id : id }, function(building){
+	$scope.building = Building.get({ _id : id }, function(building){
 		$rootScope.$emit('buildingFinishLoad', building);
 	});
 

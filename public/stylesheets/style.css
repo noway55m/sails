@@ -51,14 +51,29 @@ body {
 
 /* Icon wrapper while list */
 .belement{
-	height:150px;
+	width:150px;
+	height: 220px;
+	max-height: 150px;	
+	text-align:center;
+	vertical-align: top; 
+	display: inline-block;
+	*display: inline;
+	margin: 10px auto;
+}
+.belement p{
+	font-size: 14px;
+	line-height: 20px;
 	text-align:center;
 }
 .default-icon{
 	width:100px;
 	height:100px;
 	display:block;
-	margin:8px auto;
+	margin:4px auto;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #eee;
+	vertical-align: top; 
 }
 
 

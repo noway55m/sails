@@ -84,7 +84,6 @@ function AdListCtrl($scope, Ad, $rootScope) {
 			},
 			uploadProgress : function(event, position, total, percent){},
 			success : function(res, statusText){ // post-submit callback
-
 				// Show error msg
 				if(res.msg){
 					errorMsgObj.find(".errorText").text(res.msg);
@@ -115,7 +114,6 @@ function AdListCtrl($scope, Ad, $rootScope) {
 
 	// Function for create new ad
 	$scope.addAd = function(e){
-	    console.log("lsdjflsafjsld")
 		var addButton = angular.element(e.currentTarget),
 			closeButton = addButton.prev(),
 			closeButtonTop = addButton.parent().prev().prev().find(".close"),
@@ -123,7 +121,6 @@ function AdListCtrl($scope, Ad, $rootScope) {
 			inputFields = form.find("input"),
 			errorMsgObj = form.find(".error-msg"),
 			utility = Utility.getInstance(),
-			storeId = form.find("input[name=storeId]"),
 			nameObj = form.find("input[name=name]"),
 			priceObj = form.find("input[name=price]"),
 			descObj = form.find("input[name=desc]");
@@ -146,7 +143,7 @@ function AdListCtrl($scope, Ad, $rootScope) {
 			// Create new ad
 			Ad.create({
 
-				storeId: storeId.val(),
+				storeId: $rootScope.store._id,
 				name: nameObj.val(),
 				price: priceObj.val(),
 				desc: descObj.val()
@@ -174,7 +171,7 @@ function AdListCtrl($scope, Ad, $rootScope) {
 
 					// Clean all fields and close dialog
 					inputFields.val("");
-					$('#add-ad-dialog').modal('hide');
+					form.parent().parent().parent().modal('hide');
 
 				}
 
