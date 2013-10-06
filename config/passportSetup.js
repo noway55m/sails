@@ -4,6 +4,7 @@ var passport = require('passport'),
 	log = require('log4js').getLogger(),
 	User = require('../model/user');
 
+
 // Session user serialize and de-serialize
 passport.serializeUser(function(user, done) {
 	done(null, user._id);
@@ -81,7 +82,7 @@ passport.use(new facebookStrategy({
 								
 				username : profile.username,				
 				fid : profile.id,
-				accessToken : accessToken
+				faccessToken : accessToken
 				
 			}).save(function(err, newUser){
 				
@@ -117,7 +118,21 @@ passport.configSecureHttpRequest = function(app){
                 res.redirect('/user');
 
         }else{
-
+        	
+        	// Developer authorization by token
+        	if(req.get("Authorization")){
+        		
+        		var token = req.get("Authorization");
+        		console.log(token);
+        		User.findOne({
+        			token: token
+        		}, function(error, user){
+        			req.user = user;
+        			callback(req, res);
+        		});
+        		
+        	}
+        	
             if(req.url.toString() == "/login" || req.url.toString() == "/")
                 callback(req, res);
             else

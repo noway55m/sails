@@ -1,5 +1,6 @@
 var mongoose = require("./dataSource"),
 	Schema = mongoose.Schema,
+	uuid = require('node-uuid'),
 	crypto = require('crypto');
 			
 /**
@@ -11,19 +12,27 @@ var userSchema = new Schema({
     
     password: String,
     
+    enabled: Boolean,
+    
     country: Number, // Use default mapping
     
     role: {
     	
-    	type: Number, // 1: admin, 2: normal user
-    	default: 2
+    	type: Number, // 1: admin, 2: developer, 3: free user 
+    	default: 3
     	
     },
     
+    token: String, // Developer token
+    
     fid: String, // facebook id
     
-    accessToken: String // facebook OAuth access token    
-            
+    faccessToken: String, // facebook OAuth access token    
+    
+    tid: String, // twitter id
+    
+    taccessToken: String // twitter OAuth access token
+    
 });
 
 
@@ -35,6 +44,18 @@ user.encodePassword = function(password){
 	shasum.update(password);
 	var hashPasswd = shasum.digest('hex').toString();	
 	return hashPasswd;		
+};
+
+// Function for generate token
+user.genToken = function(){
+	return uuid.v4().replace(/-/g, "");
+};
+
+// User static roles
+user.ROLES = {
+	ADMIN: 1,
+	DEVELOPER : 2,
+	FREE : 3		
 };
 
 module.exports = user;

@@ -16,10 +16,8 @@ var storeSchema = new Schema({
     phone: String,
     
     memo: String,
-        
-    floor: Number,
-    
-    buildingId: String
+
+    floorId: String
     
 });
 

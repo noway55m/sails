@@ -12,6 +12,7 @@ var express = require('express')
   , floor = require('./routes/floor')
   , store = require('./routes/store')
   , ad = require('./routes/ad')
+  , test = require('./routes/test')  
   , http = require('http')
   , https = require('https')
   , path = require('path')
@@ -66,43 +67,57 @@ app.sget('/', routes.index);
 app.sget('/login', authentication.index);
 app.sget('/logout', authentication.logout);
 app.post('/auth', authentication.auth);
-app.sget('/user', user.index);
 app.get('/register', register.index);
 app.post('/register/auth', register.auth);
 
+
+//---------------------------------
+app.sget('/user', user.index);
+app.sget('/user/all', user.all); // only use in admin
+app.sget('/user/list', user.list); // only use in admin
+app.spost('/user/create', user.create);  // only use in admin
+app.spost('/user/update', user.update);  // only use in admin
+app.spost('/user/changePassword', user.changePassword);  
+
 //----------------------------------
-app.sget('/building/show/:id', building.index);
-app.sget('/building/read/:id', building.read);
+app.sget('/building/show/:_id', building.show);
+app.sget('/building/read/:_id', building.read);
 app.spost('/building/create', building.create);
 app.spost('/building/update', building.update);
 app.spost('/building/delete', building.del);
 app.sget('/building/list', building.list);
+app.sget('/building/list/public', building.listPublic);
 app.spost('/building/uploadMapzip', building.uploadMapzip);
 app.spost('/building/uploadImage', building.uploadImage);
 app.sget('/building/map/:filename', building.getMapzip);
 
 //----------------------------------
-app.sget('/floor/read/:id', floor.read);
+app.sget('/floor/show/:_id', floor.show);
+app.sget('/floor/read/:_id', floor.read);
 app.sget('/floor/list', floor.list);
 app.spost('/floor/create', floor.create);
 app.spost('/floor/update', floor.update);
+app.spost('/floor/uploadMapAndPath', floor.uploadMapAndPath);
+app.spost('/floor/uploadRenderAndRegion', floor.uploadRenderAndRegion);
 
 //----------------------------------
-app.sget('/store/show/:id', store.index);
-app.sget('/store/read/:id', store.read);
+app.sget('/store/show/:_id', store.show);
+app.sget('/store/read/:_id', store.read);
 app.sget('/store/list', store.list);
 app.spost('/store/create', store.create);
 app.spost('/store/update', store.update);
 app.spost('/store/uploadImage', store.uploadImage);
 
 //----------------------------------
-
+app.sget('/ad/show/:_id', ad.show);
 app.sget('/ad/list', ad.list);
 app.spost('/ad/create', ad.create);
 app.spost('/ad/update', ad.update);
 app.spost('/ad/uploadImage', ad.uploadImage);
 //----------------------------------
 
+app.sget('/test1', test.test1);
+app.spost('/test2', test.test2);
 
 
 // Facebook OAuth Authentication
