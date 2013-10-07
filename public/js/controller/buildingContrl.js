@@ -62,12 +62,11 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 		id = url.substring(url.lastIndexOf("/") + 1, url.length);
 	$scope.building = Building.get({ _id : id }, function(building){
 	    $rootScope.$emit('buildingFinishLoad', building);
-        $rootScope.buildingClone = angular.copy(building); // Clone user for  future rollback
+        $rootScope.buildingClone = angular.copy(building); // Clone building for future rollback
 	});
 
     // Function for rollback selected user info
     $scope.cancelUpdateBuilding = function(){
-        console.log('sdlfjsldfj')
         angular.copy($rootScope.buildingClone, $scope.building);
     };
 

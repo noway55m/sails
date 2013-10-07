@@ -115,7 +115,10 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
     var url = $location.absUrl(),
     	id = url.substring(url.lastIndexOf("/") + 1, url.length);
     $rootScope.store = Store.get({ _id : id }, function(store){
-    	 
+    	
+    	// Clone store for future rollback
+    	$rootScope.storeClone = angular.copy(store); 
+    	
     	// Get floor
     	$scope.floor = Floor.get({ _id: store.floorId }, function(floor){
 
@@ -160,8 +163,15 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
     	$rootScope.$emit('storeFinishLoad', store);
 
     });
+    
+    // Include math library
 	$scope.Math = window.Math;
 
+    // Function for rollback selected user info
+    $scope.cancelUpdateStore = function(){
+        angular.copy($rootScope.storeClone, $rootScope.store);
+    };
+		
 	// Function for update the basic fields
 	$scope.updateStore = function(e){
 
@@ -205,6 +215,9 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
     			inputFields.removeAttr('disabled');
                 selectFloor.removeAttr('disabled');
 
+				// Clone user info
+		        $rootScope.storeClone = angular.copy(store);                
+                
     		}, function(responseText){
 
     			// Show error msg

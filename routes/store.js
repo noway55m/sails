@@ -18,7 +18,7 @@ exports.show = function(req, res) {
 			log.error(error);
 		
 		if(store)
-			res.render("store/index.html", {
+			res.render("store/store-show.html", {
 				url: req.url.toString(), // use in layout for identify display info
 				user: req.user,
 				imagePath: public_image_path

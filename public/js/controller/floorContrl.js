@@ -23,7 +23,6 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 
 			$rootScope.currentUpFloor = $rootScope.floorUp.length + 1,
 			$rootScope.currentDownFloor = -($rootScope.floorDown.length) - 1;
-			console.log($rootScope.currentDownFloor);
 
 		});
 
@@ -36,7 +35,7 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 		Floor.create({
 
 			buildingId: $rootScope.building._id,
-			layer: $rootScope.currentUpFloor
+			layer: 1 // $rootScope.currentUpFloor
 
 		}, function(floor) {
 
@@ -56,8 +55,8 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 		Floor.create({
 
 			buildingId: $rootScope.building._id,
-			layer: $rootScope.currentDownFloor
-
+			layer: -1 // $rootScope.currentDownFloor
+			
 		}, function(floor) {
 
 			// Update local buildings
@@ -89,10 +88,18 @@ function FloorShowCtrl($scope, $location, Floor, $rootScope) {
 		else
 			$rootScope.up = false;
 		
+		// Clone floor for future rollback
+        $rootScope.floorClone = angular.copy(floor); 
+				
 		// Trigger load stores of this floor
 		$rootScope.$emit('floorFinishLoad', floor);
 		
 	});
+
+    // Function for rollback selected user info
+    $scope.cancelUpdateFloor = function(){
+        angular.copy($rootScope.floorClone, $rootScope.floor);
+    };	
 	
 	// Function for update floor
 	$scope.updateFloor = function(e){
@@ -125,7 +132,10 @@ function FloorShowCtrl($scope, $location, Floor, $rootScope) {
 	
 				// Enable all input fields
 				inputFields.removeAttr('disabled');
-	
+
+				// Clone user info
+		        $rootScope.floorClone = angular.copy(floor);				
+				
 			}, function(res){
 	
 				// Show error msg
