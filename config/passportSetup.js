@@ -5,6 +5,14 @@ var passport = require('passport'),
 	User = require('../model/user');
 
 
+//Static variable
+var	resource_path = "./resource/",
+	public_image_path = "client-image",
+	mapzip_path = resource_path + "mapzip",
+	image_path = "public/" + public_image_path;
+
+
+
 // Session user serialize and de-serialize
 passport.serializeUser(function(user, done) {
 	done(null, user._id);
@@ -110,8 +118,17 @@ passport.configSecureHttpRequest = function(app){
 
     // Inner function for check isLoggedIn or not
     function isLoggedIn(req, res, callback){
+    	
+    	// set local variables
+    	res.locals.user = req.user;
+    	res.locals.roles = User.ROLES;
+    	res.locals.url = req.url.toString();
+    	res.locals.imagePath = public_image_path;
+    	
         if(req.user){
-
+        	
+        	// set local variables
+        	res.locals.user = req.user;        	
             if(req.url.toString() != "/")
                 callback(req, res);
             else

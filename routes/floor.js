@@ -5,13 +5,12 @@ var log = require('log4js').getLogger(),
     fs = require('fs'),
 	path = require('path'),
 	mkdirp = require("mkdirp"),
-	parseString = require('xml2js').parseString;
+	parseString = require('xml2js').parseString,
+	config = require('../config/config');
+	
 
 // Static variable
-var	resource_path = "./resource/",
-	public_image_path = "client-image",
-	mapzip_path = resource_path + "mapzip",
-	image_path = "public/" + public_image_path;
+var	mapinfo_path = "/" + config.mapInfoPath;
 
 // GET Page of specific building
 exports.show = function(req, res) {
@@ -23,10 +22,7 @@ exports.show = function(req, res) {
 
 		if(floor)
 			res.render("floor/floor-show.html", {
-				url: req.url.toString(), // use in layout for identify display info
-				user: req.user,
-				floor: floor,
-				imagePath: public_image_path
+				floor: floor
 			});
 
 	});
@@ -73,29 +69,41 @@ exports.create = function(req, res) {
 
 	if(req.body.buildingId && req.body.layer){
 
-		new Floor({
+		Building.findById(req.body.buildingId, function(error, building){
+			
+			var layer;
+			if(req.body.layer>0){
+				building.upfloor = building.upfloor + 1;
+				layer = building.upfloor;
+			}else{
+				building.downfloor =  building.downfloor + 1;
+				layer = -(building.downfloor);				
+			}
 
-			layer: req.body.layer,
-
-			buildingId: req.body.buildingId
-
-		}).save(function(error, floor){
-
-			Building.findById(req.body.buildingId, function(error, building){
-
-				if(req.body.layer>0)
-					building.upfloor = req.body.layer;
-				else
-					building.downfloor = Math.abs(req.body.layer);
-
-				building.save(function(){
-					res.send(200, floor);
-				});
-
+			building.save(function(err, building){
+				
+				if(err)
+					log.error(err);
+				
+				if(building)
+					new Floor({
+	
+						layer: layer,
+	
+						buildingId: req.body.buildingId
+	
+					}).save(function(error, floor){
+	
+							building.save(function(){
+								res.send(200, floor);
+							});
+	
+					});				
+				
 			});
 
-		});
-
+		});		
+		
 	}
 
 };
@@ -103,7 +111,6 @@ exports.create = function(req, res) {
 // POST Interface for update floor of building
 exports.update = function(req, res) {
 
-	console.log(req.body)
     if(req.body._id){
 
         // Get building
@@ -138,9 +145,8 @@ exports.uploadMapAndPath = function(req, res) {
 	            tmpPathMap = req.files.map.path;
 
 	        // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
-	        var webLocation = '/resource/map-info/' + req.user._id + "/" + floor.buildingId + "/" + floor.layer,
-	            folderPath = path.dirname() + webLocation;
-
+	        var webLocation = req.user._id + "/" + floor.buildingId + "/" + floor.layer,
+	            folderPath = path.dirname() + mapinfo_path + '/' + webLocation;	        
             mkdirp(folderPath, function(err, dd) {
                 if (err)
                     log.error(err);
@@ -202,8 +208,8 @@ exports.uploadRenderAndRegion = function(req, res) {
                 tmpPathRegion = req.files.region.path;
 
             // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
-            var webLocation = '/resource/map-info/' + req.user._id + "/" + floor.buildingId + "/" + floor.layer,
-                folderPath = path.dirname() + webLocation;
+            var webLocation = req.user._id + "/" + floor.buildingId + "/" + floor.layer,
+                folderPath = path.dirname() + mapinfo_path + '/' + webLocation;
 
             mkdirp(folderPath, function(err, dd) {
                 if (err)
@@ -267,13 +273,10 @@ exports.uploadRenderAndRegion = function(req, res) {
 
 // Function for parse regions and create stores on these floor
 function parseRegion(regionXMLString, floorId, next){
-
-	//console.log(regionXMLString);
+	
 	parseString(regionXMLString, function (err, result) {
-	    //console.dir(result);
+		
 	    var ways = result.osm.way;
-	    console.log("-------------------------------------");
-
 	    Store.find({}, function(err, stores){
 
 	    	if(err)
@@ -335,22 +338,20 @@ function parseRegion(regionXMLString, floorId, next){
 
 }
 
-
-
 // GET Interface for get mapzip file of specific building
 exports.getMapzip = function(req, res){
+	
+    if(req.query.mapzip){
 
-    if(req.params.filename){
-
-        var fileName = req.params.filename,
-            filePath = mapzip_path + "/"+ fileName;
+        var fileName = req.query.mapzip,
+            filePath = path.dirname() + mapinfo_path + '/' + fileName,
             stat = fs.statSync(filePath);
-
+            
         try{
 
             res.writeHead(200, {
                 "Content-type": "application/octet-stream",
-                "Content-disposition": "attachment; filename=" + fileName,
+                "Content-disposition": "attachment; filename=mapzip",
                 "Content-Length": stat.size
             });
 
@@ -370,7 +371,7 @@ exports.getMapzip = function(req, res){
 
 // POST Interface for upload mapzip
 exports.uploadMapzip = function(req, res) {
-    console.log(req.body)
+	
     if(req.body._id && req.files.mapzip){
 
         // Get file name and extension
@@ -393,18 +394,18 @@ exports.uploadMapzip = function(req, res) {
                     var tmpPath = req.files.mapzip.path;
 
                     // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
-                    var webLocation = '/resource/map-info/' + req.user._id + "/" + floor.buildingId + "/" + floor.layer,
-                        folderPath = path.dirname() + webLocation;
+                    var webLocation = req.user._id + "/" + floor.buildingId + "/" + floor.layer,
+                        folderPath = path.dirname() + mapinfo_path + '/' + webLocation;
 
                     mkdirp(folderPath, function(err, dd) {
 
-                        var targetPath = folderPath + "/mapzip." + extension;
+                        var targetPath = folderPath + "/mapzip" + extension;
                         fs.rename(tmpPath, targetPath, function(err) {
 
                             if (err)
                                 log.error(err);
 
-                            floor.mapzip = webLocation + "/mapzip." + extension;
+                            floor.mapzip = webLocation + "/mapzip" + extension;
                             floor.save(function(err, floor) {
 
                                 if (err)
@@ -434,8 +435,3 @@ exports.uploadMapzip = function(req, res) {
     }
 
 };
-
-
-
-
-

@@ -4,9 +4,31 @@ var utility = Utility.getInstance();
 function AdListCtrl($scope, Ad, $rootScope) {
 
 	$rootScope.$on('storeFinishLoad', function(e, store) {
-		$scope.ads = Ad.list({ storeId: store._id });
-	});
+		
+		$scope.ads = Ad.list({
+			storeId : store._id
+		}, function(ads) {
+			$rootScope.adsClone = angular.copy(ads);	// Clone ads for future rollback
+		});
 
+	});
+	
+    // Function for rollback selected user info
+    $scope.cancelUpdateAd = function(e){
+    	
+    	var form = angular.element(e.currentTarget).parent();
+    	var id = angular.element(e.currentTarget).parent().attr('id');
+    	for(var i=0; i<$rootScope.adsClone.length; i++){			
+			if($rootScope.adsClone[i]._id == id){    			
+		        angular.copy($rootScope.adsClone[i], $scope.ads[i]);		        
+		        // Set start and end time manually, since not support while use datepicker.
+		        form.find("input[name=startTime]").val($rootScope.adsClone[i].startTime);
+		        form.find("input[name=endTime]").val($rootScope.adsClone[i].endTime);		        
+			}
+    	}
+    	
+    };	
+	
 	// Function for update info fields
 	$scope.updateAd = function(e){
 
@@ -45,7 +67,14 @@ function AdListCtrl($scope, Ad, $rootScope) {
 
 				// Enable all input fields
 				inputFields.removeAttr('disabled');
-
+				
+				// Clone ad
+		    	var id = ad._id;
+		    	for(var i=0; i<$rootScope.adsClone.length; i++){			
+					if($rootScope.adsClone[i]._id == id)    			
+						$rootScope.adsClone[i] = angular.copy(ad); 			    		    		
+		    	}
+				
 			}, function(res){
 
 				// Show error msg
@@ -93,6 +122,14 @@ function AdListCtrl($scope, Ad, $rootScope) {
 					$scope.$apply(function () {
 						ad.image = res;
 					});
+					
+					// Clone ad
+			    	var id = ad._id;
+			    	for(var i=0; i<$rootScope.adsClone.length; i++){			
+						if($rootScope.adsClone[i]._id == id)    			
+							$rootScope.adsClone[i] = angular.copy(ad); 			    		    		
+			    	}					
+					
 				}
 
 				// Hide button

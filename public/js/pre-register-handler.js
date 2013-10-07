@@ -33,9 +33,7 @@ $(document).ready(function(){
 		$(document).on('change', ".upload-file", function() {
 			$(this).parent().next().show();
 		});
-
+		
 	}, 500);
-
-
+	
 });
-

@@ -5,18 +5,10 @@ var log = require('log4js').getLogger(),
     crypto = require('crypto'),
     fs = require('fs'),
 	path = require('path'),
-	util = require('util');
+	util = require('util'),
+	config = require('../config/config');
 
-
-// Static variable
-var	resource_path = "./resource/",
-	public_image_path = "client-image",
-	mapzip_path = resource_path + "mapzip",
-	image_path = "public/" + public_image_path;
-
-/*
- * GET Page of specific building
- */
+// GET Page for show specific building
 exports.show = function(req, res) {
 
 	Building.findById(req.params._id, function(err, building) {
@@ -26,10 +18,7 @@ exports.show = function(req, res) {
 
 		if (building)
 			res.render("building/building-show.html", {
-				url: req.url.toString(), // use in layout for identify display info
-				user: req.user,
-				building: building,
-				imagePath: public_image_path
+				building: building
 			});
 
 	});
@@ -196,7 +185,7 @@ exports.uploadImage = function(req, res) {
 			stream.on('end', function() {
 
 				targetFileName = md5sum.digest('hex')  + extension;
-				var targetPath = path.resolve(image_path + "/" + targetFileName);
+				var targetPath = path.resolve(config.imagePath + "/" + targetFileName);
 				log.info("targetPath: " + targetPath);
 
 				Building.findById(req.body._id, function(error, building){

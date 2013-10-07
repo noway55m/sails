@@ -18,7 +18,7 @@ exports.show = function(req, res) {
 			log.error(error);
 		
 		if(store)
-			res.render("store/index.html", {
+			res.render("store/store-show.html", {
 				url: req.url.toString(), // use in layout for identify display info
 				user: req.user,
 				imagePath: public_image_path
@@ -120,7 +120,7 @@ exports.update = function(req, res){
 				Store.find({
 					
 					name: req.body.name,
-					floorId: req.body.floorId
+					floorId: store.floorId
 					
 				}, function(err, stores){
 					
@@ -139,7 +139,7 @@ exports.update = function(req, res){
 						store.phone = req.body.phone;				
 						store.link = req.body.link;
 						store.memo = req.body.memo;
-						//store.floorId = req.body.floorId;			
+						store.floorId = req.body.floorId;			
 						store.save(function(){
 							res.send(200, store);
 						});						

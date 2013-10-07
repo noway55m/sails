@@ -1,9 +1,6 @@
 <!-- Floors list include in building/index.html -->
 <div class="display-block" ng-controller="FloorListCtrl">
 
-	<!-- Add store dialog and trigger button -->
-	<% include ../store/store-add-dialog.html %>
-
 	<!-- Add floor, add basement and add store buttons -->
 	<a data-toggle="modal" class="btn btn-default" href="#" ng-click="addFloor()">
 		<span  class="glyphicon glyphicon-plus" ></span> Add Floor
@@ -11,10 +8,6 @@
 	<a data-toggle="modal" class="btn btn-default" href="#" ng-click="addBasement()">
 		<span  class="glyphicon glyphicon-plus" ></span> Add Basement
 	</a>
-	<a data-toggle="modal" class="btn btn-default" href="#add-store-dialog">
-		<span class="glyphicon glyphicon-plus" ></span> Add Store
-	</a>
-
 	<!-- List floors block -->
 	<div id="index-floor" class="panel-collapse collapse in">
 		<div class="panel-body">

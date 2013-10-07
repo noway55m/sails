@@ -62,12 +62,11 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 		id = url.substring(url.lastIndexOf("/") + 1, url.length);
 	$scope.building = Building.get({ _id : id }, function(building){
 	    $rootScope.$emit('buildingFinishLoad', building);
-        $rootScope.buildingClone = angular.copy(building); // Clone user for  future rollback
+        $rootScope.buildingClone = angular.copy(building); // Clone building for future rollback
 	});
 
     // Function for rollback selected user info
     $scope.cancelUpdateBuilding = function(){
-        console.log('sdlfjsldfj')
         angular.copy($rootScope.buildingClone, $scope.building);
     };
 
@@ -156,6 +155,7 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
                 }else{
                     $scope.$apply(function () {
                         building.mapzipUpdateTime = res.mapzipUpdateTime;
+				        $rootScope.buildingClone = angular.copy(building); // clone building                        
                     });
                 }
 
@@ -205,6 +205,7 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 					// imgTag.attr("src", ad.image);
 					$scope.$apply(function () {
 						building.icon = res;
+				        $rootScope.buildingClone = angular.copy(building); // clone building						
 					});
 				}
 

@@ -1,4 +1,7 @@
 <!-- Store create dialog include in floor/floor-list.html -->
+<a data-toggle="modal" class="btn btn-default" href="#add-store-dialog">
+	<span class="glyphicon glyphicon-plus" ></span> Add Store
+</a>
  <div class="modal fade" id="add-store-dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
    <div class="modal-dialog">
      <div class="modal-content" ng-controller="StoreListCtrl">
@@ -27,16 +30,6 @@
 			<div class="form-group">
 				<label for="link">link</label> <input class="form-control"
 					placeholder="Store Official Site Link" name="link" value="">
-			</div>
-		
-			<!-- Select floor -->
-			<div class="form-group">
-				<label for="floor">Floor</label> <select name="floorId">
-					<option value="{{floor._id}}" ng-repeat="floor in floorUp">{{Math.abs(floor.layer)}}
-						F</option>
-					<option value="{{floor._id}}" ng-repeat="floor in floorDown">B
-						{{Math.abs(floor.layer)}}</option>
-				</select>
 			</div>
 		
 			<!-- error msg -->

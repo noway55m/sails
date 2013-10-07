@@ -2,7 +2,8 @@ var log = require('log4js').getLogger(),
 	Ad = require("../model/ad"),
 	crypto = require('crypto'),
 	fs = require('fs'),
-	path = require('path');
+	path = require('path'),
+	moment = require('moment');
 
 // Static variable
 var	resource_path = "./resource/",
@@ -10,9 +11,7 @@ var	resource_path = "./resource/",
 	mapzip_path = resource_path + "mapzip",
 	image_path = "public/" + public_image_path;
 
-/*
- * GET Page of specific building
- */
+// GET Page for show specific ad
 exports.show = function(req, res) {
 
 	Ad.findById(req.params._id, function(err, ad) {
@@ -32,20 +31,24 @@ exports.show = function(req, res) {
 
 };
 
-// Interface for list the ads of store
+// GET Interface for list the ads of store
 exports.list = function(req, res) {
 
-	log.info(req.query);
 	if (req.query.storeId) {
 
 		Ad.find({
 			
 			storeId : req.query.storeId
 		
-		}, function(error, ads) {
+		}, function(err, ads) {
 			
-			console.log(ads);
-			res.send(200, ads);
+			if(err)
+				log.error(err);
+			
+			var adsObj = [];
+			for(var i=0; i<ads.length; i++)
+				adsObj[i] = formatObjectDate(ads[i]);			
+			res.send(200, adsObj);
 
 		});
 
@@ -53,20 +56,49 @@ exports.list = function(req, res) {
 
 };
 
+// Interface for read specific ad of store
+exports.read = function(req, res){
+	
+	if(req.params._id){
+		
+		Ad.findById(req.params._id, function(err, ad) {
+
+			if (err)
+				log.error(err);
+			
+			if(ad){
+				var adObj = formatObjectDate(ad);
+				res.send(200, adObj);
+			}
+		});			
+		
+	}
+	
+}; 
+
 // Interface for create the new ad of store
 exports.create = function(req, res){
 	
 	if(req.body.storeId && req.body.name && req.body.price && req.body.desc){
 					
-		new Ad({				
+		new Ad({
+			
 		    name: req.body.name,
 		    price: req.body.price,			    
 		    desc: req.body.desc,			    
 		    startTime: new Date(),			    		    
 		    endTime: new Date(),			    
-		    storeId: req.body.storeId							
-		}).save(function(error, ad){				
-			res.send(200, ad);			
+		    storeId: req.body.storeId
+		    
+		}).save(function(err, ad){
+			
+			if(err)
+				log.error(err);
+			
+			if(ad){
+				var adObj = formatObjectDate(ad);			
+				res.send(200, adObj);
+			}
 		});	
 		
 	}
@@ -93,8 +125,16 @@ exports.update = function(req, res){
 				ad.startTime = new Date(req.body.startTime);
 				ad.endTime = new Date(req.body.endTime);
 				// ad.storeId = req.body.storeId;				
-				ad.save(function(){
-					res.send(200, ad);
+				ad.save(function(err, ad){
+					
+					if(err)
+						log.error(err);
+					
+					if(ad){
+						var adObj = formatObjectDate(ad);			
+						res.send(200, adObj);											
+					}
+					
 				});
 			}
 
@@ -185,3 +225,13 @@ exports.uploadImage = function(req, res) {
 	}	
 	
 };
+
+// Function for clone object and format time
+function formatObjectDate(ad){
+
+	var adObj = JSON.parse(JSON.stringify(ad));
+	adObj.startTime = moment(ad.startTime).format("MM/DD/YYYY").toString();
+	adObj.endTime = moment(ad.endTime).format("MM/DD/YYYY").toString();		
+	return adObj;
+	
+}

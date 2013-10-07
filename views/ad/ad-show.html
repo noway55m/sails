@@ -1,22 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="sails" ng-controller="FloorShowCtrl">
+<html lang="en" ng-app="sails" ng-controller="AdShowCtrl">
 	<head>
 
-	    <title ng-bind="floor.name"></title>
-
-	    <!-- Bootstrap core CSS -->
-	    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
-	    <link href="/stylesheets/bootstrap-theme.min.css" rel="stylesheet">
-
-	    <!-- Custom styles for this template -->
-	    <link href="/stylesheets/style.css" rel="stylesheet">
-
-	    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-	    <!--[if lt IE 9]>
-	      <script src="../js/html5shiv.js"></script>
-	      <script src="../js/respond.min.js"></script>
-	    <![endif]-->
-	    <script src="/js/jquery-1.10.2.js"></script>
+		<!-- Head meta, css or library include -->
+		<% include ../layout/head-include.html %>
+		
+		<!-- Title -->
+	    <title ng-bind="ad.name"></title>
 
 	</head>
 	<body>
@@ -61,7 +51,7 @@
 				<div class="row edit-block">
 
 					<!-- Cancel edit button -->
-					<button type="button" class="close close-button">x</button>
+					<button type="button" class="close close-button" ng-click="cancelUpdateAd()">x</button>
 
 					<!-- Form -->
 					<div class="edit-block">
@@ -108,27 +98,11 @@
 
 		</div>
 
-		<!-- Bootstrap core JavaScript
-	    ================================================== -->
-	    <!-- Placed at the end of the document so the pages load faster -->
-	    <script src="/js/bootstrap.min.js"></script>
-	    <script src="/js/building/index.js"></script>
-	    <script src="/js/jquery.form.min.js"></script>
-	    <script src="/js/utility.js"></script>
-	    <script src="/js/bootstrap-datepicker.js"></script>
-
-
-	    <!-- AngularJS relative -->
-	    <script src="/js/angular.min.js"></script>
-		<script src="/js/app.js"></script>
-	    <script src="/js/controller/buildingContrl.js"></script>
-	    <script src="/js/controller/floorContrl.js"></script>
-	    <script src="/js/controller/storeContrl.js"></script>
+		<!-- Body library include -->
+		<% include ../layout/body-include.html	%>
+		
+	    <!-- Controller -->
 	    <script src="/js/controller/adContrl.js"></script>
-		<script src="/js/angular-resource.js"></script>
-
-		<!-- Pre Register Handler -->
-		<script src="/js/pre-register-handler.js"></script>
 
 	</body>
 

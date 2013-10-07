@@ -73,6 +73,7 @@ app.post('/register/auth', register.auth);
 
 //---------------------------------
 app.sget('/user', user.index);
+app.sget('/user/profile', user.profile);
 app.sget('/user/all', user.all); // only use in admin
 app.sget('/user/list', user.list); // only use in admin
 app.spost('/user/create', user.create);  // only use in admin
@@ -111,10 +112,12 @@ app.spost('/store/uploadImage', store.uploadImage);
 
 //----------------------------------
 app.sget('/ad/show/:_id', ad.show);
+app.sget('/ad/read/:_id', ad.read);
 app.sget('/ad/list', ad.list);
 app.spost('/ad/create', ad.create);
 app.spost('/ad/update', ad.update);
 app.spost('/ad/uploadImage', ad.uploadImage);
+
 //----------------------------------
 
 app.sget('/test1', test.test1);

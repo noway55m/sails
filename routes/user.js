@@ -11,9 +11,12 @@ var resource_path = "./resource/",
     image_path = "public/" + public_image_path;
 
 
-/*
- * GET Index page of user showing all his/her buildings.
- */
+// GET Page for show user profile info
+exports.profile = function(req, res){
+	
+};
+
+// GET Index page of user showing all his/her buildings.
 exports.index = function(req, res){
 
 	res.render("user/index.html", {

@@ -35,7 +35,7 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 		$("#add-store-form select option[value=" + $scope.selectedFloor + "]").attr("selected", "selected");
 
 	});
-	
+
 	// Function for add new store
 	$scope.addStore = function(e){
 		var addButton = angular.element(e.currentTarget),
@@ -71,7 +71,7 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 			// Create new ad
 			Store.create({
 	
-				floorId: floorObj.val(),
+				floorId: $rootScope.floor._id,
 				name: nameObj.val(),
 				phone: phoneObj.val(),
 				memo: memoObj.val(),
@@ -95,8 +95,13 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 					errorMsgObj.show();
 	
 				}else{
-	
-					window.location = "/store/show/" + res._id;
+					
+					// add new store
+					$rootScope.floor.stores.push(res);
+					
+					// Clean all fields and close dialog
+					inputFields.val("");
+					form.parent().parent().parent().modal('hide');
 					
 				}
 	
@@ -104,7 +109,7 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 	
 		}		
 				
-	};
+	}; 	
 	
 }
 
@@ -115,7 +120,10 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
     var url = $location.absUrl(),
     	id = url.substring(url.lastIndexOf("/") + 1, url.length);
     $rootScope.store = Store.get({ _id : id }, function(store){
-    	 
+    	
+    	// Clone store for future rollback
+    	$rootScope.storeClone = angular.copy(store); 
+    	
     	// Get floor
     	$scope.floor = Floor.get({ _id: store.floorId }, function(floor){
 
@@ -160,8 +168,15 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
     	$rootScope.$emit('storeFinishLoad', store);
 
     });
+        
+    // Include math library
 	$scope.Math = window.Math;
 
+    // Function for rollback selected user info
+    $scope.cancelUpdateStore = function(){
+        angular.copy($rootScope.storeClone, $rootScope.store);
+    };
+		
 	// Function for update the basic fields
 	$scope.updateStore = function(e){
 
@@ -205,6 +220,9 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
     			inputFields.removeAttr('disabled');
                 selectFloor.removeAttr('disabled');
 
+				// Clone user info
+		        $rootScope.storeClone = angular.copy(store);                
+                
     		}, function(responseText){
 
     			// Show error msg
@@ -253,6 +271,8 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
 					$scope.$apply(function () {
 						store.icon = res;
 					});
+					// Clone user info
+			        $rootScope.storeClone = angular.copy(store);                					
 				}
 
 				// Hide button

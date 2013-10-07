@@ -19,15 +19,18 @@
 					<ul class="nav navbar-nav">
 						<li class="active"><a href="/">Home</a></li>
 						<li><a href="#about">About</a></li>
-						<li><a href="#contact">Contact</a></li>
-						<li><a href="/user/all">User</a></li>						
+						<li><a href="#contact">Contact</a></li>																		
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<% if(url == "/"){ %>
 							<li><a href="/login">Sign in or Register</a></li>
 						<% } else if (url == "/login" || url == "/register"){ %>
 							<li><a href="/login"></a></li>
-						<% } else { %>
+						<% } else { %>							
+							<% if(user && (user.role == roles.ADMIN) ){ %>
+								<li><a href="/user/all">User</a></li>						
+							<% } %>						
+							<li><a href="/user/profile">Profile</a></li>
 							<li><a href="/logout"><%= user.username%> | Logout</a></li>
 						<% } %>
 					</ul>

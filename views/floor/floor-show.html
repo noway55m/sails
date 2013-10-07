@@ -62,7 +62,7 @@
 				<div class="row edit-block">
 
 					<!-- Cancel edit button -->
-					<button type="button" class="close close-button">x</button>
+					<button type="button" class="close close-button" ng-click="cancelUpdateFloor()">x</button>
 
 					<!-- Form -->
 					<div class="edit-block">
@@ -108,7 +108,19 @@
 
 				<!-- Stores Block -->
 				<div class="row display-block">
+					
+					<!-- only admin have permission to create store -->	
+					<% if(user.role == roles.ADMIN ){ %>
+
+						<!-- Add store dialog and trigger button -->
+						<% include ../store/store-add-dialog.html %>
+														
+					<% } %>
+					
+					
+					<!-- Stores list -->				
 					<% include ../store/store-list.html	%>
+					
 				</div>
 
 			</div>
