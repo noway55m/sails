@@ -128,6 +128,8 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 
 
     // Function for upload building image
+	// Note: we won't use now, all map zip package from server automatically
+	/*
     $scope.uploadMapzip = function(e){
 
         var building = this.building,
@@ -174,6 +176,7 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
         return false;
 
     };
+    */
 
 
 	// Function for upload building image
@@ -204,7 +207,7 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 				}else{
 					// imgTag.attr("src", ad.image);
 					$scope.$apply(function () {
-						building.icon = res;
+						building.icon = res.icon;
 				        $rootScope.buildingClone = angular.copy(building); // clone building						
 					});
 				}
@@ -224,8 +227,31 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 		return false;
 
 	};
-
-
+	
+	// Function for package building mapzip
+	$scope.packageMapzip = function(e){
+		
+		var building = this.building,
+			updateButton = angular.element(e.currentTarget);
+		
+		updateButton.button('loading');
+		Building.packageMapzip({
+		
+			_id: building._id 
+				
+		}, function(res){
+			
+			updateButton.button('reset');
+			building.mapzipUpdateTime = res.mapzipUpdateTime;
+			
+		}, function(res){
+			
+			updateButton.button('reset');
+			
+		});		
+		
+	};
+		
 }
 
 

@@ -170,6 +170,7 @@ exports.uploadMapAndPath = function(req, res) {
 
                         floor.path = webLocation + "/path.xml";
                         floor.map = webLocation + "/map.xml";
+                        floor.lastXmlUpdateTime = new Date();                        
                         floor.save(function(err, floor) {
 
                             if (err)

@@ -3,6 +3,8 @@ var log = require('log4js').getLogger(),
     Building = require("../model/building"),
     Floor = require("../model/floor"),
     crypto = require('crypto'),
+    AdmZip = require('adm-zip'),
+    archiver = require('archiver'),
     fs = require('fs'),
 	path = require('path'),
 	util = require('util'),
@@ -207,7 +209,7 @@ exports.uploadImage = function(req, res) {
 
 									building.icon = targetFileName;
 									building.save(function(){
-										res.send(200, targetFileName);
+										res.send(200, building);
 									});
 								}
 							});
@@ -215,7 +217,7 @@ exports.uploadImage = function(req, res) {
 						}else{
 
 							log.info("Same");
-							res.send(200, targetFileName);
+							res.send(200, building);
 						}
 
 					}else{
@@ -238,3 +240,109 @@ exports.uploadImage = function(req, res) {
 
 };
 
+// Function for package map zip of all floors in specific building
+exports.packageMapzip = function(req, res){
+	
+	Building.findById(req.body._id, function(err, building){
+	
+		if(err)
+			log.error(err);
+		
+		if(building){
+			
+			var buildingFolderPath = path.dirname() + "/" + config.mapInfoPath + "/" + req.user.id + "/" + building.id,   
+		 		zip = new AdmZip(),
+		 		targetPath = req.user.id + "/" + building.id + "/map.zip";
+			zip.addLocalFolder(buildingFolderPath);
+			zip.writeZip(buildingFolderPath + "/map.zip", function(){
+				
+				building.mapzip = targetPath;
+				building.save(function(err, building){
+					
+					if(err)
+						log.error(err);
+					
+					if(building)
+						res.send(200, building);				
+					
+				});
+								
+			});
+			
+		}
+		
+	});
+	
+	
+};
+
+
+// Function for package map zip of all floors in specific building
+exports.packageMapzip = function(req, res){
+	
+	Building.findById(req.body._id, function(err, building){
+	
+		if(err)
+			log.error(err);
+		
+		if(building){
+			
+			var buildingFolderPath = path.dirname() + "/" + config.mapInfoPath + "/" + req.user.id + "/" + building.id,   
+		 		zip = new AdmZip(),
+		 		targetPath = req.user.id + "/" + building.id + "/map.zip";
+			
+			// Start to package map.zip
+			zip.addLocalFolder(buildingFolderPath);
+			zip.writeZip(buildingFolderPath + "/map.zip");
+			
+			// Update mapzip info of building
+			building.mapzip = targetPath;
+			building.mapzipUpdateTime = new Date();				
+			building.save(function(err, building){
+				
+				if(err)
+					log.error(err);
+				
+				if(building)
+					res.send(200, building);				
+				
+			});
+			
+		}
+		
+	});
+		
+};
+
+
+// Function for get map zip of all building
+exports.getMapzip = function(req, res){
+	
+    if(req.query.mapzip){
+    	
+        var fileName = req.query.mapzip,
+            filePath = path.dirname() + "/" + config.mapInfoPath + '/' + fileName,
+            stat = fs.statSync(filePath);
+        
+        console.log(filePath);
+        try{
+
+            res.writeHead(200, {
+                "Content-type": "application/octet-stream",
+                "Content-disposition": "attachment; filename=mapzip",
+                "Content-Length": stat.size
+            });
+
+            var readStream = fs.createReadStream(filePath);
+
+            // We replaced all the event handlers with a simple call to util.pump()
+            readStream.pipe(res);
+
+        }catch(e){
+
+            log.error(e);
+
+        }
+    }
+	
+};

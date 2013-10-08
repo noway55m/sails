@@ -36,7 +36,13 @@ angular.module('buildingServices', [ 'ngResource' ]).factory('Building', functio
                 action : 'list'
             },
             isArray : true
-        }
+        },
+        packageMapzip : {
+            method : 'POST',
+            params : {
+                action : 'packageMapzip'
+            }
+        }                
     });
 });
 

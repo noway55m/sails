@@ -23,7 +23,9 @@ var floorSchema = new Schema({
 
     mapzip: String, // File path of map zip
 
-    buildingId: String
+    buildingId: String,
+    
+    lastXmlUpdateTime: Date
 
 });
 

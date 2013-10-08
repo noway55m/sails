@@ -157,19 +157,34 @@ function FloorShowCtrl($scope, $location, Floor, $rootScope) {
 	// Function for update map.xml and path.xml
 	$scope.uploadMapAndPath = function(e){
 		
-		var uploadButton = angular.element(e.currentTarget),
+		var floor = this.floor
+			uploadButton = angular.element(e.currentTarget),
 			form = uploadButton.prev(),
 			inputFields = form.find("input"),
 			errorMsgObj = form.find('.error-msg');
-			
+		
 		// Ajax from setup
 		var options = {
 	
 			beforeSend : function(){ // pre-submit callback
-				inputFields.attr('disabled');
-				errorMsgObj.hide();
-				uploadButton.button("loading");
-				return true;
+				
+				// Hide error msg block
+				errorMsgObj.hide();						
+				
+				// Check both file upload
+				if(!$(inputFields[1]).val() || !$(inputFields[2]).val()){
+					
+					errorMsgObj.find('.errorText').text("Both path.xml and map.xml need to be uploaded.");	
+					errorMsgObj.show();	
+					return false
+					
+				}else{
+					inputFields.attr('disabled');
+					errorMsgObj.hide();
+					uploadButton.button("loading");
+					return true;
+				}
+				
 			},
 			uploadProgress : function(event, position, total, percent){},
 			success : function(res, statusText){ // post-submit callback
@@ -182,7 +197,16 @@ function FloorShowCtrl($scope, $location, Floor, $rootScope) {
 				// Hide button
 				uploadButton.button("reset");
 				uploadButton.hide();
+				
+				// Update and clone
+				$scope.$apply(function () {
+					floor.lastXmlUpdateTime = res.lastXmlUpdateTime;
+			        console.log(floor)
+					$rootScope.floorClone = angular.copy(floor);	
+				});
+				
 				return true;
+				
 			},
 	
 			// other available options:

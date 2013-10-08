@@ -90,6 +90,8 @@
 
 					<!-- Icons upload area -->
 					<div class="edit-block">
+						<span class="title">Last Xml update time</span>
+						<span ng-bind="floor.lastXmlUpdateTime"></span>																		
 						<form name="form" action="/floor/uploadMapAndPath" method="POST" enctype="multipart/form-data">
 							<input type="hidden" class="form-control" name="_id" value="{{floor._id}}">
 							<label for="path">Upload "path.xml" here</label>

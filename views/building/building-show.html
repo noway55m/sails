@@ -33,17 +33,26 @@
 					<div>
 						<span class="title">Name:</span>
 						<span ng-bind="building.name"></span>
+						<span class="title">Public</span>
+						<span ng-bind="building.pub"></span>						
 					</div>
 				</div>
-
-				<!-- Description -->
 				<div class="col-xs-12 col-sm-8 col-md-9">
 					<span class="title">Description</span>
 					<p ng-bind="building.desc" style="padding:10px;"></p>
 				</div>
-
-
+				<br><br><br>
+				<hr/>		
+				<!-- Package all floor map zips to building map zip -->
+				<div class="col-xs-12 col-sm-12 col-md-12">
+					<span class="title">Last package time</span>
+					<span ng-bind="building.mapzipUpdateTime"></span>
+					<button class="btn btn-md btn-primary"  ng-click="packageMapzip($event)"
+						data-loading-text="Packaging">Package</button>								
+				</div>				
+							
 			</div>
+
 
 			<!-- Building Index Basic Information Edit Block -->
 			<div id="building-index-basic-edit" class="row edit-block">
@@ -78,7 +87,8 @@
 				</div>
 				<hr/>
 
-				<!-- Mapzip upload area -->
+				<!-- Mapzip upload area, Note: we won't use this now, all mapzip package from server -->
+				<!-- 
 				<div class="edit-block">
 					<form id="image-form" name="form" action="/building/uploadMapzip" method="POST" enctype="multipart/form-data">
 						<input type="hidden" name="_id" value="{{building._id}}" >
@@ -91,6 +101,7 @@
 					</form>
 					<button class="btn btn-md btn-primary" style="display:none;" ng-click="uploadMapzip($event)">Upload</button>
 				</div>
+				-->
 
 				<!-- Icons upload area -->
 				<div class="edit-block">
@@ -107,7 +118,7 @@
 				</div>
 
 			</div>
-
+	
 			<!-- floors Block -->
 			<% include ../floor/floor-list.html %>
 
