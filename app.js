@@ -41,7 +41,7 @@ app.engine('html', require('ejs').renderFile);
 
 
 // all environments
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 80);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.favicon());
@@ -67,6 +67,7 @@ app.sget('/', routes.index);
 app.sget('/login', authentication.index);
 app.sget('/logout', authentication.logout);
 app.post('/auth', authentication.auth);
+app.post('/authMobile', authentication.authMobile);
 app.get('/register', register.index);
 app.post('/register/auth', register.auth);
 

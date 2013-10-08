@@ -136,20 +136,6 @@ passport.configSecureHttpRequest = function(app){
 
         }else{
         	
-        	// Developer authorization by token
-        	if(req.get("Authorization")){
-        		
-        		var token = req.get("Authorization");
-        		console.log(token);
-        		User.findOne({
-        			token: token
-        		}, function(error, user){
-        			req.user = user;
-        			callback(req, res);
-        		});
-        		
-        	}
-        	
             if(req.url.toString() == "/login" || req.url.toString() == "/")
                 callback(req, res);
             else
@@ -157,18 +143,50 @@ passport.configSecureHttpRequest = function(app){
 
         }
     }
+    
+    // Function about token authentication
+    function tokenAuth(req, res, callback){
+    	
+		var token = req.get("Authorization");
+		User.findOne({
+			token: token
+		}, function(err, user){
+			if(err)
+				log.error(err);
+			
+			if(user){
+    			req.user = user;
+    			callback(req, res);
+			}else{
+				
+				res.json(401, { 
+					msg: "Unavailable token" 
+				});
+				
+			}
+		});    	
+    	
+    }
 
     // Configure secure get
     app.sget = function(url, callback) {
-        app.get(url, function(req, res){
-            isLoggedIn(req, res, callback);
+        app.get(url, function(req, res){                    	
+        	// Check authentication way
+        	if(req.get("Authorization"))        		
+        		tokenAuth(req, res, callback);        		
+        	else        	        	
+        		isLoggedIn(req, res, callback);            
         });
     };
 
     // Configure secure post
     app.spost = function(url, callback) {
         app.post(url, function(req, res){
-            isLoggedIn(req, res, callback);
+        	// Check authentication way
+        	if(req.get("Authorization"))        		
+        		tokenAuth(req, res, callback);        		
+        	else        	        	
+        		isLoggedIn(req, res, callback);  
         });
     };
 
