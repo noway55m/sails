@@ -2,7 +2,7 @@ var utiliy = Utility.getInstance(),
     form_submitted = false;
 
 function submit_form(){
-
+	
     // Check form is submitting or not
     if(form_submitted){
 
