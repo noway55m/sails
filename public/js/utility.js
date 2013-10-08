@@ -35,9 +35,7 @@ Utility.prototype.fieldValidate = function(value, fieldObj, errorMsgObj, regExpr
 
     // Show error info
     if(!result){
-    	console.log("dklsfjlsdflasdfjlsadjfljsdaljf")
-    	console.log(errorMsgObj);
-        errorMsgObj.show();
+    	errorMsgObj.show();
         fieldObj.focus();
         fieldObj.select();
     }
@@ -50,19 +48,19 @@ Utility.prototype.fieldValidate = function(value, fieldObj, errorMsgObj, regExpr
 Utility.prototype.emailValidate = function(fieldObj, errorMsgObj){
     var format = /^([_a-z0-9-]+)(\.[_a-z0-9-]+)*@([a-z0-9-]+)(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/, // email regex
         value = $.trim(fieldObj.val()).toLowerCase();
-    return utility.fieldValidate(value, fieldObj, errorMsgObj, format);
+    return this.fieldValidate(value, fieldObj, errorMsgObj, format);
 };
 
 // Function for validate password input fields and focus, select then show error message if format error occur
 Utility.prototype.passwordValidate = function(fieldObj, errorMsgObj){
     var format = /|S*/, // not defined yet, use normal string now
         value = $.trim(fieldObj.val());
-    return utility.fieldValidate(value, fieldObj, errorMsgObj, format);
+    return this.fieldValidate(value, fieldObj, errorMsgObj, format);
 };
 
 //Function for validate password input fields and focus, select then show error message if format error occur
 Utility.prototype.emptyValidate = function(fieldObj, errorMsgObj){
     var format = /|S*/, // not defined yet, use normal string now
         value = $.trim(fieldObj.val());
-    return utility.fieldValidate(value, fieldObj, errorMsgObj, format);
+    return this.fieldValidate(value, fieldObj, errorMsgObj, format);
 };
