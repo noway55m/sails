@@ -291,21 +291,37 @@ exports.packageMapzip = function(req, res){
 		 		zip = new AdmZip(),
 		 		targetPath = req.user.id + "/" + building.id + "/map.zip";
 			
-			// Start to package map.zip
-			zip.addLocalFolder(buildingFolderPath);
-			zip.writeZip(buildingFolderPath + "/map.zip");
+			// Check exist
+			fs.exists(buildingFolderPath, function (exist) {
+				
+				
+				if(exist){
+					
+					// Start to package map.zip
+					zip.addLocalFolder(buildingFolderPath);
+					zip.writeZip(buildingFolderPath + "/map.zip");
+					
+					// Update mapzip info of building
+					building.mapzip = targetPath;
+					building.mapzipUpdateTime = new Date();				
+					building.save(function(err, building){
+						
+						if(err)
+							log.error(err);
+						
+						if(building)
+							res.send(200, building);				
+						
+					});					
+					
+				}else{
+					
+					res.json(200, { 
+						msg: "No floor files have been uploaded before" 
+					});
+					
+				}
 			
-			// Update mapzip info of building
-			building.mapzip = targetPath;
-			building.mapzipUpdateTime = new Date();				
-			building.save(function(err, building){
-				
-				if(err)
-					log.error(err);
-				
-				if(building)
-					res.send(200, building);				
-				
 			});
 			
 		}

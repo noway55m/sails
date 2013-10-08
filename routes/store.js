@@ -139,7 +139,7 @@ exports.update = function(req, res){
 						store.phone = req.body.phone;				
 						store.link = req.body.link;
 						store.memo = req.body.memo;
-						store.floorId = req.body.floorId;			
+						// store.floorId = req.body.floorId; not support now			
 						store.save(function(){
 							res.send(200, store);
 						});						

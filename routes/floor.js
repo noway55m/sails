@@ -278,7 +278,11 @@ function parseRegion(regionXMLString, floorId, next){
 	parseString(regionXMLString, function (err, result) {
 		
 	    var ways = result.osm.way;
-	    Store.find({}, function(err, stores){
+	    Store.find({
+	    	
+	    	floorId : floorId
+	    	
+	    }, function(err, stores){
 
 	    	if(err)
 	    		log.error(err);
@@ -345,7 +349,7 @@ exports.getMapzip = function(req, res){
     if(req.query.mapzip){
 
         var fileName = req.query.mapzip,
-            filePath = path.dirname() + mapinfo_path + '/' + fileName,
+            filePath = path.dirname() + "/" + config.mapInfoPath + '/' + fileName,
             stat = fs.statSync(filePath);
             
         try{

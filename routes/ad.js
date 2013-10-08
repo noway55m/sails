@@ -142,10 +142,7 @@ exports.update = function(req, res){
 	}
 };		
 
-
-/*
- * POST Interface of upload image
- */
+// POST Interface of upload image
 exports.uploadImage = function(req, res) {
 	
 	if(req.body._id && req.files.image){

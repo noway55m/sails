@@ -92,7 +92,7 @@
 							<label for="link">link</label>
 							<input class="form-control" placeholder="Store official site link" name="link" ng-model="store.link">
 						</div>
-						<div class="form-group">
+						<div class="form-group" style="display:none"> <!-- current don't support chnage floor -->
 							<label for="floor">Floor</label>
 							<select name="floor" id="store-floor"> <!-- Select can't use ng-model on my two different array condition -->
 							    <option value="{{floor._id}}" ng-repeat="floor in floorUp">{{Math.abs(floor.layer)}} F</option>

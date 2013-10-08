@@ -90,7 +90,6 @@ app.spost('/building/delete', building.del);
 app.sget('/building/list', building.list);
 app.sget('/building/list/public', building.listPublic);
 app.spost('/building/uploadImage', building.uploadImage);
-app.sget('/building/map/:filename', building.getMapzip);
 app.spost('/building/packageMapzip', building.packageMapzip);
 app.sget('/building/getMapzip', building.getMapzip);
 

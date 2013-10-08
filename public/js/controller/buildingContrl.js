@@ -240,13 +240,18 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 			_id: building._id 
 				
 		}, function(res){
-			
-			updateButton.button('reset');
-			building.mapzipUpdateTime = res.mapzipUpdateTime;
-			
-		}, function(res){
-			
-			updateButton.button('reset');
+						
+			if(res.msg){
+
+				building.mapzipUpdateTime = res.msg;				
+				
+			}else{
+				
+				building.mapzipUpdateTime = res.mapzipUpdateTime;
+				
+			}
+
+			updateButton.button('reset');			
 			
 		});		
 		
