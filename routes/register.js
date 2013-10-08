@@ -55,9 +55,9 @@ exports.auth = function(req, res) {
 						var mailOptions = {
 							from : mailer.defaultOptions.from, // sender address
 							to : email, // list of receivers
-							subject : "Welcome join to bletooth cloud", // Subject line
-							text : "Welcome join to bletooth cloud", // plaintext body
-							html : "<b>Welcome join to bletooth cloud</b>" // html body
+							subject : "Welcome join to Sails Cloud Service", // Subject line
+							text : "Welcome join to Sails Cloud Service", // plaintext body
+							html : "<b>Welcome join to Sails Cloud Service</b>" // html body
 						};
 
 						mailer.sendMail(mailOptions, function(error, response) {
@@ -82,3 +82,4 @@ exports.auth = function(req, res) {
     }
 
 };
+c
