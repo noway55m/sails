@@ -82,4 +82,3 @@ exports.auth = function(req, res) {
     }
 
 };
-c

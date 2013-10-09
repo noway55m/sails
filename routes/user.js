@@ -13,6 +13,8 @@ var resource_path = "./resource/",
 
 // GET Page for show user profile info
 exports.profile = function(req, res){
+
+	res.render("user/profile.html");	
 	
 };
 
