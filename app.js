@@ -18,7 +18,8 @@ var express = require('express')
   , path = require('path')
   , passport = require('./config/passportSetup')
   , bootstrap = require('./config/bootstrap')
-  , flash = require('connect-flash');
+  , flash = require('connect-flash')
+  , log4js = require('log4js');
 
 
 var app = express();
@@ -39,6 +40,14 @@ app.use(passport.session());
 app.engine('html', require('ejs').renderFile);
 
 
+log4js.configure({
+	  appenders: [
+	    { type: 'console' },
+	    { type: 'file', filename: 'logs/server.log', category: 'log' }
+	  ]
+});
+
+log4js.getLogger().info("kdkddkdddjkkddk");
 
 // all environments
 app.set('port', process.env.PORT || 80);
