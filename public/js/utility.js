@@ -58,9 +58,34 @@ Utility.prototype.passwordValidate = function(fieldObj, errorMsgObj){
     return this.fieldValidate(value, fieldObj, errorMsgObj, format);
 };
 
-//Function for validate password input fields and focus, select then show error message if format error occur
+// Function for validate password input fields and focus, select then show error message if format error occur
 Utility.prototype.emptyValidate = function(fieldObj, errorMsgObj){
     var format = /|S*/, // not defined yet, use normal string now
         value = $.trim(fieldObj.val());
     return this.fieldValidate(value, fieldObj, errorMsgObj, format);
+};
+
+//Function for validate password input fields and focus, select then show error message if format error occur
+Utility.prototype.newPasswordValidate = function(passwdObj, confirmPasswdObj, errorMsgObj){
+    var value1 = $.trim(passwdObj.val()),
+    	value2 = $.trim(confirmPasswdObj.val()),
+    	result = false;
+
+	// Check format
+	if(value1 != value2){
+	    errorMsgObj.children(".errorText").html("New password and confirm password is not identical.");
+	    result = false;
+	}else{
+	    result = true;
+	}
+	
+	// Show error info
+	if(!result){
+		errorMsgObj.show();
+		confirmPasswdObj.focus();
+		confirmPasswdObj.select();
+	}
+	
+	return result;    
+    
 };

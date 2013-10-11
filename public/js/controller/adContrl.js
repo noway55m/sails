@@ -10,9 +10,13 @@ function AdListCtrl($scope, Ad, $rootScope) {
 		}, function(ads) {
 			$rootScope.adsClone = angular.copy(ads);	// Clone ads for future rollback
 		});
-
+		
+		setTimeout(function(){
+			datepickerSetup()
+		}, 500);
+		
 	});
-	
+		
     // Function for rollback selected user info
     $scope.cancelUpdateAd = function(e){
     	
@@ -74,6 +78,9 @@ function AdListCtrl($scope, Ad, $rootScope) {
 					if($rootScope.adsClone[i]._id == id)    			
 						$rootScope.adsClone[i] = angular.copy(ad); 			    		    		
 		    	}
+		    	
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Update successfully");		    	
 				
 			}, function(res){
 
@@ -128,7 +135,10 @@ function AdListCtrl($scope, Ad, $rootScope) {
 			    	for(var i=0; i<$rootScope.adsClone.length; i++){			
 						if($rootScope.adsClone[i]._id == id)    			
 							$rootScope.adsClone[i] = angular.copy(ad); 			    		    		
-			    	}					
+			    	}
+			    	
+			    	// Show success msg
+					$().toastmessage('showSuccessToast', "Upload successfully");			    	
 					
 				}
 
@@ -205,11 +215,15 @@ function AdListCtrl($scope, Ad, $rootScope) {
 
 					// Push new record to ads
 					$scope.ads.push(res);
+					$rootScope.adsClone.push(res);
 
 					// Clean all fields and close dialog
 					inputFields.val("");
 					form.parent().parent().parent().modal('hide');
 
+			    	// Show success msg
+					$().toastmessage('showSuccessToast', "Create successfully");					
+					
 				}
 
 			});
@@ -217,7 +231,79 @@ function AdListCtrl($scope, Ad, $rootScope) {
 		}
 
 	};
+	
+	// Function for setup delete dialog
+	var deleteObj,
+		deleteModal = $("#deleteModal");
+	$scope.deleteDialogSetup = function(e){
+		deleteObj = this.ad;
+		$("#removeContent").html(deleteObj.name);
+	};
+	
+	// Function for delete ad obj
+	$scope.deleteObj = function(e){
+		
+		// Hide modal
+		deleteModal.modal('hide');
+		
+		// Delete ad
+		Ad.delete({
+			
+			_id: deleteObj._id
+			
+		}, function(res){
 
+			if(res._id){
+				
+				// Remove ad from view
+		    	var id = res._id;
+		    	for(var i=0; i<$rootScope.adsClone.length; i++){			
+					if($rootScope.adsClone[i]._id == id){    			
+						$rootScope.adsClone.splice(i, 1);
+						$scope.ads.splice(i, 1);
+						break;
+					}
+		    	}
+		    	
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Remove successfully");
+				
+			}			
+			
+		});
+		
+	};
+
+}
+
+// Function for setup datepicker
+function datepickerSetup(){
+	
+	console.log('kddlfsajflsdfjl')
+	var nowTemp = new Date();
+	var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+	 
+	var checkin = $('.startDate').datepicker({
+	  onRender: function(date) {
+	    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+	  }
+	}).on('changeDate', function(ev) {
+	  if (ev.date.valueOf() > checkout.date.valueOf()) {
+	    var newDate = new Date(ev.date)
+	    newDate.setDate(newDate.getDate() + 1);
+	    checkout.setValue(newDate);
+	  }
+	  checkin.hide();
+	  $('.endDate')[0].focus();
+	}).data('datepicker');
+	var checkout = $('.endtDate').datepicker({
+	  onRender: function(date) {
+	    return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';
+	  }
+	}).on('changeDate', function(ev) {
+	  checkout.hide();
+	}).data('datepicker');	
+	
 }
 
 // StoreListCtrl.$inject = ['$scope', 'Building'];

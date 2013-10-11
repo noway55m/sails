@@ -198,4 +198,91 @@ function UserListCtrl($scope, User, $rootScope) {
 
 }
 
+function UserShowCtrl($scope, User, $rootScope) {	
+	
+	$scope.user = User.get({ _id: userId });	
+	
+	var cpForm = $("#change-password-form"),
+		cpButton = $("#changePasswordButton");
+	
+	// Control change password block
+	$scope.showChangePasswordBlock = function(){
+		cpButton.fadeOut();
+		cpForm.fadeIn();		
+	};
+	$scope.hideChangePasswordBlock = function(){
+		cpForm.fadeOut();
+		cpButton.fadeIn();
+	};
+
+	// Change password check
+	$scope.changePassword = function(e){
+		
+		var changeButton = angular.element(e.currentTarget),
+			closeButton = changeButton.prev(),
+			passwordObj = cpForm.find("input[name=password]"),
+			cfpasswordObj = cpForm.find("input[name=confirmPassword]"),
+			errorMsgObj = cpForm.find(".error-msg");
+		
+		if (utility.emptyValidate(passwordObj, errorMsgObj) &&
+			utility.emptyValidate(cfpasswordObj, errorMsgObj) &&
+			utility.newPasswordValidate(passwordObj, cfpasswordObj, errorMsgObj)) {
+				
+			// Disable all fields
+			passwordObj.attr('disabled', 'disabled');
+			cfpasswordObj.attr('disabled', 'disabled');			
+
+			// Disable all buttons
+			changeButton.button('loading');
+			closeButton.hide();
+
+			// Hide error msg
+			errorMsgObj.hide();			
+						
+			// Change user's password
+			User.changePassword({
+	
+				_id: $scope.user._id,
+				password: passwordObj.val()
+	
+			}, function(res){
+	
+				// Enable all fields
+				passwordObj.removeAttr('disabled');
+				cfpasswordObj.removeAttr('disabled');
+	
+				// Enable all buttons
+				changeButton.button('reset');
+				closeButton.show();
+	
+				if(res.msg){
+	
+					// Show error msg
+					errorMsgObj.find(".errorText").text(res.msg);
+					errorMsgObj.show();
+	
+				}else{
+	
+					// Clean all fields and close dialog
+					passwordObj.val("");
+					cfpasswordObj.val("");
+					$scope.hideChangePasswordBlock();
+					$().toastmessage('showSuccessToast', "Change password successfully");
+				}
+	
+			});			
+						
+		}	
+		
+	};
+	
+	// Upgrade developer
+	$scope.upgradeDeveloper = function(e){
+		
+		
+	};
+	
+}
+
+
 // StoreListCtrl.$inject = ['$scope', 'Building'];

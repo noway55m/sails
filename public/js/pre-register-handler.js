@@ -7,12 +7,15 @@ $(document).ready(function(){
 
 			// Toggle edit button
 			$(this).find(".edit-button").fadeIn();
+			$(this).find(".remove-button").fadeIn();
 
 		}).on('mouseleave', ".display-block", function(){
 
 			// Toggle edit button
 			$(this).find(".edit-button").fadeOut();
+			$(this).find(".remove-button").fadeOut();
 
+			
 		}).on('click', ".edit-button", function(){
 
 			// Toggle edit block
@@ -35,5 +38,11 @@ $(document).ready(function(){
 		});
 		
 	}, 500);
+	
+	// Notification Message Dialog
+	$().toastmessage({
+		sticky : false,
+		position: 'top-center'
+	});	
 	
 });
