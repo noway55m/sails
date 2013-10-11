@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="sails">
+<html lang="en" ng-app="sails" ng-controller="UserShowCtrl">
   <head>
   
 	<!-- Head meta, css or library include -->
 	<% include ../layout/head-include.html %>
 	
 	<!-- Title -->
-    <title>user</title>
+    <title>Profile</title>
 
   </head>
 
@@ -17,30 +17,104 @@
 
 	<!-- Main Container -->
     <div class="container">
-		
+    		
 		<div class="jumbotron">
-		
+			<h2>Profile</h2>
+			
 			<!-- Display Block -->
-			<div class="row display-block">
-			
-					<!-- Link, Phone and Memo -->
+			<div id="profile-display-block" class="row display-block">
+					
+
 					<div class="col-xs-12 col-sm-8 col-md-9">
-						<span class="title">Username or Email</span>
-						<p ng-bind="user.desc" style="padding:10px;"></p>
+						<label>Username or Email: </label>
+						<span><%= user.username %></span>
+						<hr>
 					</div>
-				
-			
+					<div class="col-xs-12 col-sm-8 col-md-9">
+						<label>Account Binding: </label>
+						<span>
+							<% if(user.fid){ %>
+								Facebook
+							<% } else if(user.tid) {  %>
+								Twitter
+							<% } else if(user.gid) { %>
+								Google Plus
+							<% } else { %>
+								No Binding
+							<% } %>								
+						</span>
+						<% if( !user.fid || !user.tid || !user.gid){ %>
+						<div id="binding-social-form">
+							<div class="form-group">
+								<label>Binding social network:</label>
+								<a href="#"><img src="/img/facebook.png" alot="facebook bindg" /></a>
+								<a href="#"><img src="/img/twitter.png" alot="facebook bindg" /></a>
+								<a href="#"><img src="/img/googleplus.png" alot="facebook bindg" /></a>																		 
+							</div>
+						</div>
+						<% } %>								
+						<hr>
+					</div>					
+					<div class="col-xs-12 col-sm-8 col-md-9">
+						<label>Level: </label>
+						<span>
+							<% if(user.role == roles.ADMIN){ %>
+								Administrator
+								<div>
+									<label>token:</label>
+									<span><%= user.token %></span>																							
+								</div>
+							<% } else if(user.role == roles.DEVELOPER){ %>
+								Developer
+								<div>
+									<label>token:</label>
+									<span><%= user.token %></span>																							
+								</div>															
+							<% } else { %>
+								Free User
+								<button class="btn btn-md btn-primary">Upgrade Developer</button>								
+							<% } %>								
+						</span>						
+						<hr>
+					</div>					
+					<div class="col-xs-12 col-sm-8 col-md-9">
+						<label>Password</label>
+						<span>*************</span>
+						<button class="btn btn-md btn-primary" id="changePasswordButton"
+							ng-click="showChangePasswordBlock()">Change Password</button>						
+						<!-- Change input block -->
+						<div id="change-password-form">
+							<div class="form-group">
+								<label for="name">Password</label>
+								<input type="password" class="form-control" placeholder="New Password" name="password"/>							
+							</div>							
+							<div class="form-group">
+								<label for="name">Confirm Password</label>							
+								<input type="password" class="form-control" placeholder="Confirm Password" name="confirmPassword"/>								
+							</div>
+							<div class="alert alert-danger error-msg">
+							  	<span class="label label-danger">Error</span>
+							  	<span class="errorText"></span>
+							</div>							
+							<button class="btn btn-md btn-default cancel" ng-click="hideChangePasswordBlock()">Cancel</button>
+							<button class="btn btn-md btn-primary change" data-loading-text="Changing" ng-click="changePassword($event)">Change</button>						
+						</div>
+																			
+					</div>
+							
 			</div>
 		
 		</div>
 		
     </div>
 
+
 	<!-- Body library include -->
 	<% include ../layout/body-include.html	%>
-
-    <!-- Controller -->
-    <script src="/js/controller/buildingContrl.js"></script>
+	
+	<!-- Controller -->
+	<script> var userId = "<%= user._id %>"; </script>
+    <script src="/js/controller/userContrl.js"></script>  
 
   </body>
 </html>

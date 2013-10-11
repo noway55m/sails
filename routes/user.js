@@ -18,6 +18,22 @@ exports.profile = function(req, res){
 	
 };
 
+// GET Interface for read specific user
+exports.read = function(req, res){
+
+	User.findById(req.params._id, function(err, user){
+		
+		if(err)
+			log.error(err);
+		
+		if(user)
+			res.send(200, user)
+		
+	});	
+	
+};
+
+
 // GET Index page of user showing all his/her buildings.
 exports.index = function(req, res){
 
@@ -29,9 +45,7 @@ exports.index = function(req, res){
 
 };
 
-/*
- * GET Interface for list all users
- */
+// GET Interface for list all users
 exports.list = function(req, res){
 
 	User.find({}, function(err, users){

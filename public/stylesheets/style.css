@@ -42,7 +42,15 @@ body {
 }
 
 .edit-button{
-	display: none;
+	display:none;
+	position: absolute;
+	right:50px;
+	top:8px;
+	cursor: pointer;
+}
+
+.remove-button{
+	display:none;
 	position: absolute;
 	right:20px;
 	top:8px;
@@ -86,3 +94,33 @@ body {
 	max-width:280px;
 	display:inline;
 }
+
+/******************* profle.html *********************/
+#profile-display-block label{
+	min-width: 250px;
+	font-size: 16px;
+  	font-style: italic;	
+}
+#profile-display-block span{
+	margin-left: 20px;
+}
+#profile-display-block button{
+	float: right;
+}
+#change-password-form{
+	margin-left: 280px;
+	display:none;	
+}
+#binding-social-form{
+	margin-left: 280px;	
+}
+#change-password-form input{
+	min-width: 300px;
+	margin: 20px auto;
+}
+#change-password-form button{
+	margin: 5px 5px;
+}
+
+
+/******************* profle.html *********************/

@@ -142,6 +142,30 @@ exports.update = function(req, res){
 	}
 };		
 
+// POST Interface of delete specific ad
+exports.del = function(req, res){
+	
+	Ad.findById(req.body._id, function(err, ad){
+		
+		if(err)
+			log.error(err);
+		
+		if(ad)
+			ad.remove(function(err){
+				
+				if(err)
+					log.error(err);
+				
+				res.send(200, {
+					_id: req.body._id
+				});
+				
+			});
+		
+	});
+	
+};
+
 // POST Interface of upload image
 exports.uploadImage = function(req, res) {
 	

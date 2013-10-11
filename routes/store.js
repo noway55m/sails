@@ -34,7 +34,7 @@ exports.read = function(req, res) {
 	Store.findById(req.params._id, function(error, store){
 		
 		if(error)
-			log.error(err);
+			log.error(error);
 		
 		if(store)
 			res.send(200, store);
