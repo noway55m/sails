@@ -345,7 +345,7 @@ exports.getMapzip = function(req, res){
 
             res.writeHead(200, {
                 "Content-type": "application/octet-stream",
-                "Content-disposition": "attachment; filename=mapzip",
+                "Content-disposition": "attachment; filename=mapzip.zip",
                 "Content-Length": stat.size
             });
 
