@@ -139,62 +139,113 @@ exports.del = function(req, res){
 	
 	if(req.body._id){
 		
-		Floor.remove({ layer: 1 }, function(err){
-			console.log(err);
+		// Find all stores
+		Store.find({
+			
+			floorId: req.body._id
+			
+		}, function(err, stores){
+			
+			if(err)
+				log.error(err);
+						
+			for(var i=0; i<stores.length; i++){					
+				
+				// Remove all ads of specific store
+				Ad.remove({
+					
+					storeId: stores[i].id
+					
+				}, function(err){
+					
+					// Remove store
+					if(err)
+						log.error(err);
+					else
+						stores[i].remove();
+								
+				});				
+				
+			}
+			
+			// Remove floor
+			Floor.findById({
+				
+				_id: req.body._id
+				
+			}, function(err, floor){
+				
+				if(err)
+					log.error(err);
+				
+				// Get all building floors
+				Floor.find({
+					
+					buildingId: floor.buildingId
+					
+				}, function(err, floors){
+					
+					if(err)
+						log.error(err);
+					
+					// Reorder all floors in this building
+					floors.forEach(function(ofloor){
+						
+						if(floor.layer > 0){
+														
+							if(ofloor.layer > floor.layer){								
+								
+								// Change render and region folder
+								var oldFolderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + floor.buildingId + "/" + ofloor.layer;
+								ofloor.layer = ofloor.layer - 1;
+								var newFolderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + floor.buildingId + "/" + ofloor.layer;
+								ofloor.save();
+								
+								fs.exists(oldFolderPath, function (exist) {							
+									if(exist){
+										fs.rename(oldFolderPath, newFolderPath, function(err) {});
+									}							
+								});										
+								
+							}							
+							
+						}else{
+							
+							if(ofloor.layer < floor.layer){	
+								
+								// Change render and region folder
+								var oldFolderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + floor.buildingId + "/" + ofloor.layer;
+								ofloor.layer = ofloor.layer + 1;
+								var newFolderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + floor.buildingId + "/" + ofloor.layer;
+								ofloor.save();
+								
+								fs.exists(oldFolderPath, function (exist) {							
+									if(exist){
+										fs.rename(oldFolderPath, newFolderPath, function(err) {});
+									}							
+								});	
+								
+							}														
+														
+						}
+						
+					});
+					
+					// Remove floor
+					floor.remove(function(err){						
+						if(err)
+							log.error(err);
+						else
+							res.json(200, {
+								_id: req.body._id
+							});												
+					});
+					
+				});
+								
+			});			
+			
 		});
-		
-		// Get Floor
-//		Floor.findById(req.body._id, function(err, floor){
-//			
-//			if(err)
-//				log.error(err);
-//			
-//			if(floor){
-//				
-//				Store.find({
-//					
-//					floorId: floor.id
-//					
-//				}, function(err, stores){
-//					
-//					if(err)
-//						log.error(err);
-//					
-//					for(var i=0; i<stores.length; i++){					
-//						
-//						Ad.find({
-//							
-//							storeId: stores[i].id
-//							
-//						}, function(err, ads){
-//							
-//							if(err)
-//								log.error(err);
-//							
-//							for(var j=0; j<ads.length; j++)
-//								ads[j].remove();
-//							
-//							if( i == stores.length-1 )
-//								stores[i].remove();
-//							
-//						});
-//												
-//					}
-//					
-//					store.remove(function(err){
-//						
-//						if(err)
-//							log.err(err);
-//						else
-//							res.send(200, { _id: req.body._id});
-//						
-//					});
-//					
-//				});
-//							
-//			}
-//			
-//		});	
 	
 	}
 		

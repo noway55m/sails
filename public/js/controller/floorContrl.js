@@ -3,6 +3,15 @@ var utility = Utility.getInstance();
 // List buildings controller
 function FloorListCtrl($scope, Floor, $rootScope) {
 	
+	// Show and hide remove button
+	$scope.showRemoveButton = function(e){
+		angular.element(e.currentTarget).find(".remove-button-list").show();
+	};
+		
+	$scope.hideRemoveButton = function(e){
+		angular.element(e.currentTarget).find(".remove-button-list").hide();		
+	};	
+	
 	// Include math library
 	$scope.Math = window.Math;
 
@@ -46,7 +55,7 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 
 		}, function(err) {});
 
-	}
+	};
 
 	// Add down floor
 	$scope.addBasement = function(){
@@ -66,8 +75,52 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 
 		}, function(err) {});
 
-	}
+	};
 
+	
+	// Function for setup delete dialog
+	var deleteObj,
+		deleteModal = $("#deleteModal");
+	$scope.deleteDialogSetup = function(){
+		deleteObj = this.floor;
+		var content = deleteObj.layer > 0 ? deleteObj.layer + " F" : "B " + Math.abs(deleteObj.layer);
+		$("#removeContent").html(content);
+		deleteModal.modal("show");
+	};
+	
+	// Function for delete ad obj
+	$scope.deleteObj = function(e){
+		
+		// Hide modal
+		deleteModal.modal('hide');
+		
+		// Delete store
+		Floor.delete({
+			
+			_id: deleteObj._id
+			
+		}, function(res){
+
+			if(res._id){
+				
+				// Remove store from view
+		    	var id = res._id;
+		    	for(var i=0; i<$$rootScope.floors.length; i++){			
+					if($rootScope.floors[i]._id == id){    			
+						$rootScope.floors.splice(i, 1);
+						break;
+					}
+		    	}
+		    	
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Remove successfully");
+				
+			}			
+			
+		});
+		
+	};	
+	
 }
 
 

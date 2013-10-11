@@ -93,6 +93,19 @@ body {
 	vertical-align: top; 
 }
 
+/******************* floor-list.html ********************/
+#index-floor .panel-heading,
+#index-layer .panel-heading{
+	position: relative;
+}
+#index-floor .remove-button-list,
+#index-layer .remove-button-list{
+	display:none;
+	position:absolute;
+	top: 10px;
+	cursor: pointer;
+	margin: auto auto;	
+}
 
 /******************* Ad New Building Block in building/building-list.html *********************/
 #add-building-block{

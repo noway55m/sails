@@ -1,6 +1,9 @@
 <!-- Floors list include in building/index.html -->
 <div class="display-block" ng-controller="FloorListCtrl">
 
+	<!-- Delete Confirm Dialog -->
+	<% include ../layout/delete-confirm-dialog.html %>
+
 	<!-- Add floor, add basement and add store buttons -->
 	<a data-toggle="modal" class="btn btn-default" href="#" ng-click="addFloor()">
 		<span  class="glyphicon glyphicon-plus" ></span> Add Floor
@@ -13,14 +16,18 @@
 		<div class="panel-body">
 			<div class="panel-group" id="index-upfloor-accordion" ng-repeat="floor in floorUp">
 
-				<div class="panel panel-default">
+				<div class="panel panel-default" ng-mouseenter="showRemoveButton($event)" ng-mouseleave="hideRemoveButton($event)">
 					<div class="panel-heading">
 						<h4 class="panel-title">
 							<a class="accordion-toggle" data-toggle="collapse" data-parent="#index-upfloor-accordion"
 								href="#{{floor._id}}" ng-bind="floor.layer"></a><span> F</span>
 							
 							<!-- Show link -->
-							<span><a href="/floor/show/{{floor._id}}">details</a></span>								
+							<span><a href="/floor/show/{{floor._id}}">details</a></span>
+							
+							<!-- Delete Icon -->
+							<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup()"></span>
+															
 						</h4>
 					</div>
 				</div>
@@ -39,7 +46,7 @@
 		<div class="panel-body">
 			<div class="panel-group" id="index-downfloor-accordion" ng-repeat="floor in floorDown">
 
-				<div class="panel panel-default">
+				<div class="panel panel-default" ng-mouseenter="showRemoveButton($event)" ng-mouseleave="hideRemoveButton($event)">
 					<div class="panel-heading">
 						<h4 class="panel-title">
 							<span>B </span><a class="accordion-toggle" data-toggle="collapse" data-parent="#index-downfloor-accordion"
@@ -47,6 +54,10 @@
 							
 							<!-- Show link -->
 							<span><a href="/floor/show/{{floor._id}}">details</a></span>
+							
+							<!-- Delete Icon -->
+							<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup()"></span>
+														
 						</h4>
 					</div>
 				</div>
@@ -60,6 +71,5 @@
 
 		</div>
 	</div>
-
 
 </div>
