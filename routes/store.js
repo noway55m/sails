@@ -1,5 +1,6 @@
 var log = require('log4js').getLogger(), 
 	Store = require("../model/store"),
+	Ad = require("../model/store"),
 	crypto = require('crypto'),
 	fs = require('fs'),
 	path = require('path');
@@ -155,6 +156,47 @@ exports.update = function(req, res){
 	}
 	
 };		
+
+
+// POST Interface for delete the store and relative ads
+exports.del = function(req, res){
+	
+	if(req.body._id){
+			
+		Ad.remove({
+			
+			storeId: req.body._id 
+		
+		}, function(err){
+			
+			if(err){
+				
+				log.error(err);
+			
+			}else{
+				
+				Store.findOneAndRemove({
+					
+					_id: req.body._id
+					
+				}, function(err){
+					
+					if(err)
+						log.error(err);
+					else
+						res.json(200, {
+							_id: req.body._id
+						});
+					
+				});
+				
+			}
+			
+		});	
+		
+	}
+		
+};
 
 
 // POST Interface of upload image

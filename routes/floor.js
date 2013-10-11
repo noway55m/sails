@@ -133,6 +133,74 @@ exports.update = function(req, res) {
 
 };
 
+
+//POST Interface for delete the store and relative ads
+exports.del = function(req, res){
+	
+	if(req.body._id){
+		
+		Floor.remove({ layer: 1 }, function(err){
+			console.log(err);
+		});
+		
+		// Get Floor
+//		Floor.findById(req.body._id, function(err, floor){
+//			
+//			if(err)
+//				log.error(err);
+//			
+//			if(floor){
+//				
+//				Store.find({
+//					
+//					floorId: floor.id
+//					
+//				}, function(err, stores){
+//					
+//					if(err)
+//						log.error(err);
+//					
+//					for(var i=0; i<stores.length; i++){					
+//						
+//						Ad.find({
+//							
+//							storeId: stores[i].id
+//							
+//						}, function(err, ads){
+//							
+//							if(err)
+//								log.error(err);
+//							
+//							for(var j=0; j<ads.length; j++)
+//								ads[j].remove();
+//							
+//							if( i == stores.length-1 )
+//								stores[i].remove();
+//							
+//						});
+//												
+//					}
+//					
+//					store.remove(function(err){
+//						
+//						if(err)
+//							log.err(err);
+//						else
+//							res.send(200, { _id: req.body._id});
+//						
+//					});
+//					
+//				});
+//							
+//			}
+//			
+//		});	
+	
+	}
+		
+};
+
+
 // POST Interface for upload path.xml and map.xml
 exports.uploadMapAndPath = function(req, res) {
 

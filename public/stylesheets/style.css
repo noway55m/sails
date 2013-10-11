@@ -57,6 +57,14 @@ body {
 	cursor: pointer;
 }
 
+.remove-button-list{
+	display:none;
+	position:absolute;
+	right:20px;
+	top:-5px;
+	cursor: pointer;
+}
+
 /* Icon wrapper while list */
 .belement{
 	width:150px;
@@ -67,6 +75,7 @@ body {
 	display: inline-block;
 	*display: inline;
 	margin: 10px auto;
+	position:relative;
 }
 .belement p{
 	font-size: 14px;

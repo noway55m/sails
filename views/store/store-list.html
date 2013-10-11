@@ -2,11 +2,13 @@
 <div class="panel-body" ng-controller="StoreListCtrl">
 	<h4>Stores</h4>
 	<h6>Total Count: <span ng-bind="floor.stores.size"></span></h6>
-	<div class="belement" ng-repeat="store in floor.stores">
-		<a href="/store/show/{{store._id}}">
-			<img ng-show="store.icon" ng-src="/<%= imagePath %>/{{store.icon}}" alt="Store Icon" class="default-icon"/>
-			<img ng-hide="store.icon" src="/img/no-image.png" alt="Store Icon" class="default-icon"/>
-			<p ng-bind="store.name"></p>
-		</a>
+	<div class="belement" ng-repeat="store in floor.stores" ng-mouseenter="showRemoveButton($event)" ng-mouseleave="hideRemoveButton($event)">		
+		<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup()"></span>
+		<img ng-show="store.icon" ng-src="{{store.icon}}" alt="Store Icon" class="default-icon"/>
+		<a href="/store/show/{{store._id}}" ><p ng-bind="store.name"></p></a>
 	</div>		
+
+	<!-- Delete Confirm Dialog -->
+	<% include ../layout/delete-confirm-dialog.html %>
+	
 </div>

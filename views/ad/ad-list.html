@@ -13,17 +13,14 @@
 			<div id="{{ad._id}}" class="display-block">
 
 				<!-- Edit and Remove trigger button -->
-				<a href="#deleteModal" data-toggle="modal" ng-click="deleteDialogSetup($event)">
-					<span class="glyphicon glyphicon-remove remove-button"></span>
-				</a>
-				<span class="glyphicon glyphicon-edit edit-button" ng-click="removeAd($event)"></span>				
+				<span class="glyphicon glyphicon-remove remove-button" ng-click="deleteDialogSetup()"></span>
+				<span class="glyphicon glyphicon-edit edit-button"></span>				
 				
 				<!-- Display block -->
 				<div>
 					<div>
 						<div class="row" style="text-align:center;">
-							<img ng-show="ad.image" ng-src="/<%= imagePath %>/{{ad.image}}" alt="Ad Image"/>
-					  		<img ng-hide="ad.image" src="/img/no-image.png" alt="Ad Image"/>
+							<img ng-show="ad.image" ng-src="{{ad.image}}" alt="Ad Image"/>
 						</div>
 						<hr/>
 						<div class="row">
@@ -103,8 +100,7 @@
 					<form name="form" action="/ad/uploadImage" method="POST" enctype="multipart/form-data">
 						<input type="hidden" name="_id" value="{{ad._id}}">
 						<label for="image">Upload Ad Image</label>
-						<img ng-show="ad.image" ng-src="/<%= imagePath %>/{{ad.image}}" alt="Ad Image" class="icon"/>
-				  		<img ng-hide="ad.image" src="/img/no-image.png" alt="Ad Image" class='icon'/>
+						<img ng-show="ad.image" ng-src="{{ad.image}}" alt="Ad Image" class="icon"/>
 						<div class="alert alert-danger error-msg">
 							<span class="label label-danger">Error</span> <span class="errorText"></span>
 						</div>

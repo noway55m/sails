@@ -2,14 +2,32 @@ var utility = Utility.getInstance();
 
 // Controller for list stores
 function StoreListCtrl($scope, Store, $scope, $rootScope) {
-
+	
+	// Show and hide remove button
+	$scope.showRemoveButton = function(e){
+		angular.element(e.currentTarget).find(".remove-button-list").show();
+	};
+	
+	$scope.hideRemoveButton = function(e){
+		angular.element(e.currentTarget).find(".remove-button-list").hide();		
+	};
+		
 	// Load floor after building finish load
 	$rootScope.$on('floorFinishLoad', function(e, floor) {
 		Store.list({
 			floorId : floor._id
 		}, function(stores) {
+			
+			// Set icon url
+			stores.forEach(function(store){
+				if(store.icon)
+					store.icon = "/" + imagePath + "/" + store.icon;
+				else
+					store.icon = "/img/no-image.png";
+			});
 			$rootScope.floor.stores = stores;
 			$rootScope.floor.stores.size = stores.length;
+			
 		});
 	});	
 		
@@ -27,8 +45,21 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 		}
 		
 		// Set stores on specific floor
-		$rootScope.floors[j].stores = Store.list({
+		Store.list({
+		
 			floorId: $scope.selectedFloor
+		
+		}, function(stores){
+			
+			// Set icon url
+			stores.forEach(function(store){
+				if(store.icon)
+					store.icon = "/" + imagePath + "/" + store.icon;
+				else
+					store.icon = "/img/no-image.png";
+			});			
+			$rootScope.floors[j].stores	= stores;
+			
 		});
 
 		// Set current selected floor on field floor
@@ -103,13 +134,58 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 					inputFields.val("");
 					form.parent().parent().parent().modal('hide');
 					
+			    	// Show success msg
+					$().toastmessage('showSuccessToast', "Create successfully");					
+					
 				}
 	
 			});
 	
 		}		
 				
-	}; 	
+	};
+		
+	// Function for setup delete dialog
+	var deleteObj,
+		deleteModal = $("#deleteModal");
+	$scope.deleteDialogSetup = function(){
+		deleteObj = this.store;
+		$("#removeContent").html(deleteObj.name);
+		deleteModal.modal("show");
+	};
+	
+	// Function for delete ad obj
+	$scope.deleteObj = function(e){
+		
+		// Hide modal
+		deleteModal.modal('hide');
+		
+		// Delete store
+		Store.delete({
+			
+			_id: deleteObj._id
+			
+		}, function(res){
+
+			if(res._id){
+				
+				// Remove store from view
+		    	var id = res._id;
+		    	for(var i=0; i<$rootScope.floor.stores.length; i++){			
+					if($rootScope.floor.stores[i]._id == id){    			
+						$rootScope.floor.stores.splice(i, 1);
+						break;
+					}
+		    	}
+		    	
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Remove successfully");
+				
+			}			
+			
+		});
+		
+	};
 	
 }
 
@@ -119,7 +195,16 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
     // Get store info and floor info
     var url = $location.absUrl(),
     	id = url.substring(url.lastIndexOf("/") + 1, url.length);
-    $rootScope.store = Store.get({ _id : id }, function(store){
+    Store.get({ _id : id }, function(store){
+    	
+    	// Set icon url
+		if(store.icon)
+			store.icon = "/" + imagePath + "/" + store.icon;
+		else
+			store.icon = "/img/no-image.png";
+    	
+		// Set store
+		$rootScope.store = store;
     	
     	// Clone store for future rollback
     	$rootScope.storeClone = angular.copy(store); 
@@ -222,7 +307,10 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
 
 				// Clone user info
 		        $rootScope.storeClone = angular.copy(store);                
-                
+
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Update successfully");	                		        
+		        
     		}, function(responseText){
 
     			// Show error msg
@@ -235,7 +323,7 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
     			// Enable all input fields
     			inputFields.removeAttr('disabled');
                 selectFloor.removeAttr('disabled');
-
+               
     		});
 
         }
@@ -267,12 +355,18 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
 					errorMsgObj.find(".errorText").text(res.msg);
 					errorMsgObj.show();
 				}else{
-					// imgTag.attr("src", ad.image);
+					
+					// Update icon
 					$scope.$apply(function () {
-						store.icon = res;
+						store.icon = "/" + imagePath + "/" + res;
 					});
+					
 					// Clone user info
-			        $rootScope.storeClone = angular.copy(store);                					
+			        $rootScope.storeClone = angular.copy(store); 
+			        
+			    	// Show success msg
+					$().toastmessage('showSuccessToast', "Upload successfully");				        
+			        
 				}
 
 				// Hide button

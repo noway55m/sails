@@ -5,10 +5,19 @@ function AdListCtrl($scope, Ad, $rootScope) {
 
 	$rootScope.$on('storeFinishLoad', function(e, store) {
 		
-		$scope.ads = Ad.list({
+		Ad.list({
 			storeId : store._id
 		}, function(ads) {
+			
+			ads.forEach(function(ad){
+				if(ad.image)
+					ad.image = "/" + imagePath + "/" + ad.image;
+				else
+					ad.image = "/img/no-image.png";	
+			});
+			$scope.ads = ads;
 			$rootScope.adsClone = angular.copy(ads);	// Clone ads for future rollback
+			
 		});
 		
 		setTimeout(function(){
@@ -125,9 +134,10 @@ function AdListCtrl($scope, Ad, $rootScope) {
 					errorMsgObj.find(".errorText").text(res.msg);
 					errorMsgObj.show();
 				}else{
-					// imgTag.attr("src", ad.image);
+					
+					// Update image
 					$scope.$apply(function () {
-						ad.image = res;
+						ad.image = "/" + imagePath + "/" + res;
 					});
 					
 					// Clone ad
@@ -235,9 +245,10 @@ function AdListCtrl($scope, Ad, $rootScope) {
 	// Function for setup delete dialog
 	var deleteObj,
 		deleteModal = $("#deleteModal");
-	$scope.deleteDialogSetup = function(e){
+	$scope.deleteDialogSetup = function(){
 		deleteObj = this.ad;
 		$("#removeContent").html(deleteObj.name);
+		deleteModal.modal("show");
 	};
 	
 	// Function for delete ad obj
