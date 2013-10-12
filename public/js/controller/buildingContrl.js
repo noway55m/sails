@@ -65,6 +65,9 @@ function BuildingListCtrl($scope, Building) {
 				else
 					building.icon = "/img/no-image.png";					
 				$scope.buildings.push(building);
+				
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Create successfully");				
 
 			}, function(err) {
 
@@ -178,6 +181,9 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 				// Clone user info
 		        $rootScope.buildingClone = angular.copy(building);
 
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Update successfully");						        
+		        
 			}, function(res){
 
 				// Show error msg
@@ -276,11 +282,16 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 					errorMsgObj.find(".errorText").text(res.msg);
 					errorMsgObj.show();
 				}else{
-					// imgTag.attr("src", ad.image);
+					
+					// Update building 
 					$scope.$apply(function () {
 						building.icon = "/" + imagePath + "/" + res;
 				        $rootScope.buildingClone = angular.copy(building); // clone building						
 					});
+					
+			    	// Show success msg
+					$().toastmessage('showSuccessToast', "Upload successfully");									
+					
 				}
 
 				// Hide button
@@ -322,7 +333,10 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 				
 			}
 
-			updateButton.button('reset');			
+			updateButton.button('reset');
+			
+	    	// Show success msg
+			$().toastmessage('showSuccessToast', "Package successfully");							
 			
 		});		
 		
