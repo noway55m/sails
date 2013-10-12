@@ -1,10 +1,12 @@
 var log = require('log4js').getLogger(),
+	Ad = require("../model/ad"),
 	Store = require("../model/store"),
     Floor = require("../model/floor"),
     Building = require("../model/building"),
     fs = require('fs'),
 	path = require('path'),
 	mkdirp = require("mkdirp"),
+    AdmZip = require('adm-zip'),
 	parseString = require('xml2js').parseString,
 	config = require('../config/config');
 	
@@ -134,9 +136,10 @@ exports.update = function(req, res) {
 };
 
 
-//POST Interface for delete the store and relative ads
+// POST Interface for delete the floor, stores in this floor and ads of stores of this floor
 exports.del = function(req, res){
 	
+	console.log(req.body._id);
 	if(req.body._id){
 		
 		// Find all stores
@@ -148,7 +151,8 @@ exports.del = function(req, res){
 			
 			if(err)
 				log.error(err);
-						
+			
+			console.log(stores);
 			for(var i=0; i<stores.length; i++){					
 				
 				// Remove all ads of specific store
@@ -161,88 +165,141 @@ exports.del = function(req, res){
 					// Remove store
 					if(err)
 						log.error(err);
-					else
-						stores[i].remove();
 								
 				});				
+				
+				// Remove store
+				stores[i].remove();
 				
 			}
 			
 			// Remove floor
-			Floor.findById({
-				
-				_id: req.body._id
-				
-			}, function(err, floor){
+			Floor.findById(req.body._id, function(err, floor){
 				
 				if(err)
 					log.error(err);
 				
-				// Get all building floors
-				Floor.find({
+				// Get all building's floors
+				if(floor){
 					
-					buildingId: floor.buildingId
+					Building.findById(floor.buildingId, function(err, building){
 					
-				}, function(err, floors){
-					
-					if(err)
-						log.error(err);
-					
-					// Reorder all floors in this building
-					floors.forEach(function(ofloor){
+						if(err)
+							log.error(err);
 						
-						if(floor.layer > 0){
-														
-							if(ofloor.layer > floor.layer){								
-								
-								// Change render and region folder
-								var oldFolderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + floor.buildingId + "/" + ofloor.layer;
-								ofloor.layer = ofloor.layer - 1;
-								var newFolderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + floor.buildingId + "/" + ofloor.layer;
-								ofloor.save();
-								
-								fs.exists(oldFolderPath, function (exist) {							
-									if(exist){
-										fs.rename(oldFolderPath, newFolderPath, function(err) {});
-									}							
-								});										
-								
-							}							
+						if(building){
 							
-						}else{
-							
-							if(ofloor.layer < floor.layer){	
+							var folderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + floor.buildingId;							
+							Floor.find({
 								
-								// Change render and region folder
-								var oldFolderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + floor.buildingId + "/" + ofloor.layer;
-								ofloor.layer = ofloor.layer + 1;
-								var newFolderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + floor.buildingId + "/" + ofloor.layer;
-								ofloor.save();
+								buildingId: floor.buildingId
 								
-								fs.exists(oldFolderPath, function (exist) {							
-									if(exist){
-										fs.rename(oldFolderPath, newFolderPath, function(err) {});
-									}							
-								});	
+							}, function(err, floors){
 								
-							}														
+								if(err)
+									log.error(err);
+								
+								// Reorder all floors in this building
+								console.log(floor.layer);
+								floors.forEach(function(ofloor){
+
+									console.log(floor.layer);
+									console.log(ofloor.layer);
+									if(floor.layer > 0){
+																	
+										if(ofloor.layer > floor.layer){								
+											
+											// Change render and region folder
+											var oldFolderPath = folderPath + "/" + ofloor.layer;
+											ofloor.layer = ofloor.layer - 1;
+											var newFolderPath = folderPath + "/" + ofloor.layer;
+											ofloor.save();
+											
+											console.log("oldFolderPath: " + oldFolderPath);
+											console.log("newFolderPath: " + newFolderPath);
+																						
+											// Rename foldr with new layer
+											fs.exists(oldFolderPath, function (exist) {
+												console.log(exist);
+												if(exist)
+													fs.rename(oldFolderPath, newFolderPath, function(err) {});
+											});										
+											
+										}							
+										
+										
+									}else{
+										
+										if(ofloor.layer < floor.layer){	
+											
+											// Change render and region folder
+											var oldFolderPath = folderPath + "/" + ofloor.layer;
+											ofloor.layer = ofloor.layer + 1;
+											var newFolderPath = folderPath + "/" + ofloor.layer;
+											ofloor.save();
+			
+											console.log("oldFolderPath: " + oldFolderPath);
+											console.log("newFolderPath: " + newFolderPath);											
+											
+											// Rename foldr with new layer								
+											fs.exists(oldFolderPath, function (exist) {
+												console.log(exist);
+												if(exist)
+													fs.rename(oldFolderPath, newFolderPath, function(err) {});
+											});	
+											
+										}
+																											
+									}
+																		
+								});
+								
+								// Update building
+								if(floor.layer > 0)
+									building.upfloor = building.upfloor - 1;										
+								else
+									building.downfloor = building.downfloor - 1;
+								building.save(function(err, building){
+									
+									// Repackage building's map zip file
+									var zip = new AdmZip(),
+							 			targetPath = req.user._id + "/" + building.id + "/map.zip";															
+									fs.exists(folderPath, function (exist) {																				
+										if(exist){
+											
+											// Start to package map.zip
+											zip.addLocalFolder(folderPath);
+											zip.writeZip(folderPath + "/map.zip");
+											
+											// Update mapzip info of building
+											building.mapzip = targetPath;
+											building.mapzipUpdateTime = new Date();				
+											building.save();					
+											
+										}
+									});											
+									
+								});								
+								
+								// Remove floor
+								floor.remove(function(err){	
+															
+									if(err)
+										log.error(err);
+									else
+										res.json(200, {
+											_id: req.body._id
+										});												
+								});
+								
+							});							
 														
 						}
 						
 					});
-					
-					// Remove floor
-					floor.remove(function(err){						
-						if(err)
-							log.error(err);
-						else
-							res.json(200, {
-								_id: req.body._id
-							});												
-					});
-					
-				});
-								
+						
+				}
+				
 			});			
 			
 		});
@@ -469,8 +526,7 @@ exports.getMapzip = function(req, res){
 
         var fileName = req.query.mapzip,
             filePath = path.dirname() + "/" + config.mapInfoPath + '/' + fileName,
-            stat = fs.statSync(filePath);
-            
+            stat = fs.statSync(filePath);            
         try{
 
             res.writeHead(200, {
@@ -489,8 +545,57 @@ exports.getMapzip = function(req, res){
             log.error(e);
 
         }
+        
     }
 
+};
+
+// GET Interface for get region.xml
+exports.getFile = function(req, res){
+	
+	if(req.query.map || req.query.path || req.query.render || req.query.region){
+		
+		// Get file name
+		var fileName, resFileName;
+		if(req.query.map){			
+			fileName = req.query.map;
+			resFileName = "map.xml";			
+		}else if(req.query.path){			
+			fileName = req.query.path;
+			resFileName = "path.xml";
+		}else if(req.query.render){			
+			fileName = req.query.render;
+			resFileName = "render.xml";						
+		}else{			
+			fileName = req.query.region;
+			resFileName = "region.xml";						
+		}
+        var filePath = path.dirname() + "/" + config.mapInfoPath + '/' + fileName;
+        try{
+        	
+	        var stat = fs.statSync(filePath);
+            res.writeHead(200, {
+                "Content-type": "application/octet-stream",
+                "Content-disposition": "attachment; filename=" + resFileName,
+                "Content-Length": stat.size
+            });
+
+            var readStream = fs.createReadStream(filePath);
+
+            // We replaced all the event handlers with a simple call to util.pump()
+            readStream.pipe(res);
+
+        }catch(e){
+        	
+            log.error(e);
+            res.json(400, {
+            	msg: "file doesn't exist"
+            });
+
+        }		
+		
+	}	
+	
 };
 
 // POST Interface for upload mapzip
@@ -523,13 +628,13 @@ exports.uploadMapzip = function(req, res) {
 
                     mkdirp(folderPath, function(err, dd) {
 
-                        var targetPath = folderPath + "/mapzip" + extension;
+                        var targetPath = folderPath + "/map" + extension;
                         fs.rename(tmpPath, targetPath, function(err) {
 
                             if (err)
                                 log.error(err);
 
-                            floor.mapzip = webLocation + "/mapzip" + extension;
+                            floor.mapzip = webLocation + "/map" + extension;
                             floor.save(function(err, floor) {
 
                                 if (err)

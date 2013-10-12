@@ -112,6 +112,10 @@ app.spost('/floor/update', floor.update);
 app.spost('/floor/uploadMapAndPath', floor.uploadMapAndPath);
 app.spost('/floor/uploadRenderAndRegion', floor.uploadRenderAndRegion);
 app.spost('/floor/uploadMapzip', floor.uploadMapzip);
+app.sget('/floor/getMap', floor.getFile);
+app.sget('/floor/getPath', floor.getFile);
+app.sget('/floor/getRender', floor.getFile);
+app.sget('/floor/getRegion', floor.getFile);
 app.sget('/floor/getMapzip', floor.getMapzip);
 app.spost('/floor/delete', floor.del);
 
