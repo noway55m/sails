@@ -524,11 +524,11 @@ exports.getMapzip = function(req, res){
 	
     if(req.query.mapzip){
 
-        var fileName = req.query.mapzip,
-            filePath = path.dirname() + "/" + config.mapInfoPath + '/' + fileName,
-            stat = fs.statSync(filePath);            
         try{
-
+        	
+            var fileName = req.query.mapzip,
+            	filePath = path.dirname() + "/" + config.mapInfoPath + '/' + fileName,
+            	stat = fs.statSync(filePath);            
             res.writeHead(200, {
                 "Content-type": "application/octet-stream",
                 "Content-disposition": "attachment; filename=mapzip",
@@ -543,6 +543,9 @@ exports.getMapzip = function(req, res){
         }catch(e){
 
             log.error(e);
+            res.json(400, {
+            	msg: "file doesn't exist"
+            });            
 
         }
         
