@@ -2,13 +2,19 @@ var log = require('log4js').getLogger(),
     User = require("../model/user"),
     Building = require("../model/building"),
     Floor = require("../model/floor"),
+    Store = require("../model/store"),    
+    Ad = require("../model/ad"),    
     crypto = require('crypto'),
     AdmZip = require('adm-zip'),
     archiver = require('archiver'),
+    rimraf = require('rimraf'),
     fs = require('fs'),
 	path = require('path'),
 	util = require('util'),
 	config = require('../config/config');
+
+// Static variable
+var	mapinfo_path = "/" + config.mapInfoPath;
 
 // GET Page for show specific building
 exports.show = function(req, res) {
@@ -152,6 +158,85 @@ exports.update = function(req, res) {
 // GET Interface of delete specific building
 exports.del = function(req, res) {
 
+	if(req.body._id){
+		
+		// Find all stores
+		Floor.find({
+			
+			buildingId: req.body._id
+			
+		}, function(err, floors){
+			
+			if(err)
+				log.error(err);
+			
+			for(var i=0; i<floors.length; i++){
+				
+				Store.find({
+					
+					floorId: floors[i]._id
+					
+				}, function(err, stores){
+					
+					if(err)
+						log.error(err);
+					
+					for(var j=0; j<stores.length; j++){		
+						
+						// Remove ad
+						Ad.remove({
+							
+							storeId: stores[j].id
+							
+						}, function(err){					
+							if(err)
+								log.error(err);								
+						});				
+						
+						// Remove store
+						stores[j].remove();					
+					}
+					
+				});
+				
+				// Remove floor
+				floors[i].remove();
+				
+			}
+			
+			// Remove building folder
+			var folderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + req.body._id;
+			fs.exists(folderPath, function(exist){
+				
+				// Delete the folder removed floor 
+				if(exist)
+					rimraf(folderPath, function(err){
+						if(err)
+							log.error(err);
+					});	
+				
+				// Remove building
+				Building.findOneAndRemove({
+				
+					_id: req.body._id
+				
+				}, function(err){
+					
+					if(err)
+						log.error(err);
+					else
+						res.send(200, {
+							_id: req.body._id
+						});
+					
+				});
+				
+			});
+						
+		});		
+				
+	}
+	
 };
 
 // POST Interface of upload image
@@ -209,7 +294,7 @@ exports.uploadImage = function(req, res) {
 
 									building.icon = targetFileName;
 									building.save(function(){
-										res.send(200, building);
+										res.send(200, targetFileName);
 									});
 								}
 							});
@@ -217,7 +302,7 @@ exports.uploadImage = function(req, res) {
 						}else{
 
 							log.info("Same");
-							res.send(200, building);
+							res.send(200, targetFileName);
 						}
 
 					}else{
@@ -336,13 +421,11 @@ exports.getMapzip = function(req, res){
 	
     if(req.query.mapzip){
     	
-        var fileName = req.query.mapzip,
-            filePath = path.dirname() + "/" + config.mapInfoPath + '/' + fileName,
-            stat = fs.statSync(filePath);
-        
-        console.log(filePath);
         try{
-
+        	
+            var fileName = req.query.mapzip,
+	            filePath = path.dirname() + "/" + config.mapInfoPath + '/' + fileName,
+	            stat = fs.statSync(filePath);
             res.writeHead(200, {
                 "Content-type": "application/octet-stream",
                 "Content-disposition": "attachment; filename=mapzip.zip",
@@ -357,6 +440,9 @@ exports.getMapzip = function(req, res){
         }catch(e){
 
             log.error(e);
+            res.json(400, {
+            	msg: "file doesn't exist"
+            });             
 
         }
     }
