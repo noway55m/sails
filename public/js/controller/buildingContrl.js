@@ -3,8 +3,28 @@ var utility = Utility.getInstance();
 // List buildings controller
 function BuildingListCtrl($scope, Building) {
 
+	// Show and hide remove button
+	$scope.showRemoveButton = function(e){
+		angular.element(e.currentTarget).find(".remove-button-list").show();
+	};
+	
+	$scope.hideRemoveButton = function(e){
+		angular.element(e.currentTarget).find(".remove-button-list").hide();		
+	};	
+	
     // List all buildings
-	$scope.buildings = Building.list();
+	Building.list(function(buildings){
+		
+		// Set icon url
+		buildings.forEach(function(building){
+			if(building.icon)
+				building.icon = "/" + imagePath + "/" + building.icon;
+			else
+				building.icon = "/img/no-image.png";
+		});		
+		$scope.buildings = buildings;
+		
+	});
 
 	// Function for add new building
 	$scope.addBuilding = function(e) {
@@ -40,6 +60,10 @@ function BuildingListCtrl($scope, Building) {
 				addButton.button("reset");
 
 				// Update local buildings
+				if(building.icon)
+					building.icon = "/" + imagePath + "/" + building.icon;
+				else
+					building.icon = "/img/no-image.png";					
 				$scope.buildings.push(building);
 
 			}, function(err) {
@@ -54,14 +78,61 @@ function BuildingListCtrl($scope, Building) {
 
 	};
 
+	// Function for setup delete dialog
+	var deleteObj,
+		deleteModal = $("#deleteModal");
+	$scope.deleteDialogSetup = function(){
+		deleteObj = this.building;
+		$("#removeContent").html(deleteObj.name);
+		deleteModal.modal("show");
+	};
+	
+	// Function for delete ad obj
+	$scope.deleteObj = function(e){
+		
+		// Hide modal
+		deleteModal.modal('hide');
+		
+		// Delete store
+		Building.delete({
+			
+			_id: deleteObj._id
+			
+		}, function(res){
+
+			if(res._id){
+				
+				// Remove store from view
+		    	var id = res._id;
+		    	for(var i=0; i<$scope.buildings.length; i++){			
+					if($scope.buildings[i]._id == id){    			
+						$scope.buildings.splice(i, 1);
+						break;
+					}
+		    	}
+		    	
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Remove successfully");
+				
+			}			
+			
+		});
+		
+	};		
+	
 }
 
 // Show specific building controller
 function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 	var url = $location.absUrl(),
 		id = url.substring(url.lastIndexOf("/") + 1, url.length);
-	$scope.building = Building.get({ _id : id }, function(building){
-	    $rootScope.$emit('buildingFinishLoad', building);
+	Building.get({ _id : id }, function(building){
+		if(building.icon)
+			building.icon = "/" + imagePath + "/" + building.icon;
+		else
+			building.icon = "/img/no-image.png";	    
+		$scope.building = building;
+		$rootScope.$emit('buildingFinishLoad', building);
         $rootScope.buildingClone = angular.copy(building); // Clone building for future rollback
 	});
 
@@ -207,7 +278,7 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 				}else{
 					// imgTag.attr("src", ad.image);
 					$scope.$apply(function () {
-						building.icon = res.icon;
+						building.icon = "/" + imagePath + "/" + res;
 				        $rootScope.buildingClone = angular.copy(building); // clone building						
 					});
 				}

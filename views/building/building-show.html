@@ -28,8 +28,7 @@
 
 				<!-- Display block -->
 				<div class="col-xs-12 col-sm-3 col-md-2" style="text-align:center;padding:15px 5px;">
-					<img ng-show="building.icon" ng-src="/<%= imagePath %>/{{building.icon}}" alt="Image Icon" style="width:100px;"/>
-					<img ng-hide="building.icon" src="/img/no-image.png" alt="Image Icon"  style="width:100px;"/>
+					<img ng-src="{{building.icon}}" alt="Building Icon" class="icon"/>
 					<div>
 						<span class="title">Name:</span>
 						<span ng-bind="building.name"></span>
@@ -110,7 +109,7 @@
 					<form id="image-form" name="form" action="/building/uploadImage" method="POST" enctype="multipart/form-data">
 						<input type="hidden" name="_id" value="{{building._id}}" >
 						<label for="image">Upload icon image:</label>
-						<img id="edit-building-icon" ng-src="/<%= imagePath %>/{{building.icon}}" alt="icon" style="width:100px;"/>
+						<img ng-src="{{building.icon}}" alt="Building Icon" class="icon"/>
 						<div class="alert alert-danger error-msg">
 							<span class="label label-danger">Error</span> <span class="errorText"></span>
 						</div>

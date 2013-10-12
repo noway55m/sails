@@ -128,6 +128,10 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 				}else{
 					
 					// add new store
+					if(res.icon)
+						res.icon = "/" + imagePath + "/" + res.icon;
+					else
+						res.icon = "/img/no-image.png";						
 					$rootScope.floor.stores.push(res);
 					
 					// Clean all fields and close dialog
@@ -231,7 +235,8 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
     					$scope.floor = floor;
     					
     					// Check is floor or basement
-    			    	if(store.floor > 0)
+    					console.log()
+    			    	if($scope.floor.layer > 0)
     			        	$scope.up = true;
     			    	else
     			        	$scope.up = false;

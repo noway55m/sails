@@ -6,20 +6,20 @@
 
 	<!-- Add building form block -->
 	<% include ../building/building-add.html %>
-
 	<br>
 
 	<!-- Buildings list -->
 	<div id="building-list" class="row" style="background-color: #f7f7f9;">
-		<div class="col-xs-6 col-sm-4 col-md-2" ng-repeat="building in buildings">
+		<div class="col-xs-6 col-sm-4 col-md-2" ng-repeat="building in buildings" ng-mouseenter="showRemoveButton($event)" ng-mouseleave="hideRemoveButton($event)">
 			<div class="belement">
-				<a href="/building/show/{{building._id}}">
-					<img ng-show="building.icon" ng-src="/<%= imagePath %>/{{building.icon}}" alt="Image Icon" class="default-icon"/>
-					<img ng-hide="building.icon" src="/img/no-image.png"alt="Image Icon" class="default-icon"/>
-					<span ng-bind="building.name"></span>
-				</a>
+				<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup()"></span>
+				<img ng-src="{{building.icon}}" alt="Image Icon" class="default-icon"/>
+				<a href="/building/show/{{building._id}}"><span ng-bind="building.name"></span></a>
 			</div>
 		</div>
 	</div>
+	
+	<!-- Delete Confirm Dialog -->
+	<% include ../layout/delete-confirm-dialog.html %>	
 
 </div>
