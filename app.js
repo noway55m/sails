@@ -78,7 +78,8 @@ app.sget('/user/all', user.all); // only use in admin
 app.sget('/user/list', user.list); // only use in admin
 app.spost('/user/create', user.create);  // only use in admin
 app.spost('/user/update', user.update);  // only use in admin
-app.spost('/user/changePassword', user.changePassword);
+app.post('/user/forgetPassword', user.forgetPassword);
+app.get('/user/resetPassword/:token', user.resetPassword);
 
 //----------------------------------
 app.sget('/building/show/:_id', building.show);

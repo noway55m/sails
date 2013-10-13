@@ -73,7 +73,7 @@
 	
 				<!-- Register and Forget Password -->
 				<a href="register">Register</a> | 
-				<a href="register">Forget Password</a>
+				<a data-toggle="modal" href="#forget-password-dialog" >Forget Password</a>
 				
 				<div id="socialSignIn">
 					<a href="/auth/facebook" class="btn btn-primary">facebook login</a>
@@ -99,6 +99,9 @@
 
 		<!-- Body library include -->
 		<% include layout/body-include.html	%>
+
+		<!-- Forget Password Dialog include -->
+		<% include user/forget-password-dialog.html	%>
 		
 	</body>
 </html>

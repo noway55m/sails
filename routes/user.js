@@ -2,7 +2,10 @@ var log = require('log4js').getLogger("User"),
 	crypto = require('crypto'),
 	uuid = require('node-uuid'),
 	Building = require("../model/building"),
-	User = require("../model/user");
+	User = require("../model/user"),
+	ResetPasswordToken = require("../model/resetPasswordToken"),	
+    mailer = require('../config/nodemailerSetup'),
+    config = require('../config/config.js');
 
 // Static variable
 var resource_path = "./resource/",
@@ -150,8 +153,81 @@ exports.update = function(req, res){
 };
 
 
+// POST Interface trigger reset password while forget password
+exports.forgetPassword = function(req, res){
+	
+	if(req.body.email){
+		
+		var email = req.body.email;
+		User.findOne({
+		
+			username: email
+			
+		}, function(err, user){
+			
+			if(err)
+				log.error(err);
+			
+			if(user){
+				
+				new ResetPasswordToken({
+					
+				    token: User.genToken(), 			        
+				    userId: user.id,				    
+					createdAt :	new Date()				
+					
+				}).save(function(err, token){
+					
+					if(err)
+						log.error(err);
+					
+					if(token){
+						
+						// Send mail with defined transport object
+						var mailOptions = {
+							from : mailer.defaultOptions.from, // sender address
+							to : email, // list of receivers
+							subject : "Sails Cloud Service Notification", // Subject line
+							text : "Please Click following link to reset your password", // plaintext body
+							html : "<b>Welcome join to Sails Cloud Service</b>" + 
+									"<a href='" + config.domainUrl + "/resetPassword/" + token + "'>Reset Password</a>" // html body
+						};
+
+						mailer.sendMail(mailOptions, function(error, response) {
+							
+							if (error) {
+								log.error(error);
+							} else {
+								log.error("Message sent: " + response.message);
+								res.json(200,{
+									msg: "Please check your email address, we have sent the reset password email to you"
+								});
+							}
+
+						});							
+												
+					}
+								
+				});
+							
+			}else{
+				
+				res.json(400, { 
+					msg: "This email address does not exist in system" 
+				});
+				
+			}
+			
+		});
+		
+		
+	}
+	
+	
+};
+
 // POST Interface for change password of sepcific user
-exports.changePassword = function(req, res){
+exports.resetPassword = function(req, res){
 
 	console.log("dkkkkkkkkkkkkkkkkk")
 	console.log(req.body);

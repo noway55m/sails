@@ -1,4 +1,5 @@
 var mongoose = require("./dataSource.js"),
+	config = require("../config/config.js"),
 	Schema = mongoose.Schema;
 
 
@@ -9,7 +10,15 @@ var accountActivateTokenSchema = new Schema({
 	
     token: String, 
         
-    userId: String
+    userId: String,
+    
+	createdAt : {
+
+		type : Date,
+
+		expires : config.defaultTokenDuration
+
+	}    
     
 });
 

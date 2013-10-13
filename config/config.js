@@ -20,6 +20,8 @@ module.exports = {
 	
 	googleAppSecret: "GjyzGopNhamfve2Ouhw9firR",
 	
-	defaultCookieDuration: 604800 // 7 days: 604800 60 <=> * 60 * 24 * 7
-					
+	defaultCookieDuration: 604800, // 7 days: 604800 <=> 60 * 60 * 24 * 7
+
+	defaultTokenDuration: 86400 // 1 day: 86400 <=> 60 * 60 * 24
+	
 };

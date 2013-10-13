@@ -3,13 +3,13 @@ var nodemailer  = require('nodemailer');
 var mailer = nodemailer.createTransport("SMTP",{
     service: "Gmail",
     auth: {
-        user: "iasolutionid1@gmail.com",
-        pass: "AplixAplix"
+        user: "admin@sailstech.com",
+        pass: "felix123"
     }
 });
 
 mailer.defaultOptions = {
-    from : "iasolutionid1@gmail.com"
+    from : "admin@sailstech.com"
 };
 
 module.exports = mailer;
