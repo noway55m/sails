@@ -39,16 +39,6 @@ app.use(passport.session());
 // Support html by nodejs module "ejs"
 app.engine('html', require('ejs').renderFile);
 
-
-log4js.configure({
-	  appenders: [
-	    { type: 'console' },
-	    { type: 'file', filename: 'logs/server.log', category: 'log' }
-	  ]
-});
-
-log4js.getLogger().info("kdkddkdddjkkddk");
-
 // all environments
 app.set('port', process.env.PORT || 80);
 app.set('views', __dirname + '/views');
@@ -71,7 +61,7 @@ if ('development' == app.get('env')) {
 // Configure secured http request
 app = passport.configSecureHttpRequest(app);
 
-// URL mapping
+/**************** URL Mapping ****************/
 app.sget('/', routes.index);
 app.sget('/login', authentication.index);
 app.sget('/logout', authentication.logout);
@@ -79,7 +69,6 @@ app.post('/auth', authentication.auth);
 app.post('/authMobile', authentication.authMobile);
 app.get('/register', register.index);
 app.post('/register/auth', register.auth);
-
 
 //---------------------------------
 app.sget('/user', user.index);
@@ -137,12 +126,8 @@ app.spost('/ad/update', ad.update);
 app.spost('/ad/uploadImage', ad.uploadImage);
 app.spost('/ad/delete', ad.del);
 
-//----------------------------------
 
-app.sget('/test1', test.test1);
-app.spost('/test2', test.test2);
-
-
+/**************** Social URL Mapping ****************/
 // Facebook OAuth Authentication
 app.get('/auth/facebook',passport.authenticate('facebook', {
 	scope: ['read_stream', 'publish_actions', 'read_friendlists', 'manage_notifications']
@@ -151,12 +136,30 @@ app.get('/auth/facebook',passport.authenticate('facebook', {
 // Facebook OAuth Code Callback (first handshake)
 app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/user', failureRedirect: '/login' }) );
 
+//-----------------------------------------------
+// Twitter OAuth Authentication
+app.get('/auth/twitter', passport.authenticate('twitter'));
 
+// Twitter OAuth Code Callback (first handshake)
+app.get('/auth/twitter/callback',  passport.authenticate('twitter', { successRedirect: '/user', failureRedirect: '/login' }));
+
+//-----------------------------------------------
+// Google Plus OAuth Authentication
+app.get('/auth/google', passport.authenticate('google', {
+	scope: ['https://www.googleapis.com/auth/plus.login']
+}));
+
+// Google Plus OAuth Code Callback (first handshake)
+app.get('/auth/google/callback', passport.authenticate('google', {failureRedirect: '/login' }) ,function(req, res){
+	res.redirect('/user');
+});
+
+
+/**************** Create HTTP Server ****************/
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
-// Execute pre-process step
-bootstrap();
 
-console.log('test');
+/**************** Bootstrap ****************/
+bootstrap();

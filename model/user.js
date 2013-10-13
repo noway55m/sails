@@ -25,14 +25,18 @@ var userSchema = new Schema({
     
     token: String, // Developer token
     
-    fid: String, // facebook id
+    fid: String, // Facebook ID
     
-    faccessToken: String, // facebook OAuth access token    
+    faccessToken: String, // Facebook OAuth access token    
     
-    tid: String, // twitter id
+    tid: String, // Twitter ID
     
-    taccessToken: String // twitter OAuth access token
+    taccessToken: String ,// Twitter OAuth access token
     
+    gid: String, // Google Plus ID
+
+    gaccessToken: String // Google OAuth access token
+        
 });
 
 

@@ -1,8 +1,11 @@
 var passport = require('passport'),
 	facebookStrategy = require('passport-facebook').Strategy,
+	twitterStrategy = require('passport-twitter').Strategy,
+	googleStrategy = require('passport-google-oauth').OAuth2Strategy,	
 	localStrategy = require('passport-local').Strategy,
 	log = require('log4js').getLogger(),
-	User = require('../model/user');
+	User = require('../model/user'),
+	config = require('./config.js');
 
 
 //Static variable
@@ -53,15 +56,16 @@ passport.use(new localStrategy(function(username, password, done) {
 
 }));
 
-// Passport Ffacebook OAuth configuration
+// Passport facebook OAuth configuration
 passport.use(new facebookStrategy({
 
-	clientID : "138521589682299",
-	clientSecret : "c95dd1966614afc48129a5405b96dd79",
+	clientID : config.facebookAppKey,
+	clientSecret : config.facebookAppSecret,
 	callbackURL : "/auth/facebook/callback"
 
 }, function(accessToken, refreshToken, profile, done) {
-
+	
+	log.info("Facebook OAuth");
 	log.info("accessToken: " + accessToken);
 	log.info("refreshToken: " + refreshToken);
 	log.info(profile);
@@ -77,7 +81,7 @@ passport.use(new facebookStrategy({
 			log.info("old user");
 			
 			// Update access token
-			user.accessToken = accessToken;
+			user.faccessToken = accessToken;
 			user.save();
 			done(err, user);
 
@@ -112,6 +116,137 @@ passport.use(new facebookStrategy({
 	});
 
 }));
+
+// Passport twitter OAuth configuration
+passport.use(new twitterStrategy({
+
+	consumerKey : config.twitterAppKey,
+	consumerSecret : config.twitterAppSecret,
+	callbackURL : "/auth/twitter/callback"
+
+}, function(accessToken, tokenSecret, profile, done) {
+
+	log.info("Twitter OAuth");
+	log.info("token: " + accessToken);
+	log.info("tokenSecret: " + tokenSecret);
+	log.info(profile);
+	User.findOne({
+
+		tid : profile.id
+
+	}, function(err, user) {
+
+		log.info(user);
+		if (user) {
+
+			log.info("old user");
+
+			// Update access token
+			user.taccessToken = accessToken;
+			user.save();
+			done(err, user);
+
+		} else {
+
+			log.info("new user");
+
+			// Create new user
+			new User({
+
+				username : profile.username,
+				tid : profile.id,
+				taccessToken : accessToken
+
+			}).save(function(err, newUser) {
+
+				if (newUser) {
+
+					log.info('Successfully Insert User ' + newUser.username);
+					done(err, newUser);
+
+				} else {
+
+					log.info('Failed to create new user ' + profile.username);
+					return done(null, false, {
+						message : 'Server error, fail to create new user ' + profile.username
+					});
+
+				}
+			});
+
+		}
+
+	});
+
+}));
+
+
+// Passport google plus OAuth configuration
+passport.use(new googleStrategy({
+
+	clientID : config.googleAppKey,
+	clientSecret : config.googleAppSecret,
+	callbackURL : "/auth/google/callback"
+
+}, function(accessToken, tokenSecret, profile, done) {
+
+	log.info("Google Plus OAuth");
+	log.info("token: " + accessToken);
+	log.info("tokenSecret: " + tokenSecret);	
+	log.info(profile);
+	User.findOne({
+
+		gid : profile.id
+
+	}, function(err, user) {
+
+		log.info(user);
+		if (user) {
+
+			log.info("old user");
+
+			// Update access token
+			user.gaccessToken = accessToken;
+			user.save();
+			done(err, user);
+
+		} else {
+
+			log.info("new user");
+
+			// Create new user
+			new User({
+
+				username : profile.username,
+				gid : profile.id,
+				gaccessToken : accessToken
+
+			}).save(function(err, newUser) {
+
+				if (newUser) {
+
+					log.info('Successfully Insert User ' + newUser.username);
+					done(err, newUser);
+
+				} else {
+
+					log.info('Failed to create new user ' + profile.username);
+					return done(null, false, {
+						message : 'Server error, fail to create new user ' + profile.username
+					});
+
+				}
+			});
+
+		}
+
+	});
+
+}
+
+));
+
+
 
 // Function for configure secure get and secure post
 passport.configSecureHttpRequest = function(app){
