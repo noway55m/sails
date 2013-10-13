@@ -5,6 +5,7 @@ var passport = require('passport'),
 	localStrategy = require('passport-local').Strategy,
 	log = require('log4js').getLogger(),
 	User = require('../model/user'),
+	CookieToken = require('../model/cookieToken'),	
 	config = require('./config.js');
 
 
@@ -277,6 +278,7 @@ passport.configSecureHttpRequest = function(app){
                 res.redirect('/login');
 
         }
+        
     }
     
     // Function about token authentication
@@ -302,13 +304,69 @@ passport.configSecureHttpRequest = function(app){
 		});    	
     	
     }
-
+    
+    // Function about cookie token(remember me) authentication
+    function cookieTokenAuth(req, res, callback){
+    	
+    	// set local variables
+    	res.locals.user = req.user;
+    	res.locals.roles = User.ROLES;
+    	res.locals.url = req.url.toString();
+    	res.locals.imagePath = public_image_path;
+    	
+    	// Get cookie token
+		var cookieToken = req.cookies.cookieToken;
+		CookieToken.findOne({
+			
+			token: cookieToken
+			
+		}, function(err, ct){
+			
+			if(err)
+				log.error(err);
+			
+			if(ct){
+    			
+				// Get user
+				User.findById(ct.userId, function(err, user){
+					
+					if(err)
+						log.error(err);
+					
+					if(user){
+						
+			        	// Set req.user and local variables
+						req.user = user;
+			        	res.locals.user = req.user;        	
+			            if(req.url.toString() != "/")
+			                callback(req, res);
+			            else
+			                res.redirect('/user');
+			            
+					}
+					
+				});
+    			
+			}else{
+				
+	            if(req.url.toString() == "/login" || req.url.toString() == "/")
+	                callback(req, res);
+	            else
+	                res.redirect('/login');
+				
+			}
+		});  	
+    	
+    }
+    
     // Configure secure get
     app.sget = function(url, callback) {
-        app.get(url, function(req, res){                    	
+        app.get(url, function(req, res){                    	        	
         	// Check authentication way
         	if(req.get("Authorization"))        		
-        		tokenAuth(req, res, callback);        		
+        		tokenAuth(req, res, callback);
+        	else if(req.cookies.cookieToken)
+        		cookieTokenAuth(req, res, callback);        	
         	else        	        	
         		isLoggedIn(req, res, callback);            
         });
@@ -320,6 +378,8 @@ passport.configSecureHttpRequest = function(app){
         	// Check authentication way
         	if(req.get("Authorization"))        		
         		tokenAuth(req, res, callback);        		
+        	else if(req.cookies.cookieToken)
+        		cookieTokenAuth(req, res, callback);
         	else        	        	
         		isLoggedIn(req, res, callback);  
         });

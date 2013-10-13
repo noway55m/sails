@@ -18,6 +18,8 @@ module.exports = {
 	
 	googleAppKey: "369163861143.apps.googleusercontent.com",
 	
-	googleAppSecret: "GjyzGopNhamfve2Ouhw9firR"
+	googleAppSecret: "GjyzGopNhamfve2Ouhw9firR",
+	
+	defaultCookieDuration: 604800 // 7 days: 604800 60 <=> * 60 * 24 * 7
 					
 };
