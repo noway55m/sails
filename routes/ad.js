@@ -3,32 +3,15 @@ var log = require('log4js').getLogger(),
 	crypto = require('crypto'),
 	fs = require('fs'),
 	path = require('path'),
-	moment = require('moment');
+	moment = require('moment'),
+	config = require('../config/config');
 
 // Static variable
-var	resource_path = "./resource/",
-	public_image_path = "client-image",
-	mapzip_path = resource_path + "mapzip",
-	image_path = "public/" + public_image_path;
+var	image_path = "/" + config.mapInfoPath;
 
 // GET Page for show specific ad
 exports.show = function(req, res) {
-
-	Ad.findById(req.params._id, function(err, ad) {
-
-		if (err)
-			log.error(err);
-		
-		if(ad)
-			res.render("ad/ad-show.html", {
-				url: req.url.toString(), // use in layout for identify display info
-				user: req.user,
-				ad: ad,
-				imagePath: public_image_path
-			});
-
-	});
-
+	res.render("ad/ad-show.html");
 };
 
 // GET Interface for list the ads of store
@@ -243,8 +226,7 @@ exports.uploadImage = function(req, res) {
                             fs.unlink(tmpPath, function(err){
                             	log.error(err);
                             });
-                            
-							
+                            							
 						}else{
 							
 							log.info("Same");

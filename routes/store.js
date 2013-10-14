@@ -3,30 +3,15 @@ var log = require('log4js').getLogger(),
 	Ad = require("../model/store"),
 	crypto = require('crypto'),
 	fs = require('fs'),
-	path = require('path');
+	path = require('path'),
+	config = require('../config/config');
 
 // Static variable
-var	resource_path = "./resource/",
-	public_image_path = "client-image",
-	image_path = "public/" + public_image_path;	
+var	image_path = "/" + config.mapInfoPath;
 
 // Page for show the store in the floor of specific building
-exports.show = function(req, res) {
-	
-	Store.findById(req.params._id, function(error, store){
-		
-		if(error)
-			log.error(error);
-		
-		if(store)
-			res.render("store/store-show.html", {
-				url: req.url.toString(), // use in layout for identify display info
-				user: req.user,
-				imagePath: public_image_path
-			});
-		
-	});
-
+exports.show = function(req, res) {	
+	res.render("store/store-show.html");
 };
 
 // GET¡@Interface for read the store in the floor of specific building
@@ -247,12 +232,23 @@ exports.uploadImage = function(req, res) {
 									res.send(200, "Server error, please try again later");									
 								}else{									
 									
+									// Delete old image									
+									var oldImgPath = path.resolve(image_path + "/" + store.icon);
+									fs.unlink(oldImgPath, function(err){
+										log.error(err);
+									});									
+									
 									store.icon = targetFileName;
 									store.save(function(){
 										res.send(200, targetFileName);																			
 									});
 								}										
 							});								
+						
+							// Delete the temporary file
+                            fs.unlink(tmpPath, function(err){
+                            	log.error(err);
+                            });							
 							
 						}else{
 							

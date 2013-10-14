@@ -292,6 +292,12 @@ exports.uploadImage = function(req, res) {
 									});
 								}else{
 
+									// Delete old image									
+									var oldImgPath = path.resolve(config.imagePath + "/" + building.icon);
+									fs.unlink(oldImgPath, function(err){
+										log.error(err);
+									});										
+									
 									building.icon = targetFileName;
 									building.save(function(){
 										res.send(200, targetFileName);
@@ -299,6 +305,11 @@ exports.uploadImage = function(req, res) {
 								}
 							});
 
+							// Delete the temporary file
+                            fs.unlink(tmpPath, function(err){
+                            	log.error(err);
+                            });									
+							
 						}else{
 
 							log.info("Same");
