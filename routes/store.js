@@ -7,7 +7,7 @@ var log = require('log4js').getLogger(),
 	config = require('../config/config');
 
 // Static variable
-var	image_path = "/" + config.mapInfoPath;
+var	image_path = config.imagePath;
 
 // Page for show the store in the floor of specific building
 exports.show = function(req, res) {	
@@ -147,38 +147,54 @@ exports.update = function(req, res){
 exports.del = function(req, res){
 	
 	if(req.body._id){
-			
-		Ad.remove({
-			
-			storeId: req.body._id 
 		
-		}, function(err){
+		Store.findById(req.body._id, function(err, store){
 			
-			if(err){
-				
+			if(err)
 				log.error(err);
 			
-			}else{
+			if(store){
 				
-				Store.findOneAndRemove({
-					
+				// Delete store image									
+				var oldImgPath = path.resolve(image_path + "/" + store.icon);
+				fs.unlink(oldImgPath, function(err){
+					log.error(err);
+				});	
+				
+				res.json(200, {
 					_id: req.body._id
-					
-				}, function(err){
-					
-					if(err)
-						log.error(err);
-					else
-						res.json(200, {
-							_id: req.body._id
-						});
-					
 				});
+				
+				// Find all relative ads
+				Ad.find({
+					
+					storeId: req.body._id 
+				
+				}, function(err, ads){
+					
+					if(err)						
+						log.error(err);
+
+					for(var i=0; i<ads.length; i++){
+						
+						// Delete ad image									
+						var oldAdImgPath = path.resolve(image_path + "/" + ads[i].image);
+						fs.unlink(oldAdImgPath, function(err){
+							log.error(err);
+						});
+						
+						ads[i].remove(function(err){
+							log.error(err);
+						});
+						
+					}					
+					
+				});					
 				
 			}
 			
-		});	
-		
+		});		
+				
 	}
 		
 };

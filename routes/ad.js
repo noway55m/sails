@@ -7,7 +7,7 @@ var log = require('log4js').getLogger(),
 	config = require('../config/config');
 
 // Static variable
-var	image_path = "/" + config.mapInfoPath;
+var	image_path = config.imagePath;
 
 // GET Page for show specific ad
 exports.show = function(req, res) {
@@ -218,15 +218,16 @@ exports.uploadImage = function(req, res) {
 									ad.image = targetFileName;
 									ad.save(function(){
 										res.send(200, targetFileName);																			
-									});
+									});								
+									
 								}										
 							});
-							
+                            
 							// Delete the temporary file
                             fs.unlink(tmpPath, function(err){
                             	log.error(err);
-                            });
-                            							
+                            });								
+							
 						}else{
 							
 							log.info("Same");
