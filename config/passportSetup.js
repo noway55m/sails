@@ -38,13 +38,23 @@ passport.use(new localStrategy(function(username, password, done) {
 		username: username,			
 		password: User.encodePassword(password)
 		
-	}, function(error, user){
+	}, function(err, user){
+		
+		if(err)
+			done(err);
 		
 		if (user) {
 
 			log.info(user);
-			return done(null, user);
-
+			
+			// Check user account has been activated or not
+			if(user.enabled)
+				return done(null, user);
+			else
+				return done(null, false, {
+					message : 'User account not activate yet'
+				});				
+			
 		} else {
 
 			return done(null, false, {

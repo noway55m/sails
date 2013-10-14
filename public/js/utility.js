@@ -53,9 +53,38 @@ Utility.prototype.emailValidate = function(fieldObj, errorMsgObj){
 
 // Function for validate password input fields and focus, select then show error message if format error occur
 Utility.prototype.passwordValidate = function(fieldObj, errorMsgObj){
-    var format = /|S*/, // not defined yet, use normal string now
-        value = $.trim(fieldObj.val());
-    return this.fieldValidate(value, fieldObj, errorMsgObj, format);
+	
+	// Password matching expression. Password must be at least 4 characters, 
+	// no more than 20 characters, and must include at least one upper case letter, 
+	// one lower case letter, and one numeric digit.	
+    var format = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,20}$/, 
+        value = $.trim(fieldObj.val()),
+    	fieldName = fieldObj.prev().text(),
+	    result = false;
+
+	if(!fieldName)
+		fieldName = fieldObj.attr("name");
+		
+	// Check format
+	if(!value){
+	    errorMsgObj.children(".errorText").html("Field '" + fieldName + "' is empty");
+	    result = false;
+	}else if(!format.test(value)){
+	    errorMsgObj.children(".errorText").html("Format of field '" + fieldName + "' is incorrect. " + 
+	    		"Password must be at least 4 characters and must include at least one upper case letter, one lower case letter, and one numeric digit.");
+	    result = false;
+	}else{
+	    result = true;
+	}
+	
+	// Show error info
+	if(!result){
+		errorMsgObj.show();
+	    fieldObj.focus();
+	    fieldObj.select();
+	}
+   
+    return result;
 };
 
 // Function for validate password input fields and focus, select then show error message if format error occur

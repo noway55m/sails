@@ -31,8 +31,9 @@ function createDefaultUser() {
 			new User({
 
 				username : "admin",
-				password : User.encodePassword("admin123"),
+				password : User.encodePassword("Admin123"),
 				role: 1,
+				enabled: true,
 				token: User.genToken()
 				
 			}).save();

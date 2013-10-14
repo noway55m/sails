@@ -199,6 +199,12 @@ angular.module('userServices', [ 'ngResource' ]).factory('User', function($resou
             params : {
                 action : 'changePassword'
             }        	
-        }
+        },
+        changePasswordAdmin : {
+            method : 'POST',
+            params : {
+                action : 'changePasswordAdmin'
+            }        	
+        }        
     });
 });

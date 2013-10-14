@@ -30,8 +30,10 @@
 							<% if(user && (user.role == roles.ADMIN) ){ %>
 								<li><a href="/user/all">User</a></li>						
 							<% } %>						
-							<li><a href="/user/profile">Profile</a></li>
-							<li><a href="/logout"><%= user.username%> | Logout</a></li>
+							<% if(user){ %>
+								<li><a href="/user/profile">Profile</a></li>
+								<li><a href="/logout"><%= user.username%> | Logout</a></li>
+							<% } %>
 						<% } %>
 					</ul>
 				</div>

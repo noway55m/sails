@@ -176,12 +176,12 @@ exports.forgetPassword = function(req, res){
 				    userId: user.id,				    
 					createdAt :	new Date()				
 					
-				}).save(function(err, token){
+				}).save(function(err, rtoken){
 					
 					if(err)
 						log.error(err);
 					
-					if(token){
+					if(rtoken){
 						
 						// Send mail with defined transport object
 						var mailOptions = {
@@ -190,7 +190,7 @@ exports.forgetPassword = function(req, res){
 							subject : "Sails Cloud Service Notification", // Subject line
 							text : "Please Click following link to reset your password", // plaintext body
 							html : "<b>Welcome join to Sails Cloud Service</b>" + 
-									"<a href='" + config.domainUrl + "/resetPassword/" + token + "'>Reset Password</a>" // html body
+									"<a href='" + config.domainUrl + "/user/resetPassword/" + rtoken.token + "'>Reset Password</a>" // html body
 						};
 
 						mailer.sendMail(mailOptions, function(error, response) {
@@ -226,17 +226,104 @@ exports.forgetPassword = function(req, res){
 	
 };
 
-// POST Interface for change password of sepcific user
+// POST Page for change password of specific user
 exports.resetPassword = function(req, res){
 
-	console.log("dkkkkkkkkkkkkkkkkk")
-	console.log(req.body);
+	if(req.params.token){
+		
+		// Set local variables
+    	res.locals.user = req.user;
+    	res.locals.roles = User.ROLES;
+    	res.locals.url = req.url.toString();
+    	res.locals.imagePath = public_image_path;		
+		
+		ResetPasswordToken.findOne({
+		
+			token: req.params.token
+			
+		}, function(err, rtoken){
+			
+			if(err)
+				log.error(err);
+			
+			if(rtoken){
+				
+				res.render("user/reset-password.html", {
+					userId: rtoken.userId,
+					token: rtoken.token
+				});	
+								
+			}else{
+				
+				res.json(400, {
+					msg: "Incorrect token"
+				});
+								
+			}
+			
+		});
+		
+	}
+
+};
+
+// POST Interface for auth reset password of specific user
+exports.resetPasswordAuth = function(req, res){
+	
 	User.findById(req.body._id, function(err, user){
 
 		if(err)
 			log.error(err);
 
 		if(user){
+			
+			var opassword = User.encodePassword(req.body.password);
+			if(opassword == user.password){
+				
+				user.password = User.encodePassword(req.body.npassword);
+				user.save(function(err, user){
+
+					if(err)
+						log.error(err);
+
+					if(user){
+						
+						// Remove token
+						ResetPasswordToken.findOneAndRemove({							
+							token: req.body.token							
+						}, function(err){
+							log.error(err);
+						});
+						
+						res.send(200, user);					
+					
+					}
+				});				
+				
+			}else{
+				
+				res.json(200, {					
+					msg: "Original password is incorrect"					
+				});
+								
+			}
+			
+		}
+
+	});
+
+};
+
+// POST Interface for change password of specific user (only use in admin)
+exports.changePasswordAdmin = function(req, res){
+	
+	User.findById(req.body._id, function(err, user){
+
+		if(err)
+			log.error(err);
+
+		if(user){
+				
 			user.password = User.encodePassword(req.body.password);
 			user.save(function(err, user){
 
@@ -246,7 +333,47 @@ exports.resetPassword = function(req, res){
 				if(user)
 					res.send(200, user);
 
-			});
+			});				
+							
+		}
+
+	});
+
+};
+
+
+// POST Interface for change password of specific user
+exports.changePassword = function(req, res){
+	
+	User.findById(req.body._id, function(err, user){
+
+		if(err)
+			log.error(err);
+
+		if(user){
+			
+			var opassword = User.encodePassword(req.body.password);
+			if(opassword == user.password){
+				
+				user.password = User.encodePassword(req.body.npassword);
+				user.save(function(err, user){
+
+					if(err)
+						log.error(err);
+
+					if(user)
+						res.send(200, user);
+
+				});				
+				
+			}else{
+				
+				res.json(200, {					
+					msg: "Original password is incorrect"					
+				});
+								
+			}
+			
 		}
 
 	});

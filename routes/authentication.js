@@ -26,14 +26,14 @@ exports.auth = function(req, res, next) {
 
 		if (err)
 			return next(err);
-
+		
 		if (!user) {
 
-			req.flash('msg', "Incorrect username or password");
+			req.flash('msg', info.message);
 			return res.redirect("/login");
 
 		} else {
-
+			
 			// Create cookie token if remember me is 'on'
 			if (req.body.rememberMe) {
 

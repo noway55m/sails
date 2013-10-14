@@ -69,6 +69,7 @@ app.post('/auth', authentication.auth);
 app.post('/authMobile', authentication.authMobile);
 app.get('/register', register.index);
 app.post('/register/auth', register.auth);
+app.get('/register/activate/:token', register.activate);
 
 //---------------------------------
 app.sget('/user', user.index);
@@ -79,7 +80,10 @@ app.sget('/user/list', user.list); // only use in admin
 app.spost('/user/create', user.create);  // only use in admin
 app.spost('/user/update', user.update);  // only use in admin
 app.post('/user/forgetPassword', user.forgetPassword);
+app.spost('/user/changePassword', user.changePassword);
+app.spost('/user/changePasswordAdmin', user.changePasswordAdmin);  // only use in admin
 app.get('/user/resetPassword/:token', user.resetPassword);
+app.post('/user/resetPasswordAuth', user.resetPasswordAuth);
 
 //----------------------------------
 app.sget('/building/show/:_id', building.show);

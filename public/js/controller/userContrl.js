@@ -146,7 +146,7 @@ function UserListCtrl($scope, User, $rootScope) {
 			errorMsgObj = form.find(".error-msg"),
 			passwordObj = form.find("input[name=password]");
 
-		if (utility.emptyValidate(passwordObj, errorMsgObj)) {
+		if (utility.passwordValidate(passwordObj, errorMsgObj)) {
 
 			// Disable all fields
 			passwordObj.attr('disabled', 'disabled');
@@ -160,7 +160,7 @@ function UserListCtrl($scope, User, $rootScope) {
 			errorMsgObj.hide();
 
 			// Change user's password
-			User.changePassword({
+			User.changePasswordAdmin({
 
 				_id: $rootScope.selecedtUser._id,
 				password: passwordObj.val()
@@ -220,17 +220,18 @@ function UserShowCtrl($scope, User, $rootScope) {
 		
 		var changeButton = angular.element(e.currentTarget),
 			closeButton = changeButton.prev(),
-			passwordObj = cpForm.find("input[name=password]"),
+			inputFields = cpForm.find("input"),
+			passwordObj = cpForm.find("input[name=password]"),			
+			npasswordObj = cpForm.find("input[name=newPassword]"),
 			cfpasswordObj = cpForm.find("input[name=confirmPassword]"),
 			errorMsgObj = cpForm.find(".error-msg");
 		
-		if (utility.emptyValidate(passwordObj, errorMsgObj) &&
-			utility.emptyValidate(cfpasswordObj, errorMsgObj) &&
-			utility.newPasswordValidate(passwordObj, cfpasswordObj, errorMsgObj)) {
+		if (utility.passwordValidate(passwordObj, errorMsgObj) &&				
+			utility.passwordValidate(npasswordObj, errorMsgObj) &&
+			utility.newPasswordValidate(npasswordObj, cfpasswordObj, errorMsgObj)) {
 				
 			// Disable all fields
-			passwordObj.attr('disabled', 'disabled');
-			cfpasswordObj.attr('disabled', 'disabled');			
+			inputFields.attr('disabled', 'disabled');	
 
 			// Disable all buttons
 			changeButton.button('loading');
@@ -243,14 +244,14 @@ function UserShowCtrl($scope, User, $rootScope) {
 			User.changePassword({
 	
 				_id: $scope.user._id,
-				password: passwordObj.val()
-	
+				password: passwordObj.val(),
+				npassword: npasswordObj.val()
+				
 			}, function(res){
 	
 				// Enable all fields
-				passwordObj.removeAttr('disabled');
-				cfpasswordObj.removeAttr('disabled');
-	
+				inputFields.removeAttr('disabled');
+				
 				// Enable all buttons
 				changeButton.button('reset');
 				closeButton.show();
@@ -264,8 +265,7 @@ function UserShowCtrl($scope, User, $rootScope) {
 				}else{
 	
 					// Clean all fields and close dialog
-					passwordObj.val("");
-					cfpasswordObj.val("");
+					inputFields.val("");
 					$scope.hideChangePasswordBlock();
 					$().toastmessage('showSuccessToast', "Change password successfully");
 				}
