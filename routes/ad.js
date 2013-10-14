@@ -146,15 +146,32 @@ exports.update = function(req, res){
 exports.del = function(req, res){
 	
 	if(req.body._id){
-		
-		Ad.remove({ _id: req.body._id }, function(err){
+				
+		Ad.findById(req.body._id, function(err, ad){
+			
 			if(err)
 				log.error(err);
-			else
-				res.json(200, {
-					_id: req.body._id
+			
+			if(ad){
+				
+				// Delete ad image									
+				var oldImgPath = path.resolve(image_path + "/" + ad.image);
+				fs.unlink(oldImgPath, function(err){
+					log.error(err);
 				});				
 				
+				// Remove ad
+				ad.remove(function(err){
+					if(err)
+						log.error(err);
+					else
+						res.json(200, {
+							_id: req.body._id
+						});						
+				});
+				
+			}
+			
 		});
 	
 	}	
@@ -208,13 +225,25 @@ exports.uploadImage = function(req, res) {
 									log.error(err);
 									res.send(200, "Server error, please try again later");									
 								}else{									
+
+									// Delete old image									
+									var oldImgPath = path.resolve(image_path + "/" + ad.image);
+									fs.unlink(oldImgPath, function(err){
+										log.error(err);
+									});
 									
 									ad.image = targetFileName;
 									ad.save(function(){
 										res.send(200, targetFileName);																			
 									});
 								}										
-							});								
+							});
+							
+							// Delete the temporary file
+                            fs.unlink(tmpPath, function(err){
+                            	log.error(err);
+                            });
+                            
 							
 						}else{
 							

@@ -224,6 +224,7 @@ function AdListCtrl($scope, Ad, $rootScope) {
 				}else{
 
 					// Push new record to ads
+					res.image = "/img/no-image.png";	
 					$scope.ads.push(res);
 					$rootScope.adsClone.push(res);
 
