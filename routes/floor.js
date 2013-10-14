@@ -17,19 +17,7 @@ var	mapinfo_path = "/" + config.mapInfoPath;
 
 // GET Page of specific building
 exports.show = function(req, res) {
-
-	Floor.findById(req.params._id, function(err, floor) {
-
-		if (err)
-			log.error(err);
-
-		if(floor)
-			res.render("floor/floor-show.html", {
-				floor: floor
-			});
-
-	});
-
+	res.render("floor/floor-show.html");
 };
 
 // GET Interface for read specific floor

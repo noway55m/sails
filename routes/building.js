@@ -18,19 +18,7 @@ var	mapinfo_path = "/" + config.mapInfoPath;
 
 // GET Page for show specific building
 exports.show = function(req, res) {
-
-	Building.findById(req.params._id, function(err, building) {
-
-		if (err)
-			log.error(err);
-
-		if (building)
-			res.render("building/building-show.html", {
-				building: building
-			});
-
-	});
-
+	res.render("building/building-show.html");
 };
 
 // Get Interface of list public buildings
