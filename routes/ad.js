@@ -137,11 +137,13 @@ exports.del = function(req, res){
 			
 			if(ad){
 				
-				// Delete ad image									
-				var oldImgPath = path.resolve(image_path + "/" + ad.image);
-				fs.unlink(oldImgPath, function(err){
-					log.error(err);
-				});				
+				// Delete ad image if exist
+				if(ad.image){
+					var oldImgPath = path.resolve(image_path + "/" + ad.image);
+					fs.unlink(oldImgPath, function(err){
+						log.error(err);
+					});				
+				}
 				
 				// Remove ad
 				ad.remove(function(err){
@@ -209,24 +211,27 @@ exports.uploadImage = function(req, res) {
 									res.send(200, "Server error, please try again later");									
 								}else{									
 
-									// Delete old image									
-									var oldImgPath = path.resolve(image_path + "/" + ad.image);
-									fs.unlink(oldImgPath, function(err){
-										log.error(err);
-									});
+									// Delete old image	if exist
+									if(ad.image){
+										var oldImgPath = path.resolve(image_path + "/" + ad.image);
+										fs.unlink(oldImgPath, function(err){
+											log.error(err);
+										});
+									}
 									
+									// Update ad
 									ad.image = targetFileName;
 									ad.save(function(){
 										res.send(200, targetFileName);																			
 									});								
+								
+									// Delete the temporary file
+		                            fs.unlink(tmpPath, function(err){
+		                            	log.error(err);
+		                            });										
 									
 								}										
-							});
-                            
-							// Delete the temporary file
-                            fs.unlink(tmpPath, function(err){
-                            	log.error(err);
-                            });								
+							});							
 							
 						}else{
 							

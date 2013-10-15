@@ -1,6 +1,6 @@
 var log = require('log4js').getLogger(), 
 	Store = require("../model/store"),
-	Ad = require("../model/store"),
+	Ad = require("../model/ad"),
 	crypto = require('crypto'),
 	fs = require('fs'),
 	path = require('path'),
@@ -155,41 +155,59 @@ exports.del = function(req, res){
 			
 			if(store){
 				
-				// Delete store image									
-				var oldImgPath = path.resolve(image_path + "/" + store.icon);
-				fs.unlink(oldImgPath, function(err){
-					log.error(err);
-				});	
+				var storeId = req.body._id;
 				
-				res.json(200, {
-					_id: req.body._id
+				// Delete store image if exist
+				if(store.icon){
+					var oldImgPath = path.resolve(image_path + "/" + store.icon);
+					fs.unlink(oldImgPath, function(err){
+						log.error(err);
+					});	
+				}
+				
+				// Remove store
+				store.remove(function(err){
+					
+					if(err){
+						log.error(err);
+					}else{
+						res.json(200, {
+							_id: req.body._id
+						});
+						
+					}
+					
 				});
 				
 				// Find all relative ads
 				Ad.find({
 					
-					storeId: req.body._id 
+					storeId: storeId
 				
 				}, function(err, ads){
 					
 					if(err)						
 						log.error(err);
-
+					
 					for(var i=0; i<ads.length; i++){
 						
-						// Delete ad image									
-						var oldAdImgPath = path.resolve(image_path + "/" + ads[i].image);
-						fs.unlink(oldAdImgPath, function(err){
-							log.error(err);
-						});
+						// Delete ad image
+						if(ads[i].image){
+							var oldAdImgPath = path.resolve(image_path + "/" + ads[i].image);
+							console.log(oldAdImgPath);
+							fs.unlink(oldAdImgPath, function(err){
+								log.error(err);
+							});														
+						}
 						
+						// Remove ad
 						ads[i].remove(function(err){
 							log.error(err);
 						});
 						
 					}					
 					
-				});					
+				});	
 				
 			}
 			
@@ -198,7 +216,6 @@ exports.del = function(req, res){
 	}
 		
 };
-
 
 // POST Interface of upload image
 exports.uploadImage = function(req, res) {
@@ -248,23 +265,27 @@ exports.uploadImage = function(req, res) {
 									res.send(200, "Server error, please try again later");									
 								}else{									
 									
-									// Delete old image									
-									var oldImgPath = path.resolve(image_path + "/" + store.icon);
-									fs.unlink(oldImgPath, function(err){
-										log.error(err);
-									});									
+									// Delete old image if exist
+									if(store.icon){
+										var oldImgPath = path.resolve(image_path + "/" + store.icon);
+										fs.unlink(oldImgPath, function(err){
+											log.error(err);
+										});
+									}
 									
+									// Update store
 									store.icon = targetFileName;
 									store.save(function(){
 										res.send(200, targetFileName);																			
 									});
+									
+									// Delete the temporary file
+		                            fs.unlink(tmpPath, function(err){
+		                            	log.error(err);
+		                            });									
+									
 								}										
-							});								
-						
-							// Delete the temporary file
-                            fs.unlink(tmpPath, function(err){
-                            	log.error(err);
-                            });							
+							});															
 							
 						}else{
 							

@@ -134,6 +134,9 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 						res.icon = "/img/no-image.png";						
 					$rootScope.floor.stores.push(res);
 					
+					// Update size
+					$rootScope.floor.stores.size++; 
+					
 					// Clean all fields and close dialog
 					inputFields.val("");
 					form.parent().parent().parent().modal('hide');
@@ -181,6 +184,9 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 						break;
 					}
 		    	}
+		    	
+				// Update size
+				$rootScope.floor.stores.size--; 		    	
 		    	
 		    	// Show success msg
 				$().toastmessage('showSuccessToast', "Remove successfully");

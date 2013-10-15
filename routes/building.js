@@ -14,7 +14,8 @@ var log = require('log4js').getLogger(),
 	config = require('../config/config');
 
 // Static variable
-var	mapinfo_path = "/" + config.mapInfoPath;
+var	mapinfo_path = "/" + config.mapInfoPath,
+	image_path = config.imagePath;
 
 // GET Page for show specific building
 exports.show = function(req, res) {
@@ -147,8 +148,52 @@ exports.update = function(req, res) {
 exports.del = function(req, res) {
 
 	if(req.body._id){
+				
+		// Remove building folder
+		var folderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + req.body._id;
+		fs.exists(folderPath, function(exist){
+			
+			// Delete the folder removed floor 
+			if(exist)
+				rimraf(folderPath, function(err){
+					if(err)
+						log.error(err);
+				});	
+			
+			// Find building
+			Building.findById(req.body._id, function(err, building){
+				
+				if(err)
+					log.error(err);
+				
+				if(building){
+					
+					// Remove building icon
+					if(building.icon){
+						var oldImgPath = path.resolve(image_path + "/" + building.icon);
+						fs.unlink(oldImgPath, function(err){
+							log.error(err);
+						});	
+					}							
+					
+					// Remove building
+					building.remove(function(err){
+						if(err)
+							log.error(err);
+						else
+							res.send(200, {
+								_id: req.body._id
+							});
+							
+					});
+										
+				}
+				
+			});
+			
+		});		
 		
-		// Find all stores
+		// Find all floors
 		Floor.find({
 			
 			buildingId: req.body._id
@@ -172,55 +217,58 @@ exports.del = function(req, res) {
 					for(var j=0; j<stores.length; j++){		
 						
 						// Remove ad
-						Ad.remove({
+						Ad.find({
 							
 							storeId: stores[j].id
 							
-						}, function(err){					
+						}, function(err, ads){					
+							
 							if(err)
-								log.error(err);								
-						});				
+								log.error(err);
+							
+							for(var k=0; k<ads.length; k++){
+								
+								// Delete ad image if exist
+								if(ads[k].image){
+									var oldImgPathAd = path.resolve(image_path + "/" + ads[k].image);
+									fs.unlink(oldImgPathAd, function(err){
+										log.error(err);
+									});	
+								}
+								
+								// Remove ad
+								ads[k].remove(function(err){
+									log.error(err);
+								});						
+								
+							}
+												
+						});			
+												
+						// Delete store icon if exist
+						if(stores[j].icon){
+							var oldImgPath = path.resolve(image_path + "/" + stores[j].icon);
+							fs.unlink(oldImgPath, function(err){
+								log.error(err);
+							});	
+						}							
 						
 						// Remove store
-						stores[j].remove();					
+						stores[j].remove(function(err){
+							log.error(err);
+						});
+						
 					}
 					
 				});
 				
 				// Remove floor
-				floors[i].remove();
-				
-			}
-			
-			// Remove building folder
-			var folderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + req.body._id;
-			fs.exists(folderPath, function(exist){
-				
-				// Delete the folder removed floor 
-				if(exist)
-					rimraf(folderPath, function(err){
-						if(err)
-							log.error(err);
-					});	
-				
-				// Remove building
-				Building.findOneAndRemove({
-				
-					_id: req.body._id
-				
-				}, function(err){
-					
-					if(err)
-						log.error(err);
-					else
-						res.send(200, {
-							_id: req.body._id
-						});
-					
+				floors[i].remove(function(err){
+					log.error(err);
 				});
 				
-			});
-						
+			}
+									
 		});		
 				
 	}
@@ -280,23 +328,27 @@ exports.uploadImage = function(req, res) {
 									});
 								}else{
 
-									// Delete old image									
-									var oldImgPath = path.resolve(config.imagePath + "/" + building.icon);
-									fs.unlink(oldImgPath, function(err){
-										log.error(err);
-									});										
+									// Delete old image if exist
+									if(building.icon){
+										var oldImgPath = path.resolve(config.imagePath + "/" + building.icon);
+										fs.unlink(oldImgPath, function(err){
+											log.error(err);
+										});
+									}
 									
+									// Update building
 									building.icon = targetFileName;
 									building.save(function(){
 										res.send(200, targetFileName);
 									});
+									
+									// Delete the temporary file
+		                            fs.unlink(tmpPath, function(err){
+		                            	log.error(err);
+		                            });										
+									
 								}
-							});
-
-							// Delete the temporary file
-                            fs.unlink(tmpPath, function(err){
-                            	log.error(err);
-                            });									
+							});								
 							
 						}else{
 

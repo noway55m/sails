@@ -109,21 +109,7 @@
 				</div>
 
 				<!-- Stores Block -->
-				<div class="row display-block">
-					
-					<!-- only admin have permission to create store -->	
-					<% if(user.role == roles.ADMIN ){ %>
-
-						<!-- Add store dialog and trigger button -->
-						<% include ../store/store-add-dialog.html %>
-														
-					<% } %>
-					
-					
-					<!-- Stores list -->				
-					<% include ../store/store-list.html	%>
-					
-				</div>
+				<% include ../store/store-list.html	%>
 
 			</div>
 
