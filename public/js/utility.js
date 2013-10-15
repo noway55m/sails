@@ -51,6 +51,13 @@ Utility.prototype.emailValidate = function(fieldObj, errorMsgObj){
     return this.fieldValidate(value, fieldObj, errorMsgObj, format);
 };
 
+// Function for validate float input fields and focus, select then show error message if format error occur
+Utility.prototype.floatValidate = function(fieldObj, errorMsgObj){
+    var format = /^-?(?:[0-9]+|[0-9]*\.[0-9]+)$/, // float regex
+        value = $.trim(fieldObj.val()).toLowerCase();
+    return this.fieldValidate(value, fieldObj, errorMsgObj, format);
+};
+
 // Function for validate password input fields and focus, select then show error message if format error occur
 Utility.prototype.passwordValidate = function(fieldObj, errorMsgObj){
 	

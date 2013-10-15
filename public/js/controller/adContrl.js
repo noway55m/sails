@@ -57,7 +57,7 @@ function AdListCtrl($scope, Ad, $rootScope) {
 			descObj = form.find("input[name=desc]");
 
 		if (utility.emptyValidate(nameObj, errorMsgObj) &&
-				utility.emptyValidate(priceObj, errorMsgObj) &&
+				utility.floatValidate(priceObj, errorMsgObj) &&
 				utility.emptyValidate(descObj, errorMsgObj)) {
 
 			// Disable all fields before finish save
@@ -183,7 +183,7 @@ function AdListCtrl($scope, Ad, $rootScope) {
 			descObj = form.find("input[name=desc]");
 
 		if (utility.emptyValidate(nameObj, errorMsgObj) &&
-			utility.emptyValidate(priceObj, errorMsgObj) &&
+			utility.floatValidate(priceObj, errorMsgObj) &&
 			utility.emptyValidate(descObj, errorMsgObj)) {
 
 			// Disable all fields
