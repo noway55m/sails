@@ -267,9 +267,9 @@ function FloorShowCtrl($scope, $location, Floor, $rootScope) {
 				errorMsgObj.hide();						
 				
 				// Check both file upload
-				if(!$(inputFields[1]).val() || !$(inputFields[2]).val()){
+				if(!$(inputFields[1]).val()){
 					
-					errorMsgObj.find('.errorText').text("Both path.xml and map.xml need to be uploaded.");	
+					errorMsgObj.find('.errorText').text("Map.xml need to be uploaded.");	
 					errorMsgObj.show();	
 					return false
 					

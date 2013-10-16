@@ -334,12 +334,12 @@ exports.del = function(req, res){
 // POST Interface for upload path.xml and map.xml
 exports.uploadMapAndPath = function(req, res) {
 
-	if(req.body._id && req.files.map && req.files.path){
+	if(req.body._id && req.files.map){
 
 	    Floor.findById(req.body._id, function(err, floor) {
 
 	        // Get the temporary location of the file
-	        var tmpPathPath = req.files.path.path,
+	        var tmpPathPath = req.files.path ? req.files.path.path : null,
 	            tmpPathMap = req.files.map.path;
 
 	        // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
@@ -356,34 +356,64 @@ exports.uploadMapAndPath = function(req, res) {
                 log.info("targetPathMap: " + targetPathMap);
 
                 // Move file from temp to target
-                fs.rename(tmpPathPath, targetPathPath, function(err) {
+                fs.rename(tmpPathMap, targetPathMap, function(err) {
 
-                    if (err)
+                    if (err){
+                    	
                         log.error(err);
+                        
+                    }else{
+                    	
+                    	// Update map
+                    	floor.map = webLocation + "/map.xml";
+                        if(tmpPathPath){
+                        	
+                            fs.rename(tmpPathPath, targetPathPath, function(err) {
 
-                    fs.rename(tmpPathMap, targetPathMap, function(err) {
+                                if (err)
+                                    log.error(err);
+                                
+                                // Update floor
+                                floor.path = webLocation + "/path.xml";                                
+                                floor.lastXmlUpdateTime = new Date();                        
+                                floor.save(function(err, floor) {
 
-                        if (err)
-                            log.error(err);
+                                    if (err)
+                                        log.error(err);
 
-                        floor.path = webLocation + "/path.xml";
-                        floor.map = webLocation + "/map.xml";
-                        floor.lastXmlUpdateTime = new Date();                        
-                        floor.save(function(err, floor) {
+                                    if (floor)
+                                        res.send(200, floor);
 
-                            if (err)
-                                log.error(err);
+                                    // Delete temped path.xml
+                                    fs.unlink(tmpPathPath, function(err){});
 
-                            if (floor)
-                                res.send(200, floor);
+                                });
 
-                            // Delete the temporary file
-                            fs.unlink(tmpPathMap, function(err){});
-                            fs.unlink(tmpPathPath, function(err){});
+                            });                    	
+                        	                    	
+                        }else{
+                        	
+                        	// Update floor
+                        	floor.lastXmlUpdateTime = new Date(); 
+                            floor.save(function(err, floor) {
 
-                        });
+                                if (err)
+                                    log.error(err);
 
-                    });
+                                if (floor)
+                                    res.send(200, floor);
+
+                                // Delete temped map.xml
+                                fs.unlink(tmpPathMap, function(err){});
+
+                            });
+                            
+                        }                    	
+                    	
+                    }
+                    
+                    // Delete temped map.xml
+                    fs.unlink(tmpPathMap, function(err){});
 
                 });
 
