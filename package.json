@@ -25,6 +25,7 @@
     "moment": "2.3.0",
     "adm-zip": "0.4.3",
     "archiver": "~0.4.10",
-    "rimraf": "2.2.2"
+    "rimraf": "2.2.2",
+    "http-proxy": "0.10.3"
   }
 }

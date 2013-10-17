@@ -15,6 +15,7 @@ var express = require('express')
   , test = require('./routes/test')
   , http = require('http')
   , https = require('https')
+  , httpProxy = require('http-proxy')
   , path = require('path')
   , passport = require('./config/passportSetup')
   , bootstrap = require('./config/bootstrap')
@@ -40,7 +41,7 @@ app.use(passport.session());
 app.engine('html', require('ejs').renderFile);
 
 // all environments
-app.set('port', process.env.PORT || 80);
+app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.favicon());
@@ -161,6 +162,10 @@ app.get('/auth/google/callback', passport.authenticate('google', {failureRedirec
 
 
 /**************** Create HTTP Server ****************/
+// Create your proxy server
+httpProxy.createServer(app.get('port'), 'localhost').listen(80);
+
+// Create http server
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
