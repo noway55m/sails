@@ -453,41 +453,49 @@ exports.uploadRenderAndRegion = function(req, res) {
                 // Move file from temp to target
                 fs.rename(tmpPathRender, targetPathRender, function(err) {
 
-                    if (err)
+                    if (err){
+                    	
                         log.error(err);
-
-                    fs.rename(tmpPathRegion, targetPathRegion, function(err) {
-
-                        if (err)
-                            log.error(err);
-
-                        floor.render = webLocation + "/render.xml";
-                        floor.region = webLocation + "/region.xml";
-                        floor.save(function(err, floor) {
-
-                            if (err)
-                                log.error(err);
-
-                            if (floor)
-                                res.send(200, floor);
-
-                            // Start to parse region.xml
-                            fs.readFile(targetPathRegion, 'utf8', function (err, data) {
-
-                                if(err)
-                                  log.error(err);
-
-                                if(data)
-                                    parseRegion(data, req.body._id);
-
-                                // Delete the temporary file
-                                fs.unlink(tmpPathRender, function(err){});
-                                fs.unlink(tmpPathRegion, function(err){});
-                            });
-
+                        res.json(400, {
+                        	msg: "Sever error " + err 
                         });
-
-                    });
+                        
+                    }else{
+                    	
+	                    fs.rename(tmpPathRegion, targetPathRegion, function(err) {
+	
+	                        if (err)
+	                            log.error(err);
+	
+	                        floor.render = webLocation + "/render.xml";
+	                        floor.region = webLocation + "/region.xml";
+	                        floor.save(function(err, floor) {
+	
+	                            if (err)
+	                                log.error(err);
+	
+	                            if (floor)
+	                                res.send(200, floor);
+	
+	                            // Start to parse region.xml
+	                            fs.readFile(targetPathRegion, 'utf8', function (err, data) {
+	
+	                                if(err)
+	                                  log.error(err);
+	
+	                                if(data)
+	                                    parseRegion(data, req.body._id);
+	
+	                                // Delete the temporary file
+	                                fs.unlink(tmpPathRender, function(err){});
+	                                fs.unlink(tmpPathRegion, function(err){});
+	                            });
+	
+	                        });
+	
+	                    });
+	                    
+                    }
 
                 });
 
@@ -514,56 +522,59 @@ function parseRegion(regionXMLString, floorId, next){
 
 	    	if(err)
 	    		log.error(err);
+	    	
+	    	if(ways){
+	    		
+			    ways.forEach(function(way){
+	
+			    	var tags = way.tag;
+			    	tags.forEach(function(tag){
+	
+			    		//console.log(tag.$);
+			    		var tagInfo = tag.$;
+			    		if(tagInfo.k == "label"){
+	
+			    			var name = tagInfo.v,
+			    				isDuplicate = false;
+			    			console.log(name);
+	
+			    			// Check is duplicate
+			    			for(var i=0; i< stores.length; i++){
+			    				if(name == stores[i].name){
+			    					isDuplicate = true;
+			    					break;
+			    				}
+			    			}
+	
+			    			if(!isDuplicate){
+	
+		    					Store.create({
+	
+		    						name: tagInfo.v,
+		    						floorId: floorId
+	
+		    					}, function(error, store){
+		    						if(error)
+		    							log.error(error);
+	
+		    						if(store)
+		    							log.info("Create new store " + name + " successfully");
+		    					});
+	
+			    			}else{
+	
+			    				log.info("Duplicate store name " + name);
+	
+			    			}
+	
+			    		}
+	
+			    	});
+	
+			    });
 
-		    ways.forEach(function(way){
-
-		    	var tags = way.tag;
-		    	tags.forEach(function(tag){
-
-		    		//console.log(tag.$);
-		    		var tagInfo = tag.$;
-		    		if(tagInfo.k == "label"){
-
-		    			var name = tagInfo.v,
-		    				isDuplicate = false;
-		    			console.log(name);
-
-		    			// Check is duplicate
-		    			for(var i=0; i< stores.length; i++){
-		    				if(name == stores[i].name){
-		    					isDuplicate = true;
-		    					break;
-		    				}
-		    			}
-
-		    			if(!isDuplicate){
-
-	    					Store.create({
-
-	    						name: tagInfo.v,
-	    						floorId: floorId
-
-	    					}, function(error, store){
-	    						if(error)
-	    							log.error(error);
-
-	    						if(store)
-	    							log.info("Create new store " + name + " successfully");
-	    					});
-
-		    			}else{
-
-		    				log.info("Duplicate store name " + name);
-
-		    			}
-
-		    		}
-
-		    	});
-
-		    });
-
-
+	    	}
+	    	
 	    });
 
 
