@@ -1,18 +1,21 @@
 <!-- Floors list include in building/index.html -->
 <div class="row display-block" ng-controller="FloorListCtrl">
-
+	
+	<!-- Loading -->
+	<div class="loading" ng-show="loadingFloor">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>	
+	
 	<!-- Delete Confirm Dialog -->
 	<% include ../layout/delete-confirm-dialog.html %>
 
 	<!-- Add floor, add basement and add store buttons -->
-	<a data-toggle="modal" class="btn btn-default" href="#" ng-click="addFloor()">
+	<a data-toggle="modal" class="btn btn-default" href="#" ng-click="addFloor()" ng-hide="loadingFloor" style="display:none;">
 		<span  class="glyphicon glyphicon-plus" ></span> Add Floor
 	</a>
-	<a data-toggle="modal" class="btn btn-default" href="#" ng-click="addBasement()">
+	<a data-toggle="modal" class="btn btn-default" href="#" ng-click="addBasement()" ng-hide="loadingFloor" style="display:none;">
 		<span  class="glyphicon glyphicon-plus" ></span> Add Basement
 	</a>
 	<!-- List floors block -->
-	<div id="index-floor" class="panel-collapse collapse in">
+	<div id="index-floor" class="panel-collapse collapse in" ng-hide="loadingFloor" style="display:none;">
 		<div class="panel-body">
 			<div class="panel-group" id="index-upfloor-accordion" ng-repeat="floor in floorUp">
 
@@ -42,7 +45,7 @@
 	</div>
 
 	<!-- List basements block -->
-	<div id="index-layer" class="panel-collapse collapse in">
+	<div id="index-layer" class="panel-collapse collapse in" ng-hide="loadingFloor" style="display:none;">
 		<div class="panel-body">
 			<div class="panel-group" id="index-downfloor-accordion" ng-repeat="floor in floorDown">
 

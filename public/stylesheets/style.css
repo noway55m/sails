@@ -9,6 +9,7 @@ body {
 	border-radius: 10px;
 	box-shadow: 5px 5px 5px #888888;
 	margin-top:20px;
+	min-height: 220px;
 }
 .edit-block {
 	max-width: 900px;
@@ -93,6 +94,17 @@ body {
 	vertical-align: top; 
 }
 
+.jumbotron,
+.breadcrumb{
+	position: relative;
+}
+
+.loading{
+	position:absolute;
+	left:50%;
+	margin-left: -12px;
+	top:0px;
+}
 /******************* floor-list.html ********************/
 #index-floor .panel-heading,
 #index-layer .panel-heading{

@@ -13,6 +13,8 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 	};
 		
 	// Load floor after building finish load
+	$rootScope.loadingStore = true;
+	$rootScope.loadingAd = true;
 	$rootScope.$on('floorFinishLoad', function(e, floor) {
 		Store.list({
 			floorId : floor._id
@@ -27,11 +29,11 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 			});
 			$rootScope.floor.stores = stores;
 			$rootScope.floor.stores.size = stores.length;
-			
+			$rootScope.loadingStore = false;			
 		});
 	});	
 		
-	// Show stores while floor collapse open
+	// Show stores while floor collapse open	
 	$(".floor").on("shown.bs.collapse", function(){
 
 		// Get current select floor
@@ -59,7 +61,7 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 					store.icon = "/img/no-image.png";
 			});			
 			$rootScope.floors[j].stores	= stores;
-			
+			$rootScope.loadingStore = false;			
 		});
 
 		// Set current selected floor on field floor
@@ -205,6 +207,8 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
     // Get store info and floor info
     var url = $location.absUrl(),
     	id = url.substring(url.lastIndexOf("/") + 1, url.length);
+    
+	$rootScope.loadingStore = true;
     Store.get({ _id : id }, function(store){
     	
     	// Set icon url
@@ -259,6 +263,7 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
 				$("#store-floor option[value=" + store.floor + "]").attr("selected", "selected");
 			}, 1000);
 
+			$rootScope.loadingStore = false;
 		});
 
     	$rootScope.$emit('storeFinishLoad', store);

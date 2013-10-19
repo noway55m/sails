@@ -13,6 +13,7 @@ function BuildingListCtrl($scope, Building) {
 	};	
 	
     // List all buildings
+	$scope.loading = true;
 	Building.list(function(buildings){
 		
 		// Set icon url
@@ -23,7 +24,7 @@ function BuildingListCtrl($scope, Building) {
 				building.icon = "/img/no-image.png";
 		});		
 		$scope.buildings = buildings;
-		
+		$scope.loading = false;
 	});
 
 	// Function for add new building
@@ -128,7 +129,9 @@ function BuildingListCtrl($scope, Building) {
 // Show specific building controller
 function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 	var url = $location.absUrl(),
-		id = url.substring(url.lastIndexOf("/") + 1, url.length);
+		id = url.substring(url.lastIndexOf("/") + 1, url.length);	
+	$scope.loadingBuilding = true;
+	$rootScope.loadingFloor = true;	
 	Building.get({ _id : id }, function(building){
 		if(building.icon)
 			building.icon = "/" + imagePath + "/" + building.icon;
@@ -136,7 +139,8 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 			building.icon = "/img/no-image.png";	    
 		$scope.building = building;
 		$rootScope.$emit('buildingFinishLoad', building);
-        $rootScope.buildingClone = angular.copy(building); // Clone building for future rollback
+        $rootScope.buildingClone = angular.copy(building); // Clone building for future rollback        
+    	$scope.loadingBuilding = false;
 	});
 
     // Function for rollback selected user info

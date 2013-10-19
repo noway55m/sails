@@ -5,6 +5,7 @@ function AdListCtrl($scope, Ad, $rootScope) {
 
 	$rootScope.$on('storeFinishLoad', function(e, store) {
 		
+		$rootScope.loadingAd = true;
 		Ad.list({
 			storeId : store._id
 		}, function(ads) {
@@ -17,7 +18,7 @@ function AdListCtrl($scope, Ad, $rootScope) {
 			});
 			$scope.ads = ads;
 			$rootScope.adsClone = angular.copy(ads);	// Clone ads for future rollback
-			
+			$rootScope.loadingAd = false;
 		});
 		
 		setTimeout(function(){

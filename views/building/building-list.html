@@ -9,11 +9,17 @@
 	<br>
 
 	<!-- Buildings list -->
-	<div id="building-list" class="row" style="background-color: #f7f7f9;">
-		<div class="col-xs-6 col-sm-4 col-md-2" ng-repeat="building in buildings" ng-mouseenter="showRemoveButton($event)" ng-mouseleave="hideRemoveButton($event)">
+	<div id="building-list" class="row display-block">
+		
+		<!-- Loading -->
+		<div class="loading" ng-show="loading">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>	
+		
+		<!-- Content -->
+		<div class="col-xs-6 col-sm-4 col-md-2" ng-repeat="building in buildings" ng-mouseenter="showRemoveButton($event)" 
+			ng-mouseleave="hideRemoveButton($event)">
 			<div class="belement">
 				<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup()"></span>
-				<img ng-src="{{building.icon}}" alt="Image Icon" class="default-icon"/>
+				<img ng-src="{{building.icon}}" alt="Image Icon" class="default-icon" ng-hide="loading" style="display:none;"/>
 				<a href="/building/show/{{building._id}}"><span ng-bind="building.name"></span></a>
 			</div>
 		</div>

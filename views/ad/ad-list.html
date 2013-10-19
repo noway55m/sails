@@ -7,17 +7,20 @@
 	</a>
 	<% include ../ad/ad-add-dialog.html %>
 
-	<!-- Ads list block -->
+	<!-- Ads list block -->	
 	<div ng-repeat="ad in ads">
 
 			<div id="{{ad._id}}" class="display-block">
+
+				<!-- Loading -->
+				<div class="loading" ng-show="loadingAd">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>		
 
 				<!-- Edit and Remove trigger button -->
 				<span class="glyphicon glyphicon-remove remove-button" ng-click="deleteDialogSetup()"></span>
 				<span class="glyphicon glyphicon-edit edit-button"></span>				
 				
 				<!-- Display block -->
-				<div>
+				<div ng-hide="loadingAd" style="display:none;">
 					<div>
 						<div class="row" style="text-align:center;">
 							<img ng-show="ad.image" ng-src="{{ad.image}}" alt="Ad Image"/>
@@ -44,7 +47,7 @@
 					</div>
 				</div>
 				<hr>
-				<div class="row" style="text-align:center;">
+				<div class="row" style="text-align:center;display:none;" ng-hide="loadingAd">
 					<span class="title">Start Date</span>
 					<span ng-bind="ad.startTime"></span>
 					<span class="title">End Date</span>

@@ -17,26 +17,28 @@
 		<div class="container">
 
 			<!-- Navigator bar to display current store of floor of specific building -->
-			<ol class="breadcrumb">
-			  <li><a href="/building/show/{{floor.buildingId}}">Building</a></li>
-			  <li>
-			  	<a href="/floor/show/{{store.floorId}}" ng-show="up">
-			  		<span ng-bind="floor.layer"></span> F
-			  	</a>
-			  	<a href="/floor/show/{{store.floorId}}" ng-show="!up">
-			  		B <span ng-bind="Math.abs(floor.layer)"></span>
-			  	</a>
-			  </li>
-			  <li class="active" ng-bind="store.name"></li>
-			</ol>
+		<ol class="breadcrumb">
+			<!-- Loading -->
+			<div class="loading" ng-show="loadingAd" >&nbsp;<img src="/img/loading.gif" alt="loading.." /></div>
 
-			<div class="jumbotron">
+			<li><a href="/building/show/{{floor.buildingId}}">Building</a></li>
+			<li ng-hide="loadingAd" style="display: none;">
+				<a href="/floor/show/{{store.floorId}}" ng-show="up"> <span ng-bind="floor.layer"></span> F</a>
+				<a href="/floor/show/{{store.floorId}}" ng-show="!up" ng-hide="loadingAd"> B <span ng-bind="Math.abs(floor.layer)"></span></a>
+			</li>
+			<li class="active" ng-bind="store.name" ng-hide="loadingAd" style="display: none;"></li>
+		</ol>
+
+		<div class="jumbotron">
 
 				<!-- Display Block -->
 				<div class="row display-block">
 
+					<!-- Loading -->
+					<div class="loading" ng-show="loadingStore">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>		
+
 					<!-- Image icon and name -->
-					<div class="col-xs-12 col-sm-3 col-md-2" style="text-align:center;padding:15px 5px;">
+					<div class="col-xs-12 col-sm-3 col-md-2" style="text-align:center;padding:15px 5px;display:none" ng-hide="loadingStore">
 						<img ng-show="store.icon" ng-src="{{store.icon}}" alt="Store Icon" class="icon"/>
 						<div>
 							<span class="title">Name:</span>
@@ -45,7 +47,7 @@
 					</div>
 
 					<!-- Link, Phone and Memo -->
-					<div class="col-xs-12 col-sm-8 col-md-9">
+					<div class="col-xs-12 col-sm-8 col-md-9" ng-hide="loadingStore" style="display:none;">
 						<div>
 							<span class="title">Link</span>
 							<span ng-bind="store.link"></span>

@@ -32,7 +32,8 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 
 			$rootScope.currentUpFloor = $rootScope.floorUp.length + 1,
 			$rootScope.currentDownFloor = -($rootScope.floorDown.length) - 1;
-
+			$rootScope.loadingFloor = false;
+			
 		});
 
 	});
@@ -175,6 +176,7 @@ function FloorShowCtrl($scope, $location, Floor, $rootScope) {
 	$scope.Math = window.Math;
 	
 	// Get floor
+	$rootScope.loadingFloor = true;
 	$rootScope.floor = Floor.get({ _id : id }, function(floor){
 		
 		// Check is floor or basement
@@ -188,6 +190,7 @@ function FloorShowCtrl($scope, $location, Floor, $rootScope) {
 				
 		// Trigger load stores of this floor
 		$rootScope.$emit('floorFinishLoad', floor);
+		$rootScope.loadingFloor = false;
 		
 	});
 

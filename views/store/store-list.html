@@ -1,6 +1,9 @@
 <!-- Store list include in page 'floor/index.html' -->
 <div class="row display-block">
 
+	<!-- Loading -->
+	<div class="loading" ng-show="loadingStore">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>		
+
 	<!-- only admin have permission to create store -->	
 	<% if(user.role == roles.ADMIN ){ %>
 
@@ -9,7 +12,7 @@
 										
 	<% } %>
 					
-	<div class="panel-body" ng-controller="StoreListCtrl">
+	<div class="panel-body" ng-controller="StoreListCtrl" ng-hide="loadingStore" style="display:none;">
 		<h4>Stores</h4>
 		<h6>Total Count: <span ng-bind="floor.stores.size"></span></h6>
 		<div class="belement" ng-repeat="store in floor.stores" ng-mouseenter="showRemoveButton($event)" ng-mouseleave="hideRemoveButton($event)">		

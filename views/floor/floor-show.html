@@ -16,26 +16,28 @@
 
 		<div class="container">
 
-			<!-- Navigation bar to display current floor of specific building -->
-			<ol class="breadcrumb">
-			  <li><a href="/building/show/{{floor.buildingId}}">Building</a></li>
-			  <li class="active">
-			  	<a href="#" ng-show="up">
-			  		<span ng-bind="floor.layer"></span> F
-			  	</a>
-			  	<a href="#" ng-show="!up">
-			  		B <span ng-bind="Math.abs(floor.layer)"></span>
-			  	</a>
-			  </li>
-			</ol>
+		<!-- Navigation bar to display current floor of specific building -->
+		<ol class="breadcrumb">		
+			<!-- Loading -->
+			<div class="loading" ng-show="loadingFloor">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>		
+		
+			<li><a href="/building/show/{{floor.buildingId}}">Building</a></li>
+			<li class="active" ng-hide="loadingFloor" style="display:none;">
+				<a href="#" ng-show="up"><span ng-bind="floor.layer"></span> F </a> 
+				<a href="#" ng-show="!up"> B <span ng-bind="Math.abs(floor.layer)"></span></a>
+			</li>
+		</ol>
 
-			<div class="jumbotron">
+		<div class="jumbotron">
 
 				<!-- Display Block -->
 				<div class="row display-block">
 
+					<!-- Loading -->
+					<div class="loading" ng-show="loadingFloor">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>		
+
 					<!-- Layer, name and description -->
-					<div class="col-xs-12 col-sm-3 col-md-2" style="text-align:center;padding:15px 5px;">
+					<div class="col-xs-12 col-sm-3 col-md-2" style="text-align:center;padding:15px 5px;display:none;" ng-hide="loadingFloor">
 					  	<div href="#" ng-show="up">
 					  		<span ng-bind="floor.layer"></span> F
 					  	</div>
@@ -47,7 +49,7 @@
 							<span ng-bind="floor.name"></span>
 						</div>
 					</div>
-					<div class="col-xs-12 col-sm-8 col-md-9">
+					<div class="col-xs-12 col-sm-8 col-md-9" ng-hide="loadingFloor" style="display:none;">
 						<span class="title">Description</span>
 						<p ng-bind="floor.desc" style="padding:10px;"></p>
 					</div>
