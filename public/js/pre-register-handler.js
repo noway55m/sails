@@ -20,13 +20,15 @@ $(document).ready(function(){
 
 			// Toggle edit block
 			$(this).parent().hide();
-			$(this).parent().parent().find(".edit-block").fadeIn();
+			// $(this).parent().parent().find(".edit-block").first().fadeIn();
+			$(this).parent().nextAll('.row.edit-block:first').fadeIn();
 
 		}).on('click', ".close-button", function(){
 
 			// Toggle display block
 			$(this).parent().hide();
-			$(this).parent().parent().find(".display-block").fadeIn();
+			// $(this).parent().parent().find(".display-block").first().fadeIn();
+			$(this).parent().prevAll('.row.display-block:first').fadeIn();
 
 		});
 

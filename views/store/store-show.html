@@ -62,7 +62,7 @@
 					</div>
 
 					<!-- Edit trigger button -->
-					<span class="glyphicon glyphicon-edit edit-button"></span>
+					<span class="glyphicon glyphicon-edit edit-button" id="kkkkkkk"></span>
 
 				</div>
 				<hr/>
@@ -74,8 +74,7 @@
 					<button type="button" class="close close-button" ng-click="cancelUpdateStore()">x</button>
 
 					<!-- Form -->
-					<div class="edit-block">
-
+					<div>
 						<!-- text fields -->
 						<div class="form-group">
 							<label for="name">Name</label>
@@ -114,7 +113,7 @@
 					<hr/>
 
 					<!-- Icons upload area -->
-					<div class="edit-block">
+					<div>
 						<form name="form" action="/store/uploadImage" method="POST" enctype="multipart/form-data">
 							<input type="hidden" class="form-control" name="_id" value="{{store._id}}">
 							<label for="image">Upload icon image:</label>

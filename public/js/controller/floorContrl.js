@@ -232,8 +232,13 @@ function FloorShowCtrl($scope, $location, Floor, $rootScope) {
 				inputFields.removeAttr('disabled');
 
 				// Clone user info
+				var stores = $rootScope.floorClone.stores;
 		        $rootScope.floorClone = angular.copy(floor);				
-				
+		        $rootScope.floorClone.stores = stores;
+		        
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Update successfully");		        
+		        
 			}, function(res){
 	
 				// Show error msg
@@ -299,8 +304,9 @@ function FloorShowCtrl($scope, $location, Floor, $rootScope) {
 				// Update and clone
 				$scope.$apply(function () {
 					floor.lastXmlUpdateTime = res.lastXmlUpdateTime;
-			        console.log(floor)
-					$rootScope.floorClone = angular.copy(floor);	
+					var stores = $rootScope.floorClone.stores;
+			        $rootScope.floorClone = angular.copy(floor);				
+			        $rootScope.floorClone.stores = stores;										
 				});
 				
 				return true;

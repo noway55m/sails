@@ -14,7 +14,6 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 		
 	// Load floor after building finish load
 	$rootScope.loadingStore = true;
-	$rootScope.loadingAd = true;
 	$rootScope.$on('floorFinishLoad', function(e, floor) {
 		Store.list({
 			floorId : floor._id
@@ -29,6 +28,7 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 			});
 			$rootScope.floor.stores = stores;
 			$rootScope.floor.stores.size = stores.length;
+			$rootScope.floorClone.stores = angular.copy(stores); 
 			$rootScope.loadingStore = false;			
 		});
 	});	

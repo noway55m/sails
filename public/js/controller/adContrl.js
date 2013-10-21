@@ -83,6 +83,10 @@ function AdListCtrl($scope, Ad, $rootScope) {
 				inputFields.removeAttr('disabled');
 				
 				// Clone ad
+				if(ad.image)
+					ad.image = "/" + imagePath + "/" + ad.image;
+				else
+					ad.image = "/img/no-image.png";					
 		    	var id = ad._id;
 		    	for(var i=0; i<$rootScope.adsClone.length; i++){			
 					if($rootScope.adsClone[i]._id == id)    			
