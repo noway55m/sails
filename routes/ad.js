@@ -1,4 +1,5 @@
 var log = require('log4js').getLogger(), 
+	utilityS = require("./utility"),
 	Ad = require("../model/ad"),
 	crypto = require('crypto'),
 	fs = require('fs'),
@@ -130,6 +131,8 @@ exports.del = function(req, res){
 	
 	if(req.body._id){
 				
+		utilityS()
+		
 		Ad.findById(req.body._id, function(err, ad){
 			
 			if(err)

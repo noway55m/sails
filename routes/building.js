@@ -1,5 +1,7 @@
 var log = require('log4js').getLogger(),
-    User = require("../model/user"),
+	http = require('http'),
+    utilityS = require("./utility.js"),
+	User = require("../model/user"),
     Building = require("../model/building"),
     Floor = require("../model/floor"),
     Store = require("../model/store"),    
@@ -14,7 +16,8 @@ var log = require('log4js').getLogger(),
 	config = require('../config/config');
 
 // Static variable
-var	mapinfo_path = "/" + config.mapInfoPath,
+var	errorResInfo = utilityS.errorResInfo,
+	mapinfo_path = "/" + config.mapInfoPath,
 	image_path = config.imagePath;
 
 // GET Page for show specific building
@@ -115,27 +118,50 @@ exports.read = function(req, res){
 exports.update = function(req, res) {
 
     if(req.body._id){
-
+    	    	
         // Get building
         Building.findById(req.body._id, function(err, building){
 
-            if(err)
+            if(err){
+            	
                 log.error(err);
+    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+    			});            	            	
+                                
+            }else{
 
-            if(building){
+                if(building){
+                	
+                	utilityS.validatePermission(req.user, building, Building.modelName, function(info){
 
-                // Check permission
-                if(building.userId == req.user.id || req.user.role == 1){
-                    building.name = req.body.name;
-                    building.desc = req.body.desc;
-                    building.pub = req.body.pub;
-                    building.save(function(){
-                        res.send(200, building);
-                    });
+                		if(info.result){
+                			
+                            building.name = req.body.name;
+                            building.desc = req.body.desc;
+                            building.pub = req.body.pub;
+                            building.save(function(){
+                                res.json(200, building);
+                            });            			
+                			
+                		}else{
+                			
+                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+                			});
+                			
+                		}         		
+                		
+                	});
+                	
                 }else{
-                    res.send(400, { msg: "You have no permission to access building: " + building.id });
-                }
-
+                	
+        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+        				msg: errorResInfo.INCORRECT_PARAMS.msg
+        			});            	            	
+                	                	
+                }            	
+            	            	
             }
 
         });
@@ -386,46 +412,11 @@ exports.packageMapzip = function(req, res){
 		
 		if(building){
 			
-			var buildingFolderPath = path.dirname() + "/" + config.mapInfoPath + "/" + req.user.id + "/" + building.id,   
-		 		zip = new AdmZip(),
-		 		targetPath = req.user.id + "/" + building.id + "/map.zip";
-			zip.addLocalFolder(buildingFolderPath);
-			zip.writeZip(buildingFolderPath + "/map.zip", function(){
-				
-				building.mapzip = targetPath;
-				building.save(function(err, building){
-					
-					if(err)
-						log.error(err);
-					
-					if(building)
-						res.send(200, building);				
-					
-				});
-								
-			});
-			
-		}
-		
-	});
-	
-	
-};
-
-
-// Function for package map zip of all floors in specific building
-exports.packageMapzip = function(req, res){
-	
-	Building.findById(req.body._id, function(err, building){
-	
-		if(err)
-			log.error(err);
-		
-		if(building){
-			
-			var buildingFolderPath = path.dirname() + "/" + config.mapInfoPath + "/" + req.user.id + "/" + building.id,   
-		 		zip = new AdmZip(),
-		 		targetPath = req.user.id + "/" + building.id + "/map.zip";
+			var folderPath = path.dirname() + "/" + config.mapInfoPath + "/" + req.user.id,
+				buildingFolderPath = folderPath + "/" + building.id,   
+		 		locationMapzipPath = folderPath + "/" + building.id + ".zip",
+				zip = new AdmZip(),
+		 		targetPath = req.user.id + "/" + building.id + ".zip";
 			
 			// Check exist
 			fs.exists(buildingFolderPath, function (exist) {
@@ -435,7 +426,7 @@ exports.packageMapzip = function(req, res){
 					
 					// Start to package map.zip
 					zip.addLocalFolder(buildingFolderPath);
-					zip.writeZip(buildingFolderPath + "/map.zip");
+					zip.writeZip(locationMapzipPath);
 					
 					// Update mapzip info of building
 					building.mapzip = targetPath;
@@ -479,7 +470,7 @@ exports.getMapzip = function(req, res){
 	            stat = fs.statSync(filePath);
             res.writeHead(200, {
                 "Content-type": "application/octet-stream",
-                "Content-disposition": "attachment; filename=mapzip.zip",
+                "Content-disposition": "attachment; filename=map.zip",
                 "Content-Length": stat.size
             });
 
