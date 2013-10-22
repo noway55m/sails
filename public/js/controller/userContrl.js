@@ -203,7 +203,9 @@ function UserShowCtrl($scope, User, $rootScope) {
 	$scope.user = User.get({ _id: userId });	
 	
 	var cpForm = $("#change-password-form"),
-		cpButton = $("#changePasswordButton");
+		cpButton = $("#changePasswordButton"),
+		udForm = $("#upgrade-developer-form"),
+		udButton = $("#upgradeDeveloperButton");
 	
 	// Control change password block
 	$scope.showChangePasswordBlock = function(){
@@ -276,9 +278,75 @@ function UserShowCtrl($scope, User, $rootScope) {
 		
 	};
 	
+	
+	// Control upgrade developer block
+	$scope.showUpgradeDeveloperBlock = function(){
+		udButton.fadeOut();
+		udForm.fadeIn();		
+	};
+	$scope.hideUpgradeDeveloperBlock = function(){
+		udForm.fadeOut();
+		udButton.fadeIn();
+	};
+	
 	// Upgrade developer
 	$scope.upgradeDeveloper = function(e){
 		
+		console.log("ldjflsdjfklsd")
+		var informButton = angular.element(e.currentTarget),
+			closeButton = informButton.prev(),
+			emailObj = udForm.find("input[name=email]"),
+			msgObj = udForm.find("textarea[name=msg]"),			
+			errorMsgObj = udForm.find(".error-msg");
+		
+		if (utility.emailValidate(emailObj, errorMsgObj) &&				
+			utility.emptyValidate(msgObj, errorMsgObj)) {
+				
+			// Disable all fields
+			emailObj.attr('disabled', 'disabled');	
+			msgObj.attr('disabled', 'disabled');	
+			
+			// Disable all buttons
+			informButton.button('loading');
+			closeButton.hide();
+	
+			// Hide error msg
+			errorMsgObj.hide();			
+						
+			// Change user's password
+			User.upgradeDeveloper({
+	
+				_id: $scope.user._id,
+				email: emailObj.val(),
+				msg: msgObj.val()
+				
+			}, function(res){
+	
+				// Enable all fields
+				emailObj.removeAttr('disabled');
+				msgObj.removeAttr('disabled');
+				
+				// Enable all buttons
+				informButton.button('reset');
+				closeButton.show();
+	
+				if(res.msg){
+	
+					// Show error msg
+					errorMsgObj.find(".errorText").text(res.msg);
+					errorMsgObj.show();
+	
+				}else{
+	
+					// Clean all fields and close dialog
+					emailObj.val("");
+					msgObj.val("");
+					$().toastmessage('showSuccessToast', "We have received your request, will reply as soon as posible.");
+				}
+	
+			});			
+						
+		}			
 		
 	};
 	

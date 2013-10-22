@@ -85,6 +85,8 @@ app.spost('/user/changePassword', user.changePassword);
 app.spost('/user/changePasswordAdmin', user.changePasswordAdmin);  // only use in admin
 app.get('/user/resetPassword/:token', user.resetPassword);
 app.post('/user/resetPasswordAuth', user.resetPasswordAuth);
+app.post('/user/upgradeDeveloper', user.upgradeDeveloper);
+
 
 //----------------------------------
 app.sget('/building/show/:_id', building.show);

@@ -137,11 +137,11 @@ exports.update = function(req, res){
 		if(user){
 
 		    // Check upgrade user to "admin" or "developer" for get token
-		    console.log(req.body.role)
 			if( (req.body.role == User.ROLES.ADMIN || req.body.role == User.ROLES.DEVELOPER) &&
 			   user.role == User.ROLES.FREE)
 			    user.token = User.genToken();
 			user.role = req.body.role;
+			user.enabled = req.body.enabled;
 			user.save(function(err, user){
 				res.send(200, user);
 			});
@@ -378,4 +378,36 @@ exports.changePassword = function(req, res){
 
 	});
 
+};
+
+// POST Interface for notify server about upgrade developer
+exports.upgradeDeveloper = function(req, res){
+	
+	if(req.body.msg && req.body.email){
+		
+		// Send mail with defined transport object
+		var mailOptions = {
+			from : req.body.email, // sender address
+			to : mailer.defaultOptions.from, // list of receivers
+			subject : "Upgrade Developer Request", // Subject line
+			text : "Upgrade Developer Request", // plaintext body
+			html : "<b>Upgrade Developer Request from user with userId: " + req.user.id + "</b>" + 
+				"<p>message:" + req.body.msg + "</p>"// html body// html body
+		};
+
+		mailer.sendMail(mailOptions, function(error, response) {
+			if (error) {
+				log.error(error);
+				response.json(200, {
+					msg: "Server error, please try again later"
+				});				
+			} else {
+				log.error("Message sent: " + response.message);
+				res.json(200, {});
+			}																		
+		});		
+		
+	}
+	
+	
 };

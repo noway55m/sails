@@ -205,6 +205,12 @@ angular.module('userServices', [ 'ngResource' ]).factory('User', function($resou
             params : {
                 action : 'changePasswordAdmin'
             }        	
-        }        
+        },
+        upgradeDeveloper : {
+            method : 'POST',
+            params : {
+                action : 'upgradeDeveloper'
+            }        	
+        }            
     });
 });

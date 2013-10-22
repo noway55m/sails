@@ -141,7 +141,8 @@ body {
 #profile-display-block button{
 	float: right;
 }
-#change-password-form{
+#change-password-form,
+#upgrade-developer-form{
 	margin-left: 280px;
 	display:none;	
 }
@@ -155,6 +156,7 @@ body {
 #change-password-form button{
 	margin: 5px 5px;
 }
+
 
 
 /******************* profle.html *********************/

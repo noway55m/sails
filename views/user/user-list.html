@@ -6,6 +6,7 @@
 			<thead>
 				<th>Username</th>
 				<th>Role</th>
+				<th>Enabled</th>				
 				<th>Token</th>
 				<th>fid</th>
 				<th>tid</th>												
@@ -14,6 +15,7 @@
 				<tr ng-repeat="user in users" id="{{user._id}}">				
 					<td ng-bind="user.username"></td>
 					<td ng-bind="user.role"></td>
+					<td ng-bind="user.enabled"></td>					
 					<td ng-bind="user.token"></td>
 					<td ng-bind="user.fid"></td>
 					<td ng-bind="user.tid"></td>
