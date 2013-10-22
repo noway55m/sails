@@ -41,6 +41,8 @@ var buildingSchema = new Schema({
     mapzipUpdateTime: Date, // *require       
     
     userId: String,
+    
+    address: String
                
 });
 

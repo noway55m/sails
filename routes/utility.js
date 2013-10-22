@@ -34,17 +34,20 @@ Utility.errorResInfo = {
 Utility.validatePermission = function(user, obj, type, next){
 	
 	switch(type){
+		
+		// Building Model
 		case Building.modelName:
 			
 			var result = false;
-			if(obj && obj.userId == user.id){				
+			if( (obj && obj.userId == user.id) || user.role == User.ROLES.ADMIN){				
 				result = true;								
 			}else{
 				result = false;
 			}
 			next(result);
 			break;
-			
+		
+		// Floor Model	
 		case Floor.modelName:
 
 			if(obj && obj.user.id == user.id)
@@ -52,10 +55,12 @@ Utility.validatePermission = function(user, obj, type, next){
 			else 
 				return false;
 			break;
-			
+		
+		// Store Model	
 		case Store.modelName:
 			break;
-			
+		
+		// Ad Model	
 		case Ad.modelName:
 			break;
 			

@@ -133,13 +133,14 @@ exports.update = function(req, res) {
 
                 if(building){
                 	
-                	utilityS.validatePermission(req.user, building, Building.modelName, function(info){
+                	utilityS.validatePermission(req.user, building, Building.modelName, function(result){
 
-                		if(info.result){
+                		if(result){
                 			
                             building.name = req.body.name;
                             building.desc = req.body.desc;
                             building.pub = req.body.pub;
+                            building.address = req.body.address;
                             building.save(function(){
                                 res.json(200, building);
                             });            			

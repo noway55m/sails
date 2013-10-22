@@ -44,13 +44,18 @@
 					<div ng-hide="loadingBuilding">
 						<span class="title">Public</span>
 						<span ng-bind="building.pub"></span>											
-					</div>						
+					</div>											
 				</div>
 				<div class="col-xs-12 col-sm-8 col-md-9" ng-hide="loadingBuilding" style="display:none;">
 					<span class="title">Description</span>
 					<p ng-bind="building.desc" style="padding:10px;"></p>
 				</div>
 				<br><br>
+				<hr/>
+				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-hide="loadingBuilding" style="display:none;">
+					<span class="title">Address:</span>
+					<span ng-bind="building.address"></span>
+				</div>				
 				<hr/>		
 				<!-- Package all floor map zips to building map zip -->
 				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" ng-hide="loadingBuilding" style="display:none;">
@@ -70,7 +75,7 @@
 				<button type="button" class="close close-button" ng-click="cancelUpdateBuilding()">x</button>
 
 				<!-- Form -->
-				<div id="update-form" class="edit-block">
+				<div id="update-form">
 
 					<!-- Input Fields -->
 					<input type="hidden" name="id" value="{{building._id}}">
@@ -82,6 +87,10 @@
 						<label for="desc">Description</label>
 						<textarea id="update-form-desc" class="form-control" placeholder="Building Description" name="desc" ng-model="building.desc"></textarea>
 					</div>
+					<div class="form-group">
+						<label for="address">Address</label>
+						<input id="update-form-address" class="form-control" placeholder="Building Address" name="address" ng-model="building.address">
+					</div>					
 					<div class="form-group">
 						<label for="pub">Public</label>
 						<input type="checkbox" name="pub" ng-model="building.pub"><br/>
@@ -113,7 +122,7 @@
 				-->
 
 				<!-- Icons upload area -->
-				<div class="edit-block">
+				<div>
 					<form id="image-form" name="form" action="/building/uploadImage" method="POST" enctype="multipart/form-data">
 						<input type="hidden" name="_id" value="{{building._id}}" >
 						<label for="image">Upload icon image:</label>
