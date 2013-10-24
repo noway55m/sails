@@ -1,6 +1,7 @@
 var log = require('log4js').getLogger(),
 	http = require('http'),
     utilityS = require("./utility.js"),
+    mkdirp = require("mkdirp"),
 	User = require("../model/user"),
     Building = require("../model/building"),
     Floor = require("../model/floor"),
@@ -13,7 +14,8 @@ var log = require('log4js').getLogger(),
     fs = require('fs'),
 	path = require('path'),
 	util = require('util'),
-	config = require('../config/config');
+	config = require('../config/config'),
+	builder = require('xmlbuilder');
 
 // Static variable
 var	errorResInfo = utilityS.errorResInfo,
@@ -406,56 +408,160 @@ exports.uploadImage = function(req, res) {
 // Function for package map zip of all floors in specific building
 exports.packageMapzip = function(req, res){
 	
-	Building.findById(req.body._id, function(err, building){
+	if(req.body._id){
 	
-		if(err)
-			log.error(err);
+		Building.findById(req.body._id, function(err, building){
 		
-		if(building){
-			
-			var folderPath = path.dirname() + "/" + config.mapInfoPath + "/" + req.user.id,
-				buildingFolderPath = folderPath + "/" + building.id,   
-		 		locationMapzipPath = folderPath + "/" + building.id + ".zip",
-				zip = new AdmZip(),
-		 		targetPath = req.user.id + "/" + building.id + ".zip";
-			
-			// Check exist
-			fs.exists(buildingFolderPath, function (exist) {
+			if(err){
 				
+				log.error(err);
+    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+    			});				
 				
-				if(exist){
+			} else {
+	
+				if(building){
 					
-					// Start to package map.zip
-					zip.addLocalFolder(buildingFolderPath);
-					zip.writeZip(locationMapzipPath);
-					
-					// Update mapzip info of building
-					building.mapzip = targetPath;
-					building.mapzipUpdateTime = new Date();				
-					building.save(function(err, building){
+					// Get all floors
+					Floor.find({
 						
-						if(err)
+						buildingId: building.id
+						
+					}).sort({layer: 1}).execFind( function(err, floors){
+						
+						if(err){
+							
 							log.error(err);
+		        			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+		        				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+		        			});					
+							
+						}else{
+							
+							// Main Folder path
+							var folderPath = path.dirname() + "/" + config.mapInfoPath + "/" + req.user.id,
+								buildingFolderPath = folderPath + "/" + building.id;   
+				 								
+							// Make sure folder path exist, if not created
+							mkdirp(folderPath, function(err, dd) {
+								
+								if(err){
+									
+									log.error(err);
+				        			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+				        				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				        			});										
+									
+								}else{
+																
+									// Construct floorlist.xml
+									var floorListTag = builder.create('FloorList', {
+											'location': '',
+											'version': '1.0', 
+											'encoding': 'UTF-8',
+											'standalone': 'yes'
+									});
+									
+									for(var i=0; i<floors.length; i++)
+										floorListTag.ele('floor', {
+											'name': floors[i].name ? floors[i].name : '',
+											'desc': floors[i].desc ? floors[i].desc : '',
+											'number': floors[i].layer,
+											'id': floors[i].id
+										});
+									
+									var floorListXML = floorListTag.end({ pretty: true});
+									fs.writeFile(buildingFolderPath + "/floorlist.xml", floorListXML.toString(), function(err) {
+										
+									    if(err) {
+									    	
+											log.error(err);
+						        			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+						        				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+						        			});										    
+									    	
+									    } else {
+									    	
+									        log.info("floorlist.xml has been created or updated");
+									        
+									        // Construct index.xml
+											var sailsBuildingTag = builder.create('sailsbuilding', {
+													'location': '',
+													'version': '1.0', 
+													'encoding': 'UTF-8',
+													'standalone': 'yes'
+											}).ele('building', {
+												'name': building.name ? building.name : '',
+												'id': building.id
+											}).ele('read', {
+												'filepath' : 'floorlist.xml'
+											});
+											var indexXML = sailsBuildingTag.end({ pretty: true});
+											fs.writeFile(buildingFolderPath + "/index.xml", indexXML.toString(), function(err) {
+												
+												if(err) {
+													
+													log.error(err);
+								        			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								        				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+								        			});										
+													
+												} else {
+													
+													log.info("index.xml has been created or updated");
+				
+													var locationMapzipPath = folderPath + "/" + building.id + ".zip",
+											 			zip = new AdmZip(),
+											 			targetPath = req.user.id + "/" + building.id + ".zip";
+												
+													// Start to package map.zip
+													zip.addLocalFolder(buildingFolderPath);
+													zip.writeZip(locationMapzipPath);
+													
+													// Update mapzip info of building
+													building.mapzip = targetPath;
+													building.mapzipUpdateTime = new Date();				
+													building.save(function(err, building){
+														
+														if(err)
+															log.error(err);
+														
+														if(building)
+															res.send(200, building);				
+														
+													});																									
+													
+												}
+												
+											});
+											
+									    }
+									    
+									});							
+																
+								}
+														
+							});					
+												
+						}					
 						
-						if(building)
-							res.send(200, building);				
-						
-					});					
-					
-				}else{
-					
-					res.json(200, { 
-						msg: "No floor files have been uploaded before" 
 					});
 					
 				}
+				
+			}
 			
-			});
-			
-		}
+		});
 		
-	});
+	} else {
 		
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		});			
+		
+	}
+	
 };
 
 

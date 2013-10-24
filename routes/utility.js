@@ -49,11 +49,23 @@ Utility.validatePermission = function(user, obj, type, next){
 		
 		// Floor Model	
 		case Floor.modelName:
-
-			if(obj && obj.user.id == user.id)
-				return true;
-			else 
-				return false;
+			
+			var result = false;			
+			if(user.role == User.ROLES.ADMIN){				
+				result = true;
+				next(result);				
+			}else{				
+				var buildingId = obj.buildingId;
+				Building.findById(buildingId, function(err, building){					
+					if(err){
+						log.error(err);					
+					}else{
+						if(building && building.id == user.id)
+							result = true;
+					}
+					next(result);					
+				});								
+			}
 			break;
 		
 		// Store Model	

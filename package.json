@@ -26,6 +26,7 @@
     "adm-zip": "0.4.3",
     "archiver": "~0.4.10",
     "rimraf": "2.2.2",
-    "http-proxy": "0.10.3"
+    "http-proxy": "0.10.3",
+    "xmlbuilder" : "0.4.2"
   }
 }
