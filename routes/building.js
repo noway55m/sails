@@ -465,8 +465,8 @@ exports.packageMapzip = function(req, res){
 									
 									for(var i=0; i<floors.length; i++)
 										floorListTag.ele('floor', {
-											'name': floors[i].name ? floors[i].name : '',
-											'desc': floors[i].desc ? floors[i].desc : '',
+											'name': floors[i].layer,
+											'desc': floors[i].name ? floors[i].name : '',
 											'number': floors[i].layer,
 											'id': floors[i].id
 										});
