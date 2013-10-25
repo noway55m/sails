@@ -495,7 +495,8 @@ exports.packageMapzip = function(req, res){
 												'name': building.name ? building.name : '',
 												'id': building.id
 											}).ele('read', {
-												'filepath' : 'floorlist.xml'
+												'filepath' : 'floorlist.xml',
+												'type' : 'floorlist'
 											});
 											var indexXML = sailsBuildingTag.end({ pretty: true});
 											fs.writeFile(buildingFolderPath + "/index.xml", indexXML.toString(), function(err) {
