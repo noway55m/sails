@@ -54,6 +54,17 @@
 						<p ng-bind="floor.desc" style="padding:10px;"></p>
 					</div>
 
+					<br/><br/><hr>
+					<!-- Edit trigger button -->
+					<div class="col-xs-12 col-sm-8 col-md-9" ng-hide="loadingStore" style="display:none;">
+						<a href="/floor/getMap?map={{floor.map}}" target="_blank">
+							<span class="glyphicon glyphicon-download">Map.xml</span>
+						</a>&nbsp;
+						<a href="/floor/getPath?path={{floor.path}}" target="_blank">
+							<span class="glyphicon glyphicon-download">Path.xml</span>
+						</a>
+					</div>	
+
 					<!-- Edit trigger button -->
 					<span class="glyphicon glyphicon-edit edit-button"></span>
 
