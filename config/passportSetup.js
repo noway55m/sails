@@ -6,7 +6,8 @@ var passport = require('passport'),
 	log = require('log4js').getLogger(),
 	User = require('../model/user'),
 	CookieToken = require('../model/cookieToken'),	
-	config = require('./config.js');
+	config = require('./config.js'),
+	utilityS = require("../routes/utility.js");
 
 
 //Static variable
@@ -112,8 +113,12 @@ passport.use(new facebookStrategy({
 				if (newUser) {
 
 					log.info('Successfully Insert User ' + newUser.username);
-					done(err, newUser);
-
+					
+					// Start to create default building after response
+					utilityS.createSampleBuilding(newUser, function(){						
+						done(err, newUser);						
+					});					
+										
 				} else {
 
 					log.info('Failed to create new user ' + profile.username);

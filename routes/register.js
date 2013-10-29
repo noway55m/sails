@@ -7,7 +7,8 @@ var log = require('log4js').getLogger("Register"),
 	AccountActivateToken = require("../model/accountActivateToken"),	
 	mailer = require('../config/nodemailerSetup'),
 	mkdirp = require("mkdirp"),
-	config = require('../config/config.js');
+	config = require('../config/config.js'),
+	utilityS = require("./utility.js");
 
 // GET Register page
 exports.index = function(req, res) {
@@ -87,103 +88,11 @@ exports.auth = function(req, res) {
 								
 								// Redirect to index page
 								req.flash('activate', "Please check your email address for activate your user account.");
-								res.redirect("/");										
+								res.redirect("/");
 								
 								// Start to create default building after response
-						        new Building({
-
-						            name: "Sample",
-						            desc: "You can customize your builiding by this sample",
-						            userId: nuser.id,
-						            pub: false,
-						            icon: "building-sample-icon.png",
-						            address: "Building address"
-						            	
-						        }).save(function(err, building){
-						        	
-						        	if(err){
-						        		
-						        		log.error(err);
-						        		
-						        	}else{
-						        	
-							            if(building){
-													            	
-											// Main Folder path
-											var folderPath = path.dirname() + "/" + config.mapInfoPath + "/" + nuser.id,
-												buildingFolderPath = folderPath + "/" + building.id,
-												floorFolderPath = buildingFolderPath + "/1",
-												clientImagePath = folderPath + "/client-image",
-												samplePath = config.sampleBuildingPath + "/1";   
-								 								
-											// Make sure building folder path exist, if not created
-											mkdirp(floorFolderPath, function(err, dd) {
-												
-												if(err){
-													
-													log.error(err);
-													
-												}else{
-													
-													// Make sure client-image folder path exist, if not created (TODO: for put user's images for future)
-													mkdirp(clientImagePath, function(err, dd) {
-														
-														if(err){
-															
-															log.error(err);
-															
-														}else{
-															
-															// Get sample folder data
-															fs.readdir(samplePath, function(err, files){
-																
-																if(err){
-																	
-																	log.error(err);
-																	
-																}else{
-																	
-																	
-																	// Copy the default xml files and zip to floor folder of default building of user
-																	for(var i=0; i<files.length; i++){
-																		console.log(samplePath + "/" + files[i]);
-																		fs.createReadStream( samplePath + "/" + files[i], {																
-																			encoding: 'utf8',
-																			autoClose: true																
-																		}).pipe(fs.createWriteStream(floorFolderPath + "/" + files[i]));																					
-																	}																		
-																	
-																	// Create new floor
-																	new Floor({
-																		
-																		layer: 1,													
-																		buildingId: building.id,
-																		map: floorFolderPath + '/map.xml',
-																		path: floorFolderPath + '/path.xml'
-													
-																	}).save(function(err, floor){																																											
-																		if(err)
-																			log.error(err);																		
-																	});	
-																																		
-																}
-																																																											
-															});																								
-																																													
-														}
-														
-													});
-													
-												}
-											
-											});							            	
-							            									            								            	
-							            }// end if						        								        		
-						        		
-						        	}						        	
-
-						        });								
-																
+								utilityS.createSampleBuilding(nuser);
+																													
 							}
 							
 						});
