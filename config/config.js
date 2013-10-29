@@ -8,6 +8,8 @@ module.exports = {
 	
 	mapInfoPath: "resource/map-info",
 	
+	sampleBuildingPath: "resource/map-info/sample",
+	
 	facebookAppKey: "191009537749511",
 	
 	facebookAppSecret: "bd632d3cae63b4ad4314a7238dd2aa19",
