@@ -22,7 +22,9 @@ var floorSchema = new Schema({
     region: String, // File path of region.xml
 
     mapzip: String, // File path of map zip
-
+    
+    applist: String, // File path of applist.xml
+    
     buildingId: String,
     
     lastXmlUpdateTime: Date
