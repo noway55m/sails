@@ -12,6 +12,7 @@ var express = require('express')
   , floor = require('./routes/floor')
   , store = require('./routes/store')
   , ad = require('./routes/ad')
+  , ap = require('./routes/ap')  
   , http = require('http')
   , https = require('https')
   , httpProxy = require('http-proxy')
@@ -133,6 +134,10 @@ app.spost('/ad/create', ad.create);
 app.spost('/ad/update', ad.update);
 app.spost('/ad/uploadImage', ad.uploadImage);
 app.spost('/ad/delete', ad.del);
+
+//-----------------------------------
+app.sget('/ap/queryBuildingAndFloor', ap.queryBuildingAndFloor);
+
 
 /**************** Social URL Mapping ****************/
 // Facebook OAuth Authentication

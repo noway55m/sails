@@ -889,45 +889,59 @@ function parseApplist(applistXMLString, floorId){
 			try{
 				
 			    var aps = result.WiFiAPList && result.WiFiAPList.ap;
-			    for(var ap in aps){
+			    aps.forEach(function(ap){
 			    	
-			    	var tap = aps[ap].$;
-			    	log.info(tap);
+			    	var tap = ap.$;
 			    	
 			    	// Create new ap
-			    	new Ap({
-			    	
-			    		apId: tap.id,			    		
-			    		ssid: tap.ssid,			    		
-			    		maxholdpwd: tap.maxholdpwd
+			    	Ap.findOne({
 			    		
-			    	}).save(function(err, apObj){
+			    		apId: tap.id
 			    		
-			    		if(err){
-			    			
+			    	}, function(err, apo){
+			    		
+			    		if(err)
 			    			log.error(err);
-			    			
-			    		}else{
-			    			
-			    			// Create relation between building and ap
-			    			new ApToFloor({
-			    			
-			    				apId: apObj.apId, // the attribute "apId" of ap(ap.appId not ap.id) 
+			    		
+			    		if(apo){
+			    						    			
+			    			// Update ap
+			    			apo.ssid = tap.ssid;
+			    			apo.maxholdpwd = tap.maxholdpwd;
+			    			apo.save(function(err, apObj){
 			    				
-			    				floorId: floorId			    							    				
-			    				
-			    			}).save(function(err, apToFloor){
-			    			
 			    				if(err)
-			    					log.error(err.message);
+			    					log.error(err);
+			    				
+			    				if(apObj)			    					
+			    					updateRelationBetweenApAndFloor(apObj.apId, floorId);
 			    				
 			    			});
 			    			
+			    		}else{
+			    			
+			    			// Create new ap
+					    	new Ap({
+						    	
+					    		apId: tap.id,			    		
+					    		ssid: tap.ssid,			    		
+					    		maxholdpwd: tap.maxholdpwd
+					    		
+					    	}).save(function(err, apObj){
+					    		
+					    		if(err)
+					    			log.error(err);
+					    			
+					    		if(apObj)
+					    			updateRelationBetweenApAndFloor(apObj.apId, floorId);
+					    		
+					    	});			    			
+			    			
 			    		}
-			    		
+			    					    		
 			    	});
 			    				    	
-			    }				
+			    });				
 				
 			}catch(e){				
 				
@@ -937,6 +951,41 @@ function parseApplist(applistXMLString, floorId){
 			
 		}
 
+	});	
+	
+}
+
+// Function for update relation between app and floor
+function updateRelationBetweenApAndFloor(apId, floorId){
+	
+	ApToFloor.findOne({
+		
+		apId: apId,
+		floorId: floorId
+		
+	}, function(err, apToFloor){
+		
+		if(err)
+			log.error(err);
+		
+		if(!apToFloor){
+			
+			// Create relation between building and ap
+			new ApToFloor({
+			
+				apId: apId, // the attribute "apId" of ap(ap.appId not ap.id) 
+				
+				floorId: floorId			    							    				
+				
+			}).save(function(err, apToFloor){
+			
+				if(err)
+					log.error(err.message);
+				
+			});							
+			
+		}
+				
 	});	
 	
 }
