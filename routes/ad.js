@@ -61,32 +61,32 @@ exports.read = function(req, res){
 }; 
 
 // Interface for create the new ad of store
-exports.create = function(req, res){
-	
-	if(req.body.storeId && req.body.name && req.body.price && req.body.desc){
-					
+exports.create = function(req, res) {
+
+	if (req.body.storeId && req.body.name && req.body.price && req.body.desc) {
+
 		new Ad({
-			
-		    name: req.body.name,
-		    price: req.body.price,			    
-		    desc: req.body.desc,			    
-		    startTime: new Date(),			    		    
-		    endTime: new Date(),			    
-		    storeId: req.body.storeId
-		    
-		}).save(function(err, ad){
-			
-			if(err)
+
+			name : req.body.name,
+			price : req.body.price,
+			desc : req.body.desc,
+			startTime : new Date(),
+			endTime : new Date(),
+			storeId : req.body.storeId
+
+		}).save(function(err, ad) {
+
+			if (err)
 				log.error(err);
-			
-			if(ad){
-				var adObj = formatObjectDate(ad);			
+
+			if (ad) {
+				var adObj = formatObjectDate(ad);
 				res.send(200, adObj);
 			}
-		});	
-		
+		});
+
 	}
-		
+
 };
 
 // Interface for create the new store in specific floor of specific building

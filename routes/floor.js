@@ -1,4 +1,7 @@
 var log = require('log4js').getLogger(),
+	utilityS = require("./utility.js"),		
+	Ap = require("../model/ap"),
+	ApToFloor = require("../model/apToFloor"),	
 	Ad = require("../model/ad"),
 	Store = require("../model/store"),
     Floor = require("../model/floor"),
@@ -13,7 +16,8 @@ var log = require('log4js').getLogger(),
 	
 
 // Static variable
-var	mapinfo_path = "/" + config.mapInfoPath,
+var	errorResInfo = utilityS.errorResInfo,
+	mapinfo_path = "/" + config.mapInfoPath,
 	image_path = config.imagePath;
 
 // GET Page of specific building
@@ -730,3 +734,209 @@ exports.uploadMapzip = function(req, res) {
     }
 
 };
+
+
+// Post Interface for upload applist.xml
+exports.uploadApplist = function(req, res) {
+	
+	if(req.body.floorId && req.files.applist){
+		
+		var fileName = req.files.applist.name, 
+			extension = path.extname(fileName).toLowerCase() === '.xml' ? ".xml" : null;
+		
+		// Check file type		
+		if (extension) {
+			
+			Floor.findById(req.body.floorId, function(err, floor){
+				
+				if(err){
+					
+					log.error(err);
+					
+					// Internal server error
+					res.send(errorResInfo.INTERNAL_SERVER_ERROR.code, {
+						msg: errorResInfo.INTERNAL_SERVER_ERROR.msg 
+					});				
+					
+				}else{
+									
+					if(floor){
+				        	
+				        // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
+				        var webLocation = req.user._id + "/" + floor.buildingId + "/" + floor.layer,
+				            folderPath = path.dirname() + mapinfo_path + '/' + webLocation;
+				        
+				        mkdirp(folderPath, function(err, dd) {
+				            
+				        	if (err){
+				        		
+				                log.error(err);
+				                
+								// Internal server error
+								res.send(errorResInfo.INTERNAL_SERVER_ERROR.code, {
+									msg: errorResInfo.INTERNAL_SERVER_ERROR.msg 
+								});					        		
+				        		
+				        	}else{
+				        		
+					            var tmpPathAppList = req.files.applist.path,					        	
+					            	targetPathAppList = folderPath + "/applist.xml";
+
+					            log.info("targetPathAppList: " + targetPathAppList);
+
+					            // Move file from temp to target
+					            fs.rename(tmpPathAppList, targetPathAppList, function(err) {
+
+					                if (err){
+					                	
+						                log.error(err);
+						                
+										// Internal server error
+										res.send(errorResInfo.INTERNAL_SERVER_ERROR.code, {
+											msg: errorResInfo.INTERNAL_SERVER_ERROR.msg 
+										});	
+					                    
+					                }else{
+				                        	
+				                        floor.applist = webLocation + "/applist.xml";
+				                        floor.save(function(err, floor) {
+
+				                            if(err){
+				                            	
+								                log.error(err);										                
+								                
+												// Internal server error
+												res.send(errorResInfo.INTERNAL_SERVER_ERROR.code, {
+													msg: errorResInfo.INTERNAL_SERVER_ERROR.msg 
+												});	
+				                            							                            	
+				                            }else{
+				                            	
+				                            	// Response success to client first						                            	
+												res.json(errorResInfo.SUCCESS.code, floor);
+												
+					                            // Start to parse region.xml
+					                            fs.readFile(targetPathAppList, 'utf8', function (err, data) {
+
+					                                if(err)
+					                                  log.error(err);
+					                                
+					                                if(data)
+					                                    parseApplist(data, floor.id);
+
+					                                // Delete the temporary file
+					                                fs.unlink(tmpPathAppList, function(err){});
+					                                
+					                            });						                            	
+				                            							                            	
+				                            }						                              
+
+				                        });					                        	
+					                    
+					                }
+
+					            });				        	
+				        						        		
+				        	}
+
+				        });			        														
+						
+					}else{
+						
+						// floorId is not correct
+						res.send(errorResInfo.INCORRECT_PARAMS.code, {
+							msg: errorResInfo.INCORRECT_PARAMS.msg 
+						});						
+						
+					}		        
+								
+				}
+					
+			});					
+						
+		}else{
+
+			// file is not xml type
+			res.send(errorResInfo.INCORRECT_FILE_TYPE.code, {
+				msg : errorResInfo.INCORRECT_FILE_TYPE.msg + " - applist have to be .xml format"
+			});
+
+		}			
+				
+	}else{
+		
+		// params is incorrect
+		res.send(errorResInfo.INCORRECT_PARAMS.code, {
+			msg: errorResInfo.INCORRECT_PARAMS.msg 
+		});
+		
+	}
+
+};
+
+
+// Function for parse applist.xml file
+function parseApplist(applistXMLString, floorId){
+	
+	parseString(applistXMLString, function (err, result) {
+		
+		if(err){
+			
+			log.error(err);
+			
+		}else{
+			
+			try{
+				
+			    var aps = result.WiFiAPList && result.WiFiAPList.ap;
+			    for(var ap in aps){
+			    	
+			    	var tap = aps[ap].$;
+			    	log.info(tap);
+			    	
+			    	// Create new ap
+			    	new Ap({
+			    	
+			    		apId: tap.id,			    		
+			    		ssid: tap.ssid,			    		
+			    		maxholdpwd: tap.maxholdpwd
+			    		
+			    	}).save(function(err, apObj){
+			    		
+			    		if(err){
+			    			
+			    			log.error(err);
+			    			
+			    		}else{
+			    			
+			    			// Create relation between building and ap
+			    			new ApToFloor({
+			    			
+			    				apId: apObj.apId, // the attribute "apId" of ap(ap.appId not ap.id) 
+			    				
+			    				floorId: floorId			    							    				
+			    				
+			    			}).save(function(err, apToFloor){
+			    			
+			    				if(err)
+			    					log.error(err.message);
+			    				
+			    			});
+			    			
+			    		}
+			    		
+			    	});
+			    				    	
+			    }				
+				
+			}catch(e){				
+				
+				log.error(e);
+				
+			}			
+			
+		}
+
+	});	
+	
+}

@@ -12,7 +12,6 @@ var express = require('express')
   , floor = require('./routes/floor')
   , store = require('./routes/store')
   , ad = require('./routes/ad')
-  , test = require('./routes/test')
   , http = require('http')
   , https = require('https')
   , httpProxy = require('http-proxy')
@@ -108,6 +107,7 @@ app.spost('/floor/create', floor.create);
 app.spost('/floor/update', floor.update);
 app.spost('/floor/uploadMapAndPath', floor.uploadMapAndPath);
 app.spost('/floor/uploadRenderAndRegion', floor.uploadRenderAndRegion);
+app.spost('/floor/uploadApplist', floor.uploadApplist);
 app.spost('/floor/uploadMapzip', floor.uploadMapzip);
 app.sget('/floor/getMap', floor.getFile);
 app.sget('/floor/getPath', floor.getFile);
@@ -133,7 +133,6 @@ app.spost('/ad/create', ad.create);
 app.spost('/ad/update', ad.update);
 app.spost('/ad/uploadImage', ad.uploadImage);
 app.spost('/ad/delete', ad.del);
-
 
 /**************** Social URL Mapping ****************/
 // Facebook OAuth Authentication

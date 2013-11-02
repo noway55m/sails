@@ -20,6 +20,11 @@ function Utility(){}
 // Error code and response error msg
 Utility.errorResInfo = {
 		
+	SUCCESS : {
+		msg: {},
+		code: 200					
+	},	
+				
 	ERROR_PERMISSION_DENY : {		
 		msg: "You have no permission to access",
 		code: 403		
@@ -33,7 +38,12 @@ Utility.errorResInfo = {
 	INCORRECT_PARAMS : {
 		msg: "Incorrect params",
 		code: 400				
-	}
+	},
+	
+	INCORRECT_FILE_TYPE : {
+		msg: "Incorrect file type",
+		code: 400				
+	}	
 	
 };
 

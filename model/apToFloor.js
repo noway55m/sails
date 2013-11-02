@@ -7,7 +7,7 @@ var mongoose = require("./dataSource.js"),
  */
 var apToFloorSchema = new Schema({
 	
-	apId: Number,
+	apId: Number, // the attribute "apId" of ap(ap.appId not ap.id) 
 		
 	floorId: String    
     
