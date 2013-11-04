@@ -108,7 +108,7 @@ app.spost('/floor/create', floor.create);
 app.spost('/floor/update', floor.update);
 app.spost('/floor/uploadMapAndPath', floor.uploadMapAndPath);
 app.spost('/floor/uploadRenderAndRegion', floor.uploadRenderAndRegion);
-app.spost('/floor/uploadApplist', floor.uploadApplist);
+app.spost('/floor/uploadAplist', floor.uploadAplist);
 app.spost('/floor/uploadMapzip', floor.uploadMapzip);
 app.sget('/floor/getMap', floor.getFile);
 app.sget('/floor/getPath', floor.getFile);

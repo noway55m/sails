@@ -737,11 +737,11 @@ exports.uploadMapzip = function(req, res) {
 
 
 // Post Interface for upload applist.xml
-exports.uploadApplist = function(req, res) {
+exports.uploadAplist = function(req, res) {
 	
-	if(req.body.floorId && req.files.applist){
+	if(req.body.floorId && req.files.aplist){
 		
-		var fileName = req.files.applist.name, 
+		var fileName = req.files.aplist.name, 
 			extension = path.extname(fileName).toLowerCase() === '.xml' ? ".xml" : null;
 		
 		// Check file type		
@@ -779,7 +779,7 @@ exports.uploadApplist = function(req, res) {
 				        		
 				        	}else{
 				        		
-					            var tmpPathAppList = req.files.applist.path,					        	
+					            var tmpPathAppList = req.files.aplist.path,					        	
 					            	targetPathAppList = folderPath + "/applist.xml";
 
 					            log.info("targetPathAppList: " + targetPathAppList);
