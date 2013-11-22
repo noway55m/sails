@@ -27,6 +27,7 @@
     "archiver": "~0.4.10",
     "rimraf": "2.2.2",
     "http-proxy": "0.10.3",
-    "xmlbuilder" : "0.4.2"
+    "xmlbuilder" : "0.4.2",
+    "xmldom" : "0.1.16"
   }
 }
