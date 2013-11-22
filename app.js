@@ -11,8 +11,9 @@ var express = require('express')
   , building = require('./routes/building')
   , floor = require('./routes/floor')
   , store = require('./routes/store')
-  , ad = require('./routes/ad')
-  , ap = require('./routes/ap')  
+  , ad = require('./routes/ad')  
+  , ap = require('./routes/ap')
+  , iD = require('./routes/iD')  
   , http = require('http')
   , https = require('https')
   , httpProxy = require('http-proxy')
@@ -137,6 +138,10 @@ app.spost('/ad/delete', ad.del);
 
 //-----------------------------------
 app.sget('/ap/queryBuildingAndFloor', ap.queryBuildingAndFloor);
+
+
+//-----------------------------------
+app.post('/iD/update', iD.update);
 
 
 /**************** Social URL Mapping ****************/

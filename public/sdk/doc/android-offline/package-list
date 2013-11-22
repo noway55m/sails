@@ -1,0 +1,5 @@
+com.sails.location
+com.sails.map
+com.sails.map.core.model
+com.sails.map.core.util
+com.sails.map.overlay
