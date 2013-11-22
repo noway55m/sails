@@ -417,7 +417,7 @@ exports.packageMapzip = function(req, res){
 				log.error(err);
     			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
     				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-    			});				
+    			});				 
 				
 			} else {
 	
@@ -440,7 +440,7 @@ exports.packageMapzip = function(req, res){
 						}else{
 							
 							// Main Folder path
-							var folderPath = path.dirname() + "/" + config.mapInfoPath + "/" + req.user.id,
+							var folderPath = path.dirname() + "/" + config.mapInfoPath + "/" + req.building.userId,
 								buildingFolderPath = folderPath + "/" + building.id;   
 				 								
 							// Make sure folder path exist, if not created
@@ -514,7 +514,7 @@ exports.packageMapzip = function(req, res){
 				
 													var locationMapzipPath = folderPath + "/" + building.id + ".zip",
 											 			zip = new AdmZip(),
-											 			targetPath = req.user.id + "/" + building.id + ".zip";
+											 			targetPath = req.building.userId + "/" + building.id + ".zip";
 												
 													// Start to package map.zip
 													zip.addLocalFolder(buildingFolderPath);
