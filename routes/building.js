@@ -440,7 +440,7 @@ exports.packageMapzip = function(req, res){
 						}else{
 							
 							// Main Folder path
-							var folderPath = path.dirname() + "/" + config.mapInfoPath + "/" + req.building.userId,
+							var folderPath = path.dirname() + "/" + config.mapInfoPath + "/" + building.userId,
 								buildingFolderPath = folderPath + "/" + building.id;   
 				 								
 							// Make sure folder path exist, if not created
@@ -514,7 +514,7 @@ exports.packageMapzip = function(req, res){
 				
 													var locationMapzipPath = folderPath + "/" + building.id + ".zip",
 											 			zip = new AdmZip(),
-											 			targetPath = req.building.userId + "/" + building.id + ".zip";
+											 			targetPath = building.userId + "/" + building.id + ".zip";
 												
 													// Start to package map.zip
 													zip.addLocalFolder(buildingFolderPath);
