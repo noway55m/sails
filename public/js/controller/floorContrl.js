@@ -304,6 +304,8 @@ function FloorShowCtrl($scope, $location, Floor, $rootScope) {
 				// Update and clone
 				$scope.$apply(function () {
 					floor.lastXmlUpdateTime = res.lastXmlUpdateTime;
+					floor.map = res.path;
+					floor.path = res.map;					
 					var stores = $rootScope.floorClone.stores;
 			        $rootScope.floorClone = angular.copy(floor);				
 			        $rootScope.floorClone.stores = stores;										
