@@ -523,21 +523,21 @@ exports.packageMapzip = function(req, res){
 														console.log("add to zip");
 														zip.writeZip(locationMapzipPath);
 														
-													});
-													
-													
-													// Update mapzip info of building
-													building.mapzip = targetPath;
-													building.mapzipUpdateTime = new Date();				
-													building.save(function(err, building){
+														// Update mapzip info of building
+														console.log("Update mongodb")
+														building.mapzip = targetPath;
+														building.mapzipUpdateTime = new Date();				
+														building.save(function(err, building){
+															
+															if(err)
+																log.error(err);
+															
+															if(building)
+																res.send(200, building);				
+															
+														});																																							
 														
-														if(err)
-															log.error(err);
-														
-														if(building)
-															res.send(200, building);				
-														
-													});																									
+													});													
 													
 												}
 												
