@@ -517,8 +517,14 @@ exports.packageMapzip = function(req, res){
 											 			targetPath = building.userId + "/" + building.id + ".zip";
 												
 													// Start to package map.zip
-													zip.addLocalFolder(buildingFolderPath);
-													zip.writeZip(locationMapzipPath);
+													console.log("package map.zip")
+													zip.addLocalFolder(buildingFolderPath, function(){
+																
+														console.log("add to zip");
+														zip.writeZip(locationMapzipPath);
+														
+													});
+													
 													
 													// Update mapzip info of building
 													building.mapzip = targetPath;
