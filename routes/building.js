@@ -15,7 +15,8 @@ var log = require('log4js').getLogger(),
 	path = require('path'),
 	util = require('util'),
 	config = require('../config/config'),
-	builder = require('xmlbuilder');
+	builder = require('xmlbuilder'),
+	archiver = require('archiver');
 
 // Static variable
 var	errorResInfo = utilityS.errorResInfo,
@@ -513,31 +514,91 @@ exports.packageMapzip = function(req, res){
 													log.info("index.xml has been created or updated");
 				
 													var locationMapzipPath = folderPath + "/" + building.id + ".zip",
-											 			zip = new AdmZip(),
-											 			targetPath = building.userId + "/" + building.id + ".zip";
+											 			targetPath = building.userId + "/" + building.id + ".zip",
+											 			output = fs.createWriteStream(locationMapzipPath),
+											 			archive = archiver('zip');
 												
-													// Start to package map.zip
-													console.log("package map.zip")
-													zip.addLocalFolder(buildingFolderPath, function(){
+													output.on('close', function() {
+													  log.info('archiver finish package map.zip');
+													});
+
+													archive.on('error', function(err) {
+													  throw err;
+													});
+
+													archive.pipe(output);
+													
+													// Start to package map.zip													
+													fs.readdir(buildingFolderPath, function(err, files){
+														
+														if(err){
+															
+															log.error(err);
+															
+														}else{
+															
+															for(var i=0; i<files.length; i++){
 																
-														console.log("add to zip");
-														zip.writeZip(locationMapzipPath);
+																var filePath = buildingFolderPath + "/" + files[i];
+																var isFolder = fs.statSync(filePath).isDirectory();
+																
+																console.log(filePath);
+																console.log(isFolder);
+																if(isFolder){
+																		
+																	(function(filePathF, layer){
+
+																		fs.readdir(filePathF, function(err, filesI){
+																			
+																			if(err){
+																				
+																				log.error(err);
+																				
+																			}else{
+																				
+																				for(var j=0; j<filesI.length; j++){
+																					
+																					var filePathInner = filePathF + "/" + filesI[j];																		
+																					archive.append(fs.createReadStream(filePathInner), { name: "/" + layer + "/" + filesI[j] });
+																																										
+																				}
+																				
+																			}
+																																						
+																		});																		
+																		
+																	}(filePath, files[i]));
+																	
+																}else{
+																	archive.append(fs.createReadStream(filePath), { name: files[i] });																		
+																}
+																
+																
+															}
+															
+															archive.finalize(function(err, bytes) {
+																  if (err)
+																    throw err;
+
+																  log.info(bytes + ' total bytes');
+															});	
+															
+															
+														}
+																												
+													});
+													
+													building.mapzip = targetPath;
+													building.mapzipUpdateTime = new Date();				
+													building.save(function(err, building){
 														
-														// Update mapzip info of building
-														console.log("Update mongodb")
-														building.mapzip = targetPath;
-														building.mapzipUpdateTime = new Date();				
-														building.save(function(err, building){
-															
-															if(err)
-																log.error(err);
-															
-															if(building)
-																res.send(200, building);				
-															
-														});																																							
+														if(err)
+															log.error(err);
 														
-													});													
+														if(building)
+															res.send(200, building);				
+														
+													});																										
 													
 												}
 												
