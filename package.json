@@ -23,11 +23,12 @@
     "mkdirp": "0.3.5",
     "xml2js": "0.2.8",
     "moment": "2.3.0",
-    "adm-zip": "0.4.3", // Note: There are some bugs in adm-zip module, please use loacl one for fix bugs
+    "adm-zip": "0.4.3",
     "archiver": "~0.4.10",
     "rimraf": "2.2.2",
     "http-proxy": "0.10.3",
-    "xmlbuilder" : "0.4.2",
-    "xmldom" : "0.1.16"
+    "xmlbuilder": "0.4.2",
+    "xmldom": "0.1.16",
+    "archiver" : "0.4.10"
   }
 }
