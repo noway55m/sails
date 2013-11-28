@@ -27,7 +27,7 @@
 
 			<!-- Buidling basic info display and editor -->
 			<div id="building-index-basic-display" class="row display-block">
-
+				
 				<!-- Loading -->
 				<div class="loading" ng-show="loadingBuilding">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>	
 
@@ -38,13 +38,17 @@
 				<div class="col-xs-12 col-sm-3 col-md-2" style="text-align:center;padding:15px 5px;display:none;" ng-hide="loadingBuilding">
 					<img ng-src="{{building.icon}}" alt="Building Icon" class="icon"/>
 					<div ng-hide="loadingBuilding">
+						<strong style="font-size:10px">ID: {{building._id}}</strong>
+					</div>
+					<div ng-hide="loadingBuilding">
 						<span class="title">Name:</span>
 						<span ng-bind="building.name"></span>
 					</div>
 					<div ng-hide="loadingBuilding">
 						<span class="title">Public</span>
 						<span ng-bind="building.pub"></span>											
-					</div>											
+					</div>
+
 				</div>
 				<div class="col-xs-12 col-sm-8 col-md-9" ng-hide="loadingBuilding" style="display:none;">
 					<span class="title">Description</span>
