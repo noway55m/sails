@@ -161,7 +161,7 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 			nameObj = form.find("input[name=name]"),
 			descObj = form.find("textarea[name=desc]");
 
-		if (utility.emptyValidate(nameObj, errorMsgObj) && utility.emptyValidate(descObj, errorMsgObj)) {
+		if (utility.emptyValidate(nameObj, errorMsgObj)) {
 
 			// Disable all fields before finish save
 			inputFields.attr('disabled', 'disabled');

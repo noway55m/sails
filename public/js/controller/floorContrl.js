@@ -211,7 +211,7 @@ function FloorShowCtrl($scope, $location, Floor, $rootScope) {
 	        nameObj = form.find("input[name=name]"),
 	        descObj = form.find("input[name=desc]");
 	        
-	    if (utility.emptyValidate(nameObj, errorMsgObj) && utility.emptyValidate(descObj, errorMsgObj) ){
+	    if (utility.emptyValidate(nameObj, errorMsgObj)){
 	
 			// Disable all fields before finish save
 			inputFields.attr('disabled', 'disabled');
