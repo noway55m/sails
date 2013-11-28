@@ -311,6 +311,9 @@ function FloorShowCtrl($scope, $location, Floor, $rootScope) {
 			        $rootScope.floorClone.stores = stores;										
 				});
 				
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Upload files successfully");		        
+
 				return true;
 				
 			},
