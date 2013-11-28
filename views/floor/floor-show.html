@@ -106,9 +106,9 @@
 						<span ng-bind="floor.lastXmlUpdateTime"></span>																		
 						<form name="form" action="/floor/uploadMapAndPath" method="POST" enctype="multipart/form-data">
 							<input type="hidden" class="form-control" name="_id" value="{{floor._id}}">
-							<label for="map">Upload "map.xml" here</label>
+							<label for="map">Upload Map file here</label>
 							<input type="file" class="form-control upload-file" name="map">							
-							<label for="path">Upload "path.xml" here</label>
+							<label for="path">Upload Path Routing file here</label>
 							<input type="file" class="form-control upload-file" name="path">
 							<div class="alert alert-danger error-msg">
 								<span class="label label-danger">Error</span> <span class="errorText"></span>
