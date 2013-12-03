@@ -12,6 +12,7 @@ function submit_form(){
 
         var email = $("#email"),
             password = $("#password"),
+            acceptTerm = $("#acceptTerm"),
             errorMsgObj = $("#error-dialog");
 
         // Clean error msg
@@ -20,9 +21,14 @@ function submit_form(){
 
         // Check format
         if(utiliy.emailValidate(email, errorMsgObj) && utiliy.passwordValidate(password, errorMsgObj)){
-            $("#submit").attr("disabled", "disabled");
-            form_submitted = true;
-            return true;
+            if(acceptTerm.prop('checked')){
+                $("#submit").attr("disabled", "disabled");
+                form_submitted = true;
+                return true;                
+            } else {
+               errorMsgObj.css({display: ""}); 
+               errorMsgObj.children(".errorText").html("You have not accept the term yet") ;    
+            }
         }
 
         return false;
