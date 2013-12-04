@@ -33,7 +33,7 @@ Utility.errorResInfo = {
 	},
 	
 	INTERNAL_SERVER_ERROR : {
-		msg: "You have no permission to access",
+		msg: "Internal server error, please try again later",
 		code: 500				
 	},
 	
@@ -45,7 +45,13 @@ Utility.errorResInfo = {
 	INCORRECT_FILE_TYPE : {
 		msg: "Incorrect file type",
 		code: 400				
-	}	
+	},
+
+	EMPTY_RESULT : {
+		msg: "empty result",
+		code: 204				
+	},
+
 	
 };
 

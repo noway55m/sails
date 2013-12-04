@@ -31,12 +31,24 @@ exports.read = function(req, res) {
 	// Get floor
 	Floor.findById(req.params._id, function(err, floor) {
 
-		if (err)
-			log.error(err);
+		if (err){
 
-		if (floor) {
-			res.send(200, floor);
-		}
+			log.error(err);
+			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+			}); 			
+		
+		} else {
+
+			if (floor) {
+				res.send(errorResInfo.SUCCESS.code, floor);
+			} else {
+				res.send(errorResInfo.EMPTY_RESULT.code, {
+					msg: errorResInfo.EMPTY_RESULT.msg
+				});				
+			}
+
+		}		
 
 	});
 
@@ -78,9 +90,16 @@ exports.create = function(req, res) {
 
 			building.save(function(err, building){
 				
-				if(err)
+				if(err){
+
 					log.error(err);
 				
+				} else {
+
+
+
+				}	
+
 				if(building)
 					new Floor({
 	
@@ -92,6 +111,24 @@ exports.create = function(req, res) {
 	
 							building.save(function(){
 								res.send(200, floor);
+
+                                // Auto-package mapzip     			
+								utilityS.packageMapzip(buildingS._id, function(errorObj){
+
+									if(errorObj.code != 200){
+
+										res.json(errorObj.code, {
+											msg: errorObj.msg
+										});
+
+									}else{
+
+										res.json(errorObj.code, errorObj.building);
+
+									}
+
+								});								
+
 							});
 	
 					});				
@@ -672,7 +709,11 @@ exports.getFile = function(req, res){
 exports.uploadMapzip = function(req, res) {
 	
     if(req.body._id && req.files.mapzip){
-
+    	
+    	console.log(req.body._id);
+    	console.log(req.files.mapzip);
+    	
+    	
         // Get file name and extension
         var fileName = req.files.mapzip.name,
             extension = path.extname(fileName).toLowerCase() === '.zip' ? ".zip" : null ||
@@ -697,13 +738,19 @@ exports.uploadMapzip = function(req, res) {
                         folderPath = path.dirname() + mapinfo_path + '/' + webLocation;
 
                     mkdirp(folderPath, function(err, dd) {
-
+                    	
                         var targetPath = folderPath + "/map" + extension;
+                        
+                    	console.log("dd: " + dd);
+                        console.log('tmpPath: ' + tmpPath);
+                        console.log('targetPath: ' + targetPath);
+                        
+                        
                         fs.rename(tmpPath, targetPath, function(err) {
 
                             if (err)
-                                log.error(err);
-
+                                log.error(err);                            
+                            
                             floor.mapzip = webLocation + "/map" + extension;
                             floor.save(function(err, floor) {
 

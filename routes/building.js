@@ -175,7 +175,6 @@ exports.update = function(req, res) {
 	                                // Auto-package mapzip     			
 									utilityS.packageMapzip(buildingS._id, function(errorObj){
 
-
 										if(errorObj.code != 200){
 
 											res.json(errorObj.code, {
@@ -271,7 +270,7 @@ exports.del = function(req, res) {
 			
 		});		
 		
-		
+
 		// Remove building mapzip
 		fs.exists(folderZipPath, function(exist){
 
