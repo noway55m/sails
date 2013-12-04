@@ -226,16 +226,18 @@ exports.del = function(req, res) {
 	if(req.body._id){
 				
 		// Remove building folder
-		var folderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + req.body._id;
+		var folderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + req.body._id,
+			folderZipPath = folderPath + ".zip";
+		
 		fs.exists(folderPath, function(exist){
-			
+
 			// Delete the folder removed floor 
 			if(exist)
 				rimraf(folderPath, function(err){
 					if(err)
 						log.error(err);
 				});	
-			
+
 			// Find building
 			Building.findById(req.body._id, function(err, building){
 				
@@ -269,6 +271,19 @@ exports.del = function(req, res) {
 			
 		});		
 		
+		
+		// Remove building mapzip
+		fs.exists(folderZipPath, function(exist){
+
+			// Delete if exist
+			if(exist)
+				rimraf(folderZipPath, function(err){
+					if(err)
+						log.error(err);
+				});	
+
+		});
+
 		// Find all floors
 		Floor.find({
 			
