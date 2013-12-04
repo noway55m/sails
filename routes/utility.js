@@ -246,7 +246,7 @@ Utility.packageMapzip = function(buildingId, next){
 								buildingFolderPath = folderPath + "/" + building.id;   
 				 								
 							// Make sure folder path exist, if not created
-							mkdirp(folderPath, function(err, dd) {
+							mkdirp(buildingFolderPath, function(err, dd) {
 								
 								if(err){
 									
