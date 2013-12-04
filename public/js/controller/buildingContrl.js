@@ -182,6 +182,12 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 				inputFields.removeAttr('disabled');
 				descObj.removeAttr('disabled');
 
+				// Update local buildings
+				if(building.icon)
+					building.icon = "/" + imagePath + "/" + building.icon;
+				else
+					building.icon = "/img/no-image.png";
+
 				// Clone user info
 		        $rootScope.buildingClone = angular.copy(building);
 
