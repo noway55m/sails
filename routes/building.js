@@ -79,13 +79,14 @@ exports.create = function(req, res) {
 
             if(building){
 
-                res.send(200, building);
+                res.send(errorResInfo.SUCCESS.code, building);
 
             }else{
 
-                res.send(400, {
-                    msg: "Server error"
-                });
+	            log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});  
 
             }// end if
 
@@ -101,17 +102,33 @@ exports.read = function(req, res){
     // Get building
     Building.findById(req.params._id, function(err, building) {
 
-        if(err)
-            log.error(err);
+        if( err ) {
 
-        if(building){
+            log.error(err);
+			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+			});  
+
+		} else {
 
             // Check permission
-            if(building.userId == req.user.id || req.user.role == 1)
-                res.send(200, building);
-            else
-                res.send(400, { msg: "You have no permission to access building: " + building.id });
-        }
+            utilityS.validatePermission(req.user, building, Building.modelName, function(result){
+
+            	if(result) {
+
+            		res.send( errorResInfo.SUCCESS.code , building);
+
+            	} else {
+
+        			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+        				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+        			});
+
+            	}
+
+            });
+
+		}
 
     });
 
@@ -144,10 +161,39 @@ exports.update = function(req, res) {
                             building.desc = req.body.desc;
                             building.pub = req.body.pub;
                             building.address = req.body.address;
-                            building.save(function(){
-                                res.json(200, building);
+                            building.save(function(err, buildingS){
+                                
+                            	if( err ) {
+
+                            		log.error(err);
+				        			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+				        				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				        			});                              		
+
+                            	} else {
+
+	                                // Auto-package mapzip     			
+									utilityS.packageMapzip(buildingS._id, function(errorObj){
+
+
+										if(errorObj.code != 200){
+
+											res.json(errorObj.code, {
+												msg: errorObj.msg
+											});
+
+										}else{
+
+											res.json(errorObj.code, errorObj.building);
+
+										}
+
+									});
+
+                            	}
+
                             });            			
-                			
+				           
                 		}else{
                 			
                 			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
@@ -410,216 +456,21 @@ exports.uploadImage = function(req, res) {
 exports.packageMapzip = function(req, res){
 	
 	if(req.body._id){
-	
-		Building.findById(req.body._id, function(err, building){
 		
-			if(err){
-				
-				log.error(err);
-    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-    			});				 
-				
-			} else {
-	
-				if(building){
-					
-					// Get all floors
-					Floor.find({
-						
-						buildingId: building.id
-						
-					}).sort({layer: 1}).execFind( function(err, floors){
-						
-						if(err){
-							
-							log.error(err);
-		        			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-		        				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-		        			});					
-							
-						}else{
-							
-							// Main Folder path
-							var folderPath = path.dirname() + "/" + config.mapInfoPath + "/" + building.userId,
-								buildingFolderPath = folderPath + "/" + building.id;   
-				 								
-							// Make sure folder path exist, if not created
-							mkdirp(folderPath, function(err, dd) {
-								
-								if(err){
-									
-									log.error(err);
-				        			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-				        				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-				        			});										
-									
-								}else{
-																
-									// Construct floorlist.xml
-									var floorListTag = builder.create('FloorList', {
-											'location': '',
-											'version': '1.0', 
-											'encoding': 'UTF-8',
-											'standalone': 'yes'
-									});
-									
-									for(var i=0; i<floors.length; i++)
-										floorListTag.ele('floor', {
-											'name': floors[i].layer,
-											'desc': floors[i].name ? floors[i].name : '',
-											'number': floors[i].layer,
-											'id': floors[i].id
-										});
-									
-									var floorListXML = floorListTag.end({ pretty: true});
-									fs.writeFile(buildingFolderPath + "/floorlist.xml", floorListXML.toString(), function(err) {
-										
-									    if(err) {
-									    	
-											log.error(err);
-						        			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-						        				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-						        			});										    
-									    	
-									    } else {
-									    	
-									        log.info("floorlist.xml has been created or updated");
-									        
-									        // Construct index.xml
-											var sailsBuildingTag = builder.create('sailsbuilding', {
-													'location': '',
-													'version': '1.0', 
-													'encoding': 'UTF-8',
-													'standalone': 'yes'
-											}).ele('building', {
-												'name': building.name ? building.name : '',
-												'id': building.id
-											}).ele('read', {
-												'filepath' : 'floorlist.xml',
-												'type' : 'floorlist'
-											});
-											var indexXML = sailsBuildingTag.end({ pretty: true});
-											fs.writeFile(buildingFolderPath + "/index.xml", indexXML.toString(), function(err) {
-												
-												if(err) {
-													
-													log.error(err);
-								        			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-								        				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-								        			});										
-													
-												} else {
-													
-													log.info("index.xml has been created or updated");
-				
-													var locationMapzipPath = folderPath + "/" + building.id + ".zip",
-											 			targetPath = building.userId + "/" + building.id + ".zip",
-											 			output = fs.createWriteStream(locationMapzipPath),
-											 			archive = archiver('zip');
-												
-													output.on('close', function() {
-													  log.info('archiver finish package map.zip');
-													});
+		utilityS.packageMapzip(req.body._id, function(errorObj){
 
-													archive.on('error', function(err) {
-													  throw err;
-													});
+			if(errorObj.code != 200){
 
-													archive.pipe(output);
-													
-													// Start to package map.zip													
-													fs.readdir(buildingFolderPath, function(err, files){
-														
-														if(err){
-															
-															log.error(err);
-															
-														}else{
-															
-															for(var i=0; i<files.length; i++){
-																
-																var filePath = buildingFolderPath + "/" + files[i];
-																var isFolder = fs.statSync(filePath).isDirectory();
-																
-																console.log(filePath);
-																console.log(isFolder);
-																if(isFolder){
-																		
-																	(function(filePathF, layer){
+				res.json(errorObj.code, {
+					msg: errorObj.msg
+				});
 
-																		fs.readdir(filePathF, function(err, filesI){
-																			
-																			if(err){
-																				
-																				log.error(err);
-																				
-																			}else{
-																				
-																				for(var j=0; j<filesI.length; j++){
-																					
-																					var filePathInner = filePathF + "/" + filesI[j];																		
-																					archive.append(fs.createReadStream(filePathInner), { name: "/" + layer + "/" + filesI[j] });
-																																										
-																				}
-																				
-																			}
-																																						
-																		});																		
-																		
-																	}(filePath, files[i]));
-																	
-																}else{
-																	archive.append(fs.createReadStream(filePath), { name: files[i] });																		
-																}
-																
-																
-															}
-															
-															archive.finalize(function(err, bytes) {
-																  if (err)
-																    throw err;
+			}else{
 
-																  log.info(bytes + ' total bytes');
-															});	
-															
-															
-														}
-																												
-													});
-													
-													building.mapzip = targetPath;
-													building.mapzipUpdateTime = new Date();				
-													building.save(function(err, building){
-														
-														if(err)
-															log.error(err);
-														
-														if(building)
-															res.send(200, building);				
-														
-													});																										
-													
-												}
-												
-											});
-											
-									    }
-									    
-									});							
-																
-								}
-														
-							});					
-												
-						}					
-						
-					});
-					
-				}
-				
+				res.json(errorObj.code, errorObj.building);
+
 			}
-			
+
 		});
 		
 	} else {
