@@ -87,7 +87,8 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 	
 	// Function for setup delete dialog
 	var deleteObj,
-		deleteModal = $("#deleteModal");
+		deleteModal = $("#deleteModal"),
+		loadingModal = $("#loadingModal");
 	$scope.deleteDialogSetup = function(){
 		deleteObj = this.floor;
 		var content = deleteObj.layer > 0 ? deleteObj.layer + " F" : "B " + Math.abs(deleteObj.layer);
@@ -98,8 +99,11 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 	// Function for delete ad obj
 	$scope.deleteObj = function(e){
 		
-		// Hide modal
+		// Hide delete confirm modal
 		deleteModal.modal('hide');
+
+		// Show loading modal
+		loadingModal.modal('show');
 		
 		// Delete store
 		Floor.delete({
@@ -158,7 +162,16 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 		    	// Show success msg
 				$().toastmessage('showSuccessToast', "Remove successfully");
 				
-			}			
+			} else {
+
+		    	// Show error msg
+				$().toastmessage('showErrorToast', res.msg);
+
+			}
+
+			// Hide loading modal
+			loadingModal.modal('hide');
+			
 			
 		});
 		
