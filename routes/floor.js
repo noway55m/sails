@@ -61,12 +61,20 @@ exports.list = function(req, res) {
 
 		buildingId: req.query.buildingId
 
-	}).sort({layer: -1}).execFind(function(error, floors){
+	}).sort({layer: -1}).execFind(function(err, floors){
 
-		if (error)
-			log.error(error);
+		if (err){
 
-		res.send(200, floors);
+			log.error(err);
+			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+			}); 	
+
+		} else {
+
+			res.send(errorResInfo.SUCCESS.code, floors);
+
+		}
 
 	});
 
@@ -79,64 +87,89 @@ exports.create = function(req, res) {
 
 		Building.findById(req.body.buildingId, function(error, building){
 			
-			var layer;
-			if(req.body.layer>0){
-				building.upfloor = building.upfloor + 1;
-				layer = building.upfloor;
-			}else{
-				building.downfloor =  building.downfloor + 1;
-				layer = -(building.downfloor);				
-			}
+			if(error) {
 
-			building.save(function(err, building){
-				
-				if(err){
+				log.error(error);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				}); 	
 
-					log.error(err);
-				
-				} else {
+			} else {
 
+				if( building ) {
 
+					var layer;
+					if( req.body.layer>0) {
 
-				}	
+						building.upfloor = building.upfloor + 1;
+						layer = building.upfloor;
 
-				if(building)
-					new Floor({
-	
-						layer: layer,
-	
-						buildingId: req.body.buildingId
-	
-					}).save(function(error, floor){
-	
-							building.save(function(){
-								res.send(200, floor);
+					} else {
 
-                                // Auto-package mapzip     			
-								utilityS.packageMapzip(buildingS._id, function(errorObj){
+						building.downfloor =  building.downfloor + 1;
+						layer = -( building.downfloor );
 
-									if(errorObj.code != 200){
+					}
 
-										res.json(errorObj.code, {
-											msg: errorObj.msg
-										});
+					building.save( function( err, building ) {
+						
+						if( err ) {
 
-									}else{
+							log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							}); 	
 
-										res.json(errorObj.code, errorObj.building);
+						} else {
+
+							new Floor({
+			
+								layer: layer,
+			
+								buildingId: building._id
+			
+							}).save(function(error, floor){
+									
+									if(error){
+
+										log.error(error);
+										res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+											msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+										}); 	
+
+									} else {
+
+										res.send(200, floor);
+
+		                                // Auto-package mapzip     			
+										utilityS.packageMapzip(building._id, function(errorObj){});
 
 									}
 
-								});								
+							});	
 
-							});
-	
-					});				
-				
-			});
+						}				
+						
+					});
+
+				} else {
+
+        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+        				msg: errorResInfo.INCORRECT_PARAMS.msg
+        			});  
+
+				}
+
+			}
 
 		});		
 		
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 	
+
 	}
 
 };
@@ -149,15 +182,47 @@ exports.update = function(req, res) {
         // Get building
         Floor.findById(req.body._id, function(err, floor){
 
-            if(err)
+            if(err){
+            
                 log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				}); 	
 
-            if(floor){
-                floor.name = req.body.name;
-                floor.desc = req.body.desc;
-                floor.save(function(){
-                    res.send(200, floor);
-                });
+            } else {
+
+	            if( floor ) {
+	                
+	                floor.name = req.body.name;
+	                floor.desc = req.body.desc;
+	                floor.save(function(err, floor){
+
+	                	if( err ) {
+
+			                log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							}); 
+
+	                	} else {
+
+		                    res.send(errorResInfo.SUCCESS.code, floor);
+
+		                    // Auto-package mapzip
+		                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
+
+	                	}
+
+	                });
+
+	            } else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					}); 	
+
+	            }
+
             }
 
         });
@@ -168,205 +233,244 @@ exports.update = function(req, res) {
 
 
 // POST Interface for delete the floor, stores in this floor and ads of stores of this floor
-exports.del = function(req, res){
+exports.del = function( req, res ) {
 	
-	if(req.body._id){
+	if(req.body._id) {
 				
 		// Remove floor
-		Floor.findById(req.body._id, function(err, floor){
+		Floor.findById( req.body._id, function( err, floor ) {
 			
-			if(err)
-				log.error(err);
-			
-			// Get all building's floors
-			if(floor){
-									
-				Building.findById(floor.buildingId, function(err, building){
-				
-					if(err)
-						log.error(err);
-					
-					if(building){
-						
-						var folderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + floor.buildingId;
-													
-						Floor.find({
-							
-							buildingId: floor.buildingId
-							
-						}, function(err, floors){
-							
-							if(err)
-								log.error(err);
-							
-							
-							// Remove removed floor folder if exist
-							var removeFolderPath = folderPath + "/" + floor.layer;
-							fs.exists(removeFolderPath, function(exist){
-								
-								// Delete the folder removed floor 
-								if(exist)
-									rimraf(removeFolderPath, function(err){
-										if(err)
-											log.error(err);
-									});										
-								
-								// Reorder all floors in this building
-								floors.forEach(function(ofloor){
+			if( err ) {
 
-									if(floor.layer > 0){
+				log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				}); 				
+
+			} else {
+
+				if(floor){
+
+					// Get floor's building					
+					Building.findById(floor.buildingId, function(err, building){
+					
+						if(err){
+
+							log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							}); 				
+						
+						} else {
+
+							if(building){
+								
+								var folderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + floor.buildingId;
+								
+								// Get building's all floors							
+								Floor.find({
+									
+									buildingId: floor.buildingId
+									
+								}, function(err, floors){
+									
+									if(err)
+										log.error(err);
 																	
-										if(ofloor.layer > floor.layer){								
-											
-											// Change render and region folder
-											var oldFolderPath = folderPath + "/" + ofloor.layer;
-											ofloor.layer = ofloor.layer - 1;
-											var newFolderPath = folderPath + "/" + ofloor.layer;
-											ofloor.save();
-																						
-											// Rename foldr with new layer
-											fs.exists(oldFolderPath, function (exist) {
-												if(exist)
-													fs.rename(oldFolderPath, newFolderPath, function(err) {
+									// Remove removed floor folder if exist
+									var removeFolderPath = folderPath + "/" + floor.layer;
+									fs.exists(removeFolderPath, function(exist){
+										
+										// Delete the folder of removed floor 
+										if(exist)
+											rimraf(removeFolderPath, function(err){
+												if(err)
+													log.error(err);
+											});										
+										
+										// Reorder all floors in this building
+										floors.forEach(function(ofloor){
+
+											if(floor.layer > 0){
+																			
+												if(ofloor.layer > floor.layer){								
+													
+													// Change the folder of specific floor
+													var oldFolderPath = folderPath + "/" + ofloor.layer;
+													ofloor.layer = ofloor.layer - 1;
+													var newFolderPath = folderPath + "/" + ofloor.layer;
+													ofloor.save();
+																								
+													// Rename foldr with new layer
+													fs.exists(oldFolderPath, function (exist) {
+														if(exist)
+															fs.rename(oldFolderPath, newFolderPath, function(err) {
+																if(err)
+																	log.error(err);
+															});
+													});										
+													
+												}							
+																							
+											}else{
+												
+												if(ofloor.layer < floor.layer){	
+													
+													// Change the folder of specific floor
+													var oldFolderPath = folderPath + "/" + ofloor.layer;
+													ofloor.layer = ofloor.layer + 1;
+													var newFolderPath = folderPath + "/" + ofloor.layer;
+													ofloor.save();									
+													
+													// Rename foldr with new layer								
+													fs.exists(oldFolderPath, function (exist) {
+														if(exist)
+															fs.rename(oldFolderPath, newFolderPath, function(err) {
+																if(err)
+																	log.error(err);															
+															});
+													});	
+													
+												}
+																													
+											}
+																				
+										});																			
+										
+									});
+																	
+									// Update "upfloor" or "downfloor" attribute of building 
+									if(floor.layer > 0)
+										building.upfloor = building.upfloor - 1;										
+									else
+										building.downfloor = building.downfloor - 1;
+									
+									// Update building
+									building.save(function(err, building){
+										
+										if( err ) {
+
+											log.error(err);
+											res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+												msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+											}); 				
+
+										} else {
+
+											// Remove floor
+											floor.remove(function(err){	
+																		
+												if( err ) {
+													
+													log.error(err);
+													res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+														msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+													}); 				
+
+												} else {
+													
+													res.json(errorResInfo.SUCCESS.code, {
+														_id: req.body._id
+													});
+
+													// Find all stores of removed floor
+													Store.find({
+														
+														floorId: req.body._id
+														
+													}, function(err, stores){
+														
 														if(err)
 															log.error(err);
-													});
-											});										
-											
-										}							
-																					
-									}else{
-										
-										if(ofloor.layer < floor.layer){	
-											
-											// Change render and region folder
-											var oldFolderPath = folderPath + "/" + ofloor.layer;
-											ofloor.layer = ofloor.layer + 1;
-											var newFolderPath = folderPath + "/" + ofloor.layer;
-											ofloor.save();									
-											
-											// Rename foldr with new layer								
-											fs.exists(oldFolderPath, function (exist) {
-												if(exist)
-													fs.rename(oldFolderPath, newFolderPath, function(err) {
-														if(err)
-															log.error(err);															
-													});
-											});	
-											
-										}
-																											
-									}
-																		
-								});									
-								
-								
-							});
-															
-							// Update "upfloor" or "downfloor" attribute of building 
-							if(floor.layer > 0)
-								building.upfloor = building.upfloor - 1;										
-							else
-								building.downfloor = building.downfloor - 1;
-							
-							// Update mapzip of building
-							building.save(function(err, building){
-								
-								// Repackage building's map zip file
-								var zip = new AdmZip(),
-						 			targetPath = req.user._id + "/" + building.id + "/map.zip";															
-								fs.exists(folderPath, function (exist) {																				
-									if(exist){
-										
-										// Start to package map.zip
-										zip.addLocalFolder(folderPath);
-										zip.writeZip(folderPath + "/map.zip");
-										
-										// Update mapzip info of building
-										building.mapzip = targetPath;
-										building.mapzipUpdateTime = new Date();				
-										building.save();					
-										
-									}
-								});											
-								
-							});								
-							
-							// Remove floor
-							floor.remove(function(err){	
 														
-								if(err)
-									log.error(err);
-								else
-									res.json(200, {
-										_id: req.body._id
-									});												
-							});							
-							
-						});							
-													
-					}
-					
-				});
-					
-			}
-			
-		});			
-		
-		// Find all stores
-		Store.find({
-			
-			floorId: req.body._id
-			
-		}, function(err, stores){
-			
-			if(err)
-				log.error(err);
-			
-			for(var i=0; i<stores.length; i++){					
-				
-				// Find all ads
-				Ad.find({
-					
-					storeId: stores[i].id
-					
-				}, function(err, ads){					
-					
-					if(err)
-						log.error(err);
-					
-					for(var j=0; j<ads.length; j++){
-						
-						// Delete ad image if exist
-						if(ads[j].image){
-							var oldImgPathAd = path.resolve(image_path + "/" + ads[j].image);
-							fs.unlink(oldImgPathAd, function(err){
-								log.error(err);
-							});	
+														for(var i=0; i<stores.length; i++){					
+															
+															// Find all ads
+															Ad.find({
+																
+																storeId: stores[i].id
+																
+															}, function(err, ads){					
+																
+																if(err)
+																	log.error(err);
+																
+																for(var j=0; j<ads.length; j++){
+																	
+																	// Delete ad image if exist
+																	if(ads[j].image){
+																		var oldImgPathAd = path.resolve(image_path + "/" + ads[j].image);
+																		fs.unlink(oldImgPathAd, function(err){
+																			log.error(err);
+																		});	
+																	}
+																	
+																	// Remove ad
+																	ads[j].remove();						
+																	
+																}
+																					
+															});				
+															
+															// Delete store icon if exist
+															if(stores[i].icon){
+																var oldImgPath = path.resolve(image_path + "/" + stores[i].icon);
+																fs.unlink(oldImgPath, function(err){
+																	log.error(err);
+																});	
+															}				
+															
+															// Remove store
+															stores[i].remove();
+															
+														}		
+														
+													});
+
+												}
+
+												// Auto-package mapzip
+												utilityS.packageMapzip(building._id, function(errorObj){});
+
+											});		
+
+										}
+										
+									});																						
+									
+								});							
+															
+							} else {
+
+								log.error("The building of floor: " + floor.buildingId + " is null");
+								res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+									msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+								}); 
+
+							}
+
 						}
 						
-						// Remove ad
-						ads[j].remove();						
+					});
 						
-					}
-										
-				});				
-				
-				// Delete store icon if exist
-				if(stores[i].icon){
-					var oldImgPath = path.resolve(image_path + "/" + stores[i].icon);
-					fs.unlink(oldImgPath, function(err){
-						log.error(err);
-					});	
-				}				
-				
-				// Remove store
-				stores[i].remove();
-				
-			}		
-			
-		});
+				} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					}); 	
+
+				}
+
+			}
+
+		});			
 	
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		});
+
 	}
 		
 };
