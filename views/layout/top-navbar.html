@@ -24,7 +24,10 @@
 						<li class="active"><a href="/">Home</a></li>
 						<li><a href="http://support.sailstech.com" target="_blank">Support</a></li>						
 						<li><a href="http://support.sailstech.com/kb" target="_blank">Knowlege Base</a></li>
-						<li><a href="http://blog1.sailstech.com" target="_blank">Blog</a></li>								
+						<li><a href="http://blog1.sailstech.com" target="_blank">Blog</a></li>
+						<% if(user && (user.role == roles.ADMIN) ){ %>	
+							<li><a href="#" target="_blank">Download</a></li>
+						<% } %>								
 					</ul>
 					<ul class="nav navbar-nav navbar-right">
 						<% if(url == "/"){ %>
