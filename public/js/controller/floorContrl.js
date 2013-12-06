@@ -181,7 +181,7 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 
 
 // Show specific floor controller
-function FloorShowCtrl($scope, $location, Floor, $rootScope) {
+function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 	var url = $location.absUrl(),
 		id = url.substring(url.lastIndexOf("/") + 1, url.length);
 	
@@ -198,6 +198,11 @@ function FloorShowCtrl($scope, $location, Floor, $rootScope) {
 		else
 			$rootScope.up = false;
 		
+		// Get building
+		Building.get({ _id: floor.buildingId }, function(building){
+			$rootScope.building = building;
+		});
+
 		// Clone floor for future rollback
         $rootScope.floorClone = angular.copy(floor); 
 				
