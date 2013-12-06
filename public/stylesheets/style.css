@@ -79,9 +79,15 @@ body {
 	position:relative;
 }
 .belement p{
-	font-size: 14px;
-	line-height: 20px;
+	font-size: 18px;
+	line-height: 10px;
 	text-align:center;
+}
+.jumbotron .belement > a > span{
+	font-size: 18px;
+	line-height: normal;
+	text-align:center;
+	padding: 0px;
 }
 .default-icon{
 	width:100px;
