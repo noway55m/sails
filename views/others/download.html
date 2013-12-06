@@ -3,7 +3,7 @@
   <head>
   
 	<!-- Head meta, css or library include -->
-	<% include layout/head-include.html %>
+	<% include ../layout/head-include.html %>
 
 	<!-- Title -->
     <title>Sails</title>
@@ -18,28 +18,22 @@
   </head>
 
   <body>
-	
-	<% if(activate && activate != ""){ %>
-		<script>
-			alert("<%= activate %>")
-		</script>
-	<% } %>
-		
+			
     <!-- Fixed Top Navigation Bar -->
-	<% include layout/top-navbar.html %>
+	<% include ../layout/top-navbar.html %>
 
     <div class="container">
 
       <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
-        <h1>Sails Cloud Service</h1>
-        <p>Welcome to Sails cloud service</p>
+        <h1>Download Sails SDK</h1>
+        <p>ddd</p>
       </div>
 
     </div> <!-- /container -->
 	
 	<!-- Body library include -->
-	<% include layout/body-include.html	%>
+	<% include ../layout/body-include.html	%>
 				
   </body>
 </html>
