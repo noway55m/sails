@@ -13,7 +13,8 @@ var express = require('express')
   , store = require('./routes/store')
   , ad = require('./routes/ad')  
   , ap = require('./routes/ap')
-  , iD = require('./routes/iD')  
+  , iD = require('./routes/iD')
+  , others = require('./routes/others')    
   , http = require('http')
   , https = require('https')
   , httpProxy = require('http-proxy')
@@ -142,6 +143,11 @@ app.sget('/ap/queryBuildingAndFloor', ap.queryBuildingAndFloor);
 
 //-----------------------------------
 app.post('/iD/update', iD.update);
+
+
+//-----------------------------------
+app.sget('/download', others.download);
+
 
 
 /**************** Social URL Mapping ****************/
