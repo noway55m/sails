@@ -12,6 +12,7 @@ function submit_form(){
 
         var email = $("#email"),
             password = $("#password"),
+            confirmPassword = $("#confirm-password"),
             acceptTerm = $("#acceptTerm"),
             errorMsgObj = $("#error-dialog");
 
@@ -20,7 +21,10 @@ function submit_form(){
         errorMsgObj.children(".errorText").html("");
 
         // Check format
-        if(utiliy.emailValidate(email, errorMsgObj) && utiliy.passwordValidate(password, errorMsgObj)){
+        if(utiliy.emailValidate(email, errorMsgObj) &&
+            utiliy.passwordValidate(password, errorMsgObj) &&
+            utiliy.newPasswordValidate(password, confirmPassword, errorMsgObj)){
+
             if(acceptTerm.prop('checked')){
                 $("#submit").attr("disabled", "disabled");
                 form_submitted = true;
