@@ -65,8 +65,7 @@ if ('development' == app.get('env')) {
 app = passport.configSecureHttpRequest(app);
 
 /**************** URL Mapping ****************/
-app.sget('/', routes.index);
-app.sget('/login', authentication.index);
+app.sget('/', authentication.index); // app.sget('/login', authentication.index);
 app.sget('/logout', authentication.logout);
 app.post('/auth', authentication.auth);
 app.post('/authMobile', authentication.authMobile);
@@ -157,14 +156,14 @@ app.get('/auth/facebook',passport.authenticate('facebook', {
 }) );
 
 // Facebook OAuth Code Callback (first handshake)
-app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/user', failureRedirect: '/login' }) );
+app.get('/auth/facebook/callback', passport.authenticate('facebook', { successRedirect: '/user', failureRedirect: '/' }) );
 
 //-----------------------------------------------
 // Twitter OAuth Authentication
 app.get('/auth/twitter', passport.authenticate('twitter'));
 
 // Twitter OAuth Code Callback (first handshake)
-app.get('/auth/twitter/callback',  passport.authenticate('twitter', { successRedirect: '/user', failureRedirect: '/login' }));
+app.get('/auth/twitter/callback',  passport.authenticate('twitter', { successRedirect: '/user', failureRedirect: '/' }));
 
 //-----------------------------------------------
 // Google Plus OAuth Authentication
@@ -173,7 +172,7 @@ app.get('/auth/google', passport.authenticate('google', {
 }));
 
 // Google Plus OAuth Code Callback (first handshake)
-app.get('/auth/google/callback', passport.authenticate('google', {failureRedirect: '/login' }) ,function(req, res){
+app.get('/auth/google/callback', passport.authenticate('google', {failureRedirect: '/' }) ,function(req, res){
 	res.redirect('/user');
 });
 
