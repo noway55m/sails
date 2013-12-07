@@ -287,10 +287,10 @@ passport.configSecureHttpRequest = function(app){
 
         }else{
         	
-            if(req.url.toString() == "/login" || req.url.toString() == "/")
+            if(req.url.toString() == "/")
                 callback(req, res);
             else
-                res.redirect('/login');
+                res.redirect('/');
 
         }
         
@@ -364,10 +364,10 @@ passport.configSecureHttpRequest = function(app){
     			
 			}else{
 				
-	            if(req.url.toString() == "/login" || req.url.toString() == "/")
+	            if(req.url.toString() == "/")
 	                callback(req, res);
 	            else
-	                res.redirect('/login');
+	                res.redirect('/');
 				
 			}
 		});  	
