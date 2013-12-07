@@ -30,7 +30,7 @@ exports.auth = function(req, res, next) {
 		if (!user) {
 
 			req.flash('msg', info.message);
-			return res.redirect("/login");
+			return res.redirect("/");
 
 		} else {
 			
