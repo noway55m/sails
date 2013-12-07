@@ -1,6 +1,5 @@
 body {
-  min-height: 2000px;
-  padding-top: 70px;
+  padding-top: 50px;
 }
 
 .display-block {
@@ -111,6 +110,64 @@ body {
 	margin-left: -12px;
 	top:0px;
 }
+
+/******************* index.html - login.html ********************/
+#index-container{
+	background: #ffffff url('../img/pc/index-bg.png') no-repeat center top;
+	background-size: cover;
+	width: 100%;
+	height: 92%;
+	max-width: 100%;
+	min-width: 1300px;
+	min-height: 650px;		
+	position: absolute;
+    top:50px; /* navbar height */
+    bottom:0;
+    right:0;
+    left:0;
+    overflow:hidden;	
+}
+/* Login Form */
+.form-signin {
+	position: absolute;
+	width: 500px;
+	max-width: 500px;
+	padding: 15px;
+	right: 10%;
+	bottom: 5%;
+	color: #ffffff;
+}
+.form-signin input{
+	width: 300px;
+	display: inline;
+	margin: 7px auto;
+	font-size: 16px;
+	height: auto;
+	padding: 10px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;	
+}
+.form-signin input[type="checkbox"]{
+	width: 20px;
+	margin-left: 70px;
+}
+.form-signin button{
+	margin-left: 70px;
+	width: 300px;
+}
+.form-signin a{
+	color: #ffffff;
+}
+.form-signin #register-link{
+	margin-left: 80px;
+}
+.form-signin #error-dialog{
+	width: 300px;
+	margin-left: 70px;
+	margin-bottom: 0px;
+}
+
 /******************* floor-list.html ********************/
 #index-floor .panel-heading,
 #index-layer .panel-heading{
