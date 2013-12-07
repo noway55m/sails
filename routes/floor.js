@@ -551,6 +551,9 @@ exports.uploadMapAndPath = function(req, res) {
                                 // Delete temped map.xml
                                 fs.unlink(tmpPathMap, function(err){});
 
+			                    // Auto-package mapzip
+			                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
+
                             });
                             
                         }                    	
@@ -621,7 +624,10 @@ exports.uploadRenderAndRegion = function(req, res) {
 	
 	                            if (floor)
 	                                res.send(200, floor);
-	
+
+			                    // Auto-package mapzip
+			                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
+
 	                            // Start to parse region.xml
 	                            fs.readFile(targetPathRegion, 'utf8', function (err, data) {
 	
