@@ -10,8 +10,6 @@ exports.download = function(req, res) {
 // Interface for download ios or android sdk
 exports.downloadSdk = function(req, res){
 
-
-	console.log(req.params.platform)
     var fileName = req.params.platform,
         filePath = path.dirname() + "/" + config.sdkPath + '/' + fileName + '.jar',
         stat = fs.statSync(filePath);
