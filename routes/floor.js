@@ -573,6 +573,7 @@ exports.uploadMapAndPath = function(req, res) {
 
 };
 
+
 // POST Interface for upload render.xml and region.xml
 exports.uploadRenderAndRegion = function(req, res) {
 
@@ -664,7 +665,8 @@ function parseRegion(regionXMLString, floorId, next){
 	
 	parseString(regionXMLString, function (err, result) {
 		
-	    var ways = result.osm.way;
+	    var ways = result.osm.way,
+	    	storeNamesTemp = [];
 	    Store.find({
 	    	
 	    	floorId : floorId
@@ -675,30 +677,33 @@ function parseRegion(regionXMLString, floorId, next){
 	    		log.error(err);
 	    	
 	    	if(ways){
-	    		
-			    ways.forEach(function(way){
-	
-			    	var tags = way.tag;
-			    	tags.forEach(function(tag){
-	
-			    		//console.log(tag.$);
-			    		var tagInfo = tag.$;
+	    			
+	    		// Create stores in region.xml
+	    		for(var i=0; i<ways.length; i++){
+
+	    			var way = ways[i],
+			    		tags = way.tag;
+
+			    	for(var j=0; j<tags.length; j++){
+
+		    			var tag = tags[j],
+			    			tagInfo = tag.$;
 			    		if(tagInfo.k == "label"){
 	
 			    			var name = tagInfo.v,
 			    				isDuplicate = false;
-			    			console.log(name);
+			    			storeNamesTemp.push(name);
 	
 			    			// Check is duplicate
-			    			for(var i=0; i< stores.length; i++){
-			    				if(name == stores[i].name){
+			    			for(var k=0; k< stores.length; k++){
+			    				if(name == stores[k].name){
 			    					isDuplicate = true;
 			    					break;
 			    				}
 			    			}
 	
 			    			if(!isDuplicate){
-	
+								
 		    					Store.create({
 	
 		    						name: tagInfo.v,
@@ -718,12 +723,30 @@ function parseRegion(regionXMLString, floorId, next){
 	
 			    			}
 	
-			    		}
-	
-			    	});
-	
-			    });
+			    		}		    			
 
+			    	}
+
+	    		}
+
+	    		// Delete the stores not in region.xml
+	    		for(var i=0; i<stores.length; i++){	    		
+		    		
+	    			var isFound = false;
+		    		for(var j=0; j<storeNamesTemp.length; j++){
+		    			if(stores[i].name == storeNamesTemp[j]){
+		    				isFound = true;
+		    			}
+		    		}
+
+		    		if(!isFound){
+		    			stores[i].remove(function(err){
+		    				if(err)
+		    					log.error(err);
+		    			});
+		    		}
+
+	    		}
 	    	}
 	    	
 	    });
