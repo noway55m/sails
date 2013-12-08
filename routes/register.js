@@ -14,7 +14,8 @@ var log = require('log4js').getLogger("Register"),
 exports.index = function(req, res) {
 	res.render("register/index.html", {
 		url : req.url.toString(), // use in layout for identify display info
-		errorMsg : req.flash('msg') || ""
+		errorMsg : req.flash('msg') || "",
+		user: null,
 	});
 };
 
