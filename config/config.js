@@ -7,6 +7,8 @@ module.exports = {
 	imagePath : "public/client-image",
 	
 	mapInfoPath: "resource/map-info",
+
+	sdkPath: "resource/sails-relative-res/sdk",	
 	
 	sampleBuildingPath: "resource/map-info/sample",
 	

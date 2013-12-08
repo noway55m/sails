@@ -146,7 +146,7 @@ app.post('/iD/update', iD.update);
 
 //-----------------------------------
 app.sget('/sails-resource/download', others.download);
-
+app.sget('/sails-resource/download/:platform', others.downloadSdk);
 
 
 /**************** Social URL Mapping ****************/
