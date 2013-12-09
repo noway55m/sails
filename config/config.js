@@ -8,7 +8,17 @@ module.exports = {
 	
 	mapInfoPath: "resource/map-info",
 
-	sdkPath: "resource/sails-relative-res/sdk",	
+	androidSdkPath: "resource/sails-relative-res/android/SAILS_SDK_V1.1_Published.jar",
+
+	iosSdkPath: "resource/sails-relative-res/ios/",
+
+	androidDocPath: "resource/sails-relative-res/android/Javadoc.rar",		
+
+	iosDocPath: "resource/sails-relative-res/ios/doc.rar",		
+
+	androidSampleCodePath: "resource/sails-relative-res/android/SampleCode.rar",		
+
+	iosSampleCodePath: "resource/sails-relative-res/ios/SampleCode.rar",		
 	
 	sampleBuildingPath: "resource/map-info/sample",
 	

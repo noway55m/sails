@@ -5,10 +5,12 @@ var log = require('log4js').getLogger("User"),
 	User = require("../model/user"),
 	ResetPasswordToken = require("../model/resetPasswordToken"),	
     mailer = require('../config/nodemailerSetup'),
-    config = require('../config/config.js');
+    config = require('../config/config.js'),
+    utilityS = require("./utility.js");
 
 // Static variable
-var resource_path = "./resource/",
+var errorResInfo = utilityS.errorResInfo,
+	resource_path = "./resource/",
     public_image_path = "client-image",
     mapzip_path = resource_path + "mapzip",
     image_path = "public/" + public_image_path;
@@ -26,11 +28,18 @@ exports.read = function(req, res){
 
 	User.findById(req.params._id, function(err, user){
 		
-		if(err)
+		if(err){
+
 			log.error(err);
 		
-		if(user)
-			res.send(200, user)
+		} else {
+
+			if(user)
+				res.send(200, user)
+
+			
+		}
+
 		
 	});	
 	
@@ -131,20 +140,29 @@ exports.update = function(req, res){
 
 	User.findById(req.body._id, function(err, user){
 
-		if(err)
+		if(err){
+
 			log.error(err);
+		
+		} else {
 
-		if(user){
+			if(user){
 
-		    // Check upgrade user to "admin" or "developer" for get token
-			if( (req.body.role == User.ROLES.ADMIN || req.body.role == User.ROLES.DEVELOPER) &&
-			   user.role == User.ROLES.FREE)
-			    user.token = User.genToken();
-			user.role = req.body.role;
-			user.enabled = req.body.enabled;
-			user.save(function(err, user){
-				res.send(200, user);
-			});
+			    // Check upgrade user to "admin" or "developer" for get token
+				if( (req.body.role == User.ROLES.ADMIN || req.body.role == User.ROLES.DEVELOPER) &&
+				   user.role == User.ROLES.FREE)
+				    user.token = User.genToken();
+				user.role = req.body.role;
+				user.enabled = req.body.enabled;
+				user.save(function(err, user){
+					res.send(200, user);
+				});
+
+			} else {
+
+
+
+			}
 
 		}
 
