@@ -119,7 +119,7 @@ body {
 	height: 92%;
 	max-width: 100%;
 	min-width: 1300px;
-	min-height: 650px;		
+	min-height: 600px;		
 	position: absolute;
     top:50px; /* navbar height */
     bottom:0;
