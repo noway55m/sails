@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<rendertheme>
+	<render name="default" level="0" fill="#0000FF" fill-alpha="0.0" stroke="#CC666666" stroke-alpha="0.8" stroke-width="0" text-fill="#FF444444" text-level="0" text-stroke="#FFFFFFFF" text-stroke-width="1" text-size="14" />
+	<render name="dining" level="0" fill="#4C2A9C68" fill-alpha="0.3" stroke="#000000" stroke-alpha="0.0" stroke-width="0" text-fill="#FF149E60" text-level="21" text-stroke="#FFFFFFFF" text-stroke-width="3" text-size="14" />
+	<render name="eating" level="0" fill="#996D9EEB" fill-alpha="0.6" stroke="#19000000" stroke-alpha="0.1" stroke-width="1" text-fill="#FF1C4587" text-level="21" text-stroke="#FFC9DAF8" text-stroke-width="1" text-size="14" />
+	<render name="entry" level="0" fill="#7FE07798" fill-alpha="0.5" stroke="#19000000" stroke-alpha="0.1" stroke-width="1" text-fill="#FF83334C" text-level="21" text-stroke="#FFFFFFFF" text-stroke-width="2" text-size="14" />
+	<render name="family" level="0" fill="#4C8E63CE" fill-alpha="0.3" stroke="#19000000" stroke-alpha="0.1" stroke-width="1" text-fill="#FF41236D" text-level="21" text-stroke="#FFE4D7F5" text-stroke-width="2" text-size="14" />
+	<render name="frontcp" level="0" fill="#19FCDA83" fill-alpha="0.1" stroke="#19000000" stroke-alpha="0.1" stroke-width="1" text-fill="#FF444444" text-level="21" text-stroke="#FFFFFFFF" text-stroke-width="2" text-size="14" />
+	<render name="icon" level="20" fill="#1A0000FF" fill-alpha="0.1" stroke="#1A000000" stroke-alpha="0.1" stroke-width="1" text-fill="#FF444444" text-level="0" text-stroke="#FFFFFFFF" text-stroke-width="1" text-size="14" />
+	<render name="kitchen" level="0" fill="#19CC3A21" fill-alpha="0.1" stroke="#19000000" stroke-alpha="0.1" stroke-width="1" text-fill="#FFE66550" text-level="21" text-stroke="#FFFFFFFF" text-stroke-width="3" text-size="14" />
+	<render name="living room" level="0" fill="#190000FF" fill-alpha="0.1" stroke="#19000000" stroke-alpha="0.1" stroke-width="1" text-fill="#FF6D9EEB" text-level="21" text-stroke="#FFFFFFFE" text-stroke-width="3" text-size="14" />
+	<render name="outline" level="17" fill="#19FFFFFE" fill-alpha="0.1" stroke="#FF666666" stroke-alpha="1.0" stroke-width="3" text-fill="#FF444444" text-level="0" text-stroke="#FFFFFFFF" text-stroke-width="1" text-size="14" />
+	<render name="rcp" level="0" fill="#19CF8933" fill-alpha="0.1" stroke="#19000000" stroke-alpha="0.1" stroke-width="1" text-fill="#FFCF8933" text-level="21" text-stroke="#FFFEF1D1" text-stroke-width="2" text-size="14" />
+	<render name="study" level="0" fill="#19666666" fill-alpha="0.1" stroke="#19000000" stroke-alpha="0.1" stroke-width="1" text-fill="#FF444444" text-level="21" text-stroke="#FFFFFFFF" text-stroke-width="2" text-size="14" />
+</rendertheme>
