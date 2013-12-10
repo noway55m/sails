@@ -1,7 +1,8 @@
 module.exports = {
 	
 	domainUrl : "http://cloud.sailstech.com",
-		
+
+	/******** Main resource folder  ********/		
 	resourcePath : "./resource/",
 
 	/******** Folder path of Building and floor files  ********/
@@ -21,9 +22,10 @@ module.exports = {
 	androidSampleCodePath: "resource/sails-relative-res/android/SampleCode.rar",		
 
 	iosSampleCodePath: "resource/sails-relative-res/ios/SampleCode.rar",		
-	
-	sampleBuildingPath: "resource/map-info/sample",
-	
+		
+	/******** Main sample building folder  ********/		
+	sampleBuildingPath: "resource/map-info/Sample",
+
 	/******** AppId and AppSecret of Facebook, twitter and google+ ********/	
 	facebookAppKey: "191009537749511",
 	

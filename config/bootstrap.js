@@ -1,7 +1,13 @@
 var crypto = require('crypto'), 
-	log = require('log4js').getLogger(), 
+	log = require('log4js').getLogger(),
+    fs = require('fs'),	
+	path = require('path'),	 
 	User = require('../model/user'),
-	Building = require('../model/building');
+	Store = require('../model/store'),	
+	Floor = require('../model/floor'),
+	Building = require('../model/building'),
+	utilityS = require("../routes/utility.js"),
+	config = require('../config/config');
 
 module.exports = function() {
 
@@ -62,7 +68,54 @@ function createDefaultUser() {
 
 							building.mapzip = "Sample/map.zip";
 							building.mapzipUpdateTime = new Date();
-							building.save();
+							building.save(function(err, building){
+
+								if(err)
+									log.error(err);
+
+								if(building){
+
+									new Floor({
+
+										name: "Sample Floor",
+										desc: "This is a sample floor",
+										layer: 1,
+										map: "Sample/1/map.xml",
+										path: "Sample/1/path.xml",
+										region: "Sample/1/region.xml",
+										render: "Sample/1/render.xml",
+										mapzip: "Sample/1/map.zip",										
+										lastXmlUpdateTime: new Date(),										
+										buildingId: building._id,
+
+									}).save(function(err, floor){
+
+										if(err)
+											log.error(err);
+
+										if(floor){
+
+											var sampleFolder = config.sampleBuildingPath + "/1/region.xml"
+
+				                            // Start to parse region.xml
+				                            fs.readFile(sampleFolder, 'utf8', function (err, data) {
+				
+				                                if(err)
+				                                  log.error(err);
+				
+				                                if(data)
+				                                    utilityS.parseRegion(data, floor._id);
+
+				                            });
+
+										}
+
+									});
+
+								}
+
+
+							});
 								
 						}
 

@@ -11,7 +11,8 @@ var log = require('log4js').getLogger(),
 	mkdirp = require("mkdirp"),
 	config = require('../config/config.js'),
 	builder = require('xmlbuilder'),	
-	archiver = require('archiver');
+	archiver = require('archiver'),
+	parseString = require('xml2js').parseString;
 
 
 /**
@@ -433,6 +434,103 @@ Utility.packageMapzip = function(buildingId, next){
 			}
 			
 		});
+
+}
+
+
+// Function for parse regions and create stores on the floor
+Utility.parseRegion = function(regionXMLString, floorId, next){
+	
+	parseString(regionXMLString, function (err, result) {
+		
+	    var ways = result.osm.way,
+	    	storeNamesTemp = [];
+	    Store.find({
+	    	
+	    	floorId : floorId
+	    	
+	    }, function(err, stores){
+
+	    	if(err)
+	    		log.error(err);
+	    	
+	    	if(ways){
+	    			
+	    		// Create stores in region.xml
+	    		for(var i=0; i<ways.length; i++){
+
+	    			var way = ways[i],
+			    		tags = way.tag;
+
+			    	for(var j=0; j<tags.length; j++){
+
+		    			var tag = tags[j],
+			    			tagInfo = tag.$;
+			    		if(tagInfo.k == "label"){
+	
+			    			var name = tagInfo.v,
+			    				isDuplicate = false;
+			    			storeNamesTemp.push(name);
+	
+			    			// Check is duplicate
+			    			for(var k=0; k< stores.length; k++){
+			    				if(name == stores[k].name){
+			    					isDuplicate = true;
+			    					break;
+			    				}
+			    			}
+	
+			    			if(!isDuplicate){
+								
+		    					Store.create({
+	
+		    						name: tagInfo.v,
+		    						floorId: floorId
+	
+		    					}, function(error, store){
+		    						if(error)
+		    							log.error(error);
+	
+		    						if(store)
+		    							log.info("Create new store " + name + " successfully");
+		    					});
+	
+			    			}else{
+	
+			    				log.info("Duplicate store name " + name);
+	
+			    			}
+	
+			    		}		    			
+
+			    	}
+
+	    		}
+
+	    		// Delete the stores not in region.xml
+	    		for(var i=0; i<stores.length; i++){	    		
+		    		
+	    			var isFound = false;
+		    		for(var j=0; j<storeNamesTemp.length; j++){
+		    			if(stores[i].name == storeNamesTemp[j]){
+		    				isFound = true;
+		    			}
+		    		}
+
+		    		if(!isFound){
+		    			stores[i].remove(function(err){
+		    				if(err)
+		    					log.error(err);
+		    			});
+		    		}
+
+	    		}
+	    	}
+	    	
+	    });
+
+
+	});
 
 }
 
