@@ -11,6 +11,12 @@
 	</head>
 	<body>
 	
+		<% if(activate && activate != ""){ %>
+			<script>
+				alert("<%= activate %>")
+			</script>
+		<% } %>
+
 		<!-- Fixed Top Navigation Bar -->
 		<% include layout/top-navbar.html %>
 	

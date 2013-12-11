@@ -6,10 +6,10 @@ var log = require('log4js').getLogger("authentication"),
 
 // Get Login page
 exports.index = function(req, res) {
-	// log.info(req.flash())
 	res.render('login.html', {
 		url : req.url.toString(), // use in layout for identify display info
-		errorMsg : req.flash('msg') || "" // errorMsg: req.flash('error') || ""
+		errorMsg : req.flash('msg') || "",
+		activate : req.flash('activate') || ""
 	});
 };
 
