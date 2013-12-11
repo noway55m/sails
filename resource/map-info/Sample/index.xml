@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sailsbuilding>
+  <building name="MyHome" id="52a1de7f1f32bc4b14000003">
+    <read filepath="floorlist.xml" type="floorlist"/>
+  </building>
+</sailsbuilding>
