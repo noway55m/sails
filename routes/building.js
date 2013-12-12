@@ -50,15 +50,59 @@ exports.list = function(req, res) {
 
     // Check user role for check with administration permission
     var queryJson = null;
-    if(req.user.role !== 1)
+    if(req.user.role !== User.ROLES.ADMIN)
         queryJson = { userId: req.user.id };
 
     Building.find(queryJson, function(err, buildings){
 
-        if(err)
-            log.error(err);
+        if(err){
 
-        res.send(200, buildings);
+            log.error(err);
+			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+			});  		
+
+		} else {
+
+			// Get building's owner if admin
+			if(req.user.role == User.ROLES.ADMIN){
+
+				var ids = [];
+				for(index in buildings){
+					var building = buildings[index];
+					ids.push(building.userId.toString());
+				}
+
+				User.find({
+
+				    '_id': { $in: ids }
+
+				}, function(err, users){	
+
+					if(err){
+
+						log.error(err);
+
+					} else {
+
+						var nBuildings = JSON.parse(JSON.stringify(buildings));
+						for(var j=0; j<users.length; j++){
+							nBuildings[j].userName = users[j].username;
+						}
+				        res.send(errorResInfo.SUCCESS.code, nBuildings);
+
+					}
+						
+				});	
+
+			} else {
+
+		        res.send(errorResInfo.SUCCESS.code, buildings);    	
+
+			}	
+    	
+    	}		
+
     });
 
 };
