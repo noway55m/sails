@@ -53,69 +53,7 @@ function createDefaultUser() {
 
 				} else {
 
-					var sampleFolderName = config.sampleBuildingPath;
-					sampleFolderName = sampleFolderName.substring(sampleFolderName.lastIndexOf('/')+1, sampleFolderName.length);
-					new Building({
-
-						name: "MyHome",						
-						desc: "This is sample project",
-						downfloor: 0,
-						upfloor: 1,
-						pub: true,
-						mapzip: sampleFolderName + "/map.zip",
-						userId: user._id					
-
-					}).save(function(err, building){
-
-						if(err)
-							log.err(err);
-
-						if(building){
-
-							// Load to application info
-							utilityS.applicationInfo.sampleBuildingId = building._id;
-
-							new Floor({
-
-								name: "Sample Floor",
-								desc: "This is a sample floor",
-								layer: 1,
-								map: sampleFolderName + "/1/map.xml",
-								path: sampleFolderName + "/1/path.xml",
-								region: sampleFolderName + "/1/region.xml",
-								render: sampleFolderName + "/1/render.xml",
-								mapzip: sampleFolderName + "/1/map.zip",							
-								buildingId: building._id,
-
-							}).save(function(err, floor){
-
-								if(err)
-									log.error(err);
-
-								if(floor){
-
-									var sampleFolder = config.sampleBuildingPath + "/1/region.xml"
-
-		                            // Start to parse region.xml
-		                            fs.readFile(sampleFolder, 'utf8', function (err, data) {
-		
-		                                if(err)
-		                                  log.error(err);
-		
-		                                if(data)
-		                                    utilityS.parseRegion(data, floor._id);
-
-		                            });
-
-								}
-
-							});
-								
-						}
-
-					});
-
-					log.info('Default building has been generated successfully');
+					createSampleBuilding(user);
 
 				}
 
@@ -131,11 +69,88 @@ function createDefaultUser() {
 				enabled: true,
 				token: User.genToken()
 				
-			}).save();
+			}).save(function(err, user){
+
+				if(err)
+					log.error(err);
+
+				if(user)
+					createSampleBuilding(user);
+
+			});
 
 			log.info('Default user has been generated successfully');
 
 		}
+
+	});
+
+}
+
+// Function for create sample building
+function createSampleBuilding(user){
+
+	var sampleFolderName = config.sampleBuildingPath;
+	sampleFolderName = sampleFolderName.substring(sampleFolderName.lastIndexOf('/')+1, sampleFolderName.length);
+	new Building({
+
+		name: "MyHome",						
+		desc: "This is sample project",
+		downfloor: 0,
+		upfloor: 1,
+		pub: true,
+		mapzip: sampleFolderName + "/map.zip",
+		userId: user._id					
+
+	}).save(function(err, building){
+
+		if(err)
+			log.err(err);
+
+		if(building){
+
+			// Load to application info
+			utilityS.applicationInfo.sampleBuildingId = building._id;
+
+			new Floor({
+
+				name: "Sample Floor",
+				desc: "This is a sample floor",
+				layer: 1,
+				map: sampleFolderName + "/1/map.xml",
+				path: sampleFolderName + "/1/path.xml",
+				region: sampleFolderName + "/1/region.xml",
+				render: sampleFolderName + "/1/render.xml",
+				mapzip: sampleFolderName + "/1/map.zip",							
+				buildingId: building._id,
+
+			}).save(function(err, floor){
+
+				if(err)
+					log.error(err);
+
+				if(floor){
+
+					var sampleFolder = config.sampleBuildingPath + "/1/region.xml"
+
+                    // Start to parse region.xml
+                    fs.readFile(sampleFolder, 'utf8', function (err, data) {
+
+                        if(err)
+                          log.error(err);
+
+                        if(data)
+                            utilityS.parseRegion(data, floor._id);
+
+                    });
+
+				}
+
+			});
+				
+		}
+
+		log.info('Sample building has been generated successfully');
 
 	});
 
