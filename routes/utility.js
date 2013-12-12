@@ -20,6 +20,10 @@ var log = require('log4js').getLogger(),
  */
 function Utility(){}
 
+Utility.applicationInfo = {
+	sampleBuildingId : ""
+}
+
 // Error code and response error msg
 Utility.errorResInfo = {
 		
@@ -113,52 +117,55 @@ Utility.validatePermission = function(user, obj, type, next){
 Utility.createSampleBuilding = function(nuser, next){
 	
 	// Start to create default building after response
-    new Building({
+	log.info('sampleBuildingId: ' + Utility.applicationInfo.sampleBuildingId);
+	Building.findById(Utility.applicationInfo.sampleBuildingId, function(err, sampleBuilding){
 
-        name: "Sample",
-        desc: "You can customize your builiding by this sample",
-        userId: nuser.id,
-        pub: false,
-        icon: "building-sample-icon.png",
-        address: "Building address"
-        	
-    }).save(function(err, building){
-    	
-    	if(err){
-    		
-    		log.error(err);
-    		
-    	}else{
-    	
-            if(building){
-						            	
-				// Main Folder path
-				var folderPath = path.dirname() + "/" + config.mapInfoPath + "/" + nuser.id,
-					buildingFolderPath = folderPath + "/" + building.id,
-					floorFolderPath = buildingFolderPath + "/1",
-					clientImagePath = folderPath + "/client-image",
-					samplePath = config.sampleBuildingPath + "/1";   
-	 								
-				// Make sure building folder path exist, if not created
-				mkdirp(floorFolderPath, function(err, dd) {
-					
-					if(err){
-						
-						log.error(err);
-						
-					}else{
-						
-						// Make sure client-image folder path exist, if not created (TODO: for put user's images for future)
-						mkdirp(clientImagePath, function(err, dd) {
+		if(err)
+			log.error(err);
+
+		if(sampleBuilding){
+
+			log.info("start to generate sample building of user: " + nuser._id);
+		    new Building({
+
+		        name: sampleBuilding.name,
+		        desc: sampleBuilding.desc,
+				downfloor: sampleBuilding.downfloor,
+				upfloor: sampleBuilding.upfloor,		        
+		        userId: nuser.id,
+		        pub: sampleBuilding.pub,
+		        	
+		    }).save(function(err, building){
+		    	
+		    	if(err){
+		    		
+		    		log.error(err);
+		    		
+		    	}else{
+		    	
+		            if(building){
+
+						// Main Folder path
+						var folderPath = path.dirname() + "/" + config.mapInfoPath + "/" + nuser.id,
+							buildingFolderPath = folderPath + "/" + building.id,
+							buildingWebLocation = nuser.id + "/" + building.id,
+							clientImagePath = folderPath + "/client-image",
+							sampleMapzip = config.sampleBuildingPath + "/map.zip",
+							sampleBuildingPath = config.sampleBuildingPath;   
+
+						log.info("start to generate sample floor folder: " + buildingFolderPath);
+			 								
+						// Make sure building folder path exist, if not created
+						mkdirp(buildingFolderPath, function(err, dd) {
 							
 							if(err){
 								
-								log.error(err);
+								log.error(err);buildingFolderPath
 								
 							}else{
 								
-								// Get sample folder data
-								fs.readdir(samplePath, function(err, files){
+								// Make sure client-image folder path exist, if not created (TODO: for put user's images for future)
+								mkdirp(clientImagePath, function(err, dd) {
 									
 									if(err){
 										
@@ -166,49 +173,187 @@ Utility.createSampleBuilding = function(nuser, next){
 										
 									}else{
 										
-										
-										// Copy the default xml files and zip to floor folder of default building of user
-										for(var i=0; i<files.length; i++){
-											console.log(samplePath + "/" + files[i]);
-											fs.createReadStream( samplePath + "/" + files[i], {																
-												encoding: 'utf8',
-												autoClose: true																
-											}).pipe(fs.createWriteStream(floorFolderPath + "/" + files[i]));																					
-										}																		
-										
-										// Create new floor
-										new Floor({
-											
-											layer: 1,													
-											buildingId: building.id,
-											map: floorFolderPath + '/map.xml',
-											path: floorFolderPath + '/path.xml'
-						
-										}).save(function(err, floor){																																											
-											if(err)
-												log.error(err);
-											
-											if(next)
-												next();
-										});	
-																											
-									}
-																																																				
-								});																								
-																																						
-							}
-							
-						});
-						
-					}
-				
-				});							            	
-            									            								            	
-            }// end if						        								        		
-    		
-    	}						        	
+										// Copy sample building mapzip
+										fs.readdir(sampleBuildingPath, function(err, files){
 
-    });		
+											if(err){
+
+												log.error(err);
+
+											} else {
+
+												// Copy the default xml files and zip to floor folder of default building of user
+												for(var i=0; i<files.length; i++){
+
+													var filePath = sampleBuildingPath + "/" + files[i],
+														stat = fs.statSync(filePath);
+													if(!stat.isDirectory()){
+
+														fs.createReadStream( filePath, {																
+															encoding: 'utf8',
+															autoClose: true																
+														} ).pipe( fs.createWriteStream( buildingFolderPath + "/" + files[i] ) );																					
+
+														if(files[i].indexOf("map.zip")!=-1){
+
+															// Update map zip of building
+															building.mapzip = buildingWebLocation + "/" + files[i];
+															building.save(function(err){
+																log.error(err);
+															});								
+
+														}
+
+													} else {
+
+														// Get sample folder data
+														(function(theLayer){
+
+															var floorFolderPath = buildingFolderPath + "/" + theLayer;
+															var floorWebLocation = buildingWebLocation + "/" + theLayer;
+															mkdirp(floorFolderPath, function(err, dd) {
+
+
+																log.info(dd);
+
+																if(err)
+																	log.error(err);
+
+																fs.readdir( sampleBuildingPath + "/" + theLayer, function(err, files2){
+																	
+																	if(err){
+																		
+																		log.error(err);
+																		
+																	}else{
+																										
+																		// Copy the default xml files and zip to floor folder of default building of user
+																		for(var j=0; j<files2.length; j++){
+																			console.log( floorFolderPath + "/" + files2[j] );
+																			fs.createReadStream( sampleBuildingPath + "/" + theLayer + "/" + files2[j], {																
+																				encoding: 'utf8',
+																				autoClose: true																
+																			} ).pipe( fs.createWriteStream( floorFolderPath + "/" + files2[j] ) );																					
+																		}																		
+																		
+																		// Find sample floor
+																		Floor.findOne({
+
+																			buildingId: sampleBuilding._id,
+																			layer: theLayer
+
+																		}, function(err, sampleFloor){
+
+																			if(err)
+																				log.err(err);
+
+																			if(sampleFloor){
+
+																				// Create new floor
+																				new Floor({
+																					
+																					name: sampleFloor.name,
+																					desc: sampleFloor.desc,																					
+																					layer: sampleFloor.layer,													
+																					map: floorWebLocation + '/map.xml',
+																					path: floorWebLocation + '/path.xml',
+																					render: floorWebLocation + '/render.xml',
+																					region: floorWebLocation + '/region.xml',
+																					mapzip: floorWebLocation + '/map.zip',																			
+																					buildingId: building.id,
+																
+																				}).save(function(err, floor){
+
+																					if(err)
+																						log.error(err);
+																					
+																					if(floor){
+
+																						// Create default stores
+																						Store.find({
+
+																							floorId: sampleFloor._id
+
+																						}, function(err, sampleStores){
+
+																							if(err)
+																								log.error(err);
+
+																							if(sampleStores){
+
+																								for(var l=0; l<sampleStores.length; l++){
+
+																									(function(sStore, index){
+
+																										Store.create({
+
+																										    name: sStore.name,																			    
+																										    floorId: floor._id
+
+																										}, function(err, store){
+
+																											if(err)
+																												log.error(err);
+
+																											if(index == sampleStores.length -1){
+
+																												if(next)
+																													next();
+
+																											}
+
+																										});
+
+																									}( sampleStores[l], l ) );
+
+																								}
+
+																							}
+
+																						});
+
+																					}
+
+																				});	
+
+																			}
+
+																		});
+																																			
+																	}
+																																																												
+																});	
+
+															});
+
+
+														}( files[i] ) )
+
+													}
+
+												}		
+
+											}
+
+										});																						
+																																								
+									}
+									
+								});
+								
+							}
+						
+						});							            	
+		            									            								            	
+		            }// end if						        								        		
+		    		
+		    	}						        	
+
+		    });	
+
+		}
+
+	});
 		
 };
 

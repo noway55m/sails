@@ -48,8 +48,13 @@ function createDefaultUser() {
 
 					log.info("Default building exist already");
 
+					// Load to application info
+					utilityS.applicationInfo.sampleBuildingId = building._id;
+
 				} else {
 
+					var sampleFolderName = config.sampleBuildingPath;
+					sampleFolderName = sampleFolderName.substring(sampleFolderName.lastIndexOf('/')+1, sampleFolderName.length);
 					new Building({
 
 						name: "MyHome",						
@@ -57,6 +62,7 @@ function createDefaultUser() {
 						downfloor: 0,
 						upfloor: 1,
 						pub: true,
+						mapzip: sampleFolderName + "/map.zip",
 						userId: user._id					
 
 					}).save(function(err, building){
@@ -66,54 +72,42 @@ function createDefaultUser() {
 
 						if(building){
 
-							building.mapzip = "Sample/map.zip";
-							building.mapzipUpdateTime = new Date();
-							building.save(function(err, building){
+							// Load to application info
+							utilityS.applicationInfo.sampleBuildingId = building._id;
+
+							new Floor({
+
+								name: "Sample Floor",
+								desc: "This is a sample floor",
+								layer: 1,
+								map: sampleFolderName + "/1/map.xml",
+								path: sampleFolderName + "/1/path.xml",
+								region: sampleFolderName + "/1/region.xml",
+								render: sampleFolderName + "/1/render.xml",
+								mapzip: sampleFolderName + "/1/map.zip",							
+								buildingId: building._id,
+
+							}).save(function(err, floor){
 
 								if(err)
 									log.error(err);
 
-								if(building){
+								if(floor){
 
-									new Floor({
+									var sampleFolder = config.sampleBuildingPath + "/1/region.xml"
 
-										name: "Sample Floor",
-										desc: "This is a sample floor",
-										layer: 1,
-										map: "Sample/1/map.xml",
-										path: "Sample/1/path.xml",
-										region: "Sample/1/region.xml",
-										render: "Sample/1/render.xml",
-										mapzip: "Sample/1/map.zip",										
-										lastXmlUpdateTime: new Date(),										
-										buildingId: building._id,
+		                            // Start to parse region.xml
+		                            fs.readFile(sampleFolder, 'utf8', function (err, data) {
+		
+		                                if(err)
+		                                  log.error(err);
+		
+		                                if(data)
+		                                    utilityS.parseRegion(data, floor._id);
 
-									}).save(function(err, floor){
-
-										if(err)
-											log.error(err);
-
-										if(floor){
-
-											var sampleFolder = config.sampleBuildingPath + "/1/region.xml"
-
-				                            // Start to parse region.xml
-				                            fs.readFile(sampleFolder, 'utf8', function (err, data) {
-				
-				                                if(err)
-				                                  log.error(err);
-				
-				                                if(data)
-				                                    utilityS.parseRegion(data, floor._id);
-
-				                            });
-
-										}
-
-									});
+		                            });
 
 								}
-
 
 							});
 								
