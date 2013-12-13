@@ -89,7 +89,7 @@ exports.downloadSampleCode = function(req, res){
     stat = fs.statSync(filePath);
     res.writeHead(200, {
         "Content-type": "application/octet-stream",
-        "Content-disposition": "attachment; filename=SampleCode.jar",
+        "Content-disposition": "attachment; filename=SampleCode.rar",
         "Content-Length": stat.size
     });
 
