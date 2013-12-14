@@ -669,8 +669,8 @@ Utility.packageMapzip = function(buildingId, next){
 																																										
 																				}
 
-																				if(filesI.length == 0)
-																					archive.append(fs.createReadStream(filePath), { name: "/" + layer + "/.tmp" });
+																				// if(filesI.length == 0)
+																				//	archive.append(fs.createReadStream(filePath), { name: "/" + layer + "/.tmp" });
 																				
 																			}
 																																						

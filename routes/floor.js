@@ -780,38 +780,45 @@ exports.uploadMapzip = function(req, res) {
                     var tmpPath = req.files.mapzip.path;
 
                     // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
-                    var webLocation = req.user._id + "/" + floor.buildingId + "/" + floor.layer,
-                        folderPath = path.dirname() + mapinfo_path + '/' + webLocation;
+                    Building.findById( floor.buildingId, function(err, building) {
 
-                    mkdirp(folderPath, function(err, dd) {
-                    	
-                        var targetPath = folderPath + "/map" + extension;
-                        
-                    	console.log("dd: " + dd);
-                        console.log('tmpPath: ' + tmpPath);
-                        console.log('targetPath: ' + targetPath);
-                        
-                        
-                        fs.rename(tmpPath, targetPath, function(err) {
+                    	if(err){
 
-                            if (err)
-                                log.error(err);                            
-                            
-                            floor.mapzip = webLocation + "/map" + extension;
-                            floor.save(function(err, floor) {
+                    		log.error(err);
 
-                                if (err)
-                                    log.error(err);
+                    	} else {
 
-                                if (floor)
-                                    res.send(200, floor);
+		                    var webLocation = building.userId + "/" + building._id + "/" + floor.layer,
+		                        folderPath = path.dirname() + mapinfo_path + '/' + webLocation;
 
-                                // Delete the temporary file
-                                fs.unlink(tmpPath, function(err){});
+		                    mkdirp(folderPath, function(err, dd) {
+		                    	
+		                        var targetPath = folderPath + "/map" + extension;
+		                        		                        
+		                        fs.rename(tmpPath, targetPath, function(err) {
 
-                            });
+		                            if (err)
+		                                log.error(err);                            
+		                            
+		                            floor.mapzip = webLocation + "/map" + extension;
+		                            floor.save(function(err, floor) {
 
-                        });
+		                                if (err)
+		                                    log.error(err);
+
+		                                if (floor)
+		                                    res.send(200, floor);
+
+		                                // Delete the temporary file
+		                                fs.unlink(tmpPath, function(err){});
+
+		                            });
+
+		                        });
+
+		                    });
+
+                    	}
 
                     });
 
