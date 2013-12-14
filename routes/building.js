@@ -86,8 +86,15 @@ exports.list = function(req, res) {
 					} else {
 
 						var nBuildings = JSON.parse(JSON.stringify(buildings));
-						for(var j=0; j<users.length; j++){
-							nBuildings[j].userName = users[j].username;
+						for(var j=0; j<ids.length; j++){
+							var username = "";
+							for(var n=0; n<users.length; n++){
+								if(ids[j] == users[n].id.toString()){
+									username = users[n].username;
+									break;
+								}
+							}
+							nBuildings[j].userName = username;
 						}
 				        res.send(errorResInfo.SUCCESS.code, nBuildings);
 
