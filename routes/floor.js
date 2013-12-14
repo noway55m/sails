@@ -141,7 +141,7 @@ exports.create = function(req, res) {
 
 										res.send(200, floor);
 
-		                                var floorFolderPath = path.dirname() + "/" + config.mapInfoPath + "/" + req.user.id + "/" + building.id + "/" + layer;
+		                                var floorFolderPath = path.dirname() + "/" + config.mapInfoPath + "/" + building.userId + "/" + building.id + "/" + layer;
 
 		                                // Create floor's folder
 		                                mkdirp(floorFolderPath, function(err, dd) {

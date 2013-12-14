@@ -71,7 +71,7 @@ Utility.validatePermission = function(user, obj, type, next){
 		case Building.modelName:
 			
 			var result = false;
-			if( (obj && obj.userId == user.id) || user.role == User.ROLES.ADMIN){				
+			if( (obj && obj.userId == user.id.toString()) || user.role == User.ROLES.ADMIN){				
 				result = true;								
 			}else{
 				result = false;
@@ -661,10 +661,16 @@ Utility.packageMapzip = function(buildingId, next){
 																				
 																				for(var j=0; j<filesI.length; j++){
 																					
-																					var filePathInner = filePathF + "/" + filesI[j];																		
-																					archive.append(fs.createReadStream(filePathInner), { name: "/" + layer + "/" + filesI[j] });
+																					var filePathInner = filePathF + "/" + filesI[j];
+																					if( filesI[j].indexOf("temp") != -1 )
+																						continue;
+																					else																		
+																						archive.append(fs.createReadStream(filePathInner), { name: "/" + layer + "/" + filesI[j] });
 																																										
 																				}
+
+																				if(filesI.length == 0)
+																					archive.append(fs.createReadStream(filePath), { name: "/" + layer + "/.tmp" });
 																				
 																			}
 																																						
