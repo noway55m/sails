@@ -29,6 +29,7 @@
     "http-proxy": "0.10.3",
     "xmlbuilder": "0.4.2",
     "xmldom": "0.1.16",
-    "archiver" : "0.4.10"
+    "archiver" : "0.4.10",
+	  "unzip" : "0.1.9"    
   }
 }

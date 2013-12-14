@@ -141,8 +141,18 @@ exports.create = function(req, res) {
 
 										res.send(200, floor);
 
-		                                // Auto-package mapzip     			
-										utilityS.packageMapzip(building._id, function(errorObj){});
+		                                var floorFolderPath = path.dirname() + "/" + config.mapInfoPath + "/" + req.user.id + "/" + building.id + "/" + layer;
+
+		                                // Create floor's folder
+		                                mkdirp(floorFolderPath, function(err, dd) {
+
+		                                	if(err)
+		                                		log.error(err);
+
+		                                	// Auto-package mapzip		                                
+		                                	utilityS.packageMapzip(building._id, function(errorObj){});
+
+		                                });										
 
 									}
 
