@@ -46,7 +46,7 @@ function createDefaultUser() {
 
 				if(building){
 
-					log.info("Default building exist already");
+					log.info("Sample building exist already");
 
 					// Load to application info
 					utilityS.applicationInfo.sampleBuildingId = building._id;
@@ -74,12 +74,12 @@ function createDefaultUser() {
 				if(err)
 					log.error(err);
 
-				if(user)
-					createSampleBuilding(user);
+				if(user){
+					log.info('Default user has been generated successfully');
+					createSampleBuilding(user);				
+				}
 
 			});
-
-			log.info('Default user has been generated successfully');
 
 		}
 
