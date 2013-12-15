@@ -71,11 +71,15 @@ Utility.validatePermission = function(user, obj, type, next){
 		case Building.modelName:
 			
 			var result = false;
-			if( (obj && obj.userId == user.id.toString()) || user.role == User.ROLES.ADMIN){				
-				result = true;								
-			}else{
+			if( (obj && obj.userId == user.id.toString()) || user.role == User.ROLES.ADMIN) {
+
+				result = true;
+
+			} else {
+
 				result = false;
-			}
+
+			}			
 			next(result);
 			break;
 		
@@ -83,29 +87,154 @@ Utility.validatePermission = function(user, obj, type, next){
 		case Floor.modelName:
 			
 			var result = false;			
-			if(user.role == User.ROLES.ADMIN){				
+			if(user.role == User.ROLES.ADMIN) {
+
 				result = true;
-				next(result);				
-			}else{				
-				var buildingId = obj.buildingId;
-				Building.findById(buildingId, function(err, building){					
-					if(err){
+				next(result);
+
+			} else {
+
+				Building.findById( obj.buildingId, function(err, building) {
+
+					if(err) {
+
 						log.error(err);					
-					}else{
-						if(building && building.id == user.id)
+					
+					} else {
+
+						if( building && building.userId == user.id.toString() )
 							result = true;
+
 					}
-					next(result);					
-				});								
+					next(result);
+
+				});
+
 			}
 			break;
 		
 		// Store Model	
 		case Store.modelName:
+
+			var result = false;			
+			if(user.role == User.ROLES.ADMIN) {
+
+				result = true;
+				next(result);
+
+			} else {
+
+				Floor.findById( obj.floorId, function(err, floor) {
+
+					if(err) {
+
+						log.error(err);
+						next(result);					
+					
+					} else {
+
+						if(floor) {
+
+							Building.findById( floor.buildingId, function(err, building) {
+
+								if(err) {
+
+									log.error(err);
+									
+								} else {
+
+									if( building && building.userId == user.id.toString() )
+										result = true;
+
+								}
+
+								next(result);
+
+							});
+
+						} else {
+
+							next(result);
+
+						}
+							
+
+					}
+
+				});
+
+			}	
+
 			break;
 		
 		// Ad Model	
 		case Ad.modelName:
+
+			var result = false;			
+			if(user.role == User.ROLES.ADMIN) {
+
+				result = true;
+				next(result);
+
+			} else {
+
+				Store.findById( obj.storeId, function(err, store) {
+
+					if(err) {
+
+						next(result);
+
+					} else {
+
+						if(store) {
+
+							Floor.findById( store.floorId, function(err, floor) {
+
+								if(err) {
+
+									next(result);
+
+								} else {
+
+									if(floor) {
+
+										Building.findById( floor.buildingId, function(err, building) {
+
+											if(err) {
+
+												log.error(err);					
+											
+											} else {
+
+												if( building && building.userId == user.id.toString() )
+													result = true;
+
+											}
+											next(result);																					
+
+										});
+
+									} else {
+
+										next(result);
+
+									}
+
+								}
+
+							});
+
+						} else {
+
+							next(result);
+
+						}
+
+					}
+
+				});
+
+			}		
 			break;
 			
 		default:

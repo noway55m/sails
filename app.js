@@ -113,12 +113,17 @@ app.spost('/floor/uploadMapAndPath', floor.uploadMapAndPath);
 app.spost('/floor/uploadRenderAndRegion', floor.uploadRenderAndRegion);
 app.spost('/floor/uploadAplist', floor.uploadAplist);
 app.spost('/floor/uploadMapzip', floor.uploadMapzip);
+app.spost('/floor/uploadMap', floor.uploadMap);
+app.spost('/floor/uploadPath', floor.uploadPath);
+app.spost('/floor/uploadRender', floor.uploadRender);
+app.spost('/floor/uploadRegion', floor.uploadRegion);
 app.sget('/floor/getMap', floor.getFile);
 app.sget('/floor/getPath', floor.getFile);
 app.sget('/floor/getRender', floor.getFile);
 app.sget('/floor/getRegion', floor.getFile);
 app.sget('/floor/getMapzip', floor.getMapzip);
 app.spost('/floor/delete', floor.del);
+
 
 //----------------------------------
 app.sget('/store/show/:_id', store.show);

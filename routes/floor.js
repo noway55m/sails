@@ -92,7 +92,7 @@ exports.create = function(req, res) {
 				log.error(error);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
 					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-				}); 	
+				}); 				
 
 			} else {
 
@@ -755,11 +755,7 @@ exports.getFile = function(req, res){
 exports.uploadMapzip = function(req, res) {
 	
     if(req.body._id && req.files.mapzip){
-    	
-    	console.log(req.body._id);
-    	console.log(req.files.mapzip);
-    	
-    	
+    	    	
         // Get file name and extension
         var fileName = req.files.mapzip.name,
             extension = path.extname(fileName).toLowerCase() === '.zip' ? ".zip" : null ||
@@ -771,64 +767,122 @@ exports.uploadMapzip = function(req, res) {
             // Get floor
             Floor.findById(req.body._id, function(err, floor) {
 
-                if(err)
+                if(err){
+
                     log.error(err);
+					res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+						msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					});                      
 
-                if(floor){
+				} else {
 
-                    // Get the temporary location of the file
-                    var tmpPath = req.files.mapzip.path;
+	                if(floor){
 
-                    // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
-                    Building.findById( floor.buildingId, function(err, building) {
+	                    // Get the temporary location of the file
+	                    var tmpPath = req.files.mapzip.path;
 
-                    	if(err){
+	                    // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
+	                    Building.findById( floor.buildingId, function(err, building) {
 
-                    		log.error(err);
+	                    	if(err){
 
-                    	} else {
+				                log.error(err);
+								res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+									msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+								});                     		
 
-		                    var webLocation = building.userId + "/" + building._id + "/" + floor.layer,
-		                        folderPath = path.dirname() + mapinfo_path + '/' + webLocation;
+	                    	} else {
 
-		                    mkdirp(folderPath, function(err, dd) {
-		                    	
-		                        var targetPath = folderPath + "/map" + extension;
-		                        		                        
-		                        fs.rename(tmpPath, targetPath, function(err) {
+	                    		if( building ) {
 
-		                            if (err)
-		                                log.error(err);                            
-		                            
-		                            floor.mapzip = webLocation + "/map" + extension;
-		                            floor.save(function(err, floor) {
+					    			// Check permisssion
+					    			utilityS.validatePermission(req.user, building, Building.modelName, function(result){
 
-		                                if (err)
-		                                    log.error(err);
+					    				if(result){
 
-		                                if (floor)
-		                                    res.send(200, floor);
+						                    var webLocation = building.userId + "/" + building._id + "/" + floor.layer,
+						                        folderPath = path.dirname() + "/" + config.mapInfoPath + '/' + webLocation;
 
-		                                // Delete the temporary file
-		                                fs.unlink(tmpPath, function(err){});
+						                    mkdirp(folderPath, function(err, dd) {
+						                    	
+						                        var targetPath = folderPath + "/map" + extension;
+						                        		                        
+						                        fs.rename(tmpPath, targetPath, function(err) {
 
-		                            });
+						                            if (err) {
 
-		                        });
+						                                log.error(err);
+														res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+															msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+														});   						                                                            
+						                            
+						                            } else {
 
-		                    });
+							                            floor.mapzip = webLocation + "/map" + extension;
+							                            floor.save(function(err, floor) {
 
-                    	}
+							                                if (err) {
 
-                    });
+							                                    log.error(err);
+																res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+																	msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+																});   							                                    
 
-                }
+							                                 } else {
+
+							                                 	res.send( errorResInfo.SUCCESS.code, floor );
+
+							                                 }   
+
+							                                // Delete the temporary file
+							                                fs.unlink( tmpPath, function(err){} );
+
+							                            });
+
+						                            }
+
+						                        });
+
+						                    });
+
+					    				} else {
+
+				                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+				                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+				                			});
+
+					    				}
+
+					    			});                    			
+
+	                    		} else {
+
+					                log.error(err);
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									}); 
+
+	                    		}
+
+	                    	}
+
+	                    });
+
+	                } else {
+
+						res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+							msg: errorResInfo.INCORRECT_PARAMS.msg
+						}); 
+
+	                }
+
+				}
 
             });
 
         }else{
 
-            res.send(200, { msg: "File extension should be .zip or .rar." });
+            res.send( errorResInfo.SUCCESS.code, { msg: "File extension should be .zip or .rar." } );
         }
 
     }
@@ -861,85 +915,123 @@ exports.uploadAplist = function(req, res) {
 				}else{
 									
 					if(floor){
-				        	
-				        // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
-				        var webLocation = req.user._id + "/" + floor.buildingId + "/" + floor.layer,
-				            folderPath = path.dirname() + mapinfo_path + '/' + webLocation;
 				        
-				        mkdirp(folderPath, function(err, dd) {
-				            
-				        	if (err){
-				        		
+				        Building.findById( floor.buildingId, function(err, building) {
+
+	                    	if(err){
+
 				                log.error(err);
-				                
-								// Internal server error
-								res.send(errorResInfo.INTERNAL_SERVER_ERROR.code, {
-									msg: errorResInfo.INTERNAL_SERVER_ERROR.msg 
-								});					        		
-				        		
-				        	}else{
-				        		
-					            var tmpPathAppList = req.files.aplist.path,					        	
-					            	targetPathAppList = folderPath + "/applist.xml";
+								res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+									msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+								});                     		
 
-					            log.info("targetPathAppList: " + targetPathAppList);
+	                    	} else {
 
-					            // Move file from temp to target
-					            fs.rename(tmpPathAppList, targetPathAppList, function(err) {
+	                    		if( building ) {
 
-					                if (err){
-					                	
-						                log.error(err);
-						                
-										// Internal server error
-										res.send(errorResInfo.INTERNAL_SERVER_ERROR.code, {
-											msg: errorResInfo.INTERNAL_SERVER_ERROR.msg 
-										});	
-					                    
-					                }else{
-				                        	
-				                        floor.applist = webLocation + "/applist.xml";
-				                        floor.save(function(err, floor) {
+					    			// Check permisssion
+					    			utilityS.validatePermission(req.user, building, Building.modelName, function(result){
 
-				                            if(err){
-				                            	
-								                log.error(err);										                
-								                
-												// Internal server error
-												res.send(errorResInfo.INTERNAL_SERVER_ERROR.code, {
-													msg: errorResInfo.INTERNAL_SERVER_ERROR.msg 
-												});	
-				                            							                            	
-				                            }else{
-				                            	
-				                            	// Response success to client first						                            	
-												res.json(errorResInfo.SUCCESS.code, floor);
-												
-					                            // Start to parse region.xml
-					                            fs.readFile(targetPathAppList, 'utf8', function (err, data) {
+					    				if(result){
 
-					                                if(err)
-					                                  log.error(err);
-					                                
-					                                if(data)
-					                                    parseApplist(data, floor.id);
+									        // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
+									        var webLocation = building.userId + "/" + floor.buildingId + "/" + floor.layer,
+									            folderPath = path.dirname() + mapinfo_path + '/' + webLocation;
+									        
+									        mkdirp(folderPath, function(err, dd) {
+									            
+									        	if (err){
+									        		
+									                log.error(err);
+													res.send(errorResInfo.INTERNAL_SERVER_ERROR.code, {
+														msg: errorResInfo.INTERNAL_SERVER_ERROR.msg 
+													});					        		
+									        		
+									        	}else{
+									        		
+										            var tmpPathAppList = req.files.aplist.path,					        	
+										            	targetPathAppList = folderPath + "/applist.xml";
 
-					                                // Delete the temporary file
-					                                fs.unlink(tmpPathAppList, function(err){});
-					                                
-					                            });						                            	
-				                            							                            	
-				                            }						                              
+										            log.info("targetPathAppList: " + targetPathAppList);
 
-				                        });					                        	
-					                    
-					                }
+										            // Move file from temp to target
+										            fs.rename(tmpPathAppList, targetPathAppList, function(err) {
 
-					            });				        	
-				        						        		
-				        	}
+										                if (err){
+										                	
+											                log.error(err);
+											                
+															// Internal server error
+															res.send(errorResInfo.INTERNAL_SERVER_ERROR.code, {
+																msg: errorResInfo.INTERNAL_SERVER_ERROR.msg 
+															});	
+										                    
+										                }else{
+									                        	
+									                        floor.applist = webLocation + "/applist.xml";
+									                        floor.save(function(err, floor) {
 
-				        });			        														
+									                            if(err){
+									                            	
+													                log.error(err);										                
+													                
+																	// Internal server error
+																	res.send(errorResInfo.INTERNAL_SERVER_ERROR.code, {
+																		msg: errorResInfo.INTERNAL_SERVER_ERROR.msg 
+																	});	
+									                            							                            	
+									                            }else{
+									                            	
+									                            	// Response success to client first						                            	
+																	res.json(errorResInfo.SUCCESS.code, floor);
+																	
+										                            // Start to parse region.xml
+										                            fs.readFile(targetPathAppList, 'utf8', function (err, data) {
+
+										                                if(err)
+										                                  log.error(err);
+										                                
+										                                if(data)
+										                                    parseApplist(data, floor.id);
+
+										                                // Delete the temporary file
+										                                fs.unlink(tmpPathAppList, function(err){});
+										                                
+										                            });						                            	
+									                            							                            	
+									                            }						                              
+
+									                        });					                        	
+										                    
+										                }
+
+										            });				        	
+									        						        		
+									        	}
+
+									        });		
+
+					    				} else {
+
+				                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+				                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+				                			});
+
+					    				}
+
+					    			});	  
+
+	                    		} else {
+
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									});   
+
+	                    		}
+
+	                    	}
+
+				        });      														
 						
 					}else{
 						
@@ -970,6 +1062,594 @@ exports.uploadAplist = function(req, res) {
 			msg: errorResInfo.INCORRECT_PARAMS.msg 
 		});
 		
+	}
+
+};
+
+
+// POST Interface for upload map.xml
+exports.uploadMap = function(req, res) {
+
+	if(req.body._id && req.files.map){
+
+	    Floor.findById(req.body._id, function(err, floor) {
+
+	    	if(err){
+
+                log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				}); 
+
+	    	} else {
+
+	    		if(floor){
+
+	    			Building.findById( floor.buildingId, function( err, building ){
+
+	    				if(err) {
+
+			                log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							}); 
+
+	    				} else {
+
+	    					if( building ){
+
+				    			// Check permisssion
+				    			utilityS.validatePermission(req.user, building, Building.modelName, function(result){
+
+				    				if(result){
+
+								        // Get the temporary location of the file
+								        var tmpPathPath = req.files.map.path;
+
+								        // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
+								        var webLocation = building.userId + "/" + floor.buildingId + "/" + floor.layer,
+								            folderPath = path.dirname() + "/" + config.mapInfoPath + '/' + webLocation;
+
+								        // Make sure flolder exist    	        
+							            mkdirp(folderPath, function(err, dd) {
+
+							                if (err){
+
+							                    log.error(err);
+												res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+													msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+												}); 
+
+							                } else {
+
+								                var targetPathPath = folderPath + "/map.xml";
+								                log.info("targetPathPath: " + targetPathPath);
+								                	
+								                fs.rename(tmpPathPath, targetPathPath, function(err) {
+
+								                    if (err){
+
+								                        log.error(err);
+														res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+															msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+														}); 
+
+								                    } else {
+
+									                    // Update floor
+									                    floor.map = webLocation + "/map.xml";                                
+									                    floor.save(function(err, floor) {
+
+									                        if (err){
+
+									                            log.error(err);
+																res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+																	msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+																});						                            
+									                        
+									                        } else {
+
+										                        res.send( errorResInfo.SUCCESS, floor );
+
+									                        }		                          
+
+									                        // Delete temped path.xml
+									                        fs.unlink( tmpPathPath, function(err){} );
+
+									                    });
+
+								                    }	                   
+
+								                });
+
+							            	}    
+
+								    	});
+
+				    				} else {
+
+			                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+			                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+			                			});
+
+				    				}
+
+				    			});
+
+	    					} else {
+
+				                log.error(err);
+								res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+									msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+								}); 
+
+	    					}
+
+	    				}
+
+	    			});
+
+	    		} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					}); 
+
+	    		}
+
+	    	}
+		
+		});
+
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
+
+	}
+
+};
+
+// POST Interface for upload path.xml
+exports.uploadPath = function(req, res) {
+
+	if(req.body._id && req.files.path){
+
+	    Floor.findById(req.body._id, function(err, floor) {
+
+	    	if(err){
+
+                log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				}); 
+
+	    	} else {
+
+	    		if(floor){
+
+	    			Building.findById( floor.buildingId, function( err, building ){
+
+	    				if(err) {
+
+			                log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							}); 
+
+	    				} else {
+
+	    					if( building ){
+
+				    			// Check permisssion
+				    			utilityS.validatePermission(req.user, building, Building.modelName, function(result){
+
+				    				if(result){
+
+								        // Get the temporary location of the file
+								        var tmpPathPath = req.files.path.path;
+
+								        // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
+								        var webLocation = req.user._id + "/" + floor.buildingId + "/" + floor.layer,
+								            folderPath = path.dirname() + "/" + config.mapInfoPath + '/' + webLocation;
+
+								        // Make sure flolder exist    	        
+							            mkdirp(folderPath, function(err, dd) {
+
+							                if (err){
+
+							                    log.error(err);
+												res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+													msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+												}); 
+
+							                } else {
+
+								                var targetPathPath = folderPath + "/path.xml";
+								                log.info("targetPathPath: " + targetPathPath);
+								                	
+								                fs.rename(tmpPathPath, targetPathPath, function(err) {
+
+								                    if (err){
+
+								                        log.error(err);
+														res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+															msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+														}); 
+
+								                    } else {
+
+									                    // Update floor
+									                    floor.path = webLocation + "/path.xml";                                
+									                    floor.save(function(err, floor) {
+
+									                        if (err){
+
+									                            log.error(err);
+																res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+																	msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+																});						                            
+									                        
+									                        } else {
+
+										                        res.send( errorResInfo.SUCCESS, floor );
+
+									                        }		                          
+
+									                        // Delete temped path.xml
+									                        fs.unlink( tmpPathPath, function(err){} );
+
+									                    });
+
+								                    }	                   
+
+								                });
+
+							            	}    
+
+								    	});
+
+				    				} else {
+
+			                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+			                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+			                			});
+
+				    				}
+
+				    			});
+
+	    					} else {
+
+				                log.error(err);
+								res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+									msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+								}); 
+
+	    					}
+
+	    				}
+
+	    			});
+
+	    		} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					}); 
+
+	    		}
+
+	    	}
+		
+		});
+
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
+
+	}
+
+};
+
+// POST Interface for upload render.xml
+exports.uploadRender = function(req, res) {
+
+	if(req.body._id && req.files.render){
+
+	    Floor.findById(req.body._id, function(err, floor) {
+
+	    	if(err){
+
+                log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				}); 
+
+	    	} else {
+
+	    		if(floor){
+
+	    			Building.findById( floor.buildingId, function( err, building ){
+
+	    				if(err) {
+
+			                log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							}); 
+
+	    				} else {
+
+	    					if( building ){
+
+				    			// Check permisssion
+				    			utilityS.validatePermission(req.user, building, Building.modelName, function(result){
+
+				    				if(result){
+
+								        // Get the temporary location of the file
+								        var tmpPathPath = req.files.render.path;
+
+								        // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
+								        var webLocation = req.user._id + "/" + floor.buildingId + "/" + floor.layer,
+								            folderPath = path.dirname() + "/" + config.mapInfoPath + '/' + webLocation;
+
+								        // Make sure flolder exist    	        
+							            mkdirp(folderPath, function(err, dd) {
+
+							                if (err) {
+
+							                    log.error(err);
+												res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+													msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+												}); 
+
+							                } else {
+
+								                var targetPathPath = folderPath + "/render.xml";
+								                log.info("targetPathPath: " + targetPathPath);
+								                	
+								                fs.rename(tmpPathPath, targetPathPath, function(err) {
+
+								                    if (err){
+
+								                        log.error(err);
+														res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+															msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+														}); 
+
+								                    } else {
+
+									                    // Update floor
+									                    floor.render = webLocation + "/render.xml";                                
+									                    floor.save(function(err, floor) {
+
+									                        if (err){
+
+									                            log.error(err);
+																res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+																	msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+																});						                            
+									                        
+									                        } else {
+
+										                        res.send( errorResInfo.SUCCESS, floor );
+
+									                        }		                          
+
+									                        // Delete temped path.xml
+									                        fs.unlink( tmpPathPath, function(err){} );
+
+									                    });
+
+								                    }	                   
+
+								                });
+
+							            	}    
+
+								    	});
+
+				    				} else {
+
+			                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+			                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+			                			});
+
+				    				}
+
+				    			});
+
+	    					} else {
+
+				                log.error(err);
+								res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+									msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+								}); 
+
+	    					}
+
+	    				}
+
+	    			});
+
+	    		} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					}); 
+
+	    		}
+
+	    	}
+		
+		});
+
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
+
+	}
+
+};
+
+// POST Interface for upload region.xml
+exports.uploadRegion = function(req, res) {
+
+	if(req.body._id && req.files.region){
+
+	    Floor.findById(req.body._id, function(err, floor) {
+
+	    	if(err){
+
+                log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				}); 
+
+	    	} else {
+
+	    		if(floor){
+
+	    			Building.findById( floor.buildingId, function( err, building ){
+
+	    				if(err) {
+
+			                log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							}); 
+
+	    				} else {
+
+	    					if( building ){
+
+				    			// Check permisssion
+				    			utilityS.validatePermission(req.user, building, Building.modelName, function(result){
+
+				    				if(result){
+
+								        // Get the temporary location of the file
+								        var tmpPathPath = req.files.region.path;
+
+								        // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
+								        var webLocation = req.user._id + "/" + floor.buildingId + "/" + floor.layer,
+								            folderPath = path.dirname() + "/" + config.mapInfoPath + '/' + webLocation;
+
+								        // Make sure flolder exist    	        
+							            mkdirp(folderPath, function(err, dd) {
+
+							                if (err) {
+
+							                    log.error(err);
+												res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+													msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+												}); 
+
+							                } else {
+
+								                var targetPathPath = folderPath + "/region.xml";
+								                log.info("targetPathPath: " + targetPathPath);
+								                	
+								                fs.rename(tmpPathPath, targetPathPath, function(err) {
+
+								                    if (err){
+
+								                        log.error(err);
+														res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+															msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+														}); 
+
+								                    } else {
+
+									                    // Update floor
+									                    floor.region = webLocation + "/region.xml";                                
+									                    floor.save(function(err, floor) {
+
+									                        if (err){
+
+									                            log.error(err);
+																res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+																	msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+																});						                            
+									                        
+									                        } else {
+
+										                        res.send( errorResInfo.SUCCESS, floor );
+
+										                        // Start to parse region
+									                            fs.readFile(targetPathPath, 'utf8', function (err, data) {
+									
+									                                if(err)
+									                                  log.error(err);
+									
+									                                if(data)
+									                                	utilityS.parseRegion(data, floor._id)
+									
+									                            });
+
+									                        }		                          
+
+									                        // Delete temped path.xml
+									                        fs.unlink( tmpPathPath, function(err){} );
+
+									                    });
+
+								                    }	                   
+
+								                });
+
+							            	}    
+
+								    	});
+
+				    				} else {
+
+			                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+			                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+			                			});
+
+				    				}
+
+				    			});
+
+	    					} else {
+
+				                log.error(err);
+								res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+									msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+								}); 
+
+	    					}
+
+	    				}
+
+	    			});
+
+	    		} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					}); 
+
+	    		}
+
+	    	}
+		
+		});
+
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
+
 	}
 
 };

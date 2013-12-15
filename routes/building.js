@@ -37,10 +37,19 @@ exports.listPublic = function(req, res){
 
     }, function(err, buildings) {
 
-        if (err)
-            log.error(err);
+        if (err){
 
-        res.send(200, buildings);
+			log.error(err);
+			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+			});  				
+
+        } else {
+
+	        res.send(errorResInfo.SUCCESS.code, buildings);
+
+        }
+            
     });
 
 };
