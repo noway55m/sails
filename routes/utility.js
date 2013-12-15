@@ -429,7 +429,7 @@ Utility.createSampleBuilding = function(nuser, next){
 																																			if(next)
 																																				next();
 
-																																			 building.mapzip =  buildingWebLocation + "/map.zip";
+																																			 building.mapzip =  buildingWebLocation + ".zip";
 																																			 building.save(function(err, building){
 																																			 	if(err)
 																																			 		log.error(err);
