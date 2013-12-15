@@ -98,69 +98,84 @@ exports.create = function(req, res) {
 
 				if( building ) {
 
-					var layer;
-					if( req.body.layer>0) {
+	    			// Check permisssion
+	    			utilityS.validatePermission(req.user, building, Building.modelName, function(result){
 
-						building.upfloor = building.upfloor + 1;
-						layer = building.upfloor;
+	    				if(result){
 
-					} else {
+							var layer;
+							if( req.body.layer>0) {
 
-						building.downfloor =  building.downfloor + 1;
-						layer = -( building.downfloor );
+								building.upfloor = building.upfloor + 1;
+								layer = building.upfloor;
 
-					}
+							} else {
 
-					building.save( function( err, building ) {
-						
-						if( err ) {
+								building.downfloor =  building.downfloor + 1;
+								layer = -( building.downfloor );
 
-							log.error(err);
-							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-							}); 	
+							}
 
-						} else {
+							building.save( function( err, building ) {
+								
+								if( err ) {
 
-							new Floor({
-			
-								layer: layer,
-			
-								buildingId: building._id
-			
-							}).save(function(error, floor){
-									
-									if(error){
+									log.error(err);
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									}); 	
 
-										log.error(error);
-										res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-											msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-										}); 	
+								} else {
 
-									} else {
+									new Floor({
+					
+										layer: layer,
+					
+										buildingId: building._id
+					
+									}).save(function(error, floor){
+											
+											if(error){
 
-										res.send(200, floor);
+												log.error(error);
+												res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+													msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+												}); 	
 
-		                                var floorFolderPath = path.dirname() + "/" + config.mapInfoPath + "/" + building.userId + "/" + building.id + "/" + layer;
+											} else {
 
-		                                // Create floor's folder
-		                                mkdirp(floorFolderPath, function(err, dd) {
+												res.send(200, floor);
 
-		                                	if(err)
-		                                		log.error(err);
+				                                var floorFolderPath = path.dirname() + "/" + config.mapInfoPath + "/" + building.userId + "/" + building.id + "/" + layer;
 
-		                                	// Auto-package mapzip		                                
-		                                	utilityS.packageMapzip(building._id, function(errorObj){});
+				                                // Create floor's folder
+				                                mkdirp(floorFolderPath, function(err, dd) {
 
-		                                });										
+				                                	if(err)
+				                                		log.error(err);
 
-									}
+				                                	// Auto-package mapzip		                                
+				                                	utilityS.packageMapzip(building._id, function(errorObj){});
 
-							});	
+				                                });										
 
-						}				
-						
-					});
+											}
+
+									});	
+
+								}				
+								
+							});
+
+	    				} else {
+
+                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+                			});
+
+	    				}
+
+	    			});
 
 				} else {
 
@@ -203,27 +218,42 @@ exports.update = function(req, res) {
 
 	            if( floor ) {
 	                
-	                floor.name = req.body.name;
-	                floor.desc = req.body.desc;
-	                floor.save(function(err, floor){
+	    			// Check permisssion
+	    			utilityS.validatePermission(req.user, floor, Floor.modelName, function(result){
 
-	                	if( err ) {
+	    				if(result){
 
-			                log.error(err);
-							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-							}); 
+			                floor.name = req.body.name;
+			                floor.desc = req.body.desc;
+			                floor.save(function(err, floor){
 
-	                	} else {
+			                	if( err ) {
 
-		                    res.send(errorResInfo.SUCCESS.code, floor);
+					                log.error(err);
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									}); 
 
-		                    // Auto-package mapzip
-		                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
+			                	} else {
 
-	                	}
+				                    res.send(errorResInfo.SUCCESS.code, floor);
 
-	                });
+				                    // Auto-package mapzip
+				                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
+
+			                	}
+
+			                });
+
+	    				} else {
+
+                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+                			});
+
+	    				}
+
+	    			});
 
 	            } else {
 
@@ -275,181 +305,196 @@ exports.del = function( req, res ) {
 
 							if(building){
 								
-								var folderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + floor.buildingId;
-								
-								// Get building's all floors							
-								Floor.find({
-									
-									buildingId: floor.buildingId
-									
-								}, function(err, floors){
-									
-									if(err)
-										log.error(err);
-																	
-									// Remove removed floor folder if exist
-									var removeFolderPath = folderPath + "/" + floor.layer;
-									fs.exists(removeFolderPath, function(exist){
-										
-										// Delete the folder of removed floor 
-										if(exist)
-											rimraf(removeFolderPath, function(err){
-												if(err)
-													log.error(err);
-											});										
-										
-										// Reorder all floors in this building
-										floors.forEach(function(ofloor){
+				    			// Check permisssion
+				    			utilityS.validatePermission(req.user, building, Building.modelName, function(result){
 
-											if(floor.layer > 0){
+				    				if(result){
+
+										var folderPath = path.dirname() + mapinfo_path + '/' + building.userId + "/" + building.id;
+										
+										// Get building's all floors							
+										Floor.find({
+											
+											buildingId: floor.buildingId
+											
+										}, function(err, floors){
+											
+											if(err)
+												log.error(err);
 																			
-												if(ofloor.layer > floor.layer){								
-													
-													// Change the folder of specific floor
-													var oldFolderPath = folderPath + "/" + ofloor.layer;
-													ofloor.layer = ofloor.layer - 1;
-													var newFolderPath = folderPath + "/" + ofloor.layer;
-													ofloor.save();
-																								
-													// Rename foldr with new layer
-													fs.exists(oldFolderPath, function (exist) {
-														if(exist)
-															fs.rename(oldFolderPath, newFolderPath, function(err) {
-																if(err)
-																	log.error(err);
-															});
-													});										
-													
-												}							
-																							
-											}else{
+											// Remove removed floor folder if exist
+											var removeFolderPath = folderPath + "/" + floor.layer;
+											fs.exists(removeFolderPath, function(exist){
 												
-												if(ofloor.layer < floor.layer){	
-													
-													// Change the folder of specific floor
-													var oldFolderPath = folderPath + "/" + ofloor.layer;
-													ofloor.layer = ofloor.layer + 1;
-													var newFolderPath = folderPath + "/" + ofloor.layer;
-													ofloor.save();									
-													
-													// Rename foldr with new layer								
-													fs.exists(oldFolderPath, function (exist) {
-														if(exist)
-															fs.rename(oldFolderPath, newFolderPath, function(err) {
-																if(err)
-																	log.error(err);															
-															});
-													});	
-													
-												}
-																													
-											}
-																				
-										});																			
-										
-									});
-																	
-									// Update "upfloor" or "downfloor" attribute of building 
-									if(floor.layer > 0)
-										building.upfloor = building.upfloor - 1;										
-									else
-										building.downfloor = building.downfloor - 1;
-									
-									// Update building
-									building.save(function(err, building){
-										
-										if( err ) {
+												// Delete the folder of removed floor 
+												if(exist)
+													rimraf(removeFolderPath, function(err){
+														if(err)
+															log.error(err);
+													});										
+												
+												// Reorder all floors in this building
+												floors.forEach(function(ofloor){
 
-											log.error(err);
-											res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-												msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-											}); 				
-
-										} else {
-
-											// Remove floor
-											floor.remove(function(err){	
-																		
+													if(floor.layer > 0){
+																					
+														if(ofloor.layer > floor.layer){								
+															
+															// Change the folder of specific floor
+															var oldFolderPath = folderPath + "/" + ofloor.layer;
+															ofloor.layer = ofloor.layer - 1;
+															var newFolderPath = folderPath + "/" + ofloor.layer;
+															ofloor.save();
+																										
+															// Rename foldr with new layer
+															fs.exists(oldFolderPath, function (exist) {
+																if(exist)
+																	fs.rename(oldFolderPath, newFolderPath, function(err) {
+																		if(err)
+																			log.error(err);
+																	});
+															});										
+															
+														}							
+																									
+													}else{
+														
+														if(ofloor.layer < floor.layer){	
+															
+															// Change the folder of specific floor
+															var oldFolderPath = folderPath + "/" + ofloor.layer;
+															ofloor.layer = ofloor.layer + 1;
+															var newFolderPath = folderPath + "/" + ofloor.layer;
+															ofloor.save();									
+															
+															// Rename foldr with new layer								
+															fs.exists(oldFolderPath, function (exist) {
+																if(exist)
+																	fs.rename(oldFolderPath, newFolderPath, function(err) {
+																		if(err)
+																			log.error(err);															
+																	});
+															});	
+															
+														}
+																															
+													}
+																						
+												});																			
+												
+											});
+																			
+											// Update "upfloor" or "downfloor" attribute of building 
+											if(floor.layer > 0)
+												building.upfloor = building.upfloor - 1;										
+											else
+												building.downfloor = building.downfloor - 1;
+											
+											// Update building
+											building.save(function(err, building){
+												
 												if( err ) {
-													
+
 													log.error(err);
 													res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
 														msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
 													}); 				
 
 												} else {
-													
-													res.json(errorResInfo.SUCCESS.code, {
-														_id: req.body._id
-													});
 
-													// Find all stores of removed floor
-													Store.find({
-														
-														floorId: req.body._id
-														
-													}, function(err, stores){
-														
-														if(err)
-															log.error(err);
-														
-														for(var i=0; i<stores.length; i++){					
+													// Remove floor
+													floor.remove(function(err){	
+																				
+														if( err ) {
 															
-															// Find all ads
-															Ad.find({
+															log.error(err);
+															res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+																msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+															}); 				
+
+														} else {
+															
+															res.json(errorResInfo.SUCCESS.code, {
+																_id: req.body._id
+															});
+
+															// Find all stores of removed floor
+															Store.find({
 																
-																storeId: stores[i].id
+																floorId: req.body._id
 																
-															}, function(err, ads){					
+															}, function(err, stores){
 																
 																if(err)
 																	log.error(err);
 																
-																for(var j=0; j<ads.length; j++){
+																for(var i=0; i<stores.length; i++){					
 																	
-																	// Delete ad image if exist
-																	if(ads[j].image){
-																		var oldImgPathAd = path.resolve(image_path + "/" + ads[j].image);
-																		fs.unlink(oldImgPathAd, function(err){
+																	// Find all ads
+																	Ad.find({
+																		
+																		storeId: stores[i].id
+																		
+																	}, function(err, ads){					
+																		
+																		if(err)
+																			log.error(err);
+																		
+																		for(var j=0; j<ads.length; j++){
+																			
+																			// Delete ad image if exist
+																			if(ads[j].image){
+																				var oldImgPathAd = path.resolve(image_path + "/" + ads[j].image);
+																				fs.unlink(oldImgPathAd, function(err){
+																					log.error(err);
+																				});	
+																			}
+																			
+																			// Remove ad
+																			ads[j].remove();						
+																			
+																		}
+																							
+																	});				
+																	
+																	// Delete store icon if exist
+																	if(stores[i].icon){
+																		var oldImgPath = path.resolve(image_path + "/" + stores[i].icon);
+																		fs.unlink(oldImgPath, function(err){
 																			log.error(err);
 																		});	
-																	}
+																	}				
 																	
-																	// Remove ad
-																	ads[j].remove();						
+																	// Remove store
+																	stores[i].remove();
 																	
-																}
-																					
-															});				
-															
-															// Delete store icon if exist
-															if(stores[i].icon){
-																var oldImgPath = path.resolve(image_path + "/" + stores[i].icon);
-																fs.unlink(oldImgPath, function(err){
-																	log.error(err);
-																});	
-															}				
-															
-															// Remove store
-															stores[i].remove();
-															
-														}		
-														
-													});
+																}		
+																
+															});
+
+														}
+
+														// Auto-package mapzip
+														utilityS.packageMapzip(building._id, function(errorObj){});
+
+													});		
 
 												}
+												
+											});																						
+											
+										});		
 
-												// Auto-package mapzip
-												utilityS.packageMapzip(building._id, function(errorObj){});
+				    				} else {
 
-											});		
+			                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+			                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+			                			});
 
-										}
-										
-									});																						
-									
-								});							
-															
+				    				}
+
+				    			});
+																			
 							} else {
 
 								log.error("The building of floor: " + floor.buildingId + " is null");
@@ -492,90 +537,162 @@ exports.uploadMapAndPath = function(req, res) {
 	if(req.body._id && req.files.map){
 
 	    Floor.findById(req.body._id, function(err, floor) {
+			
+	    	if (err) {
 
-	        // Get the temporary location of the file
-	        var tmpPathPath = req.files.path ? req.files.path.path : null,
-	            tmpPathMap = req.files.map.path;
+                log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});   
 
-	        // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
-	        var webLocation = req.user._id + "/" + floor.buildingId + "/" + floor.layer,
-	            folderPath = path.dirname() + mapinfo_path + '/' + webLocation;	        
-            mkdirp(folderPath, function(err, dd) {
-                if (err)
-                    log.error(err);
+	    	} else {
 
-                var targetPathPath = folderPath + "/path.xml",
-                    targetPathMap = folderPath + "/map.xml";
+	    		if(floor) {
 
-                log.info("targetPathPath: " + targetPathPath);
-                log.info("targetPathMap: " + targetPathMap);
+	    			Building.findById( floor.buildingId, function(err, building) {
 
-                // Move file from temp to target
-                fs.rename(tmpPathMap, targetPathMap, function(err) {
+	    				if(err) {
 
-                    if (err){
-                    	
-                        log.error(err);
-                        
-                    }else{
-                    	
-                    	// Update map
-                    	floor.map = webLocation + "/map.xml";
-                        if(tmpPathPath){
-                        	
-                            fs.rename(tmpPathPath, targetPathPath, function(err) {
+			                log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							});   
 
-                                if (err)
-                                    log.error(err);
-                                
-                                // Update floor
-                                floor.path = webLocation + "/path.xml";                                
-                                floor.lastXmlUpdateTime = new Date();                        
-                                floor.save(function(err, floor) {
+	    				} else {
 
-                                    if (err)
-                                        log.error(err);
+	    					if(building) {
 
-                                    if (floor)
-                                        res.send(200, floor);
+				    			// Check permisssion
+				    			utilityS.validatePermission(req.user, building, Building.modelName, function(result){
 
-                                    // Delete temped path.xml
-                                    fs.unlink(tmpPathPath, function(err){});
+				    				if(result){
 
-                                });
+								        // Get the temporary location of the file
+								        var tmpPathPath = req.files.path ? req.files.path.path : null,
+								            tmpPathMap = req.files.map.path;
 
-                            });                    	
-                        	                    	
-                        }else{
-                        	
-                        	// Update floor
-                        	floor.lastXmlUpdateTime = new Date(); 
-                            floor.save(function(err, floor) {
+								        // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
+								        var webLocation = building.userId + "/" + floor.buildingId + "/" + floor.layer,
+								            folderPath = path.dirname() + mapinfo_path + '/' + webLocation;	        
+							            mkdirp(folderPath, function(err, dd) {
 
-                                if (err)
-                                    log.error(err);
+							                if (err)
+							                    log.error(err);
 
-                                if (floor)
-                                    res.send(200, floor);
+							                var targetPathPath = folderPath + "/path.xml",
+							                    targetPathMap = folderPath + "/map.xml";
 
-                                // Delete temped map.xml
-                                fs.unlink(tmpPathMap, function(err){});
+							                log.info("targetPathPath: " + targetPathPath);
+							                log.info("targetPathMap: " + targetPathMap);
 
-			                    // Auto-package mapzip
-			                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
+							                // Move file from temp to target
+							                fs.rename(tmpPathMap, targetPathMap, function(err) {
 
-                            });
-                            
-                        }                    	
-                    	
-                    }
-                    
-                    // Delete temped map.xml
-                    fs.unlink(tmpPathMap, function(err){});
+							                    if (err){
+							                    	
+							                        log.error(err);
+													res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+														msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+													});   		                        
+							                        
+							                    }else{
+							                    	
+							                    	// Update map
+							                    	floor.map = webLocation + "/map.xml";
+							                        if(tmpPathPath){
+							                        	
+							                            fs.rename(tmpPathPath, targetPathPath, function(err) {
 
-                });
+							                                if (err)
+							                                    log.error(err);
+							                                
+							                                // Update floor
+							                                floor.path = webLocation + "/path.xml";                                
+							                                floor.lastXmlUpdateTime = new Date();                        
+							                                floor.save(function(err, floor) {
 
-            });
+							                                    if (err)
+							                                        log.error(err);
+
+							                                    if (floor)
+							                                        res.send(200, floor);
+
+							                                    // Delete temped path.xml
+							                                    fs.unlink(tmpPathPath, function(err){});
+
+							                                });
+
+							                            });                    	
+							                        	                    	
+							                        }else{
+							                        	
+							                        	// Update floor
+							                        	floor.lastXmlUpdateTime = new Date(); 
+							                            floor.save(function(err, floor) {
+
+							                                if (err){
+
+							                                	log.error(err);
+																res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+																	msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+																});   
+
+							                                } else {
+
+							                                	res.send( errorResInfo.SUCCESS.code, floor );
+
+							                                }
+							                                    
+							                                // Delete temped map.xml
+							                                fs.unlink(tmpPathMap, function(err){});
+
+										                    // Auto-package mapzip
+										                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
+
+							                            });
+							                            
+							                        }                    	
+							                    	
+							                    }
+							                    
+							                    // Delete temped map.xml
+							                    fs.unlink(tmpPathMap, function(err){});
+
+							                });
+
+							            });
+
+				    				} else {
+
+			                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+			                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+			                			});
+
+				    				}
+
+				    			});	    						
+
+	    					} else {
+
+								res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+									msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+								}); 
+
+	    					}
+
+	    				}
+
+	    			});
+
+	    		} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					}); 
+
+	    		}
+
+	    	}
 
 	    });
 
@@ -591,77 +708,156 @@ exports.uploadRenderAndRegion = function(req, res) {
 
 	    Floor.findById(req.body._id, function(err, floor) {
 
-            // Get the temporary location of the file
-            var tmpPathRender = req.files.render.path,
-                tmpPathRegion = req.files.region.path;
+	    	if(err) {
 
-            // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
-            var webLocation = req.user._id + "/" + floor.buildingId + "/" + floor.layer,
-                folderPath = path.dirname() + mapinfo_path + '/' + webLocation;
+                log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});   	    		
 
-            mkdirp(folderPath, function(err, dd) {
-                if (err)
-                    log.error(err);
+	    	} else {
 
-                var targetPathRender = folderPath + "/render.xml",
-                    targetPathRegion = folderPath + "/region.xml";
+	    		if(floor) {
 
-                log.info("targetPathRender: " + tmpPathRender);
-                log.info("targetPathRegion: " + tmpPathRegion);
+				    Building.findById( floor.buildingId, function(err, building) {
 
-                // Move file from temp to target
-                fs.rename(tmpPathRender, targetPathRender, function(err) {
+	    				if(err) {
 
-                    if (err){
-                    	
-                        log.error(err);
-                        res.json(400, {
-                        	msg: "Sever error " + err 
-                        });
-                        
-                    }else{
-                    	
-	                    fs.rename(tmpPathRegion, targetPathRegion, function(err) {
-	
-	                        if (err)
-	                            log.error(err);
-	
-	                        floor.render = webLocation + "/render.xml";
-	                        floor.region = webLocation + "/region.xml";
-	                        floor.save(function(err, floor) {
-	
-	                            if (err)
-	                                log.error(err);
-	
-	                            if (floor)
-	                                res.send(200, floor);
+			                log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							});   
 
-			                    // Auto-package mapzip
-			                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
+	    				} else {
 
-	                            // Start to parse region.xml
-	                            fs.readFile(targetPathRegion, 'utf8', function (err, data) {
-	
-	                                if(err)
-	                                  log.error(err);
-	
-	                                if(data)
-	                                	utilityS.parseRegion(data, req.body._id)
-	
-	                                // Delete the temporary file
-	                                fs.unlink(tmpPathRender, function(err){});
-	                                fs.unlink(tmpPathRegion, function(err){});
-	                            });
-	
-	                        });
-	
-	                    });
-	                    
-                    }
+	    					if(building) {
 
-                });
+				    			// Check permisssion
+				    			utilityS.validatePermission(req.user, building, Building.modelName, function(result){
 
-            });
+				    				if(result){
+
+							            // Get the temporary location of the file
+							            var tmpPathRender = req.files.render.path,
+							                tmpPathRegion = req.files.region.path;
+
+							            // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
+							            var webLocation = building.userId + "/" + floor.buildingId + "/" + floor.layer,
+							                folderPath = path.dirname() + mapinfo_path + '/' + webLocation;
+
+							            mkdirp(folderPath, function(err, dd) {
+
+							                if (err)
+							                    log.error(err);
+
+							                var targetPathRender = folderPath + "/render.xml",
+							                    targetPathRegion = folderPath + "/region.xml";
+
+							                log.info("targetPathRender: " + tmpPathRender);
+							                log.info("targetPathRegion: " + tmpPathRegion);
+
+							                // Move file from temp to target
+							                fs.rename(tmpPathRender, targetPathRender, function(err) {
+
+							                    if (err){
+							                    	
+							                        log.error(err);
+													res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+														msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+													});   
+							                        
+							                    }else{
+							                    	
+								                    fs.rename(tmpPathRegion, targetPathRegion, function(err) {
+								
+								                        if (err) {
+
+									                        log.error(err);
+															res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+																msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+															}); 
+
+								                        } else {
+
+									                        floor.render = webLocation + "/render.xml";
+									                        floor.region = webLocation + "/region.xml";
+									                        floor.lastXmlUpdateTime = new Date(); 
+									                        floor.save(function(err, floor) {
+									
+									                            if (err) {
+
+											                        log.error(err);
+																	res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+																		msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+																	}); 
+
+									                            } else {
+
+										                            res.send( errorResInfo.SUCCESS.code, floor);
+
+												                    // Auto-package mapzip
+												                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
+
+										                            // Start to parse region.xml
+										                            fs.readFile(targetPathRegion, 'utf8', function (err, data) {
+										
+										                                if(err)
+										                                  log.error(err);
+										
+										                                if(data)
+										                                	utilityS.parseRegion(data, req.body._id)
+										
+										                                // Delete the temporary file
+										                                fs.unlink(tmpPathRender, function(err){});
+										                                fs.unlink(tmpPathRegion, function(err){});
+										                            });
+
+									                            }								
+									
+									                        });
+
+								                        }
+								
+								                    });
+								                    
+							                    }
+
+							                });
+
+							            });
+
+				    				} else {
+
+			                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+			                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+			                			});
+
+				    				}
+
+				    			});	    						
+
+	    					} else {
+
+								res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+									msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+								}); 
+
+	    					}
+
+	    				}
+
+	    			});
+
+
+	    		} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					}); 
+
+	    		}
+
+	    	}
 
 	    });
 
@@ -1137,6 +1333,7 @@ exports.uploadMap = function(req, res) {
 								                    } else {
 
 									                    // Update floor
+									                    floor.lastXmlUpdateTime = new Date();
 									                    floor.map = webLocation + "/map.xml";                                
 									                    floor.save(function(err, floor) {
 
@@ -1281,6 +1478,7 @@ exports.uploadPath = function(req, res) {
 								                    } else {
 
 									                    // Update floor
+									                    floor.lastXmlUpdateTime = new Date();
 									                    floor.path = webLocation + "/path.xml";                                
 									                    floor.save(function(err, floor) {
 
@@ -1425,6 +1623,7 @@ exports.uploadRender = function(req, res) {
 								                    } else {
 
 									                    // Update floor
+									                    floor.lastXmlUpdateTime = new Date();
 									                    floor.render = webLocation + "/render.xml";                                
 									                    floor.save(function(err, floor) {
 
@@ -1569,6 +1768,7 @@ exports.uploadRegion = function(req, res) {
 								                    } else {
 
 									                    // Update floor
+									                    floor.lastXmlUpdateTime = new Date();	
 									                    floor.region = webLocation + "/region.xml";                                
 									                    floor.save(function(err, floor) {
 
