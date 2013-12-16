@@ -57,7 +57,13 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 	    	// Show success msg
 			$().toastmessage('showSuccessToast', "Add floor successfully");
 			
-		}, function(err) {});
+		}, function(err) {
+
+	    	// Show error msg				
+			if( err && err.data && err.data.msg )
+				$().toastmessage( 'showErrorToast', err.data.msg );
+
+		});
 
 	};
 
@@ -80,7 +86,13 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 	    	// Show success msg
 			$().toastmessage('showSuccessToast', "Add basement successfully");			
 			
-		}, function(err) {});
+		}, function(err) {
+
+	    	// Show error msg				
+			if( err && err.data && err.data.msg )
+				$().toastmessage( 'showErrorToast', err.data.msg );
+
+		});
 
 	};
 	
