@@ -275,8 +275,8 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 		
 	};
 	
-	// Function for update map.xml and path.xml
-	$scope.uploadMapAndPath = function(e){
+	// Function for upload map.xml
+	$scope.uploadMap = function(e){
 		
 		var floor = this.floor
 			uploadButton = angular.element(e.currentTarget),
@@ -295,7 +295,7 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 				// Check both file upload
 				if(!$(inputFields[1]).val()){
 					
-					errorMsgObj.find('.errorText').text("Map.xml need to be uploaded.");	
+					errorMsgObj.find('.errorText').text("Map file is empty!");	
 					errorMsgObj.show();	
 					return false
 					
@@ -322,15 +322,14 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 				// Update and clone
 				$scope.$apply(function () {
 					floor.lastXmlUpdateTime = res.lastXmlUpdateTime;
-					floor.map = res.path;
-					floor.path = res.map;					
+					floor.map = res.map;					
 					var stores = $rootScope.floorClone.stores;
 			        $rootScope.floorClone = angular.copy(floor);				
 			        $rootScope.floorClone.stores = stores;										
 				});
 				
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Upload files successfully");		        
+				$().toastmessage('showSuccessToast', "Upload map file successfully");		        
 
 				return true;
 				
@@ -346,6 +345,78 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 		return false;			
 		
 	};
+
+
+	// Function for upload path.xml
+	$scope.uploadPath = function(e){
+		
+		var floor = this.floor
+			uploadButton = angular.element(e.currentTarget),
+			form = uploadButton.prev(),
+			inputFields = form.find("input"),
+			errorMsgObj = form.find('.error-msg');
+		
+		// Ajax from setup
+		var options = {
+	
+			beforeSend : function(){ // pre-submit callback
+				
+				// Hide error msg block
+				errorMsgObj.hide();						
+				
+				// Check both file upload
+				if(!$(inputFields[1]).val()){
+					
+					errorMsgObj.find('.errorText').text("Path file is empty!");	
+					errorMsgObj.show();	
+					return false
+					
+				}else{
+					inputFields.attr('disabled');
+					errorMsgObj.hide();
+					uploadButton.button("loading");
+					return true;
+				}
+				
+			},
+			uploadProgress : function(event, position, total, percent){},
+			success : function(res, statusText){ // post-submit callback
+				// Show error msg
+				if(res.msg){
+					errorMsgObj.find(".errorText").text(res.msg);
+					errorMsgObj.show();
+				}
+				
+				// Hide button
+				uploadButton.button("reset");
+				uploadButton.hide();
+				
+				// Update and clone
+				$scope.$apply(function () {
+					floor.lastXmlUpdateTime = res.lastXmlUpdateTime;
+					floor.path = res.path;					
+					var stores = $rootScope.floorClone.stores;
+			        $rootScope.floorClone = angular.copy(floor);				
+			        $rootScope.floorClone.stores = stores;										
+				});
+				
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Upload path file successfully");		        
+
+				return true;
+				
+			},
+	
+			// other available options:
+			clearForm : true
+			
+		};
+		
+		form.ajaxSubmit(options);
+	
+		return false;			
+
+	}
 	
 }
 

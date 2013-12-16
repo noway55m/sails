@@ -1448,7 +1448,7 @@ exports.uploadPath = function(req, res) {
 								        var tmpPathPath = req.files.path.path;
 
 								        // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
-								        var webLocation = req.user._id + "/" + floor.buildingId + "/" + floor.layer,
+								        var webLocation = building.userId + "/" + floor.buildingId + "/" + floor.layer,
 								            folderPath = path.dirname() + "/" + config.mapInfoPath + '/' + webLocation;
 
 								        // Make sure flolder exist    	        
@@ -1593,7 +1593,7 @@ exports.uploadRender = function(req, res) {
 								        var tmpPathPath = req.files.render.path;
 
 								        // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
-								        var webLocation = req.user._id + "/" + floor.buildingId + "/" + floor.layer,
+								        var webLocation = building.userId + "/" + floor.buildingId + "/" + floor.layer,
 								            folderPath = path.dirname() + "/" + config.mapInfoPath + '/' + webLocation;
 
 								        // Make sure flolder exist    	        
@@ -1738,7 +1738,7 @@ exports.uploadRegion = function(req, res) {
 								        var tmpPathPath = req.files.region.path;
 
 								        // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
-								        var webLocation = req.user._id + "/" + floor.buildingId + "/" + floor.layer,
+								        var webLocation = building.userId + "/" + floor.buildingId + "/" + floor.layer,
 								            folderPath = path.dirname() + "/" + config.mapInfoPath + '/' + webLocation;
 
 								        // Make sure flolder exist    	        
