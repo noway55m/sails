@@ -128,29 +128,70 @@ exports.create = function(req, res) {
 
     if(req.body.name){
 
-        new Building({
 
-            name: req.body.name,
-            desc: req.body.desc,
-            userId: req.user._id,
-            pub: false
+    	Building.count({
 
-        }).save(function(err, building){
+    		userId: req.user._id
 
-            if(building){
+    	}, function( err, count ) {
 
-                res.send(errorResInfo.SUCCESS.code, building);
-
-            }else{
+	        if(err){
 
 	            log.error(err);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
 					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-				});  
+				});  		
 
-            }// end if
+			} else {
 
-        });
+				if(count <= config.maxBuildingNumberOfUser || user.role == User.ROLES.ADMIN ){
+
+			        new Building({
+
+			            name: req.body.name,
+			            desc: req.body.desc,
+			            userId: req.user._id,
+			            pub: false
+
+			        }).save(function(err, building){
+
+			        	if(err) {
+
+				            log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							});  
+
+			        	} else {
+
+				            if(building){
+
+				                res.send( errorResInfo.SUCCESS.code, building );
+
+				            }else{
+
+					            log.error(err);
+								res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+									msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+								});  
+
+				            }// end if
+
+			        	}
+
+			        });
+
+				} else {
+
+					res.json( errorResInfo.BUILDING_OVER_LIMITATION_DENY.code , { 
+						msg: errorResInfo.BUILDING_OVER_LIMITATION_DENY.msg
+					});  
+
+				}
+
+			}
+
+    	});
 
     }
 
@@ -159,38 +200,42 @@ exports.create = function(req, res) {
 // GET Interface for get building info
 exports.read = function(req, res){
 
-    // Get building
-    Building.findById(req.params._id, function(err, building) {
+	if( req.params._id ){
 
-        if( err ) {
+	    // Get building
+	    Building.findById(req.params._id, function(err, building) {
 
-            log.error(err);
-			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-			});  
+	        if( err ) {
 
-		} else {
+	            log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});  
 
-            // Check permission
-            utilityS.validatePermission(req.user, building, Building.modelName, function(result){
+			} else {
 
-            	if(result) {
+	            // Check permission
+	            utilityS.validatePermission(req.user, building, Building.modelName, function(result){
 
-            		res.send( errorResInfo.SUCCESS.code , building);
+	            	if(result) {
 
-            	} else {
+	            		res.send( errorResInfo.SUCCESS.code , building);
 
-        			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
-        				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
-        			});
+	            	} else {
 
-            	}
+	        			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+	        				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+	        			});
 
-            });
+	            	}
 
-		}
+	            }, true);
 
-    });
+			}
+
+	    });
+
+	}
 
 };
 

@@ -28,29 +28,51 @@ exports.show = function(req, res) {
 // GET Interface for read specific floor
 exports.read = function(req, res) {
 
-	// Get floor
-	Floor.findById(req.params._id, function(err, floor) {
+	if(req.params._id){
 
-		if (err){
+		// Get floor
+		Floor.findById(req.params._id, function(err, floor) {
 
-			log.error(err);
-			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-			}); 			
-		
-		} else {
+			if (err){
 
-			if (floor) {
-				res.send(errorResInfo.SUCCESS.code, floor);
+				log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				}); 			
+			
 			} else {
-				res.send(errorResInfo.EMPTY_RESULT.code, {
-					msg: errorResInfo.EMPTY_RESULT.msg
-				});				
-			}
 
-		}		
+				if (floor) {
 
-	});
+	    			utilityS.validatePermission(req.user, floor, Floor.modelName, function(result) {
+
+			    		if(result){
+
+			    			res.send( errorResInfo.SUCCESS.code, floor );
+
+			    		} else {
+
+                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+                			});
+
+			    		}
+
+			    	}, true);
+					
+				} else {
+
+        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+        				msg: errorResInfo.INCORRECT_PARAMS.msg
+        			});  
+
+				}
+
+			}		
+
+		});
+
+	}
 
 };
 
@@ -83,9 +105,9 @@ exports.list = function(req, res) {
 // POST Interface for create floor of building
 exports.create = function(req, res) {
 
-	if(req.body.buildingId && req.body.layer){
+	if(req.body.buildingId && req.body.layer) {
 
-		Building.findById(req.body.buildingId, function(error, building){
+		Building.findById( req.body.buildingId, function(error, building) {
 			
 			if(error) {
 
@@ -101,7 +123,7 @@ exports.create = function(req, res) {
 	    			// Check permisssion
 	    			utilityS.validatePermission(req.user, building, Building.modelName, function(result){
 
-	    				if(result){
+	    				if(result) {
 
 							var layer;
 							if( req.body.layer>0) {
@@ -116,26 +138,40 @@ exports.create = function(req, res) {
 
 							}
 
-							building.save( function( err, building ) {
-								
-								if( err ) {
+							if( layer > config.maxFloorNumber ) {
 
-									log.error(err);
-									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-									}); 	
+								res.json( errorResInfo.FLOOR_OVER_LIMITATION_DENY.code , { 
+									msg: errorResInfo.FLOOR_OVER_LIMITATION_DENY.msg
+								}); 	
 
-								} else {
+							} else if ( -(layer) > config.maxBasementNumber ) {
 
-									new Floor({
-					
-										layer: layer,
-					
-										buildingId: building._id
-					
-									}).save(function(error, floor){
-											
-											if(error){
+								res.json( errorResInfo.BASEMENT_OVER_LIMITATION_DENY.code , { 
+									msg: errorResInfo.BASEMENT_OVER_LIMITATION_DENY.msg
+								}); 	
+
+							} else {
+
+								building.save( function( err, building ) {
+									
+									if( err ) {
+
+										log.error(err);
+										res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+											msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+										}); 	
+
+									} else {
+
+										new Floor({
+						
+											layer: layer,
+						
+											buildingId: building._id
+						
+										}).save(function(error, floor){
+												
+											if(error) {
 
 												log.error(error);
 												res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
@@ -144,7 +180,7 @@ exports.create = function(req, res) {
 
 											} else {
 
-												res.send(200, floor);
+												res.send( errorResInfo.SUCCESS.code, floor );
 
 				                                var floorFolderPath = path.dirname() + "/" + config.mapInfoPath + "/" + building.userId + "/" + building.id + "/" + layer;
 
@@ -161,11 +197,13 @@ exports.create = function(req, res) {
 
 											}
 
-									});	
+										});	
 
-								}				
-								
-							});
+									}				
+									
+								});
+
+							}
 
 	    				} else {
 

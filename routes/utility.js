@@ -38,6 +38,21 @@ Utility.errorResInfo = {
 		msg: "You have no permission to access",
 		code: 403		
 	},
+
+	BUILDING_OVER_LIMITATION_DENY : {		
+		msg: "Building number is over limitation.",
+		code: 403		
+	},
+
+	FLOOR_OVER_LIMITATION_DENY : {		
+		msg: "Floor number is over limitation.",
+		code: 403		
+	},
+
+	BASEMENT_OVER_LIMITATION_DENY : {		
+		msg: "Basement number is over limitation.",
+		code: 403		
+	},					
 	
 	INTERNAL_SERVER_ERROR : {
 		msg: "Internal server error, please try again later",
@@ -63,7 +78,7 @@ Utility.errorResInfo = {
 };
 
 // Check the permission about specific model relative to specific user
-Utility.validatePermission = function(user, obj, type, next){
+Utility.validatePermission = function(user, obj, type, next, isRead){
 	
 	switch(type){
 		
@@ -71,7 +86,11 @@ Utility.validatePermission = function(user, obj, type, next){
 		case Building.modelName:
 			
 			var result = false;
-			if( (obj && obj.userId == user.id.toString()) || user.role == User.ROLES.ADMIN) {
+			if ( isRead && obj.pub ) {
+
+				result = true;
+
+			} else if ( (obj && obj.userId == user.id.toString()) || user.role == User.ROLES.ADMIN) {
 
 				result = true;
 
@@ -103,6 +122,9 @@ Utility.validatePermission = function(user, obj, type, next){
 					} else {
 
 						if( building && building.userId == user.id.toString() )
+							result = true;
+
+						if( building && isRead && building.pub )
 							result = true;
 
 					}
@@ -145,6 +167,9 @@ Utility.validatePermission = function(user, obj, type, next){
 
 									if( building && building.userId == user.id.toString() )
 										result = true;
+
+									if( building && isRead && building.pub )
+										result = true;									
 
 								}
 
@@ -208,6 +233,9 @@ Utility.validatePermission = function(user, obj, type, next){
 
 												if( building && building.userId == user.id.toString() )
 													result = true;
+
+												if( building && isRead && building.pub )
+													result = true;												
 
 											}
 											next(result);																					
