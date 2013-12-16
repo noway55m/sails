@@ -43,6 +43,13 @@ module.exports = {
 	defaultCookieDuration: 604800, // 7 days: 604800 <=> 60 * 60 * 24 * 7
 
 	/******** Default token duration ********/	
-	defaultTokenDuration: 86400 // 1 day: 86400 <=> 60 * 60 * 24
+	defaultTokenDuration: 86400, // 1 day: 86400 <=> 60 * 60 * 24
 	
+	/******** Max number of building count ********/	
+	maxBuildingNumberOfUser: 50,
+
+	/******** Max number of floor count ********/	
+	maxFloorNumber: 100,
+	maxBasementNumber: 20
+
 };
