@@ -1,5 +1,5 @@
 /******************* index.html ********************/
-@media( max-width: 590px){
+@media( max-width: 590px){	
 	#index-container{
 		background: #ffffff no-repeat center top;
 		width: 100%;
@@ -7,13 +7,43 @@
 		max-width: 100%;
 		min-width: 100%;		
 	}
+
+	/******************* index.html - login.html ********************/
+	/* Login Form */	
 	.form-signin {
 		position: absolute;
-		width: 500px;
-		max-width: 500px;
+		width: 320px;
+		max-width: 320px;
 		padding: 15px;
 		left:50%;
 		top:20%;
-		margin-left: -250px;
-	}		
+		margin-left: -160px;
+	}
+	.form-signin input[type="checkbox"]{
+		width: 20px;
+		margin-left: 10px;
+	}
+	.form-signin button{
+		width: 300px;
+		margin: auto auto;
+	}
+
+	/* Icon wrapper while list */
+	.belement{
+		width: 110px;
+		height: 220px;
+		max-height: 110px;
+		margin-top: 45px;
+	}
+
+	/******************* Ad New Building Block in building/building-list.html *********************/
+	#add-building-block{
+		width:100%;
+		min-width: 180px;
+	}
+	#add-building-block .form-control{
+		max-width: 280px;
+		display:inline;
+	}	
+
 }
