@@ -1384,7 +1384,7 @@ exports.uploadMap = function(req, res) {
 									                        
 									                        } else {
 
-										                        res.send( errorResInfo.SUCCESS, floor );
+										                        res.send( errorResInfo.SUCCESS.code, floor );
 
 									                        }		                          
 
@@ -1529,7 +1529,7 @@ exports.uploadPath = function(req, res) {
 									                        
 									                        } else {
 
-										                        res.send( errorResInfo.SUCCESS, floor );
+										                        res.send( errorResInfo.SUCCESS.code, floor );
 
 									                        }		                          
 
@@ -1674,7 +1674,7 @@ exports.uploadRender = function(req, res) {
 									                        
 									                        } else {
 
-										                        res.send( errorResInfo.SUCCESS, floor );
+										                        res.send( errorResInfo.SUCCESS.code, floor );
 
 									                        }		                          
 
@@ -1819,7 +1819,7 @@ exports.uploadRegion = function(req, res) {
 									                        
 									                        } else {
 
-										                        res.send( errorResInfo.SUCCESS, floor );
+										                        res.send( errorResInfo.SUCCESS.code, floor );
 
 										                        // Start to parse region
 									                            fs.readFile(targetPathPath, 'utf8', function (err, data) {
