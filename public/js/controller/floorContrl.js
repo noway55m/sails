@@ -346,6 +346,13 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 				return true;
 				
 			},
+
+			error : function(res, status){
+
+				// Show error msg
+				$().toastmessage('showErrorToast', "Fail to upload map file");		        
+
+			},
 	
 			// other available options:
 			clearForm : true
@@ -419,6 +426,13 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 				
 			},
 	
+			error : function(res, status){
+
+				// Show error msg
+				$().toastmessage('showErrorToast', "Fail to upload path file");		        
+
+			},
+
 			// other available options:
 			clearForm : true
 			
