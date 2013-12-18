@@ -76,7 +76,16 @@ exports.auth = function(req, res) {
 									subject : "Welcome join to Sails Cloud Service", // Subject line
 									text : "Welcome join to Sails Cloud Service", // plaintext body
 									html : "<b>Welcome join to Sails Cloud Service. Please click following link to activate your account:</b>" +
-											"<a href='" + config.domainUrl + "/register/activate/" + atoken.token + "'>Activate</a>" // html body// html body
+											"<a href='" + config.domainUrl + "/register/activate/" + atoken.token + "'>Activate</a>" +
+											"</br>" +
+											"<p>" +
+											"If you have any problems, please leave the message in our support platform" +
+											"(<a href='http://support.sailstech.com'>http://support.sailstech.com</a>.)" +
+											"</br>" + 
+											"Please also see our knowledge base" +
+											"(<a href='http://support.sailstech.com/kb'>http://support.sailstech.com/kb</a>)" + 
+											" to understand how to draw and upload the vector-typed indoor map, build fingerprint, and using sdk to develop your own app."+
+											"</p>" // html body// html body
 								};
 
 								mailer.sendMail(mailOptions, function(error, response) {
