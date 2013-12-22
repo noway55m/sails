@@ -8,7 +8,8 @@ var log = require('log4js').getLogger(),
 	config = require('../config/config');
 
 // Static variable
-var	image_path = config.imagePath;
+var	errorResInfo = utilityS.errorResInfo,
+	image_path = config.imagePath;
 
 // GET Page for show specific ad
 exports.show = function(req, res) {
@@ -43,17 +44,34 @@ exports.list = function(req, res) {
 // Interface for read specific ad of store
 exports.read = function(req, res){
 	
-	if(req.params._id){
+	if(req.params._id) {
 		
 		Ad.findById(req.params._id, function(err, ad) {
 
-			if (err)
+			if (err) {
+
 				log.error(err);
-			
-			if(ad){
-				var adObj = formatObjectDate(ad);
-				res.send(200, adObj);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});	
+
+			} else {
+
+				if(ad){
+
+					var adObj = formatObjectDate(ad);
+					res.send( errorResInfo.SUCCESS.code, adObj );
+				
+				} else {
+
+        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+        				msg: errorResInfo.INCORRECT_PARAMS.msg
+        			});
+
+				}
+
 			}
+			
 		});			
 		
 	}

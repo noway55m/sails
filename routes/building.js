@@ -214,22 +214,32 @@ exports.read = function(req, res){
 
 			} else {
 
-	            // Check permission
-	            utilityS.validatePermission(req.user, building, Building.modelName, function(result){
+				if( building ) {
 
-	            	if(result) {
+		            // Check permission
+		            utilityS.validatePermission( req.user, building, Building.modelName, function(result) {
 
-	            		res.send( errorResInfo.SUCCESS.code , building);
+		            	if(result) {
 
-	            	} else {
+		            		res.send( errorResInfo.SUCCESS.code , building);
 
-	        			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
-	        				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
-	        			});
+		            	} else {
 
-	            	}
+		        			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+		        				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+		        			});
 
-	            }, true);
+		            	}
+
+		            }, true);
+
+				} else {
+
+        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+        				msg: errorResInfo.INCORRECT_PARAMS.msg
+        			});  
+
+				}
 
 			}
 
@@ -473,7 +483,6 @@ exports.del = function(req, res) {
 // POST Interface of upload image
 exports.uploadImage = function(req, res) {
 
-	console.log(req.body);
 	if(req.body._id && req.files.image){
 
 		// Get file name and extension
@@ -508,7 +517,7 @@ exports.uploadImage = function(req, res) {
 
 				Building.findById(req.body._id, function(error, building){
 
-					if(building){
+					if( building ) {
 
 						log.info("icon: " + building.icon);
 						log.info("targetName: " + targetFileName);
@@ -517,10 +526,12 @@ exports.uploadImage = function(req, res) {
 							log.info("Update");
 							fs.rename(tmpPath, targetPath, function(err) {
 								if(err){
+
 									log.error(err);
-									res.send(200, {
-									    msg: "Server error, please try again later"
-									});
+					    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					    			});  
+
 								}else{
 
 									// Delete old image if exist
@@ -533,8 +544,20 @@ exports.uploadImage = function(req, res) {
 									
 									// Update building
 									building.icon = targetFileName;
-									building.save(function(){
-										res.send(200, targetFileName);
+									building.save( function(err) {
+
+										if( err ) {
+
+							    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+							    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							    			});  											
+
+										} else {
+
+											res.send( errorResInfo.SUCCESS.code, targetFileName );
+
+										}
+
 									});
 									
 									// Delete the temporary file
@@ -548,12 +571,14 @@ exports.uploadImage = function(req, res) {
 						}else{
 
 							log.info("Same");
-							res.send(200, targetFileName);
+							res.send( errorResInfo.SUCCESS.code, targetFileName );
 						}
 
-					}else{
+					} else {
 
-						res.send(200, { msg: "This building does not exist" });
+	        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+	        				msg: errorResInfo.INCORRECT_PARAMS.msg
+	        			});  						
 
 					}//end if
 
@@ -563,7 +588,8 @@ exports.uploadImage = function(req, res) {
 
 		}else{
 
-			res.send(200, { msg: "File extension should be .png or .jpg or gif" });
+			res.send( errorResInfo.INCORRECT_FILE_TYPE.code, { msg: "File extension should be .png or .jpg or gif" });
+			
 		}
 
 

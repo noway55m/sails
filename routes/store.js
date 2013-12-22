@@ -1,4 +1,5 @@
-var log = require('log4js').getLogger(), 
+var log = require('log4js').getLogger(),
+	utilityS = require("./utility.js"), 
 	Store = require("../model/store"),
 	Ad = require("../model/ad"),
 	crypto = require('crypto'),
@@ -7,7 +8,8 @@ var log = require('log4js').getLogger(),
 	config = require('../config/config');
 
 // Static variable
-var	image_path = config.imagePath;
+var	errorResInfo = utilityS.errorResInfo,
+	image_path = config.imagePath;
 
 // Page for show the store in the floor of specific building
 exports.show = function(req, res) {	
@@ -17,15 +19,51 @@ exports.show = function(req, res) {
 // GET¡@Interface for read the store in the floor of specific building
 exports.read = function(req, res) {
 	
-	Store.findById(req.params._id, function(error, store){
-		
-		if(error)
-			log.error(error);
-		
-		if(store)
-			res.send(200, store);
-		
-	});
+	if( req.params._id ){
+
+		Store.findById(req.params._id, function( error, store ) {
+			
+			if( error ) {
+
+				log.error(error);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});  				
+
+			} else {
+
+				if( store ) {
+
+		            // Check permission
+		            utilityS.validatePermission( req.user, store, Store.modelName, function(result) {
+
+		            	if(result) {
+
+		            		res.send( errorResInfo.ERROR_PERMISSION_DENY.code, store);
+
+		            	} else {
+
+		        			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+		        				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+		        			});
+
+		            	}
+
+		            }, true);
+				
+				} else {
+
+        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+        				msg: errorResInfo.INCORRECT_PARAMS.msg
+        			});  
+
+				}
+					
+			}
+						
+		});
+
+	}
 
 };
 
@@ -41,7 +79,7 @@ exports.list = function(req, res) {
 		
 		}, function(error, stores) {
 			
-			res.send(200, stores);
+			res.send( errorResInfo.ERROR_PERMISSION_DENY.code, stores );
 
 		});
 
@@ -55,34 +93,57 @@ exports.create = function(req, res){
 	
 	if(req.body.name && req.body.floorId){
 		
-		Store.find({
+		Store.findOne({
 			
 			name: req.body.name,
 			floorId: req.body.floorId
 			
-		}, function(err, stores){
+		}, function(err, store){
 			
-			if(err)
+			if(err) {
+
 				log.error(err);
-			
-			if(stores.length > 0){
-				
-				res.json(200, {
-					msg: "Store name is duplicate!"
-				});
-				
-			}else{
-				
-				new Store({				
-				    name: req.body.name,
-				    link: req.body.link,			    
-				    phone: req.body.phone,			    
-				    memo: req.body.memo,			    		    
-				    floorId: req.body.floorId,				    
-				}).save(function(error, store){				
-					res.send(200, store);			
-				});	
-				
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});				
+
+			} else {
+
+				if( store ){
+					
+					res.json( errorResInfo.SUCCESS.code, {
+						msg: "Store name is duplicate!"
+					});
+					
+				}else{
+					
+					new Store({
+
+					    name: req.body.name,
+					    link: req.body.link,			    
+					    phone: req.body.phone,			    
+					    memo: req.body.memo,			    		    
+					    floorId: req.body.floorId
+
+					}).save(function(error, store){
+
+						if( err ) {
+
+							log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							});	
+
+						} else {
+
+							res.send( errorResInfo.SUCCESS.code, store );
+
+						}
+
+					});	
+					
+				}
+
 			}
 			
 		});
@@ -98,42 +159,77 @@ exports.update = function(req, res){
 		
 		Store.findById(req.body._id, function(err, store) {
 			
-			if (err)
+			if (err){
+
 				log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});					
 			
-			if(store){
-				
-				Store.find({
+			} else {
+
+				if(store){
 					
-					name: req.body.name,
-					floorId: store.floorId
-					
-				}, function(err, stores){
-					
-					if(err)
-						log.error(err);
-					
-					if(stores.length > 1){
+					Store.findOne({
 						
-						res.json(200, {
-							msg: "Store name is duplicate!"
-						});
+						name: req.body.name,
+						floorId: store.floorId
 						
-					}else{
+					}, function(err, store){
 						
-						store.name = req.body.name;
-						store.phone = req.body.phone;				
-						store.link = req.body.link;
-						store.memo = req.body.memo;
-						// store.floorId = req.body.floorId; not support now			
-						store.save(function(){
-							res.send(200, store);
-						});						
+						if(err){
+
+							log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							});								
 						
-					}
+						} else {
+
+							if( store ) {
+								
+								res.json( errorResInfo.SUCCESS.code, {
+									msg: "Store name is duplicate!"
+								});
+								
+							}else{
+								
+								store.name = req.body.name;
+								store.phone = req.body.phone;				
+								store.link = req.body.link;
+								store.memo = req.body.memo;
+								// store.floorId = req.body.floorId; not support now			
+								store.save( function( err, store ) {
+
+									if(err) {
+
+										log.error(err);
+										res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+											msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+										});	
+
+									} else {
+
+										res.send( errorResInfo.SUCCESS.code, store );
+
+									}
+									
+								});						
+								
+							}
+
+						}
+						
+					});
 					
-				});
-				
+				} else {
+
+	    			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+	    				msg: errorResInfo.INCORRECT_PARAMS.msg
+	    			});
+
+				}
+
 			}
 
 		});
@@ -150,65 +246,79 @@ exports.del = function(req, res){
 		
 		Store.findById(req.body._id, function(err, store){
 			
-			if(err)
+			if(err) {
+
 				log.error(err);
-			
-			if(store){
-				
-				var storeId = req.body._id;
-				
-				// Delete store image if exist
-				if(store.icon){
-					var oldImgPath = path.resolve(image_path + "/" + store.icon);
-					fs.unlink(oldImgPath, function(err){
-						log.error(err);
-					});	
-				}
-				
-				// Remove store
-				store.remove(function(err){
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});	
+
+			} else {
+
+				if(store){
 					
-					if(err){
-						log.error(err);
-					}else{
-						res.json(200, {
-							_id: req.body._id
-						});
-						
+					var storeId = req.body._id;
+					
+					// Delete store image if exist
+					if(store.icon){
+						var oldImgPath = path.resolve(image_path + "/" + store.icon);
+						fs.unlink(oldImgPath, function(err){
+							log.error(err);
+						});	
 					}
 					
-				});
-				
-				// Find all relative ads
-				Ad.find({
-					
-					storeId: storeId
-				
-				}, function(err, ads){
-					
-					if(err)						
-						log.error(err);
-					
-					for(var i=0; i<ads.length; i++){
+					// Remove store
+					store.remove(function(err){
 						
-						// Delete ad image
-						if(ads[i].image){
-							var oldAdImgPath = path.resolve(image_path + "/" + ads[i].image);
-							console.log(oldAdImgPath);
-							fs.unlink(oldAdImgPath, function(err){
-								log.error(err);
-							});														
+						if(err){
+							log.error(err);
+						}else{
+							res.json( errorResInfo.SUCCESS.code, {
+								_id: req.body._id
+							});
+							
 						}
 						
-						// Remove ad
-						ads[i].remove(function(err){
-							log.error(err);
-						});
-						
-					}					
+					});
 					
-				});	
-				
+					// Find all relative ads
+					Ad.find({
+						
+						storeId: storeId
+					
+					}, function(err, ads){
+						
+						if(err)						
+							log.error(err);
+						
+						for(var i=0; i<ads.length; i++){
+							
+							// Delete ad image
+							if(ads[i].image){
+								var oldAdImgPath = path.resolve(image_path + "/" + ads[i].image);
+								console.log(oldAdImgPath);
+								fs.unlink(oldAdImgPath, function(err){
+									log.error(err);
+								});														
+							}
+							
+							// Remove ad
+							ads[i].remove(function(err){
+								log.error(err);
+							});
+							
+						}					
+						
+					});	
+					
+				} else {
+
+	    			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+	    				msg: errorResInfo.INCORRECT_PARAMS.msg
+	    			});  
+	        							
+				}
+
 			}
 			
 		});		
@@ -260,9 +370,13 @@ exports.uploadImage = function(req, res) {
 							
 							log.info("Update");
 							fs.rename(tmpPath, targetPath, function(err) {			
-								if(err){									
+								if(err){
+
 									log.error(err);
-									res.send(200, "Server error, please try again later");									
+					    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					    			});  
+																		
 								}else{									
 									
 									// Delete old image if exist
@@ -275,8 +389,20 @@ exports.uploadImage = function(req, res) {
 									
 									// Update store
 									store.icon = targetFileName;
-									store.save(function(){
-										res.send(200, targetFileName);																			
+									store.save( function( err ) {
+
+										if( err ) {
+
+							    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+							    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							    			});  											
+
+										} else {
+
+											res.send( errorResInfo.SUCCESS.code, targetFileName );
+
+										}
+
 									});
 									
 									// Delete the temporary file
@@ -290,12 +416,14 @@ exports.uploadImage = function(req, res) {
 						}else{
 							
 							log.info("Same");
-							res.send(200, targetFileName);							
+							res.send( errorResInfo.SUCCESS.code, targetFileName );						
 						}						
 						
 					}else{
 						
-						res.send(200, { msg: "This building does not exist" });
+	        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+	        				msg: errorResInfo.INCORRECT_PARAMS.msg
+	        			}); 
 						
 					}//end if
 					
@@ -305,7 +433,8 @@ exports.uploadImage = function(req, res) {
 			
 		}else{
 			
-			res.send(200, { msg: "File extension should be .png or .jpg or gif" });
+			res.send( errorResInfo.INCORRECT_FILE_TYPE.code, { msg: "File extension should be .png or .jpg or gif" });
+
 		}
 		
 		

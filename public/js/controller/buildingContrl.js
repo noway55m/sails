@@ -309,6 +309,13 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 				uploadButton.hide();
 				return true;
 			},
+			error : function(res, status){
+
+				// Show error msg
+				var resText = ( res.responseJSON && res.responseJSON.msg ) || "Fail to upload image"
+				$().toastmessage('showErrorToast', resText );		        
+
+			},			
 
 			clearForm : true
 
