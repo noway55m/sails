@@ -39,7 +39,11 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 	});
 
 	// Add up floor
-	$scope.addFloor = function(d) {
+	$scope.addFloor = function(e) {
+
+		// Change button to loading status
+		var addButton = angular.element(e.currentTarget);
+		addButton.button('loading');
 
 		// Create new building
 		Floor.create({
@@ -54,21 +58,35 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 			$rootScope.floorUp.unshift(floor);
 			$rootScope.currentUpFloor = $rootScope.currentUpFloor + 1;
 
+			// Reset button status
+			addButton.button('reset');
+
 	    	// Show success msg
 			$().toastmessage('showSuccessToast', "Add floor successfully");
 			
 		}, function(err) {
 
 	    	// Show error msg				
-			if( err && err.data && err.data.msg )
+			if( err && err.data && err.data.msg ) {
+
+				// Reset button status
+				addButton.button('reset');
+
+				// Show error msg
 				$().toastmessage( 'showErrorToast', err.data.msg );
+
+			}
 
 		});
 
 	};
 
 	// Add down floor
-	$scope.addBasement = function(){
+	$scope.addBasement = function(e){
+
+		// Change button to loading status
+		var addButton = angular.element(e.currentTarget);
+		addButton.button('loading');
 
 		// Create new building
 		Floor.create({
@@ -83,14 +101,24 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 			$rootScope.floorDown.push(floor);
 			$rootScope.currentDownFloor = $rootScope.currentDownFloor - 1;
 
+			// Reset button status
+			addButton.button('reset');
+
 	    	// Show success msg
 			$().toastmessage('showSuccessToast', "Add basement successfully");			
 			
 		}, function(err) {
 
 	    	// Show error msg				
-			if( err && err.data && err.data.msg )
+			if( err && err.data && err.data.msg ) {
+
+				// Reset button status
+				addButton.button('reset');
+
+				// Show error msg
 				$().toastmessage( 'showErrorToast', err.data.msg );
+
+			}
 
 		});
 
