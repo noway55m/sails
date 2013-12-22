@@ -168,59 +168,74 @@ exports.update = function(req, res){
 			
 			} else {
 
-				if(store){
+				if( store ) {
 					
-					Store.findOne({
-						
-						name: req.body.name,
-						floorId: store.floorId
-						
-					}, function(err, store){
-						
-						if(err){
+		            // Check permission
+		            utilityS.validatePermission( req.user, store, Store.modelName, function(result) {
 
-							log.error(err);
-							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-							});								
-						
-						} else {
+		            	if(result) {
 
-							if( store ) {
+							Store.findOne({
 								
-								res.json( errorResInfo.SUCCESS.code, {
-									msg: "Store name is duplicate!"
-								});
+								name: req.body.name,
+								floorId: store.floorId
 								
-							}else{
+							}, function(err, store){
 								
-								store.name = req.body.name;
-								store.phone = req.body.phone;				
-								store.link = req.body.link;
-								store.memo = req.body.memo;
-								// store.floorId = req.body.floorId; not support now			
-								store.save( function( err, store ) {
+								if(err){
 
-									if(err) {
+									log.error(err);
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									});								
+								
+								} else {
 
-										log.error(err);
-										res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-											msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-										});	
+									if( store ) {
+										
+										res.json( errorResInfo.SUCCESS.code, {
+											msg: "Store name is duplicate!"
+										});
+										
+									}else{
+										
+										store.name = req.body.name;
+										store.phone = req.body.phone;				
+										store.link = req.body.link;
+										store.memo = req.body.memo;
+										// store.floorId = req.body.floorId; not support now			
+										store.save( function( err, store ) {
 
-									} else {
+											if(err) {
 
-										res.send( errorResInfo.SUCCESS.code, store );
+												log.error(err);
+												res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+													msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+												});	
 
+											} else {
+
+												res.send( errorResInfo.SUCCESS.code, store );
+
+											}
+											
+										});						
+										
 									}
-									
-								});						
-								
-							}
 
-						}
-						
-					});
+								}
+								
+							});
+
+		            	} else {
+
+		        			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+		        				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+		        			});
+
+		            	}
+
+		            });
 					
 				} else {
 
@@ -257,59 +272,74 @@ exports.del = function(req, res){
 
 				if(store){
 					
-					var storeId = req.body._id;
-					
-					// Delete store image if exist
-					if(store.icon){
-						var oldImgPath = path.resolve(image_path + "/" + store.icon);
-						fs.unlink(oldImgPath, function(err){
-							log.error(err);
-						});	
-					}
-					
-					// Remove store
-					store.remove(function(err){
-						
-						if(err){
-							log.error(err);
-						}else{
-							res.json( errorResInfo.SUCCESS.code, {
-								_id: req.body._id
-							});
+		            // Check permission
+		            utilityS.validatePermission( req.user, store, Store.modelName, function(result) {
+
+		            	if(result) {
+
+							var storeId = req.body._id;
 							
-						}
-						
-					});
-					
-					// Find all relative ads
-					Ad.find({
-						
-						storeId: storeId
-					
-					}, function(err, ads){
-						
-						if(err)						
-							log.error(err);
-						
-						for(var i=0; i<ads.length; i++){
-							
-							// Delete ad image
-							if(ads[i].image){
-								var oldAdImgPath = path.resolve(image_path + "/" + ads[i].image);
-								console.log(oldAdImgPath);
-								fs.unlink(oldAdImgPath, function(err){
+							// Delete store image if exist
+							if(store.icon){
+								var oldImgPath = path.resolve(image_path + "/" + store.icon);
+								fs.unlink(oldImgPath, function(err){
 									log.error(err);
-								});														
+								});	
 							}
 							
-							// Remove ad
-							ads[i].remove(function(err){
-								log.error(err);
+							// Remove store
+							store.remove(function(err){
+								
+								if(err){
+									log.error(err);
+								}else{
+									res.json( errorResInfo.SUCCESS.code, {
+										_id: req.body._id
+									});
+									
+								}
+								
 							});
 							
-						}					
-						
-					});	
+							// Find all relative ads
+							Ad.find({
+								
+								storeId: storeId
+							
+							}, function(err, ads){
+								
+								if(err)						
+									log.error(err);
+								
+								for(var i=0; i<ads.length; i++){
+									
+									// Delete ad image
+									if(ads[i].image){
+										var oldAdImgPath = path.resolve(image_path + "/" + ads[i].image);
+										console.log(oldAdImgPath);
+										fs.unlink(oldAdImgPath, function(err){
+											log.error(err);
+										});														
+									}
+									
+									// Remove ad
+									ads[i].remove(function(err){
+										log.error(err);
+									});
+									
+								}					
+								
+							});	
+
+		            	} else {
+
+		        			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+		        				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+		        			});
+
+		            	}
+
+					});
 					
 				} else {
 
