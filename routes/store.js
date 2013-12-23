@@ -39,7 +39,7 @@ exports.read = function(req, res) {
 
 		            	if(result) {
 
-		            		res.send( errorResInfo.ERROR_PERMISSION_DENY.code, store);
+		            		res.send( errorResInfo.SUCCESS.code, store);
 
 		            	} else {
 
@@ -79,7 +79,7 @@ exports.list = function(req, res) {
 		
 		}, function(error, stores) {
 			
-			res.send( errorResInfo.ERROR_PERMISSION_DENY.code, stores );
+			res.send( errorResInfo.SUCCESS.code, stores );
 
 		});
 
@@ -93,12 +93,13 @@ exports.create = function(req, res){
 	
 	if(req.body.name && req.body.floorId){
 		
-		Store.findOne({
+		// Use find rather than fineOne for check duplicate stores
+		Store.find({
 			
 			name: req.body.name,
 			floorId: req.body.floorId
 			
-		}, function(err, store){
+		}, function( err, stores ){
 			
 			if(err) {
 
@@ -109,7 +110,7 @@ exports.create = function(req, res){
 
 			} else {
 
-				if( store ){
+				if( stores.length > 0 ){
 					
 					res.json( errorResInfo.SUCCESS.code, {
 						msg: "Store name is duplicate!"
@@ -175,12 +176,12 @@ exports.update = function(req, res){
 
 		            	if(result) {
 
-							Store.findOne({
+							Store.find({
 								
 								name: req.body.name,
 								floorId: store.floorId
 								
-							}, function(err, store){
+							}, function( err, stores ){
 								
 								if(err){
 
@@ -191,7 +192,7 @@ exports.update = function(req, res){
 								
 								} else {
 
-									if( store ) {
+									if( stores.length > 0 ) {
 										
 										res.json( errorResInfo.SUCCESS.code, {
 											msg: "Store name is duplicate!"
