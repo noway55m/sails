@@ -589,13 +589,123 @@ exports.uploadImage = function(req, res) {
 		}else{
 
 			res.send( errorResInfo.INCORRECT_FILE_TYPE.code, { msg: "File extension should be .png or .jpg or gif" });
-			
+
 		}
 
 
 	}
 
 };
+
+// Post Interface of upload beaconlist
+exports.uploadBeaconlist = function(req, res){
+
+	if( req.body._id && req.files.beaconlist ) {
+
+		Building.findById( req.body._id, function( err, building ){
+
+			if(err) {
+
+                log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				}); 
+
+			} else {
+
+				if( building ) {
+
+	    			// Check permisssion
+	    			utilityS.validatePermission(req.user, building, Building.modelName, function(result){
+
+	    				if(result){
+
+					        // Get the temporary location of the file
+					        var tmpPathPath = req.files.beaconlist.path;
+
+					        // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
+					        var webLocation = building.userId + "/" + building._id,
+					            folderPath = path.dirname() + "/" + config.mapInfoPath + '/' + webLocation;
+
+					        // Make sure flolder exist    	        
+				            mkdirp(folderPath, function(err, dd) {
+
+				                if (err) {
+
+				                    log.error(err);
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									}); 
+
+				                } else {
+
+					                var targetPathPath = folderPath + "/beaconlist.xml";
+					                log.info("targetPathPath: " + targetPathPath);
+					                	
+					                fs.rename( tmpPathPath, targetPathPath, function(err) {
+
+					                    if (err){
+
+					                        log.error(err);
+											res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+												msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+											}); 
+
+					                    } else {
+
+					                        res.send( errorResInfo.SUCCESS.code, {
+
+					                        	msg: "Upload beaconlist file successfully"
+
+					                        });
+
+		                                	// Auto-package mapzip		                                
+		                                	utilityS.packageMapzip(building._id, function(errorObj){});					                        
+
+					                        // Delete temped path.xml
+					                        fs.unlink( tmpPathPath, function(err){} );
+
+					                    }	                   
+
+					                });
+
+				            	}    
+
+					    	});
+
+	    				} else {
+
+                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+                			});
+
+	    				}
+
+	    			});
+
+				} else {
+
+	                log.error(err);
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					}); 
+
+				}
+
+			}
+
+		});
+
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
+
+	}
+
+};
+
 
 // Function for package map zip of all floors in specific building
 exports.packageMapzip = function(req, res){

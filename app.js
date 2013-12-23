@@ -102,6 +102,8 @@ app.sget('/building/list/public', building.listPublic);
 app.spost('/building/uploadImage', building.uploadImage);
 app.spost('/building/packageMapzip', building.packageMapzip);
 app.sget('/building/getMapzip', building.getMapzip);
+app.spost('/building/uploadBeaconlist', building.uploadBeaconlist);
+
 
 //----------------------------------
 app.sget('/floor/show/:_id', floor.show);
