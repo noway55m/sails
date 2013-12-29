@@ -104,7 +104,8 @@ function createSampleBuilding(user){
 		downfloor: 0,
 		upfloor: 1,
 		pub: true,
-		userId: user._id					
+		userId: user._id,
+		createdTime: new Date()					
 
 	}).save(function(err, building){
 
