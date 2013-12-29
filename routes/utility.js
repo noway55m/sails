@@ -293,6 +293,7 @@ Utility.createSampleBuilding = function(nuser, next){
 				upfloor: sampleBuilding.upfloor,		        
 		        userId: nuser.id,
 		        pub: sampleBuilding.pub,
+		        createdTime: new Date()
 		        	
 		    }).save(function(err, building){
 		    	
