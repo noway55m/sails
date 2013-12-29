@@ -44,6 +44,7 @@ exports.downloadSampleCode = function(req, res){
 
     var platform = req.params.platform,
         filePath,
+        fileName,
         stat;
     if(platform == 'android'){
 
@@ -53,11 +54,13 @@ exports.downloadSampleCode = function(req, res){
 
         filePath = path.dirname() + "/" + config.iosSampleCodePath;
         
-    }    
+    }
+
+    fileName = filePath.substring(filePath.lastIndexOf("/")+1, filePath.length);        
     stat = fs.statSync(filePath);
     res.writeHead(200, {
         "Content-type": "application/octet-stream",
-        "Content-disposition": "attachment; filename=SampleCode.rar",
+        "Content-disposition": "attachment; filename=" + fileName,
         "Content-Length": stat.size
     });
 
