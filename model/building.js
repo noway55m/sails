@@ -42,7 +42,9 @@ var buildingSchema = new Schema({
     
     userId: String,
     
-    address: String
+    address: String,
+
+    createdTime: Date
                
 });
 
