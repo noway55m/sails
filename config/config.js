@@ -11,9 +11,9 @@ module.exports = {
 	mapInfoPath: "resource/map-info",
 
 	/******** Download sdk, online doc and sample code path ********/
-	androidSdkPath: "resource/sails-relative-res/android/SAILS_SDK_V1.1_Published.jar",
+	androidSdkPath: "resource/sails-relative-res/android/SAILS_SDK_V1.2_Published.jar",
 
-	iosSdkPath: "resource/sails-relative-res/ios/",
+	iosSdkPath: "resource/sails-relative-res/ios/SAILS_SDK_V1.0_Published.zip",
 
 	androidDocPath: "resource/sails-relative-res/android/Javadoc.rar",		
 
@@ -21,7 +21,7 @@ module.exports = {
 
 	androidSampleCodePath: "resource/sails-relative-res/android/SampleCode.rar",		
 
-	iosSampleCodePath: "resource/sails-relative-res/ios/SampleCode.rar",		
+	iosSampleCodePath: "resource/sails-relative-res/ios/SampleCode.zip",		
 		
 	/******** Main sample building folder  ********/		
 	sampleBuildingPath: "resource/map-info/Sample",
@@ -50,6 +50,9 @@ module.exports = {
 
 	/******** Max number of floor count ********/	
 	maxFloorNumber: 100,
-	maxBasementNumber: 20
+	maxBasementNumber: 20,
+
+	/******** Pagination offset per page ********/	
+	pageOffset: 30
 
 };
