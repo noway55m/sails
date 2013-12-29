@@ -111,6 +111,12 @@ body {
 	top:0px;
 }
 
+#pagination{
+	margin: 50px auto;
+	width: 280px; 
+	overflow: hidden;
+}
+
 /******************* index.html - login.html ********************/
 #index-container{
 	background: #ffffff url('../img/pc/index-bg.jpg') no-repeat center top;
