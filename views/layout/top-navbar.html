@@ -27,7 +27,13 @@
 						<li><a href="http://blog1.sailstech.com" target="_blank">Blog</a></li>
 						<% if(user){ %>	
 							<li><a href="/sails-resource/download" target="_blank">Download SDK</a></li>
+						<% } %>
+
+						<% if(user && user.role == roles.ADMIN ){ %>	
+							<li><a href="/building/admin/list" target="_blank">CMS</a></li>
 						<% } %>								
+
+
 					</ul>
 					<ul class="nav navbar-nav navbar-right">											
 						<% if(user){ %>
