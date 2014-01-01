@@ -377,6 +377,9 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 
 			error : function(res, status){
 
+				// Enable buttion
+				uploadButton.button("reset");
+
 				// Show error msg
 				$().toastmessage('showErrorToast', "Fail to upload map file");		        
 
@@ -455,6 +458,9 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 			},
 	
 			error : function(res, status){
+
+				// Enable buttion
+				uploadButton.button("reset");
 
 				// Show error msg
 				$().toastmessage('showErrorToast', "Fail to upload path file");		        
