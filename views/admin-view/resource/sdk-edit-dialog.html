@@ -1,0 +1,62 @@
+<!-- SDK edit dialog include in admin-view/resource/sdkinfo.html -->
+<div class="modal fade" id="sdk-edit-dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+     <div class="modal-content">
+
+		<!-- Header -->
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h4 class="modal-title">Edit SDK</h4>
+		</div>
+		
+		<!-- Body -->
+		<div class="modal-body">
+
+				<div class="form-group">
+					<label for="name">_id</label><h4 ng-bind="selectedSdk._id" style="margin-left: 30px;display:inline;"></h4>
+				</div>
+
+				<!-- Update version -->
+				<div>
+					<div class="form-group">
+						<label for="phone">version</label> 
+						<input class="form-control" placeholder="Name" name="version" value=""  maxlength="15" ng-model="selectedSdk.version">
+					</div>
+					<!-- error msg -->
+					<div class="alert alert-danger error-msg">
+						<span class="label label-danger">Error</span> <span
+							class="errorText"></span>
+					</div>					
+					<button class="btn btn-primary" data-loading-text="Updating" ng-click="updateSdk($event, selectedSdk)">Update</button>
+				</div>
+				<hr>
+				
+				<!-- Upload SDK -->
+				<form name="form" action="/resource/admin/uploadSdk" method="POST" enctype="multipart/form-data">
+					<input type="hidden" class="form-control" name="_id" value="{{selectedSdk._id}}">
+					<label for="map">Upload SDK file</label>
+					<input type="file" class="form-control upload-file" name="sdk">							
+					<div class="alert alert-danger error-msg">
+						<span class="label label-danger">Error</span> <span class="errorText"></span>
+					</div>
+				</form>
+				<button class="btn btn-md btn-primary" ng-click="uploadFile($event, selectedSdk)"　data-loading-text="Uploading...">Upload</button>
+				<hr>
+
+				<!-- Upload Sample Code -->
+				<form name="form" action="/resource/admin/uploadSampleCode" method="POST" enctype="multipart/form-data">
+					<input type="hidden" class="form-control" name="_id" value="{{selectedSdk._id}}">
+					<label for="map">Upload Sample Code ile</label>
+					<input type="file" class="form-control upload-file" name="sampleCode">							
+					<div class="alert alert-danger error-msg">
+						<span class="label label-danger">Error</span> <span class="errorText"></span>
+					</div>
+				</form>
+				<button class="btn btn-md btn-primary" ng-click="uploadFile($event, selectedSdk)"　data-loading-text="Uploading...">Upload</button>
+				<hr>				
+
+		</div>
+
+     </div><!-- /.modal-content -->
+   </div><!-- /.modal-dialog -->
+ </div><!-- /.modal -->

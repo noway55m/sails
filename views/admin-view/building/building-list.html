@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sails" ng-controller='BuildingListCtrl'>
+  <head>
+  
+	<!-- Head meta, css or library include -->
+	<% include ../../layout/head-include.html %>
+		
+
+	<!-- admin page css -->	
+	<link href="/stylesheets/style-admin.css" rel="stylesheet">
+
+	<!-- Title -->
+    <title>Building</title>
+
+  </head>
+
+  <body>
+
+    <!-- Fixed Top Navigation Bar Template -->
+	<% include ../../layout/top-navbar.html %>
+
+
+
+	<!-- Main Container -->
+    <div class="container">
+
+		<div class="jumbotron">
+
+			<!-- left navigation bar -->
+			<% include ../layout/left-navbar.html %>
+			
+			<div style="padding-left:230px;">
+
+				<!-- Add building form block -->
+				<% include ../../building/building-add.html %>
+				<br>
+
+				<div class="panel panel-default">	
+					<div class="panel-heading">Users</div>
+					<table class="table">
+						<thead>
+							<th>_id</th>
+							<th>name</th>
+							<th>type(not use)</th>				
+							<th>pub</th>
+							<th>upfloor</th>
+							<th>downfloor</th>
+							<th>icon</th>
+							<th>desc</th>
+							<th>mapzip</th>
+							<th>mapzipUpdateTime</th>
+							<th>userId</th>
+							<th>address</th>
+							<th>createdTime</th>																						
+						</thead>
+						<tbody>
+							<tr ng-repeat="building in buildings" id="{{building._id}}">				
+								<td ng-bind="building._id"></td>
+								<td ng-bind="building.name"></td>
+								<td ng-bind="building.type"></td>					
+								<td ng-bind="building.pub"></td>
+								<td ng-bind="building.upfloor"></td>
+								<td ng-bind="building.downfloor"></td>
+								<td>
+									<img ng-src="{{building.icon}}" alt="building icon" width=100 />
+								</td>
+								<td ng-bind="building.desc"></td>
+								<td ng-bind="building.mapzip"></td>
+								<td ng-bind="building.mapzipUpdateTime"></td>
+								<td ng-bind="building.userId"></td>
+								<td ng-bind="building.address"></td>
+								<td ng-bind="building.createdTime"></td>
+								<td>
+									<a data-toggle="modal" class="btn btn-default" href="#building-edit-dialog" 
+										ng-click="selectBuilding(building)">
+										<span class="glyphicon glyphicon-edit"></span>
+									</a>					
+								</td>						
+								<td>
+									<a data-toggle="modal" class="btn btn-default" href="delete-confirm-dialog" 
+										ng-click="selectBuilding(building)">
+										<span class="glyphicon glyphicon-remove"></span>
+									</a>					
+								</td>										
+							</tr>
+						</tbody>			
+					</table>		
+				</div>
+			</div>	
+
+		</div>
+
+	</div>	
+
+	<!-- Edit and Delete Dialog -->
+	<% include ./building-edit-dialog.html %>
+	<% include ../../layout/delete-confirm-dialog.html %>	
+
+	<!-- Body library include -->
+	<% include ../../layout/body-include.html %>
+
+    <!-- Controller -->
+    <script src="/js/controller/buildingContrl.js"></script>
+
+
+  </body>
+
+</html>

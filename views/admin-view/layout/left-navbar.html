@@ -1,0 +1,76 @@
+<div class="left-navbar">
+	
+	<div class="panel-group" id="accordion">
+
+	  <div class="panel panel-info">
+	    <div class="panel-heading">
+	      <h4 class="panel-title" >
+	      	<span class="badge pull-right">42</span>	
+	        <a data-toggle="collapse" data-parent="#accordion" href="#leftNavBarBuildingContent">Building</a>
+	      </h4>
+	    </div>
+	    <div id="leftNavBarBuildingContent" class="panel-collapse collapse in">
+	      <div class="panel-body">
+	      	<ul>
+	      		<li class="selected-left-nav"><a href="/building/admin/list">Building List</a></li>
+	      	</ul>
+	      </div>
+	    </div>
+	  </div>
+
+	  <div class="panel panel-info">
+	    <div class="panel-heading">
+	      <h4 class="panel-title">
+	        <a data-toggle="collapse" data-parent="#accordion" href="#leftNavBarResourceContent">Resource</a>
+	      </h4>
+	    </div>
+	    <div id="leftNavBarResourceContent" class="panel-collapse collapse">
+	      <div class="panel-body">
+	      	<ul>
+	      		<li class="selected-left-nav"><a href="/resource/admin/sdkinfo">Upload SDK and Sample Code</a></li>
+	      	</ul>		        
+	      </div>
+	    </div>
+	  </div>
+
+	  <div class="panel panel-info">
+	    <div class="panel-heading">
+	      <h4 class="panel-title">
+	        <a data-toggle="collapse" data-parent="#accordion" href="#leftNavBarUserContent">User</a>
+	      </h4>
+	    </div>
+	    <div id="leftNavBarUserContent" class="panel-collapse collapse">
+	      <div class="panel-body">
+	      	<ul>
+	      		<li class="selected-left-nav"><a href="/user/admin/list">User List</a></li>
+	      	</ul>
+	      </div>
+	    </div>
+	  </div>
+
+	</div>
+
+	<script type="text/javascript">
+	
+		var url = window.location.href;
+		console.log(url);
+		if( url.indexOf('building') != -1 ) {
+
+			$("div.left-navbar div.panel-collapse").removeClass('in');
+			$("#leftNavBarBuildingContent").addClass('in');
+
+		} else if( url.indexOf('resource') != -1 ) {
+
+			$("div.left-navbar div.panel-collapse").removeClass('in');
+			$("#leftNavBarResourceContent").addClass('in');
+
+		} else if( url.indexOf('user') != -1 ) {
+
+			$("div.left-navbar div.panel-collapse").removeClass('in');
+			$("#leftNavBarUserContent").addClass('in');
+
+		}
+
+	</script>
+
+</div>

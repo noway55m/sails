@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sails-admin" ng-controller='SdkListCtrl'>
+  <head>
+  
+	<!-- Head meta, css or library include -->
+	<% include ../../layout/head-include.html %>
+		
+
+	<!-- admin page css -->	
+	<link href="/stylesheets/style-admin.css" rel="stylesheet">
+
+	<!-- Title -->
+    <title>Sdk</title>
+
+    <script>
+    	var OS_TYPE = {
+    		ANDROID: +(<%= osType.ANDROID %>),
+    		IOS: +(<%= osType.IOS %>)
+    	};
+    </script>
+
+  </head>
+
+  <body>
+
+    <!-- Fixed Top Navigation Bar Template -->
+	<% include ../../layout/top-navbar.html %>
+
+	<!-- Main Container -->
+    <div class="container">
+
+		<div class="jumbotron">
+
+			<!-- left navigation bar -->
+			<% include ../layout/left-navbar.html %>
+			
+			<div style="padding-left:230px;">
+
+				<!-- Add building form block -->
+				<div id="add-sdk-block">
+					<input class="form-control" placeholder="SDK Version Name" name="version" value="" maxlength="30" style="width: 300px; display:inline;">
+
+					<select name="osType" style="font-size:18px; height: 34px;margin: auto 20px;">
+						<option value="<%= osType.ANDROID %>">Android</option>	
+						<option value="<%= osType.IOS %>">IOS</option>	
+					</select>
+
+					<button class="btn btn-primary" data-loading-text="Add..." id="add-new-building-button" ng-click="addSdk($event)">Add New Version of SDK</button>
+					<div class="alert alert-danger error-msg">
+						<span class="label label-danger">Error</span> <span class="errorText"></span>
+					</div>
+				</div>
+
+				<hr>
+
+				<!-- Content -->
+				<ul class="nav nav-tabs">
+				  <li><a href="#android-tab" data-toggle="tab">Android</a></li>
+				  <li><a href="#ios-tab" data-toggle="tab">IOS</a></li>
+				</ul>
+
+				<div class="tab-content">
+
+					<!-- Android tab -->					
+					<div class="tab-pane active" id="android-tab">
+						<div class="panel panel-default">	
+							<div class="panel-heading">Android SDK</div>
+								<table class="table">
+									<thead>
+										<th>_id</th>
+										<th>Version</th>
+										<th>OS Type</th>								
+										<th>SDK</th>
+										<th>Sample Code</th>
+										<th>Created Time</th>
+										<th>Updated Time</th>
+										<th></th>
+										<th></th>
+									</thead>
+									<tbody>
+										<tr ng-repeat="sdk in androidSdks">
+											<td ng-bind="sdk._id"></td>
+											<td ng-bind="sdk.version"></td>
+											<td>Android</td>
+											<td>
+												<a href="/sails-resource/download/sdk/android/{{sdk.sdkFilePath}}">
+													<span ng-bind="sdk.sdkFilePath"></sapn>													
+												</a>
+											</td>
+											<td>												
+												<a href="/sails-resource/download/sample-code/android/{{sdk.sampleCodeFilePath}}">
+													<span ng-bind="sdk.sampleCodeFilePath"></sapn>					
+												</a>
+											</td>
+											<td ng-bind="sdk.createdTime"></td>
+											<td ng-bind="sdk.updatedTime"></td>
+											<td>
+												<a data-toggle="modal" class="btn btn-default" href="#sdk-edit-dialog" 
+													ng-click="selectSdk(sdk)">
+													<span class="glyphicon glyphicon-edit"></span>
+												</a>					
+											</td>						
+											<td>
+												<a data-toggle="modal" class="btn btn-default" ng-click="deleteDialogSetup(sdk)">
+													<span class="glyphicon glyphicon-remove"></span>
+												</a>					
+											</td>											
+										</tr>
+									</tbody>
+								</table>
+						</div>
+					</div>
+
+					<!-- ios tab -->
+					<div class="tab-pane" id="ios-tab">
+						<div class="panel panel-default">	
+							<div class="panel-heading">IOS SDK</div>
+								<table class="table">
+									<thead>
+										<th>_id</th>
+										<th>Version</th>
+										<th>OS Type</th>								
+										<th>SDK</th>
+										<th>Sample Code</th>
+										<th>Created Time</th>
+										<th>Updated Time</th>
+										<th></th>
+										<th></th>
+									</thead>
+									<tbody>
+										<tr ng-repeat="sdk in iosSdks">
+											<td ng-bind="sdk._id"></td>
+											<td ng-bind="sdk.version"></td>
+											<td>IOS</td>
+											<td>												
+												<a href="/sails-resource/download/sdk/ios/{{sdk.sdkFilePath}}">
+													<span ng-bind="sdk.sdkFilePath"></sapn>	
+												</a>
+											</td>
+											<td>
+												<a href="/sails-resource/download/sample-code/ios/{{sdk.sampleCodeFilePath}}">
+													<span ng-bind="sdk.sampleCodeFilePath"></sapn>
+												</a>
+											</td>
+											<td ng-bind="sdk.createdTime"></td>
+											<td ng-bind="sdk.updatedTime"></td>
+											<td>
+												<a data-toggle="modal" class="btn btn-default" href="#sdk-edit-dialog" 
+													ng-click="selectSdk(sdk)">
+													<span class="glyphicon glyphicon-edit"></span>
+												</a>					
+											</td>						
+											<td>
+												<a data-toggle="modal" class="btn btn-default" ng-click="deleteDialogSetup(sdk)">
+													<span class="glyphicon glyphicon-remove"></span>
+												</a>					
+											</td>											
+										</tr>
+									</tbody>
+								</table>
+						</div>
+					</div>	
+
+				</div>	
+	
+
+				<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup()"></span>
+				
+				</div>
+
+			</div>	
+
+		</div>
+
+	</div>	
+
+	<!-- Edit and Delete Dialog -->
+	<% include ./sdk-edit-dialog.html %>	
+	<% include ../../layout/delete-confirm-dialog.html %>	
+
+	<!-- Body library include -->
+	<% include ../../layout/body-include.html %>
+
+    <!-- Controller -->
+	<script src="/js/admin/controller/app.js"></script>    
+    <script src="/js/admin/controller/sdkContrl.js"></script>
+
+
+  </body>
+
+</html>
