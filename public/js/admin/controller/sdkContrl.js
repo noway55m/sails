@@ -60,11 +60,17 @@ function SdkListCtrl($scope, Sdk, $compile, $rootScope, $compile) {
 		    	// Show success msg
 				$().toastmessage('showSuccessToast', "Create successfully");				
 
-			}, function(err) {
+			}, function(res) {
 
 				// Enable all fields and button
 				inputs.removeAttr("disabled");
 				addButton.removeAttr("disabled");
+
+				// Show error msg
+				var errMsg = ( res && res.data && res.data.msg ) || "Server error, please try again later"; 				
+				errorMsgObj.find(".errorText").text(errMsg);
+				errorMsgObj.show();
+		    	$().toastmessage('showErrorToast', errMsg);				
 
 			});
 
@@ -266,23 +272,48 @@ function updateSdk(e, selectedSdk, $scope, $rootScope, Sdk){
 			// Enable all input fields
 			inputFields.removeAttr('disabled');
 
-			// Clone user info
+			// Clone sdk info
 	        $rootScope.selectedSdkClone = angular.copy(sdk);
+
+	        // Update sdk current version
+	        if(sdk.isCurrentVersion) {
+
+				if(sdk.osType == OS_TYPE.ANDROID) {
+
+					for( var i=0; i<$scope.androidSdks.length; i++ ) {
+						if($scope.androidSdks[i]._id != sdk._id){
+							$scope.androidSdks[i].isCurrentVersion = false;
+						}
+					}
+
+				} else {
+
+					for( var j=0; j<$scope.iosSdks.length; j++ ) {
+						if($scope.iosSdks[i]._id != sdk._id)
+							$scope.iosSdks[i].isCurrentVersion = false;
+					}
+
+				}
+
+	        }
 
 	    	// Show success msg
 			$().toastmessage('showSuccessToast', "Update successfully");						        
 	        
 		}, function(res){
 
-			// Show error msg
-			errorMsgObj.find(".errorText").text(res.msg);
-			errorMsgObj.show();
-
 			// Set back normal state of update button
 			updateButton.button('reset');
 
 			// Enable all input fields
 			inputFields.removeAttr('disabled');
+
+			// Show error msg
+			var errMsg = ( res && res.data && res.data.msg ) || "Server error, please try again later"; 				
+			errorMsgObj.find(".errorText").text(errMsg);
+			errorMsgObj.show();
+	    	$().toastmessage('showErrorToast', errMsg);				
+
 
 		});
 
