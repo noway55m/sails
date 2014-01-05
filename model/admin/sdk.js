@@ -10,7 +10,12 @@ var sdkSchema = new Schema({
 	
     version: String,
 
-    isCurrentVersion: Boolean,
+    isCurrentVersion: {
+
+    	type: Boolean,
+    	default: false
+    	   		
+    },
     
     osType: Number, // 1: android, 2: ios
 
