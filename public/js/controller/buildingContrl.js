@@ -1,7 +1,7 @@
 var utility = Utility.getInstance();
 
 // List buildings controller
-function BuildingListCtrl($scope, Building) {
+function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 
 	// Show and hide remove button
 	$scope.showRemoveButton = function(e){
@@ -14,8 +14,17 @@ function BuildingListCtrl($scope, Building) {
 	
     // List all buildings
 	$scope.loading = true;
-	Building.list(function(buildings){
+	$scope.hasPagination = true;
+	Building.list(function(obj){
 		
+		var page = obj.page,
+			offset = obj.offset,
+			count = obj.count,
+			totalPages = Math.ceil(count/offset),
+			buildings = obj.buildings;
+
+		console.log(buildings[0]);	
+
 		// Set icon url
 		buildings.forEach(function(building){
 			if(building.icon)
@@ -25,6 +34,26 @@ function BuildingListCtrl($scope, Building) {
 		});		
 		$scope.buildings = buildings;
 		$scope.loading = false;
+		
+		// Trigger pagination		
+		if( totalPages > 1 ) {
+
+			$scope.hasPagination = false;
+			$("#pagination").paginate({
+				count: totalPages,
+				start: 1,
+				display: 5,
+				border: false,
+				text_color: '#79B5E3',
+				background_color: 'none',	
+				text_hover_color: '#2573AF',
+				background_hover_color: 'none',
+				mouse: 'press'
+			});
+			$compile( angular.element('#pagination').contents() )($scope);
+
+		}
+
 	});
 
 	// Function for add new building
@@ -73,6 +102,7 @@ function BuildingListCtrl($scope, Building) {
 			}, function(err) {
 
 				// Enable all fields and button
+				addButton.button("reset");				
 				inputs.removeAttr("disabled");
 				addButton.removeAttr("disabled");
 
@@ -122,14 +152,67 @@ function BuildingListCtrl($scope, Building) {
 			
 		});
 		
-	};		
+	};
+
+	// Function for load specific page
+	$scope.loadPage = function(e, page){
+
+		var element = angular.element(e.currentTarget);
+		Building.list({ page: page }, function(obj){
+			
+			var page = obj.page,
+				offset = obj.offset,
+				count = obj.count,
+				buildings = obj.buildings;
+
+			// Set icon url
+			buildings.forEach(function(building){
+				if(building.icon)
+					building.icon = "/" + imagePath + "/" + building.icon;
+				else
+					building.icon = "/img/no-image.png";
+			});		
+			$scope.buildings = buildings;
+
+		});
+
+	};
+
+	// ----------------------------------------------------------------------------------------------------
+
+	// Function for select specific building (cms)
+	$scope.selectBuilding = function(building){
+		$rootScope.selectedBuilding = building;
+		$rootScope.selectedBuildingClone = angular.copy($rootScope.selecedtBuilding); // Clone building for future rollback
+		$rootScope.floors = Floor.list({ buildingId: building._id }, function(floors){
+			$rootScope.floorUp = [];
+			$rootScope.floorDown = [];
+			floors.forEach(function(floor){
+				if(floor.layer > 0 )
+					$rootScope.floorUp.push(floor);
+				else
+					$rootScope.floorDown.push(floor);
+
+			});
+
+			$rootScope.currentUpFloor = $rootScope.floorUp.length + 1,
+			$rootScope.currentDownFloor = -($rootScope.floorDown.length) - 1;
+			$rootScope.loadingFloor = false;
+			console.log(floors);			
+		});
+	};
+
+	// Function for update building (cms)
+	$scope.updateBuilding = function(e, selectedBuilding) {
+		updateBuilding(e, selectedBuilding);	
+	};
 	
 }
 
 // Show specific building controller
 function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 	var url = $location.absUrl(),
-		id = url.substring(url.lastIndexOf("/") + 1, url.length);	
+		id = url.substring(url.lastIndexOf("/") + 1, url.length) || $rootScope.selectedBuilding.id;	
 	$scope.loadingBuilding = true;
 	$rootScope.loadingFloor = true;	
 	Building.get({ _id : id }, function(building){
@@ -141,78 +224,22 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 		$rootScope.$emit('buildingFinishLoad', building);
         $rootScope.buildingClone = angular.copy(building); // Clone building for future rollback        
     	$scope.loadingBuilding = false;
+
+    	console.log(building);
 	});
 
     // Function for rollback selected user info
     $scope.cancelUpdateBuilding = function(){
+    	console.log($rootScope.buildingClone);
+    	console.log($scope.building);
         angular.copy($rootScope.buildingClone, $scope.building);
     };
 
 	// Function for update building
-	$scope.updateBuilding = function(e){
-
-		var building = this.building,
-			updateButton = angular.element(e.currentTarget),
-			form = updateButton.parent(),
-			inputFields = form.find("input");
-			errorMsgObj = form.find(".error-msg"),
-			timeFields = form.find("input[data-provide=datepicker]"),
-			utility = Utility.getInstance(),
-			nameObj = form.find("input[name=name]"),
-			descObj = form.find("textarea[name=desc]");
-
-		if (utility.emptyValidate(nameObj, errorMsgObj)) {
-
-			// Disable all fields before finish save
-			inputFields.attr('disabled', 'disabled');
-			descObj.attr('disabled', 'disabled');
-
-			// Hide error msg block
-			errorMsgObj.hide();
-
-			// Set loading state of update button
-			updateButton.button('loading');
-
-			building.$save( function(building){
-
-				// Set back normal state of update button
-				updateButton.button('reset');
-
-				// Enable all input fields
-				inputFields.removeAttr('disabled');
-				descObj.removeAttr('disabled');
-
-				// Update local buildings
-				if(building.icon)
-					building.icon = "/" + imagePath + "/" + building.icon;
-				else
-					building.icon = "/img/no-image.png";
-
-				// Clone user info
-		        $rootScope.buildingClone = angular.copy(building);
-
-		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Update successfully");						        
-		        
-			}, function(res){
-
-				// Show error msg
-				errorMsgObj.find(".errorText").text(res.msg);
-				errorMsgObj.show();
-
-				// Set back normal state of update button
-				updateButton.button('reset');
-
-				// Enable all input fields
-				inputFields.removeAttr('disabled');
-				descObj.removeAttr('disabled');
-
-			});
-
-		}
-
+	$scope.updateBuilding = function(e) {
+		console.log(this.building);
+		updateBuilding(e);	
 	};
-
 
     // Function for upload building image
 	// Note: we won't use now, all map zip package from server automatically
@@ -361,5 +388,71 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 		
 }
 
+
+// Function for update building
+function updateBuilding(e, selectedBuilding){
+
+	var building = this.building || selectedBuilding,
+		updateButton = angular.element(e.currentTarget),
+		form = updateButton.parent(),
+		inputFields = form.find("input");
+		errorMsgObj = form.find(".error-msg"),
+		timeFields = form.find("input[data-provide=datepicker]"),
+		utility = Utility.getInstance(),
+		nameObj = form.find("input[name=name]"),
+		descObj = form.find("textarea[name=desc]");
+
+	console.log(building);
+	if (utility.emptyValidate(nameObj, errorMsgObj)) {
+
+		// Disable all fields before finish save
+		inputFields.attr('disabled', 'disabled');
+		descObj.attr('disabled', 'disabled');
+
+		// Hide error msg block
+		errorMsgObj.hide();
+
+		// Set loading state of update button
+		updateButton.button('loading');
+
+		// building.$save( function(building){
+
+		// 	// Set back normal state of update button
+		// 	updateButton.button('reset');
+
+		// 	// Enable all input fields
+		// 	inputFields.removeAttr('disabled');
+		// 	descObj.removeAttr('disabled');
+
+		// 	// Update local buildings
+		// 	if(building.icon)
+		// 		building.icon = "/" + imagePath + "/" + building.icon;
+		// 	else
+		// 		building.icon = "/img/no-image.png";
+
+		// 	// Clone user info
+	 //        $rootScope.buildingClone = angular.copy(building);
+
+	 //    	// Show success msg
+		// 	$().toastmessage('showSuccessToast', "Update successfully");						        
+	        
+		// }, function(res){
+
+		// 	// Show error msg
+		// 	errorMsgObj.find(".errorText").text(res.msg);
+		// 	errorMsgObj.show();
+
+		// 	// Set back normal state of update button
+		// 	updateButton.button('reset');
+
+		// 	// Enable all input fields
+		// 	inputFields.removeAttr('disabled');
+		// 	descObj.removeAttr('disabled');
+
+		// });
+
+	}
+
+};
 
 // BuildingShowCtrl.$inject = ['$scope', 'Building'];

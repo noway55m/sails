@@ -84,7 +84,6 @@ angular.module('floorServices', [ 'ngResource' ]).factory('Floor', function($res
 
 });
 
-
 // REST API of Store
 angular.module('storeServices', [ 'ngResource' ]).factory('Store', function($resource) {
     return $resource('/store/:action/:_id', { _id : "@id" }, {
@@ -162,7 +161,7 @@ angular.module('adServices', [ 'ngResource' ]).factory('Ad', function($resource)
 
 // REST API of User
 angular.module('userServices', [ 'ngResource' ]).factory('User', function($resource) {
-    return $resource('/user/admin/:action/:_id', { _id : "@id" }, {
+    return $resource('/admin/user/:action/:_id', { _id : "@id" }, {
         create : {
             method : 'POST',
             params : {
@@ -199,7 +198,7 @@ angular.module('userServices', [ 'ngResource' ]).factory('User', function($resou
 
 // REST API of Sdk
 angular.module('sdkServices', [ 'ngResource' ]).factory('Sdk', function($resource) {
-    return $resource('/resource/admin/sdk/:action/:_id', { _id : "@id" }, {        
+    return $resource('/admin/resource/sdk/:action/:_id', { _id : "@id" }, {        
         create : {
             method : 'POST',
             params : {
