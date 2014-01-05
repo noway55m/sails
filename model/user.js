@@ -35,8 +35,10 @@ var userSchema = new Schema({
     
     gid: String, // Google Plus ID
 
-    gaccessToken: String // Google OAuth access token
+    gaccessToken: String, // Google OAuth access token
         
+    createdTime: Date
+
 });
 
 
