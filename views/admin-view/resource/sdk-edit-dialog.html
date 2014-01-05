@@ -5,7 +5,7 @@
 
 		<!-- Header -->
 		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="cancelUpdateSdk()">&times;</button>
 			<h4 class="modal-title">Edit SDK</h4>
 		</div>
 		
@@ -21,6 +21,10 @@
 					<div class="form-group">
 						<label for="phone">version</label> 
 						<input class="form-control" placeholder="Name" name="version" value=""  maxlength="15" ng-model="selectedSdk.version">
+						<br>
+						<label for="phone">isCurrentVersion</label> 						
+						<input type="checkbox" name="version" value="" ng-model="selectedSdk.isCurrentVersion">
+
 					</div>
 					<!-- error msg -->
 					<div class="alert alert-danger error-msg">

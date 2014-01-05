@@ -5,12 +5,11 @@
 	<!-- Head meta, css or library include -->
 	<% include ../../layout/head-include.html %>
 		
-
 	<!-- admin page css -->	
 	<link href="/stylesheets/style-admin.css" rel="stylesheet">
 
 	<!-- Title -->
-    <title>Sdk</title>
+    <title>Sdk Info</title>
 
     <script>
     	var OS_TYPE = {
@@ -69,6 +68,7 @@
 									<thead>
 										<th>_id</th>
 										<th>Version</th>
+										<th>isCurrentVersion</th>
 										<th>OS Type</th>								
 										<th>SDK</th>
 										<th>Sample Code</th>
@@ -81,6 +81,7 @@
 										<tr ng-repeat="sdk in androidSdks">
 											<td ng-bind="sdk._id"></td>
 											<td ng-bind="sdk.version"></td>
+											<td ng-bind="sdk.isCurrentVersion"></td>
 											<td>Android</td>
 											<td>
 												<a href="/sails-resource/download/sdk/android/{{sdk.sdkFilePath}}">
@@ -119,6 +120,7 @@
 									<thead>
 										<th>_id</th>
 										<th>Version</th>
+										<th>isCurrentVersion</th>
 										<th>OS Type</th>								
 										<th>SDK</th>
 										<th>Sample Code</th>
@@ -131,6 +133,7 @@
 										<tr ng-repeat="sdk in iosSdks">
 											<td ng-bind="sdk._id"></td>
 											<td ng-bind="sdk.version"></td>
+											<td ng-bind="sdk.isCurrentVersion"></td>											
 											<td>IOS</td>
 											<td>												
 												<a href="/sails-resource/download/sdk/ios/{{sdk.sdkFilePath}}">
@@ -162,9 +165,6 @@
 					</div>	
 
 				</div>	
-	
-
-				<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup()"></span>
 				
 				</div>
 
