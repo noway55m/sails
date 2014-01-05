@@ -4,7 +4,7 @@ var app = angular.module('sails', ['ngResource', 'buildingServices', 'floorServi
 
 // REST API of Building
 angular.module('buildingServices', [ 'ngResource' ]).factory('Building', function($resource) {
-    return $resource('/building/:action/:_id', { _id : "@id" }, {
+    return $resource('/building/:action/:_id', { _id : "@id"}, {
 
         get : {
             method : 'GET',
@@ -33,9 +33,9 @@ angular.module('buildingServices', [ 'ngResource' ]).factory('Building', functio
         list : {
             method : 'GET',
             params : {
-                action : 'list'
-            },
-            isArray : true
+                action : 'listPage',
+                page: 1
+            }
         },
         packageMapzip : {
             method : 'POST',
@@ -169,41 +169,16 @@ angular.module('userServices', [ 'ngResource' ]).factory('User', function($resou
                 action : 'read'
             }
         },
-        create : {
-            method : 'POST',
-            params : {
-                action : 'create'
-            }
-        },
         save : {
             method : 'POST',
             params : {
                 action : 'update'
             }
         },
-        "delete" : {
-            method : 'POST',
-            params : {
-                action : 'delete'
-            }
-        },
-        list : {
-            method : 'GET',
-            params : {
-                action : 'list'
-            },
-            isArray : true
-        },
         changePassword : {
             method : 'POST',
             params : {
                 action : 'changePassword'
-            }        	
-        },
-        changePasswordAdmin : {
-            method : 'POST',
-            params : {
-                action : 'changePasswordAdmin'
             }        	
         },
         upgradeDeveloper : {
