@@ -1,31 +1,71 @@
 var log = require('log4js').getLogger(),
-    fs = require('fs'), 
-	path = require('path'),    
+    fs = require('fs'),
+    utilityS = require("./utility.js"),     
+	path = require('path'), 
+    Sdk = require("../model/admin/sdk"),       
 	config = require('../config/config');
-// Page for show the store in the floor of specific building
+
+
+// Static variable
+var errorResInfo = utilityS.errorResInfo,
+    mapinfo_path = "/" + config.mapInfoPath,
+    image_path = config.imagePath;
+
+
+// Page for show downalod links, like: sdk, sample code an doc of android and ios
 exports.download = function(req, res) {	
-	res.render("others/download.html");
+	
+    Sdk.find({
+
+        isCurrentVersion: true
+
+    }, function( err, sdks ){
+
+        if( err ) {
+
+            log.error(err);
+            res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+                msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+            });         
+
+        } else {
+
+            var androidVersion, iosVersion;
+            for( var i=0; i<sdks.length; i++ ){
+
+                if( sdks[i].osType == Sdk.OS_TYPE.ANDROID ) {
+
+                    android = sdks[i];
+
+                } else {
+
+                    ios = sdks[i];
+
+                }
+
+                res.render("others/download.html", {
+
+                    androidVersion: androidVersion,
+                    iosVersion: iosVersion
+
+                });
+
+            }
+
+        }
+
+    });
+
 };
 
 // Interface for download ios or android sdk
 exports.downloadSdk = function(req, res){
 
     var platform = req.params.platform,
-        filePath,
-        fileName,
-        stat;
+        fileName = req.params.fileName,
+        filePath = path.dirname() + "/" + config.sailsResPath + "/" + platform + "/" + fileName,
+        stat = fs.statSync(filePath);
 
-    if(platform == 'android'){
-
-        filePath = path.dirname() + "/" + config.androidSdkPath;
-        
-    } else {
-
-        filePath = path.dirname() + "/" + config.iosSdkPath;
-        
-    }
-    fileName = filePath.substring(filePath.lastIndexOf("/")+1, filePath.length);
-    stat = fs.statSync(filePath);
     res.writeHead(200, {
         "Content-type": "application/octet-stream",
         "Content-disposition": "attachment; filename=" + fileName,
@@ -43,21 +83,10 @@ exports.downloadSdk = function(req, res){
 exports.downloadSampleCode = function(req, res){
 
     var platform = req.params.platform,
-        filePath,
-        fileName,
-        stat;
-    if(platform == 'android'){
+        fileName = req.params.fileName,
+        filePath = path.dirname() + "/" + config.sailsResPath + "/" + platform + "/" + fileName,
+        stat = fs.statSync(filePath);
 
-        filePath = path.dirname() + "/" + config.androidSampleCodePath;
-        
-    } else {
-
-        filePath = path.dirname() + "/" + config.iosSampleCodePath;
-        
-    }
-
-    fileName = filePath.substring(filePath.lastIndexOf("/")+1, filePath.length);        
-    stat = fs.statSync(filePath);
     res.writeHead(200, {
         "Content-type": "application/octet-stream",
         "Content-disposition": "attachment; filename=" + fileName,
