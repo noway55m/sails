@@ -165,11 +165,11 @@ exports.sdkUpdate = function(req, res){
                 	
                 	// temp original file path and extension        	  
                 	var originalSdkFilePath = sdk.sdkFilePath;
-                	var originalSdkExtension = originalSdkFilePath.substring(
-                		originalSdkFilePath.lastIndexOf(".") + 1, originalSdkFilePath.length)
+                	var originalSdkExtension = originalSdkFilePath ? originalSdkFilePath.substring(
+                		originalSdkFilePath.lastIndexOf(".") + 1, originalSdkFilePath.length) : null;
                 	var originalSampleCodeFilePath = sdk.sampleCodeFilePath;
-                	var originalSampleCodeExtension = originalSampleCodeFilePath.substring(
-                		originalSampleCodeFilePath.lastIndexOf(".") + 1, originalSampleCodeFilePath.length)
+                	var originalSampleCodeExtension = originalSampleCodeFilePath ? originalSampleCodeFilePath.substring(
+                		originalSampleCodeFilePath.lastIndexOf(".") + 1, originalSampleCodeFilePath.length) : null;
 
                 	console.log("originalSdkFilePath: " + originalSdkFilePath);
                 	console.log("originalSdkExtension: " + originalSdkExtension);
@@ -191,10 +191,12 @@ exports.sdkUpdate = function(req, res){
                 	console.log("newSampleCodeFileName: " + newSampleCodeFileName);
                 	console.log("newSampleCodeFile: " + newSampleCodeFile);
 						
-
                     sdk.version = req.body.version;
-                    sdk.sdkFilePath = newSdkFileName;
-                    sdk.sampleCodeFilePath = newSampleCodeFileName;                    
+                    sdk.isCurrentVersion = req.body.isCurrentVersion;
+                    if(originalSdkFilePath)
+                    	sdk.sdkFilePath = newSdkFileName;
+                    if(originalSampleCodeFilePath)
+                    	sdk.sampleCodeFilePath = newSampleCodeFileName;                    
                     sdk.save(function(err, sdkS){
                         
                     	if( err ) {
@@ -207,15 +209,59 @@ exports.sdkUpdate = function(req, res){
                     	} else {
 
                     		// Change file name
-                    		fs.rename( sdkFile, newSdkFile, function(err){
-                    			if(err)
-                    				log.error(err);
-                    		});
+                    		if(originalSdkFilePath) {
+	                    		fs.rename( sdkFile, newSdkFile, function(err){
+	                    			if(err)
+	                    				log.error(err);
+	                    		});
+                    		}
 
-                    		fs.rename( sampleCodeFile, newSampleCodeFile, function(err){
-                    			if(err)
-                    				log.error(err);
-                    		});                    		
+                    		if(originalSampleCodeFilePath) {
+	                    		fs.rename( sampleCodeFile, newSampleCodeFile, function(err){
+	                    			if(err)
+	                    				log.error(err);
+	                    		});                    		
+                    		}
+
+		                    // Change other sdk isCurrentVersion to false
+		                    if(req.body.isCurrentVersion){
+
+		                    	Sdk.find({
+
+		                    		isCurrentVersion: true,
+		                    		osType: sdkS.osType
+
+		                    	}, function(err, sdks){
+
+		                    		if(err) {
+
+		                    			log.error(err);
+
+		                    		} else {
+
+		                    			for( var i=0; i<sdks.length; i++){
+		                    				if(sdks[i]._id.toString() != sdkS._id.toString()){
+
+		                    					(function(sdkO){
+
+		                    						sdkO.isCurrentVersion = false;
+		                    						sdkO.save(function(err){
+
+		                    							if(err)
+		                    								log.error(err);
+
+		                    						});
+
+		                    					}(sdks[i]));
+
+		                    				}
+		                    			}
+
+		                    		}
+
+		                    	});
+
+		                    }
 
 							res.json( errorResInfo.SUCCESS.code, sdkS );
 
