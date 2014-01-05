@@ -22,9 +22,9 @@ var errorResInfo = utilityS.errorResInfo,
     image_path = "public/" + public_image_path;
 
 // Page for show all users
-exports.userInfo = function(req, res){
+exports.index = function(req, res){
 
-	res.render("admin-view/user/userInfo.html", {
+	res.render("admin-view/user/index.html", {
 		url: req.url.toString(), // use in layout for identify display info
 		user: req.user,
         imagePath: public_image_path,
@@ -113,9 +113,11 @@ exports.create = function(req, res){
 					new User({
 
 						username: req.body.username,
-						password: req.body.password,
+						password: User.encodePassword(req.body.password),
 						role: req.body.role,
-						token: token
+						enabled: true,
+						token: token,
+						createdTime: new Date()
 
 					}).save(function(err, user){
 

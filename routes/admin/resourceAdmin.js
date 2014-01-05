@@ -24,15 +24,10 @@ var	errorResInfo = utilityS.errorResInfo,
 	mapinfo_path = "/" + config.mapInfoPath,
 	image_path = config.imagePath;
 
-// Static variable
-var	errorResInfo = utilityS.errorResInfo,
-	mapinfo_path = "/" + config.mapInfoPath,
-	image_path = config.imagePath;
-
 // GET Page for show sdk info
-exports.sdkinfo = function(req, res) {
+exports.sdkIndex = function(req, res) {
 
-	res.render("admin-view/resource/sdkinfo.html", {
+	res.render("admin-view/resource/sdkIndex.html", {
 		osType: Sdk.OS_TYPE
 	});
 
