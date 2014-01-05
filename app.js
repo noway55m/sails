@@ -7,6 +7,7 @@ var express = require('express')
   , routes = require('./routes')
   , authentication = require('./routes/authentication')
   , register = require('./routes/register')
+  , UserModel = require('./model/user')
   , user = require('./routes/user')
   , building = require('./routes/building')  
   , floor = require('./routes/floor')
@@ -25,7 +26,8 @@ var express = require('express')
   , log4js = require('log4js')
   , buildingAdmin = require('./routes/admin/buildingAdmin')
   , resourceAdmin = require('./routes/admin/resourceAdmin')
-  , userAdmin = require('./routes/admin/userAdmin');
+  , userAdmin = require('./routes/admin/userAdmin')
+  , config = require('./config/config.js');
 
 
 var app = express();
@@ -57,6 +59,7 @@ app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/sails-resource/download/doc/android', express.static(path.join(__dirname, '/resource/sails-relative-res/android/doc')));
 app.use('/sails-resource/download/doc/ios', express.static(path.join(__dirname, '/resource/sails-relative-res/ios/doc')));
+
 
 // Support html by nodejs module "ejs"
 app.engine('html', require('ejs').renderFile);
@@ -172,24 +175,45 @@ app.get('/sails-resource/download/doc/ios/*', ensureAuthenticated, function(req,
 
 
 //------------------------------ admin page and interface (only use in admin)
-app.sget('/building/admin/list', buildingAdmin.list); // only use in admin
 
-app.sget('/resource/admin/sdkinfo', resourceAdmin.sdkinfo); 
-app.sget('/resource/admin/sdk/list', resourceAdmin.sdkList); 
-app.spost('/resource/admin/sdk/create', resourceAdmin.sdkCreate);
-app.spost('/resource/admin/sdk/update', resourceAdmin.sdkUpdate);
-app.spost('/resource/admin/sdk/delete', resourceAdmin.sdkDelete);
-app.spost('/resource/admin/uploadSdkAndSampleCode', resourceAdmin.uploadSdkAndSampleCode); 
-app.spost('/resource/admin/uploadSdk', resourceAdmin.uploadSdk); 
-app.spost('/resource/admin/uploadSampleCode', resourceAdmin.uploadSampleCode); 
+// Function for check user role is admin
+function isAdmin(req, res, next) {
 
+  console.log("funtion isAdmin---------------------------------------------");
 
-app.sget('/user/admin/userInfo', userAdmin.userInfo); 
-app.sget('/user/admin/list', userAdmin.list); 
-app.spost('/user/admin/create', userAdmin.create);
-app.spost('/user/admin/update', userAdmin.update);
-app.spost('/user/admin/delete', userAdmin.del);
-app.spost('/user/admin/changePassword', userAdmin.changePassword);
+  // set local variables
+  res.locals.user = req.user;
+  res.locals.roles = UserModel.ROLES;
+  res.locals.url = req.url.toString();
+  res.locals.imagePath = "client-image";
+
+  if (req.path === '/' || ( req.user && req.user.role == UserModel.ROLES.ADMIN ) ) {
+    res.locals.user = req.user;
+    return next();
+  }
+  res.redirect('/')
+}
+
+// Admin building interfaces
+app.get('/admin/building/list', isAdmin,  buildingAdmin.list); // only use in admin
+
+// Admin resource interfaces
+app.get('/admin/resource/sdk/index', isAdmin, resourceAdmin.sdkIndex);
+app.get('/admin/resource/sdk/list', isAdmin, resourceAdmin.sdkList); 
+app.post('/admin/resource/sdk/create', isAdmin, resourceAdmin.sdkCreate);
+app.post('/admin/resource/sdk/update', isAdmin, resourceAdmin.sdkUpdate);
+app.post('/admin/resource/sdk/delete', isAdmin, resourceAdmin.sdkDelete);
+app.post('/admin/resource/sdk/uploadSdkAndSampleCode', isAdmin, resourceAdmin.uploadSdkAndSampleCode); 
+app.post('/admin/resource/sdk/uploadSdk', isAdmin, resourceAdmin.uploadSdk); 
+app.post('/admin/resource/sdk/uploadSampleCode', isAdmin, resourceAdmin.uploadSampleCode); 
+
+// Admin user interfaces
+app.get('/admin/user/index', isAdmin,  userAdmin.index); 
+app.get('/admin/user/list', isAdmin, userAdmin.list); 
+app.post('/admin/user/create', isAdmin, userAdmin.create);
+app.post('/admin/user/update', isAdmin, userAdmin.update);
+app.post('/admin/user/delete', isAdmin, userAdmin.del);
+app.post('/admin/user/changePassword', isAdmin, userAdmin.changePassword);
 
 
 /**************** Social URL Mapping ****************/
