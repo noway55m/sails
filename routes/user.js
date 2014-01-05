@@ -26,22 +26,42 @@ exports.profile = function(req, res){
 // GET Interface for read specific user
 exports.read = function(req, res){
 
-	User.findById(req.params._id, function(err, user){
-		
-		if(err){
+	if(req.params._id){
 
-			log.error(err);
-		
-		} else {
-
-			if(user)
-				res.send(200, user)
-
+		User.findById(req.params._id, function(err, user){
 			
-		}
+			if(err){
 
-		
-	});	
+	            log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});  	
+			
+			} else {
+
+				if(user) {
+
+					res.json(errorResInfo.SUCCESS.code, user);
+
+				} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					}); 
+
+				}
+
+			}
+			
+		});	
+
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
+
+	}	
 	
 };
 
@@ -57,120 +77,6 @@ exports.index = function(req, res){
 
 };
 
-// GET Interface for list all users
-exports.list = function(req, res){
-
-	User.find({}, function(err, users){
-
-		if(err)
-			log.error(err);
-
-		res.send(200, users);
-
-	});
-
-};
-
-
-
-/*
- * GET Index page of admin user showing all buildings.
- */
-exports.adminIndex = function(req, res){
-
-};
-
-
-// Page for show all users
-exports.all = function(req, res){
-
-	res.render("user/all.html", {
-		url: req.url.toString(), // use in layout for identify display info
-		user: req.user,
-        imagePath: public_image_path,
-        ROLES: User.ROLES
-	});
-
-};
-
-// GET Interface for get all users
-exports.list = function(req, res){
-
-	User.find({}, function(err, users){
-
-		if(err)
-			log.error(err);
-
-		res.send(200, users);
-
-	});
-
-};
-
-
-// POST Interface for get all users
-exports.create = function(req, res){
-
-	var token;
-	if(req.body.role == User.ROLES.ADMIN ||
-			req.body.role == User.ROLES.DEVELOPER )
-		token = User.genToken();
-
-	new User({
-
-		username: req.body.username,
-		password: req.body.password,
-		role: req.body.role,
-		token: token
-
-	}).save(function(err, user){
-
-		if(err)
-			log.error(err);
-
-		res.send(200, user);
-
-	});
-
-};
-
-
-// POST Interface for update user info
-exports.update = function(req, res){
-
-	User.findById(req.body._id, function(err, user){
-
-		if(err){
-
-			log.error(err);
-		
-		} else {
-
-			if(user){
-
-			    // Check upgrade user to "admin" or "developer" for get token
-				if( (req.body.role == User.ROLES.ADMIN || req.body.role == User.ROLES.DEVELOPER) &&
-				   user.role == User.ROLES.FREE)
-				    user.token = User.genToken();
-				user.role = req.body.role;
-				user.enabled = req.body.enabled;
-				user.save(function(err, user){
-					res.send(200, user);
-				});
-
-			} else {
-
-
-
-			}
-
-		}
-
-	});
-
-};
-
-
 // POST Interface trigger reset password while forget password
 exports.forgetPassword = function(req, res){
 	
@@ -183,65 +89,89 @@ exports.forgetPassword = function(req, res){
 			
 		}, function(err, user){
 			
-			if(err)
-				log.error(err);
-			
-			if(user){
-				
-				new ResetPasswordToken({
-					
-				    token: User.genToken(), 			        
-				    userId: user.id,				    
-					createdAt :	new Date()				
-					
-				}).save(function(err, rtoken){
-					
-					if(err)
-						log.error(err);
-					
-					if(rtoken){
-						
-						// Send mail with defined transport object
-						var mailOptions = {
-							from : mailer.defaultOptions.from, // sender address
-							to : email, // list of receivers
-							subject : "Sails Cloud Service Notification", // Subject line
-							text : "Please Click following link to reset your password", // plaintext body
-							html : "<b>Welcome join to Sails Cloud Service</b>" + 
-									"<a href='" + config.domainUrl + "/user/resetPassword/" + rtoken.token + "'>Reset Password</a>" // html body
-						};
+			if(err){
 
-						mailer.sendMail(mailOptions, function(error, response) {
-							
-							if (error) {
-								log.error(error);
-							} else {
-								log.error("Message sent: " + response.message);
-								res.json(200,{
-									msg: "Please check your email address, we have sent the reset password email to you"
-								});
+	            log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});
+
+			} else {
+
+				if(user){
+					
+					new ResetPasswordToken({
+						
+					    token: User.genToken(), 			        
+					    userId: user.id,				    
+						createdAt :	new Date()				
+						
+					}).save(function(err, rtoken){
+						
+						if(err) {
+
+				            log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							});
+
+						} else {
+
+							if(rtoken){
+								
+								// Send mail with defined transport object
+								var mailOptions = {
+									from : mailer.defaultOptions.from, // sender address
+									to : email, // list of receivers
+									subject : "Sails Cloud Service Notification", // Subject line
+									text : "Please Click following link to reset your password", // plaintext body
+									html : "<b>Welcome join to Sails Cloud Service</b>" + 
+											"<a href='" + config.domainUrl + "/user/resetPassword/" + rtoken.token + "'>Reset Password</a>" // html body
+								};
+
+								mailer.sendMail(mailOptions, function(error, response) {
+									
+									if (error) {
+
+										log.error(error);
+
+									} else {
+
+										log.error("Message sent: " + response.message);
+										res.json(errorResInfo.SUCCESS.code,{
+											msg: "Please check your email address, we have sent the reset password email to you"
+										});
+
+									}
+
+								});							
+														
 							}
 
-						});							
-												
-					}
+						}
+															
+					});
 								
-				});
-							
-			}else{
-				
-				res.json(400, { 
-					msg: "This email address does not exist in system" 
-				});
-				
+				}else{
+					
+					res.json(errorResInfo.INCORRECT_PARAMS.code, { 
+						msg: "This email address does not exist in system" 
+					});
+					
+				}
+
 			}
 			
-		});
+		});		
 		
-		
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
+
 	}
-	
-	
+		
 };
 
 // POST Page for change password of specific user
@@ -261,26 +191,40 @@ exports.resetPassword = function(req, res){
 			
 		}, function(err, rtoken){
 			
-			if(err)
-				log.error(err);
-			
-			if(rtoken){
-				
-				res.render("user/reset-password.html", {
-					userId: rtoken.userId,
-					token: rtoken.token
-				});	
-								
-			}else{
-				
-				res.json(400, {
-					msg: "Incorrect token"
+			if(err) {
+
+	            log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
 				});
-								
+
+			} else {
+
+				if(rtoken){
+					
+					res.render("user/reset-password.html", {
+						userId: rtoken.userId,
+						token: rtoken.token
+					});	
+									
+				}else{
+					
+					res.json( errorResInfo.INCORRECT_PARAMS.code, {
+						msg: "Incorrect token"
+					});
+									
+				}
+
 			}
-			
+						
 		});
 		
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
+
 	}
 
 };
@@ -288,113 +232,155 @@ exports.resetPassword = function(req, res){
 // POST Interface for auth reset password of specific user
 exports.resetPasswordAuth = function(req, res){
 	
-	User.findById(req.body._id, function(err, user){
+	if(req.body._id) {
 
-		if(err)
-			log.error(err);
+		User.findById(req.body._id, function(err, user){
 
-		if(user){
-			
-			var opassword = User.encodePassword(req.body.password);
-			if(opassword == user.password){
-				
-				user.password = User.encodePassword(req.body.npassword);
-				user.save(function(err, user){
+			if(err) {
 
-					if(err)
-						log.error(err);
-
-					if(user){
-						
-						// Remove token
-						ResetPasswordToken.findOneAndRemove({							
-							token: req.body.token							
-						}, function(err){
-							log.error(err);
-						});
-						
-						res.send(200, user);					
-					
-					}
-				});				
-				
-			}else{
-				
-				res.json(200, {					
-					msg: "Original password is incorrect"					
+	            log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
 				});
+
+			} else {
+
+				if(user) {
+					
+					var opassword = User.encodePassword(req.body.password);
+					if(opassword == user.password){
+						
+						user.password = User.encodePassword(req.body.npassword);
+						user.save(function(err, user){
+
+							if(err) {
+
+					            log.error(err);
+								res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+									msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+								});
+
+							} else {
+
+								if(user){
+									
+									// Remove token
+									ResetPasswordToken.findOneAndRemove({
+
+										token: req.body.token
+
+									}, function(err){
+
+										if(err)
+											log.error(err);
+
+										res.json( errorResInfo.SUCCESS.code, user);
+
+									});
 								
+								}
+
+							}
+
+						});				
+						
+					}else{
+						
+						res.json( errorResInfo.INCORRECT_PARAMS.code, {					
+							msg: "Original password is incorrect"					
+						});
+										
+					}
+					
+				} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					}); 
+
+				}
+
 			}
-			
-		}
 
-	});
+		});
 
-};
+	} else {
 
-// POST Interface for change password of specific user (only use in admin)
-exports.changePasswordAdmin = function(req, res){
-	
-	User.findById(req.body._id, function(err, user){
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
 
-		if(err)
-			log.error(err);
-
-		if(user){
-				
-			user.password = User.encodePassword(req.body.password);
-			user.save(function(err, user){
-
-				if(err)
-					log.error(err);
-
-				if(user)
-					res.send(200, user);
-
-			});				
-							
-		}
-
-	});
+	}
 
 };
-
 
 // POST Interface for change password of specific user
 exports.changePassword = function(req, res){
 	
-	User.findById(req.body._id, function(err, user){
+	if(req.body._id) {
 
-		if(err)
-			log.error(err);
+		User.findById(req.body._id, function(err, user){
 
-		if(user){
-			
-			var opassword = User.encodePassword(req.body.password);
-			if(opassword == user.password){
-				
-				user.password = User.encodePassword(req.body.npassword);
-				user.save(function(err, user){
+			if(err) {
 
-					if(err)
-						log.error(err);
-
-					if(user)
-						res.send(200, user);
-
-				});				
-				
-			}else{
-				
-				res.json(200, {					
-					msg: "Original password is incorrect"					
+	            log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
 				});
-								
-			}
-			
-		}
 
-	});
+			} else {
+
+				if(user){
+					
+					var opassword = User.encodePassword(req.body.password);
+					if(opassword == user.password){
+						
+						user.password = User.encodePassword(req.body.npassword);
+						user.save(function(err, user){
+
+							if(err) {
+
+					            log.error(err);
+								res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+									msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+								});
+
+							} else {
+
+								if(user)
+									res.json( errorResInfo.SUCCESS.code, user);
+
+							}						
+
+						});				
+						
+					}else{
+						
+						res.json( errorResInfo.INCORRECT_PARAMS.code, {					
+							msg: "Original password is incorrect"					
+						});
+										
+					}
+					
+				} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					}); 
+
+				}
+
+			}
+				
+		});
+
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
+
+	}
 
 };
 
@@ -413,19 +399,28 @@ exports.upgradeDeveloper = function(req, res){
 				"<p>message:" + req.body.msg + "</p>"// html body// html body
 		};
 
-		mailer.sendMail(mailOptions, function(error, response) {
-			if (error) {
-				log.error(error);
-				response.json(200, {
-					msg: "Server error, please try again later"
-				});				
+		mailer.sendMail(mailOptions, function(err, response) {
+			if (err) {
+
+	            log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});
+
 			} else {
+
 				log.error("Message sent: " + response.message);
-				res.json(200, {});
+				res.json( errorResInfo.SUCCESS.code, {});
+
 			}																		
 		});		
 		
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
+
 	}
-	
-	
+		
 };
