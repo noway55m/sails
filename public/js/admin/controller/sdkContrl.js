@@ -1,7 +1,7 @@
 var utility = Utility.getInstance();
 
 // List buildings controller
-function SdkListCtrl($scope, Sdk, $compile, $rootScope) {
+function SdkListCtrl($scope, Sdk, $compile, $rootScope, $compile) {
 	
     // List all sdks
 	$scope.loading = true;
@@ -11,20 +11,6 @@ function SdkListCtrl($scope, Sdk, $compile, $rootScope) {
 		$scope.iosSdks = sdks.iosSdks;	
 		$scope.androidSdks = sdks.androidSdks;
 		$scope.loading = false;
-
-		for( var iosKey in $scope.iosSdks){
-			var date = new Date($scope.iosSdks[iosKey].createdTime);
-			$scope.iosSdks[iosKey].createdTime = date.toString();
-			$scope.iosSdks[iosKey].updatedTime = date.toISOString();
-		}
-
-		for( var androidKey in $scope.androidSdks){
-			console.log($scope.androidSdks[androidKey].createdTime);
-			var date2 = new Date($scope.androidSdks[androidKey].createdTime);
-			var timezone = date2.getTimezoneOffset();
-			$scope.androidSdks[androidKey].createdTime = date2.toUTCString() + " " + timezone;
-			$scope.androidSdks[androidKey].updatedTime = date2.toISOString();
-		}
 
 	});
 
@@ -150,22 +136,19 @@ function SdkListCtrl($scope, Sdk, $compile, $rootScope) {
 	// Function for select specific building
 	$scope.selectSdk = function(sdk){
 		$rootScope.selectedSdk = sdk;
-		$rootScope.selectedSdkClone = angular.copy(sdk); // Clone sdk for future rollback
+		$rootScope.selectedSdkClone = angular.copy($rootScope.selectedSdk); // Clone sdk for future rollback
 	};
 
-	// Revert sdk while cancel
-	var editModal = $("#sdk-edit-dialog");
-	editModal.on('hide.bs.modal', function(){
-		
+	// Cancel for update sdk	
+	$scope.cancelUpdateSdk = function(){
+
 		// Hide all error msg
-		editModal.find(".error-msg").css("display", "none");
+		$("#sdk-edit-dialog").find(".error-msg").css("display", "none");
 
 		// Revert original value
-		$scope.$apply(function () {
-			angular.copy($rootScope.selectedSdkClone, $rootScope.selectedSdk);					
-		});
-						
-	});	 
+		angular.copy($rootScope.selectedSdkClone, $rootScope.selectedSdk);					
+
+	};	 
 
 	// Function for update building
 	$scope.updateSdk = function(e, selectedSdk) {

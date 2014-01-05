@@ -162,13 +162,7 @@ angular.module('adServices', [ 'ngResource' ]).factory('Ad', function($resource)
 
 // REST API of User
 angular.module('userServices', [ 'ngResource' ]).factory('User', function($resource) {
-    return $resource('/user/:action/:_id', { _id : "@id" }, {
-        get : {
-            method : 'GET',
-            params : {
-                action : 'read'
-            }
-        },
+    return $resource('/user/admin/:action/:_id', { _id : "@id" }, {
         create : {
             method : 'POST',
             params : {
@@ -191,27 +185,14 @@ angular.module('userServices', [ 'ngResource' ]).factory('User', function($resou
             method : 'GET',
             params : {
                 action : 'list'
-            },
-            isArray : true
+            }
         },
         changePassword : {
             method : 'POST',
             params : {
                 action : 'changePassword'
             }        	
-        },
-        changePasswordAdmin : {
-            method : 'POST',
-            params : {
-                action : 'changePasswordAdmin'
-            }        	
-        },
-        upgradeDeveloper : {
-            method : 'POST',
-            params : {
-                action : 'upgradeDeveloper'
-            }        	
-        }            
+        }           
     });
 });
 
