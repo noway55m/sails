@@ -8,7 +8,7 @@ var express = require('express')
   , authentication = require('./routes/authentication')
   , register = require('./routes/register')
   , user = require('./routes/user')
-  , building = require('./routes/building')
+  , building = require('./routes/building')  
   , floor = require('./routes/floor')
   , store = require('./routes/store')
   , ad = require('./routes/ad')  
@@ -22,7 +22,10 @@ var express = require('express')
   , passport = require('./config/passportSetup')
   , bootstrap = require('./config/bootstrap')
   , flash = require('connect-flash')
-  , log4js = require('log4js');
+  , log4js = require('log4js')
+  , buildingAdmin = require('./routes/admin/buildingAdmin')
+  , resourceAdmin = require('./routes/admin/resourceAdmin')
+  , userAdmin = require('./routes/admin/userAdmin');
 
 
 var app = express();
@@ -79,13 +82,8 @@ app.get('/register/activate/:token', register.activate);
 app.sget('/user', user.index);
 app.sget('/user/profile', user.profile);
 app.sget('/user/read/:_id', user.read);
-app.sget('/user/all', user.all); // only use in admin
-app.sget('/user/list', user.list); // only use in admin
-app.spost('/user/create', user.create);  // only use in admin
-app.spost('/user/update', user.update);  // only use in admin
 app.post('/user/forgetPassword', user.forgetPassword);
 app.spost('/user/changePassword', user.changePassword);
-app.spost('/user/changePasswordAdmin', user.changePasswordAdmin);  // only use in admin
 app.get('/user/resetPassword/:token', user.resetPassword);
 app.post('/user/resetPasswordAuth', user.resetPasswordAuth);
 app.post('/user/upgradeDeveloper', user.upgradeDeveloper);
@@ -98,12 +96,12 @@ app.spost('/building/create', building.create);
 app.spost('/building/update', building.update);
 app.spost('/building/delete', building.del);
 app.sget('/building/list', building.list);
+app.sget('/building/listPage', building.listPage);
 app.sget('/building/list/public', building.listPublic);
 app.spost('/building/uploadImage', building.uploadImage);
 app.spost('/building/packageMapzip', building.packageMapzip);
 app.sget('/building/getMapzip', building.getMapzip);
 app.spost('/building/uploadBeaconlist', building.uploadBeaconlist);
-
 
 //----------------------------------
 app.sget('/floor/show/:_id', floor.show);
@@ -153,10 +151,12 @@ app.sget('/ap/queryBuildingAndFloor', ap.queryBuildingAndFloor);
 app.post('/iD/update', iD.update);
 
 
+
+
 //-----------------------------------
 app.sget('/sails-resource/download', others.download);
-app.sget('/sails-resource/download/sdk/:platform', others.downloadSdk);
-app.sget('/sails-resource/download/sample-code/:platform', others.downloadSampleCode);
+app.sget('/sails-resource/download/sdk/:platform/:fileName', others.downloadSdk);
+app.sget('/sails-resource/download/sample-code/:platform/:fileName', others.downloadSampleCode);
 function ensureAuthenticated(req, res, next) {
   if (req.path === '/' || req.user) {
     return next();
@@ -169,6 +169,28 @@ app.get('/sails-resource/download/doc/android/*', ensureAuthenticated, function(
 app.get('/sails-resource/download/doc/ios/*', ensureAuthenticated, function(req, res, next) {
   next();
 });
+
+
+//------------------------------ admin page and interface (only use in admin)
+app.sget('/building/admin/list', buildingAdmin.list); // only use in admin
+
+app.sget('/resource/admin/sdkinfo', resourceAdmin.sdkinfo); 
+app.sget('/resource/admin/sdk/list', resourceAdmin.sdkList); 
+app.spost('/resource/admin/sdk/create', resourceAdmin.sdkCreate);
+app.spost('/resource/admin/sdk/update', resourceAdmin.sdkUpdate);
+app.spost('/resource/admin/sdk/delete', resourceAdmin.sdkDelete);
+app.spost('/resource/admin/uploadSdkAndSampleCode', resourceAdmin.uploadSdkAndSampleCode); 
+app.spost('/resource/admin/uploadSdk', resourceAdmin.uploadSdk); 
+app.spost('/resource/admin/uploadSampleCode', resourceAdmin.uploadSampleCode); 
+
+
+app.sget('/user/admin/userInfo', userAdmin.userInfo); 
+app.sget('/user/admin/list', userAdmin.list); 
+app.spost('/user/admin/create', userAdmin.create);
+app.spost('/user/admin/update', userAdmin.update);
+app.spost('/user/admin/delete', userAdmin.del);
+app.spost('/user/admin/changePassword', userAdmin.changePassword);
+
 
 /**************** Social URL Mapping ****************/
 // Facebook OAuth Authentication
