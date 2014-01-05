@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sails-admin" ng-controller="UserListCtrl">
+	<head>
+	
+		<!-- Head meta, css or library include -->
+		<% include ../../layout/head-include.html %>
+		
+		<!-- admin page css -->	
+		<link href="/stylesheets/style-admin.css" rel="stylesheet">
+
+		<!-- Title -->
+		<title>User Info</title>
+	
+	</head>
+	<body>
+	
+		<!-- Fixed Top Navigation Bar Template -->
+		<% include ../../layout/top-navbar.html %>
+	
+		<!-- Main Container -->
+		<div class="container">
+			
+			<div class="jumbotron">
+
+				<!-- left navigation bar -->
+				<% include ../layout/left-navbar.html %>
+
+				<!-- User List Template -->
+				<div style="padding-left:230px;">
+					<div class="panel panel-default">	
+						<div class="panel-heading">
+
+							<!-- Add user fields -->
+							<div>
+								<input class="form-control add" placeholder="Username" name="username" value="">
+								<input class="form-control add" placeholder="Passwrord" name="password" value="">
+								<div class="form-group" style="display:inline;">
+									<label for="floor">Role</label>
+									<select name="role" style="height: 30px;">
+										<option value="<%= ROLES.ADMIN %>">Administrator</option>
+										<option value="<%= ROLES.DEVELOPER %>">Developer</option>
+										<option value="<%= ROLES.FREE %>">Free</option>
+									</select>
+								</div>
+
+								<button type="submit" class="btn btn-primary" data-loading-text="Adding"
+									ng-click="addUser($event)" style="margin-left: 30px;">Add New User</button>
+
+								<!-- error msg -->
+								<div class="alert alert-danger error-msg">
+									<span class="label label-danger">Error</span>
+									<span class="errorText"></span>
+								</div>									
+							</div>	
+
+							<h3>Users - Total Count: <span ng-bind="count"></span></h3>
+							<p>Role: 1: admin, 2: developer(has pay money to us), 3: free user</p>
+						</div>
+
+						<!-- User List -->
+						<table class="table">
+							<thead>
+								<th>_id</th>				
+								<th>Username</th>
+								<th>Role</th>
+								<th>Enabled</th>				
+								<th>Token( for developer )</th>
+								<th>Created Time</th>								
+								<th>fid</th>
+								<th>facebook access token</th>								
+								<th>tid</th>
+								<th>twitter access token</th>
+								<th>gid</th>
+								<th>google access token</th>
+								<th></th>
+								<th></th>
+								<th></th>																		
+							</thead>
+							<tbody>
+								<tr ng-repeat="user in users" id="{{user._id}}">
+									<td ng-bind="user._id"></td>								
+									<td ng-bind="user.username"></td>
+									<td ng-bind="user.role"></td>
+									<td ng-bind="user.enabled"></td>					
+									<td ng-bind="user.token"></td>
+									<td ng-bind="user.createdTime"></td>									
+									<td ng-bind="user.fid"></td>
+									<td ng-bind="user.faccessToken"></td>
+									<td ng-bind="user.tid"></td>
+									<td ng-bind="user.taccessToken"></td>
+									<td ng-bind="user.gid"></td>
+									<td ng-bind="user.gaccessToken"></td>									
+									<td>
+										<a data-toggle="modal" class="btn btn-default" href="#user-edit-dialog" 
+											ng-click="selectUser(user)">
+											<span class="glyphicon glyphicon-edit"></span>
+										</a>					
+									</td>						
+									<td>
+										<a data-toggle="modal" class="btn btn-default" href="#user-change-password-dialog" 
+											ng-click="selectUser(user)">
+											Change Password
+										</a>					
+									</td>
+									<td>
+										<a data-toggle="modal" class="btn btn-default" ng-click="deleteDialogSetup(user)">
+											<span class="glyphicon glyphicon-remove"></span>
+										</a>					
+									</td>																				
+								</tr>
+							</tbody>			
+						</table>		
+					</div>					
+				</div>
+
+				<div id="pagination"></div>
+
+			</div>
+							
+		</div>
+
+		<!-- User Update Dialog Template -->
+		<% include user-edit-dialog.html %>
+
+		<!-- User Change Password Dialog Template -->
+		<% include user-change-password-dialog.html %>
+		
+		<!-- Delete confirm dialog -->
+		<% include ../../layout/delete-confirm-dialog.html %>	
+	
+		<!-- Body library include -->
+		<% include ../../layout/body-include.html	%>
+	
+	    <!-- Controller -->
+		<script src="/js/admin/controller/app.js"></script>    
+	    <script src="/js/admin/controller/userContrl.js"></script>
+	
+	</body>
+</html>
