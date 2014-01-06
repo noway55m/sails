@@ -11,18 +11,18 @@ module.exports = {
 	mapInfoPath: "resource/map-info",
 
 	/******** Download sdk, online doc and sample code path ********/
-	androidSdkPath: "resource/sails-relative-res/android/SAILS_SDK_V1.2_Published.jar",
 
-	iosSdkPath: "resource/sails-relative-res/ios/SAILS_SDK_V1.0_Published.zip",
+	sailsResPath: "resource/sails-relative-res",
 
 	androidDocPath: "resource/sails-relative-res/android/Javadoc.rar",		
 
 	iosDocPath: "resource/sails-relative-res/ios/doc.rar",		
-
-	androidSampleCodePath: "resource/sails-relative-res/android/SampleCode.rar",		
-
-	iosSampleCodePath: "resource/sails-relative-res/ios/SampleCode.zip",		
 		
+	defaultAndroidSdkVersion: 1.2,
+
+	defaultIosSdkVersion: 1.2,
+
+
 	/******** Main sample building folder  ********/		
 	sampleBuildingPath: "resource/map-info/Sample",
 

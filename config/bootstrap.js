@@ -10,6 +10,7 @@ var crypto = require('crypto'),
 	Store = require('../model/store'),	
 	Floor = require('../model/floor'),
 	Building = require('../model/building'),
+	Sdk = require('../model/admin/sdk'),
 	utilityS = require("../routes/utility.js"),
 	config = require('../config/config');
 
@@ -17,6 +18,9 @@ module.exports = function() {
 
 	// Create default administrator
 	createDefaultUser();
+
+	// Create default sdk and sample code
+	createDefaultSdkAndSampleCode();
 
 };
 
@@ -429,6 +433,75 @@ function createSampleBuilding(user){
 		}
 
 		log.info('Sample building has been generated successfully');
+
+	});
+
+}
+
+// Function for create default sdk and sample code
+function createDefaultSdkAndSampleCode(){
+
+	Sdk.find({
+
+		isCurrentVersion : true
+
+	}, function(err, sdks) {
+
+		if (err)
+			log.error(err);
+
+		if (sdks.length > 0) {
+
+			log.info("Default sdk exist already");
+
+		} else {
+
+			var androidVersion = config.defaultAndroidSdkVersion;
+			var iosVersion = config.defaultIosSdkVersion;
+			new Sdk({
+
+				version: androidVersion,
+				osType: Sdk.OS_TYPE.ANDROID,
+				isCurrentVersion: true,
+				sdkFilePath: Sdk.getSdkFileName(androidVersion) + ".jar",
+				sampleCodeFilePath: Sdk.getSampleCodeFileName(androidVersion) + ".rar"
+
+			}).save(function( err, sdk ){
+
+				if(err){
+
+					log.error(err);
+
+				} else {
+
+					log.info("Create default android sdk successfully");
+
+				}
+
+			});
+
+			new Sdk({
+
+				version: iosVersion,
+				osType: Sdk.OS_TYPE.IOS,
+				isCurrentVersion: true
+
+			}).save(function( err, sdk ){
+
+				if(err){
+
+					log.error(err);
+
+				} else {
+
+					log.info("Create default ios sdk successfully");
+
+				}
+				
+			});
+
+
+		}
 
 	});
 
