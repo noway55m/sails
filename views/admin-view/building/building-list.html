@@ -55,7 +55,9 @@
 						</thead>
 						<tbody>
 							<tr ng-repeat="building in buildings" id="{{building._id}}">				
-								<td ng-bind="building._id"></td>
+								<td>
+									<a href="/admin/building/show/{{building._id}}" ng-bind="building._id"></a>
+								</td>
 								<td ng-bind="building.name"></td>
 								<td ng-bind="building.type"></td>					
 								<td ng-bind="building.pub"></td>

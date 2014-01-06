@@ -13,7 +13,7 @@
 		<!-- Body -->
 		<div class="modal-body">
 			<div class="form-group">
-				<label for="name">_id</label><span ng-bind="selectedBuilding._id"></span>
+				<label for="name">_id</label><div ng-bind="selectedBuilding._id"></div>
 			</div>
 			<div class="form-group">
 				<label for="phone">name</label> 
@@ -21,11 +21,19 @@
 			</div>
 			<div class="form-group">
 				<label for="type">type</label> 
-				<input class="form-control" placeholder="Store Memo" name="memo" value=""  maxlength="100" ng-model="selectedBuilding.name">
+				<input placeholder="Type" class="form-control" name="type" value=""  maxlength="100" ng-model="selectedBuilding.type">
 			</div>
 			<div class="form-group">
 				<label for="pub">pub</label> 
-				<input class="form-control" placeholder="Store Official Site Link" name="link" value="" maxlength="150" ng-model="selectedBuilding.name">
+				<input name="pub" type="checkbox" value="" ng-model="selectedBuilding.pub">
+			</div>
+			<div class="form-group">
+				<label for="desc">desc</label> 
+				<input class="form-control" placeholder="Description" name="desc" value="" maxlength="100" ng-model="selectedBuilding.desc">
+			</div>
+			<div class="form-group">
+				<label for="desc">address</label> 
+				<input class="form-control" placeholder="Address" name="address" value="" maxlength="100" ng-model="selectedBuilding.address">
 			</div>
 			
 			<!-- error msg -->
@@ -34,7 +42,8 @@
 					class="errorText"></span>
 			</div>
 
-
+			<!-- Floors -->
+			<hr>
 			<div class="form-group">
 				<label>floors</label>
 				<div ng-repeat="floor in floors" id="{{floor._id}}">
@@ -44,6 +53,15 @@
 					</a>
 				</div> 
 			</div>
+			<hr>
+
+			<!-- User -->
+			<hr>
+			<div class="form-group">
+				<label>owner</label>
+			</div>
+			<hr>
+
 
 		</div>
 
