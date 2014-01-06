@@ -196,6 +196,8 @@ function isAdmin(req, res, next) {
 
 // Admin building interfaces
 app.get('/admin/building/list', isAdmin,  buildingAdmin.list); // only use in admin
+app.get('/admin/building/show/:_id', isAdmin,  buildingAdmin.show); // only use in admin
+
 
 // Admin resource interfaces
 app.get('/admin/resource/sdk/index', isAdmin, resourceAdmin.sdkIndex);
