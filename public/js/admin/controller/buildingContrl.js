@@ -230,74 +230,15 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 
     // Function for rollback selected user info
     $scope.cancelUpdateBuilding = function(){
+    	console.log($rootScope.buildingClone);
+    	console.log($scope.building);
         angular.copy($rootScope.buildingClone, $scope.building);
     };
 
 	// Function for update building
 	$scope.updateBuilding = function(e) {
-
-		var building = this.building,
-			updateButton = angular.element(e.currentTarget),
-			form = updateButton.parent(),
-			inputFields = form.find("input");
-			errorMsgObj = form.find(".error-msg"),
-			timeFields = form.find("input[data-provide=datepicker]"),
-			utility = Utility.getInstance(),
-			nameObj = form.find("input[name=name]"),
-			descObj = form.find("textarea[name=desc]");
-
-		if (utility.emptyValidate(nameObj, errorMsgObj)) {
-
-			// Disable all fields before finish save
-			inputFields.attr('disabled', 'disabled');
-			descObj.attr('disabled', 'disabled');
-
-			// Hide error msg block
-			errorMsgObj.hide();
-
-			// Set loading state of update button
-			updateButton.button('loading');
-
-			building.$save( function(building){
-
-				// Set back normal state of update button
-				updateButton.button('reset');
-
-				// Enable all input fields
-				inputFields.removeAttr('disabled');
-				descObj.removeAttr('disabled');
-
-				// Update local buildings
-				if(building.icon)
-					building.icon = "/" + imagePath + "/" + building.icon;
-				else
-					building.icon = "/img/no-image.png";
-
-				// Clone user info
-		        $rootScope.buildingClone = angular.copy(building);
-
-		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Update successfully");						        
-		        
-			}, function(res){
-
-				// Set back normal state of update button
-				updateButton.button('reset');
-
-				// Enable all input fields
-				inputFields.removeAttr('disabled');
-				descObj.removeAttr('disabled');
-
-				// Show error msg
-				var errorMsg = res && res.data && res.data.msg;
-				errorMsgObj.find(".errorText").text(errorMsg);
-				errorMsgObj.show();
-				$().toastmessage('showErrorToast', errorMsg);						        
-
-			});
-
-		}
-
+		console.log(this.building);
+		updateBuilding(e);	
 	};
 
     // Function for upload building image
@@ -446,5 +387,72 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 	};
 		
 }
+
+
+// Function for update building
+function updateBuilding(e, selectedBuilding){
+
+	var building = this.building || selectedBuilding,
+		updateButton = angular.element(e.currentTarget),
+		form = updateButton.parent(),
+		inputFields = form.find("input");
+		errorMsgObj = form.find(".error-msg"),
+		timeFields = form.find("input[data-provide=datepicker]"),
+		utility = Utility.getInstance(),
+		nameObj = form.find("input[name=name]"),
+		descObj = form.find("textarea[name=desc]");
+
+	console.log(building);
+	if (utility.emptyValidate(nameObj, errorMsgObj)) {
+
+		// Disable all fields before finish save
+		inputFields.attr('disabled', 'disabled');
+		descObj.attr('disabled', 'disabled');
+
+		// Hide error msg block
+		errorMsgObj.hide();
+
+		// Set loading state of update button
+		updateButton.button('loading');
+
+		// building.$save( function(building){
+
+		// 	// Set back normal state of update button
+		// 	updateButton.button('reset');
+
+		// 	// Enable all input fields
+		// 	inputFields.removeAttr('disabled');
+		// 	descObj.removeAttr('disabled');
+
+		// 	// Update local buildings
+		// 	if(building.icon)
+		// 		building.icon = "/" + imagePath + "/" + building.icon;
+		// 	else
+		// 		building.icon = "/img/no-image.png";
+
+		// 	// Clone user info
+	 //        $rootScope.buildingClone = angular.copy(building);
+
+	 //    	// Show success msg
+		// 	$().toastmessage('showSuccessToast', "Update successfully");						        
+	        
+		// }, function(res){
+
+		// 	// Show error msg
+		// 	errorMsgObj.find(".errorText").text(res.msg);
+		// 	errorMsgObj.show();
+
+		// 	// Set back normal state of update button
+		// 	updateButton.button('reset');
+
+		// 	// Enable all input fields
+		// 	inputFields.removeAttr('disabled');
+		// 	descObj.removeAttr('disabled');
+
+		// });
+
+	}
+
+};
 
 // BuildingShowCtrl.$inject = ['$scope', 'Building'];
