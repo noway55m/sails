@@ -67,55 +67,157 @@ exports.list = function(req, res) {
         if(err){
 
             log.error(err);
+            res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+                    msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+            });                  
+
+        } else {
+
+            // Get building's owner if admin
+            if(req.user.role == User.ROLES.ADMIN){
+
+                var ids = [];
+                for(index in buildings){
+                        var building = buildings[index];
+                        ids.push(building.userId.toString());
+                }
+
+                User.find({
+
+                    '_id': { $in: ids }
+
+                }, function(err, users){        
+
+                        if(err){
+
+                                log.error(err);
+
+                        } else {
+
+                                var nBuildings = JSON.parse(JSON.stringify(buildings));
+                                for(var j=0; j<ids.length; j++){
+                                        var username = "";
+                                        for(var n=0; n<users.length; n++){
+                                                if(ids[j] == users[n].id.toString()){
+                                                        username = users[n].username;
+                                                        break;
+                                                }
+                                        }
+                                        nBuildings[j].userName = username;
+                                }
+                        res.send(errorResInfo.SUCCESS.code, nBuildings);
+
+                        }
+                                
+                });        
+
+            } else {
+
+            	res.send(errorResInfo.SUCCESS.code, buildings);            
+
+            }        
+        
+        }                
+
+    });
+
+};
+
+// GET Interface of list buildings or buildings of specific user (new support pagination)
+exports.listPage = function(req, res) {
+
+	// Pagination params
+	var page = ( req.query.page && req.query.page > 0 ? req.query.page - 1 : 0 ) || 0;
+
+    // Check user role for check with administration permission
+    var queryJson = null;
+    if(req.user.role !== User.ROLES.ADMIN)
+        queryJson = { userId: req.user.id };
+
+    Building.find(queryJson)
+		.sort({ createdTime: -1 })
+		.limit(config.pageOffset)
+		.skip(page * config.pageOffset).exec( function(err, buildings){
+
+        if(err){
+
+            log.error(err);
 			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
 				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
 			});  		
 
 		} else {
 
-			// Get building's owner if admin
-			if(req.user.role == User.ROLES.ADMIN){
+			// Get buildings count
+			Building.count( queryJson, function(err, count) {
 
-				var ids = [];
-				for(index in buildings){
-					var building = buildings[index];
-					ids.push(building.userId.toString());
-				}
+				if( err ) {
 
-				User.find({
+		            log.error(err);
+					res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+						msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					});  		
 
-				    '_id': { $in: ids }
+				} else {
 
-				}, function(err, users){	
+					// Get building's owner if admin
+					if(req.user.role == User.ROLES.ADMIN){
 
-					if(err){
+						var ids = [];
+						for(index in buildings){
+							var building = buildings[index];
+							ids.push(building.userId.toString());
+						}
 
-						log.error(err);
+						User.find({
+
+						    '_id': { $in: ids }
+
+						}, function(err, users){	
+
+							if(err){
+
+								log.error(err);
+
+							} else {
+
+								var nBuildings = JSON.parse(JSON.stringify(buildings));
+								for(var j=0; j<ids.length; j++){
+									var username = "";
+									for(var n=0; n<users.length; n++){
+										if(ids[j] == users[n].id.toString()){
+											username = users[n].username;
+											break;
+										}
+									}
+									nBuildings[j].userName = username;
+								}
+
+						        res.send(errorResInfo.SUCCESS.code, {						        	
+						        	page: page + 1,
+						        	offset: config.pageOffset,
+						        	count: count,
+						        	buildings: nBuildings
+						        });
+
+							}
+								
+						});	
 
 					} else {
 
-						var nBuildings = JSON.parse(JSON.stringify(buildings));
-						for(var j=0; j<ids.length; j++){
-							var username = "";
-							for(var n=0; n<users.length; n++){
-								if(ids[j] == users[n].id.toString()){
-									username = users[n].username;
-									break;
-								}
-							}
-							nBuildings[j].userName = username;
-						}
-				        res.send(errorResInfo.SUCCESS.code, nBuildings);
+				        res.send(errorResInfo.SUCCESS.code, {						        	
+				        	page: page + 1,
+				        	offset: config.pageOffset,
+				        	count: count,
+				        	buildings: buildings
+						});    	
 
-					}
-						
-				});	
+					}	
 
-			} else {
+				}
 
-		        res.send(errorResInfo.SUCCESS.code, buildings);    	
-
-			}	
+			} );			
     	
     	}		
 
@@ -151,7 +253,8 @@ exports.create = function(req, res) {
 			            name: req.body.name,
 			            desc: req.body.desc,
 			            userId: req.user._id,
-			            pub: false
+			            pub: false,
+			            createdTime: new Date()
 
 			        }).save(function(err, building){
 
@@ -290,7 +393,7 @@ exports.update = function(req, res) {
 	                                // Auto-package mapzip     			
 									utilityS.packageMapzip(buildingS._id, function(errorObj){
 
-										if(errorObj.code != 200){
+										if(errorObj.code != errorResInfo.SUCCESS.code){
 
 											res.json(errorObj.code, {
 												msg: errorObj.msg
@@ -298,7 +401,10 @@ exports.update = function(req, res) {
 
 										}else{
 
-											res.json(errorObj.code, errorObj.building);
+											//res.json(errorObj.code, errorObj.building);
+						        			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+						        				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+						        			});  
 
 										}
 
