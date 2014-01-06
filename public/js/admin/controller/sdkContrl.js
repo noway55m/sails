@@ -289,8 +289,8 @@ function updateSdk(e, selectedSdk, $scope, $rootScope, Sdk){
 				} else {
 
 					for( var j=0; j<$scope.iosSdks.length; j++ ) {
-						if($scope.iosSdks[i]._id != sdk._id)
-							$scope.iosSdks[i].isCurrentVersion = false;
+						if($scope.iosSdks[j]._id != sdk._id)
+							$scope.iosSdks[j].isCurrentVersion = false;
 					}
 
 				}
