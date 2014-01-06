@@ -56,7 +56,7 @@ function UserListCtrl($scope, User, $rootScope, $compile) {
 			roleObj = form.find("select");
 
 		if (utility.emptyValidate(usernameObj, errorMsgObj) &&
-			utility.emptyValidate(passwordObj, errorMsgObj)) {
+			utility.passwordValidate(passwordObj, errorMsgObj)) {
 
 			// Disable all fields
 			inputFields.attr('disabled', 'disabled');
