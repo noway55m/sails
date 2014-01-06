@@ -30,7 +30,7 @@ exports.download = function(req, res) {
 
         } else {
 
-            var androidVersion, iosVersion;
+            var android, ios;
             for( var i=0; i<sdks.length; i++ ){
 
                 if( sdks[i].osType == Sdk.OS_TYPE.ANDROID ) {
@@ -43,14 +43,14 @@ exports.download = function(req, res) {
 
                 }
 
-                res.render("others/download.html", {
-
-                    androidVersion: androidVersion,
-                    iosVersion: iosVersion
-
-                });
-
             }
+
+            res.render("others/download.html", {
+
+                android: android,
+                ios: ios
+
+            });
 
         }
 
