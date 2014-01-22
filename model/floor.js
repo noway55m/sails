@@ -24,6 +24,8 @@ var floorSchema = new Schema({
     mapzip: String, // File path of map zip
     
     applist: String, // File path of applist.xml
+
+    btlezip: String, // File path of btle.zip
     
     buildingId: String,
     
