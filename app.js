@@ -15,6 +15,7 @@ var express = require('express')
   , ad = require('./routes/ad')  
   , ap = require('./routes/ap')
   , iD = require('./routes/iD')
+  , feedback = require('./routes/feedback') 
   , others = require('./routes/others')    
   , http = require('http')
   , https = require('https')
@@ -25,8 +26,12 @@ var express = require('express')
   , flash = require('connect-flash')
   , log4js = require('log4js')
   , buildingAdmin = require('./routes/admin/buildingAdmin')
+  , floorAdmin = require('./routes/admin/floorAdmin') 
+  , storeAdmin = require('./routes/admin/storeAdmin')
+  , adAdmin = require('./routes/admin/adAdmin')      
   , resourceAdmin = require('./routes/admin/resourceAdmin')
   , userAdmin = require('./routes/admin/userAdmin')
+  , feedbackAdmin = require('./routes/admin/feedbackAdmin')  
   , config = require('./config/config.js');
 
 
@@ -59,7 +64,6 @@ app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/sails-resource/download/doc/android', express.static(path.join(__dirname, '/resource/sails-relative-res/android/doc')));
 app.use('/sails-resource/download/doc/ios', express.static(path.join(__dirname, '/resource/sails-relative-res/ios/doc')));
-
 
 // Support html by nodejs module "ejs"
 app.engine('html', require('ejs').renderFile);
@@ -126,7 +130,7 @@ app.sget('/floor/getRender', floor.getFile);
 app.sget('/floor/getRegion', floor.getFile);
 app.sget('/floor/getMapzip', floor.getMapzip);
 app.spost('/floor/delete', floor.del);
-
+app.spost('/floor/uploadBtlezip', floor.uploadBtlezip);
 
 //----------------------------------
 app.sget('/store/show/:_id', store.show);
@@ -153,7 +157,8 @@ app.sget('/ap/queryBuildingAndFloor', ap.queryBuildingAndFloor);
 //-----------------------------------
 app.post('/iD/update', iD.update);
 
-
+//--------------------------
+app.post('/feedback', feedback.comment);
 
 
 //-----------------------------------
@@ -179,8 +184,6 @@ app.get('/sails-resource/download/doc/ios/*', ensureAuthenticated, function(req,
 // Function for check user role is admin
 function isAdmin(req, res, next) {
 
-  console.log("funtion isAdmin---------------------------------------------");
-
   // set local variables
   res.locals.user = req.user;
   res.locals.roles = UserModel.ROLES;
@@ -195,8 +198,57 @@ function isAdmin(req, res, next) {
 }
 
 // Admin building interfaces
-app.get('/admin/building/list', isAdmin,  buildingAdmin.list); // only use in admin
+app.get('/admin/building/index', isAdmin,  buildingAdmin.index); // only use in admin
 app.get('/admin/building/show/:_id', isAdmin,  buildingAdmin.show); // only use in admin
+app.get('/admin/building/read/:_id', isAdmin, buildingAdmin.read);
+app.post('/admin/building/create', isAdmin, buildingAdmin.create);
+app.post('/admin/building/update', isAdmin, buildingAdmin.update);
+app.post('/admin/building/delete', isAdmin, buildingAdmin.del);
+app.get('/admin/building/list', isAdmin, buildingAdmin.list);
+//app.get('/admin/building/list/public', isAdmin, buildingAdmin.listPublic);
+app.post('/admin/building/uploadImage', isAdmin, buildingAdmin.uploadImage);
+app.post('/admin/building/packageMapzip', isAdmin, buildingAdmin.packageMapzip);
+app.get('/admin/building/getMapzip', isAdmin, buildingAdmin.getMapzip);
+//app.post('/admin/building/uploadBeaconlist', isAdmin, buildingAdmin.uploadBeaconlist);
+
+// Admin floor interfaces
+app.get('/admin/floor/list', isAdmin, floorAdmin.list);
+app.get('/admin/floor/show/:_id', isAdmin, floorAdmin.show);
+app.get('/admin/floor/read/:_id', isAdmin, floorAdmin.read);
+app.post('/admin/floor/create', isAdmin, floorAdmin.create);
+app.post('/admin/floor/update', isAdmin, floorAdmin.update);
+app.post('/admin/floor/delete', isAdmin, floorAdmin.del);
+app.post('/admin/floor/uploadAplist', isAdmin, floorAdmin.uploadAplist);
+app.post('/admin/floor/uploadMapzip', isAdmin, floorAdmin.uploadMapzip);
+app.post('/admin/floor/uploadMap', isAdmin, floorAdmin.uploadMap);
+app.post('/admin/floor/uploadPath', isAdmin, floorAdmin.uploadPath);
+app.post('/admin/floor/uploadRender', isAdmin, floorAdmin.uploadRender);
+app.post('/admin/floor/uploadRegion', isAdmin, floorAdmin.uploadRegion);
+app.get('/admin/floor/getMap', isAdmin, floorAdmin.getFile);
+app.get('/admin/floor/getPath', isAdmin, floorAdmin.getFile);
+app.get('/admin/floor/getRender', isAdmin, floorAdmin.getFile);
+app.get('/admin/floor/getRegion', isAdmin, floorAdmin.getFile);
+app.get('/admin/floor/getAplist', isAdmin, floorAdmin.getFile);
+app.get('/admin/floor/getMapzip', isAdmin, floorAdmin.getMapzip);
+app.post('/admin/floor/uploadBtlezip', isAdmin, floorAdmin.uploadBtlezip);
+
+// Admin store interfaces
+app.get('/admin/store/list', isAdmin, storeAdmin.list);
+app.get('/admin/store/show/:_id', isAdmin, storeAdmin.show);
+app.get('/admin/store/read/:_id', isAdmin, storeAdmin.read);
+app.post('/admin/store/create', isAdmin, storeAdmin.create);
+app.post('/admin/store/update', isAdmin, storeAdmin.update);
+app.post('/admin/store/delete', isAdmin, storeAdmin.del);
+app.post('/admin/store/uploadImage', isAdmin, storeAdmin.uploadImage);
+
+
+// Admin ad interfaces
+app.get('/admin/ad/list', isAdmin, adAdmin.list);
+app.get('/admin/ad/show/:_id', isAdmin, adAdmin.show);
+app.get('/admin/ad/read/:_id', isAdmin, adAdmin.read);
+app.post('/admin/ad/create', isAdmin, adAdmin.create);
+app.post('/admin/ad/update', isAdmin, adAdmin.update);
+app.post('/admin/ad/delete', isAdmin, adAdmin.del);
 
 
 // Admin resource interfaces
@@ -216,6 +268,10 @@ app.post('/admin/user/create', isAdmin, userAdmin.create);
 app.post('/admin/user/update', isAdmin, userAdmin.update);
 app.post('/admin/user/delete', isAdmin, userAdmin.del);
 app.post('/admin/user/changePassword', isAdmin, userAdmin.changePassword);
+
+// Admin feedback interfaces
+app.get('/admin/feedback/index', isAdmin,  feedbackAdmin.index);
+app.get('/admin/feedback/list', isAdmin, feedbackAdmin.list); 
 
 
 /**************** Social URL Mapping ****************/
