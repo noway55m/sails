@@ -87,7 +87,6 @@ exports.list = function(req, res) {
 
 };
 
-
 // POST Interface for create the new store in specific floor of specific building
 exports.create = function(req, res){
 	
@@ -137,7 +136,7 @@ exports.create = function(req, res){
 
 						} else {
 
-							res.send( errorResInfo.SUCCESS.code, store );
+							res.json( errorResInfo.SUCCESS.code, store );
 
 						}
 
@@ -192,7 +191,7 @@ exports.update = function(req, res){
 								
 								} else {
 
-									if( stores.length > 0 ) {
+									if( stores.length > 0  && stores[0]._id == store._id ) {
 										
 										res.json( errorResInfo.SUCCESS.code, {
 											msg: "Store name is duplicate!"
@@ -291,9 +290,15 @@ exports.del = function(req, res){
 							// Remove store
 							store.remove(function(err){
 								
-								if(err){
+								if(err) {
+
 									log.error(err);
-								}else{
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									});				
+
+								} else {
+
 									res.json( errorResInfo.SUCCESS.code, {
 										_id: req.body._id
 									});
