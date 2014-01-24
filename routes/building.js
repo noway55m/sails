@@ -16,7 +16,8 @@ var log = require('log4js').getLogger(),
 	util = require('util'),
 	config = require('../config/config'),
 	builder = require('xmlbuilder'),
-	archiver = require('archiver');
+	archiver = require('archiver'),
+	ga = require('./googleAnalytics');
 
 // Static variable
 var	errorResInfo = utilityS.errorResInfo,
@@ -324,7 +325,11 @@ exports.read = function(req, res){
 
 		            	if(result) {
 
-		            		res.send( errorResInfo.SUCCESS.code , building);
+		            		res.json( errorResInfo.SUCCESS.code , building);
+
+		        			// GA collect
+		        			var title = building.name + "-" + building.userId;
+						 	ga.measurementTool.pageTracking(req, title);
 
 		            	} else {
 
@@ -820,7 +825,7 @@ exports.packageMapzip = function(req, res){
 		
 		utilityS.packageMapzip(req.body._id, function(errorObj){
 
-			if(errorObj.code != 200){
+			if(errorObj.code != errorResInfo.SUCCESS.code){
 
 				res.json(errorObj.code, {
 					msg: errorObj.msg
