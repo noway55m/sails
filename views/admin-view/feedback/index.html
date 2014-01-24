@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sails-admin" ng-controller='FeedbackListCtrl'>
+  <head>
+  
+	<!-- Head meta, css or library include -->
+	<% include ../../layout/head-include.html %>
+		
+
+	<!-- admin page css -->	
+	<link href="/stylesheets/style-admin.css" rel="stylesheet">
+
+	<!-- Title -->
+    <title>Feedback</title>
+
+  </head>
+
+  <body>
+
+    <!-- Fixed Top Navigation Bar Template -->
+	<% include ../../layout/top-navbar.html %>
+
+
+
+	<!-- Main Container -->
+    <div class="container">
+
+		<div class="jumbotron">
+
+			<!-- left navigation bar -->
+			<% include ../layout/left-navbar.html %>
+			
+			<div style="padding-left:230px;">
+
+				<div class="panel panel-default">	
+					<div class="panel-heading">
+
+						<!-- Feedback info -->						
+						<h3>Feedbacks - Total Count: <span ng-bind="count"></span></h3>
+						<p></p>
+					</div>
+					<table class="table">
+						<thead>
+							<th>_id</th>
+							<th>name</th>
+							<th>email</th>				
+							<th>comment</th>
+							<th>createdTime</th>
+						</thead>
+						<tbody>
+							<tr ng-repeat="feedback in feedbacks" id="{{feedback._id}}">				
+								<td>
+									<a href="/admin/feedback/show/{{feedback._id}}" ng-bind="feedback._id"></a>
+								</td>
+								<td ng-bind="feedback.name"></td>
+								<td ng-bind="feedback.email"></td>					
+								<td ng-bind="feedback.comment"></td>
+								<td ng-bind="feedback.createdTime"></td>						
+							</tr>
+						</tbody>
+					</table>		
+				</div>
+			</div>
+
+			<div id="pagination"></div>			
+
+		</div>
+
+	</div>	
+
+	<!-- Body library include -->
+	<% include ../../layout/body-include.html %>
+
+    <!-- Controller -->    
+	<script src="/js/admin/controller/app.js"></script>    
+    <script src="/js/admin/controller/feedbackContrl.js"></script>
+
+  </body>
+
+</html>
