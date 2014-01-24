@@ -27,3 +27,10 @@ input.add{
 	display:inline;
 	margin-right:20px;
 }
+
+div.panel-default table > tbody > tr > td{
+	max-width: 110px;
+	min-width: 110px;
+	overflow-x: auto;
+	text-overflow: clip;
+}
