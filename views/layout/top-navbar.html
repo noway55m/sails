@@ -1,63 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta name="description" content="Sails cloud service">
-		<meta name="keywords" content="Sails,Navigator,Indoor,Localization">
-		<meta name="author" content="Sails Team">
-		<meta charset="UTF-8">		
-	</head>
-	<body>
-
-		<!-- Fixed Top Navigation Bar -->
-		<div class="navbar navbar-default navbar-fixed-top">
-			<div class="container" style="max-width:100%;">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle" data-toggle="collapse"
-						data-target=".navbar-collapse">
-						<span class="icon-bar"></span> <span class="icon-bar"></span> <span
-							class="icon-bar"></span>
-					</button>
-					<img src="/img/sails.png" width="170" alt="Sails Logo" />
-				</div>
-				<div class="navbar-collapse collapse">
-					<ul class="nav navbar-nav">
-						<li class="active"><a href="/">Home</a></li>
-						<li><a href="http://support.sailstech.com" target="_blank">Support</a></li>						
-						<li><a href="http://support.sailstech.com/kb" target="_blank">Knowlege Base</a></li>
-						<li><a href="http://blog1.sailstech.com" target="_blank">Blog</a></li>
-						<% if(user){ %>	
-							<li><a href="/sails-resource/download" target="_blank">Download SDK</a></li>
-						<% } %>
-
-						<% if(user && user.role == roles.ADMIN ){ %>	
-							<li><a href="/admin/building/index" target="_blank">CMS</a></li>
-						<% } %>								
-
-
-					</ul>
-					<ul class="nav navbar-nav navbar-right">											
-						<% if(user){ %>
-							<li>							
-								<div class="btn-group" style="margin: 12px 10px; cursor:pointer;">
-								  <div class="dropdown-toggle" data-toggle="dropdown">
-								  	<span class="glyphicon glyphicon-user">
-								  		<h5 style="display:inline;"><%= user.username%></h5>
-								  	</span>
-								  	<span class="caret"></span>								  
-								  </div>	
-								  <ul class="dropdown-menu" role="menu">
-								    <li><a href="/user/profile">Profile</a></li>
-								    <li class="divider"></li>
-								    <li><a href="/logout">Logout</a></li>
-								  </ul>
-								</div>
-							</li>								
-						<% } %>
-					</ul>
-				</div>
-				<!--/.nav-collapse -->
-			</div>
+<!-- Fixed Top Navigation Bar -->
+<div class="navbar navbar-default navbar-fixed-top">
+	<div class="container" style="max-width:100%;">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse"
+				data-target=".navbar-collapse">
+				<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+					class="icon-bar"></span>
+			</button>
+			<img src="/img/sails.png" width="170" alt="Sails Logo" />
 		</div>
+		<div class="navbar-collapse collapse">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="/">Home</a></li>
+				<li><a href="http://support.sailstech.com" target="_blank">Support</a></li>						
+				<li><a href="http://support.sailstech.com/kb" target="_blank">Knowlege Base</a></li>
+				<li><a href="http://blog1.sailstech.com" target="_blank">Blog</a></li>
+				<% if(user){ %>	
+					<li><a href="/sails-resource/download" target="_blank">Download SDK</a></li>
+				<% } %>
 
-	</body>
-</html>
+				<% if(user && user.role == roles.ADMIN ){ %>	
+					<li><a href="/admin/building/index" target="_blank">CMS</a></li>
+				<% } %>								
+
+
+			</ul>
+			<ul class="nav navbar-nav navbar-right">											
+				<% if(user){ %>
+					<li>							
+						<div class="btn-group" style="margin: 12px 10px; cursor:pointer;">
+						  <div class="dropdown-toggle" data-toggle="dropdown">
+						  	<span class="glyphicon glyphicon-user">
+						  		<h5 style="display:inline;"><%= user.username%></h5>
+						  	</span>
+						  	<span class="caret"></span>								  
+						  </div>	
+						  <ul class="dropdown-menu" role="menu">
+						    <li><a href="/user/profile">Profile</a></li>
+						    <li class="divider"></li>
+						    <li><a href="/logout">Logout</a></li>
+						  </ul>
+						</div>
+					</li>								
+				<% } %>
+			</ul>
+		</div>
+		<!--/.nav-collapse -->
+	</div>
+</div>
