@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="sails" ng-controller='BuildingShowCtrl'>
+<html lang="en" ng-app="sails-admin" ng-controller='BuildingShowCtrl'>
   <head>
   
 	<!-- Head meta, css or library include -->
@@ -10,7 +10,7 @@
 	<link href="/stylesheets/style-admin.css" rel="stylesheet">
 
 	<!-- Title -->
-    <title>Building</title>
+    <title>Building - {{building._id}}</title>
 
   </head>
 
@@ -31,15 +31,11 @@
 			
 			<div style="padding-left:230px;">
 
-				<!-- Add building form block -->
-				<% include ../../building/building-add.html %>
-				<br>
-
+				<!-- Building info -->
 				<div class="panel panel-default">	
-					<div class="panel-heading">Users</div>
+					<div class="panel-heading">Building - {{building._id}}</div>
 					<table class="table">
 						<thead>
-							<th>_id</th>
 							<th>name</th>
 							<th>type(not use)</th>				
 							<th>pub</th>
@@ -51,57 +47,226 @@
 							<th>mapzipUpdateTime</th>
 							<th>userId</th>
 							<th>address</th>
-							<th>createdTime</th>																						
+							<th>createdTime</th>
+							<th></th>																	
+							<th></th>					
 						</thead>
 						<tbody>
-							<tr id="{{building._id}}">				
-								<td ng-bind="building._id"></td>
-								<td ng-bind="building.name"></td>
-								<td ng-bind="building.type"></td>					
-								<td ng-bind="building.pub"></td>
-								<td ng-bind="building.upfloor"></td>
-								<td ng-bind="building.downfloor"></td>
+							<tr id="{{selectedBuilding._id}}">				
+								<td ng-bind="selectedBuilding.name"></td>
+								<td ng-bind="selectedBuilding.type"></td>					
+								<td ng-bind="selectedBuilding.pub"></td>
+								<td ng-bind="selectedBuilding.upfloor"></td>
+								<td ng-bind="selectedBuilding.downfloor"></td>
 								<td>
-									<img ng-src="{{building.icon}}" alt="building icon" width=100 />
+									<img ng-src="{{selectedBuilding.icon}}" alt="building icon" width=100 />
 								</td>
-								<td ng-bind="building.desc"></td>
-								<td ng-bind="building.mapzip"></td>
-								<td ng-bind="building.mapzipUpdateTime"></td>
-								<td ng-bind="building.userId"></td>
-								<td ng-bind="building.address"></td>
-								<td ng-bind="building.createdTime"></td>
+								<td ng-bind="selectedBuilding.desc"></td>
+								<td ng-bind="selectedBuilding.mapzip">
+									<a href="/admin/building/getMapzip?mapzip={{floor.map}}" target="_blank" ng-show="floor.map">
+										<span class="glyphicon glyphicon-download" ng-bind="floor.map" ng-show="floor.map"></span>
+									</a>
+								</td>
+								<td ng-bind="selectedBuilding.mapzipUpdateTime"></td>
+								<td ng-bind="selectedBuilding.userId"></td>
+								<td ng-bind="selectedBuilding.address"></td>
+								<td ng-bind="selectedBuilding.createdTime"></td>
 								<td>
-									<a data-toggle="modal" class="btn btn-default" href="#building-edit-dialog" 
-										ng-click="selectBuilding(building)">
+									<button class="btn btn-primary" data-loading-text="Packaging..."　
+									ng-click="packageMapzip($event, building)">Package mapzip </button>
+								</td>								
+								<td>
+									<a data-toggle="modal" class="btn btn-default" href="#building-edit-dialog">
 										<span class="glyphicon glyphicon-edit"></span>
 									</a>					
-								</td>						
-								<td>
-									<a data-toggle="modal" class="btn btn-default" href="delete-confirm-dialog" 
-										ng-click="selectBuilding(building)">
-										<span class="glyphicon glyphicon-remove"></span>
-									</a>					
-								</td>										
+								</td>									
 							</tr>
 						</tbody>			
 					</table>		
 				</div>
+
+
+				<!-- Add floor, add basement and add store buttons -->
+				<div ng-controller='FloorListCtrl'>
+					<div>
+						<button class="btn btn-md btn-default" ng-click="addFloor($event)" data-loading-text="Adding..." ng-hide="loadingFloor" style="display:none;">
+							<span class="glyphicon glyphicon-plus" ></span> Add Floor
+						</button>
+
+						<button class="btn btn-md btn-default" ng-click="addBasement($event)" data-loading-text="Adding..." ng-hide="loadingFloor" style="display:none;">
+							<span class="glyphicon glyphicon-plus" ></span> Add Basement
+						</button>
+					</div>
+
+					<!-- Floor List of building -->
+					<div class="panel panel-default">	
+						<div class="panel-heading">Up Floors</div>
+						<table class="table">
+							<thead>
+								<th>_id</th>
+								<th>name</th>
+								<th>desc</th>				
+								<th>layer</th>
+								<th>map</th>
+								<th>path</th>
+								<th>render</th>
+								<th>region</th>
+								<th>mapzip</th>
+								<th>applist</th>
+								<th>lastXmlUpdateTime</th>																			
+							</thead>
+							<tbody>
+								<tr ng-repeat="floor in floorUp" id="{{floor._id}}">				
+									<td>
+										<a href="/admin/floor/show/{{floor._id}}" ng-bind="floor._id"></a>
+									</td>
+									<td ng-bind="floor.name"></td>
+									<td ng-bind="floor.desc"></td>					
+									<td ng-bind="floor.layer"></td>
+									<td>
+										<a href="/admin/floor/getMap?map={{floor.map}}" target="_blank" ng-show="floor.map">
+											<span class="glyphicon glyphicon-download" ng-bind="floor.map" ng-show="floor.map"></span>
+										</a>
+									</td>
+									<td>
+										<a href="/admin/floor/getPath?path={{floor.path}}" target="_blank" ng-show="floor.path">
+											<span class="glyphicon glyphicon-download" ng-bind="floor.path"></span>
+										</a>
+									</td>
+									<td>
+										<a href="/admin/floor/getRender?render={{floor.render}}" target="_blank" ng-show="floor.render">
+											<span class="glyphicon glyphicon-download" ng-bind="floor.render"></span>
+										</a>
+									</td>
+									<td>
+										<a href="/admin/floor/getRegion?region={{floor.region}}" target="_blank" ng-show="floor.region">
+											<span class="glyphicon glyphicon-download" ng-bind="floor.region"></span>
+										</a>
+									</td>
+									<td>
+										<a href="/admin/floor/getMapzip?mapzip={{floor.mapzip}}" target="_blank" ng-show="floor.mapzip">
+											<span class="glyphicon glyphicon-download" ng-bind="floor.mapzip"></span>
+										</a>
+									</td>
+									<td>
+										<a href="/admin/floor/getAplist?aplist={{floor.applist}}" target="_blank" ng-show="floor.applist">
+											<span class="glyphicon glyphicon-download" ng-bind="floor.applist"></span>
+										</a>
+									</td>
+									<td ng-bind="floor.lastXmlUpdateTime"></td>
+									<td>
+										<a data-toggle="modal" class="btn btn-default" href="#floor-edit-dialog" 
+											ng-click="selectFloor(floor)">
+											<span class="glyphicon glyphicon-edit"></span>
+										</a>					
+									</td>						
+									<td>
+										<a data-toggle="modal" class="btn btn-default" ng-click="deleteDialogSetup(floor)">
+											<span class="glyphicon glyphicon-remove"></span>
+										</a>					
+									</td>										
+								</tr>
+							</tbody>			
+						</table>
+								
+					</div>
+
+					<!-- Floor List of building -->
+					<div class="panel panel-default">	
+						<div class="panel-heading">Down Floors</div>
+						<table class="table">
+							<thead>
+								<th>_id</th>
+								<th>name</th>
+								<th>desc</th>				
+								<th>layer</th>
+								<th>map</th>
+								<th>path</th>
+								<th>render</th>
+								<th>region</th>
+								<th>mapzip</th>
+								<th>applist</th>
+								<th>lastXmlUpdateTime</th>																			
+							</thead>
+							<tbody>
+								<tr ng-repeat="floor in floorDown" id="{{floor._id}}">				
+									<td>
+										<a href="/admin/floor/show/{{floor._id}}" ng-bind="floor._id"></a>
+									</td>
+									<td ng-bind="floor.name"></td>
+									<td ng-bind="floor.desc"></td>					
+									<td ng-bind="floor.layer"></td>
+									<td>
+										<a href="/admin/floor/getMap?map={{floor.map}}" target="_blank" ng-show="floor.map">
+											<span class="glyphicon glyphicon-download" ng-bind="floor.map" ng-show="floor.map"></span>
+										</a>
+									</td>
+									<td>
+										<a href="/admin/floor/getPath?path={{floor.path}}" target="_blank" ng-show="floor.path">
+											<span class="glyphicon glyphicon-download" ng-bind="floor.path"></span>
+										</a>
+									</td>
+									<td>
+										<a href="/admin/floor/getRender?render={{floor.render}}" target="_blank" ng-show="floor.render">
+											<span class="glyphicon glyphicon-download" ng-bind="floor.render"></span>
+										</a>
+									</td>
+									<td>
+										<a href="/admin/floor/getRegion?region={{floor.region}}" target="_blank" ng-show="floor.region">
+											<span class="glyphicon glyphicon-download" ng-bind="floor.region"></span>
+										</a>
+									</td>
+									<td>
+										<a href="/admin/floor/getMapzip?mapzip={{floor.mapzip}}" target="_blank" ng-show="floor.mapzip">
+											<span class="glyphicon glyphicon-download" ng-bind="floor.mapzip"></span>
+										</a>
+									</td>
+									<td>
+										<a href="/admin/floor/getAplist?aplist={{floor.applist}}" target="_blank" ng-show="floor.applist">
+											<span class="glyphicon glyphicon-download" ng-bind="floor.applist"></span>
+										</a>
+									</td>
+									<td ng-bind="floor.lastXmlUpdateTime"></td>
+									<td>
+										<a data-toggle="modal" class="btn btn-default" href="#floor-edit-dialog" 
+											ng-click="selectFloor(floor)">
+											<span class="glyphicon glyphicon-edit"></span>
+										</a>					
+									</td>						
+									<td>
+										<a data-toggle="modal" class="btn btn-default" ng-click="deleteDialogSetup(floor)">
+											<span class="glyphicon glyphicon-remove"></span>
+										</a>					
+									</td>
+								</tr>
+							</tbody>			
+						</table>
+							
+					</div>
+
+					<!-- Delete dialog -->
+					<% include ../layout/delete-confirm-dialog.html %>	
+
+				</div>				
+
 			</div>	
 
 		</div>
 
 	</div>	
 
+
 	<!-- Edit and Delete Dialog -->
-	<% include ./building-edit-dialog.html %>
-	<% include ../../layout/delete-confirm-dialog.html %>	
+	<% include building-edit-dialog.html %>	
+	<% include ../floor/floor-edit-dialog.html %>
 
 	<!-- Body library include -->
-	<% include ../../layout/body-include.html %>
+	<% include ../layout/body-include.html %>
 
     <!-- Controller -->
+	<script src="/js/admin/controller/app.js"></script>        
     <script src="/js/admin/controller/buildingContrl.js"></script>
-
+    <script src="/js/admin/controller/floorContrl.js"></script>
 
   </body>
 

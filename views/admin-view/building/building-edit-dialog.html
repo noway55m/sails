@@ -1,5 +1,5 @@
-<!-- Store create dialog include in floor/floor-list.html -->
-<div class="modal fade" id="building-edit-dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<!-- Building edit dialog -->
+<div class="modal fade" id="building-edit-dialog" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
    <div class="modal-dialog">
      <div class="modal-content">
 
@@ -7,7 +7,7 @@
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h4 class="modal-title">Edit Building</h4>
-			<p>Please kindly finish following fields about your building.</p>
+			<p>Please kindly finish following fields of this building.</p>
 		</div>
 		
 		<!-- Body -->
@@ -17,23 +17,23 @@
 			</div>
 			<div class="form-group">
 				<label for="phone">name</label> 
-				<input class="form-control" placeholder="Name" name="name" value=""  maxlength="15" ng-model="selectedBuilding.name">
+				<input class="form-control" placeholder="Name" name="name" maxlength="15" ng-model="selectedBuilding.name">
 			</div>
 			<div class="form-group">
 				<label for="type">type</label> 
-				<input placeholder="Type" class="form-control" name="type" value=""  maxlength="100" ng-model="selectedBuilding.type">
+				<input class="form-control" placeholder="Type" name="type" maxlength="100" ng-model="selectedBuilding.type">
 			</div>
 			<div class="form-group">
 				<label for="pub">pub</label> 
-				<input name="pub" type="checkbox" value="" ng-model="selectedBuilding.pub">
+				<input name="pub" type="checkbox" ng-model="selectedBuilding.pub">
 			</div>
 			<div class="form-group">
 				<label for="desc">desc</label> 
-				<input class="form-control" placeholder="Description" name="desc" value="" maxlength="100" ng-model="selectedBuilding.desc">
+				<textarea class="form-control" placeholder="Description" name="desc" maxlength="100" ng-bind="selectedBuilding.desc"></textarea>
 			</div>
 			<div class="form-group">
 				<label for="desc">address</label> 
-				<input class="form-control" placeholder="Address" name="address" value="" maxlength="100" ng-model="selectedBuilding.address">
+				<input class="form-control" placeholder="Address" name="address" maxlength="100" ng-model="selectedBuilding.address">
 			</div>
 			
 			<!-- error msg -->
@@ -42,31 +42,22 @@
 					class="errorText"></span>
 			</div>
 
-			<!-- Floors -->
-			<hr>
-			<div class="form-group">
-				<label>floors</label>
-				<div ng-repeat="floor in floors" id="{{floor._id}}">
-					<a href="/floor/admin/show/{{floor._id}}">
-						<span ng-bind="floor.layer"></span>
-						(<span ng-bind="floor._id"></span>)						
-					</a>
-				</div> 
-			</div>
-			<hr>
-
-			<!-- User -->
-			<hr>
-			<div class="form-group">
-				<label>owner</label>
-			</div>
-			<hr>
-
-
 		</div>
 
 		<button type="button" class="btn btn-default" data-dismiss="modal" style="margin-left: 400px;">Close</button>
 		<button type="submit" class="btn btn-primary" data-loading-text="Updating" ng-click="updateBuilding($event, selectedBuilding)">Update</button>
+		<hr>
+
+		<!-- Upload image -->
+		<form name="form" action="/admin/building/uploadImage" method="POST" enctype="multipart/form-data">
+			<input type="hidden" class="form-control" name="_id" value="{{selectedBuilding._id}}">
+			<label for="map">Upload icon</label>
+			<input type="file" class="form-control upload-file" name="image">							
+			<div class="alert alert-danger error-msg">
+				<span class="label label-danger">Error</span> <span class="errorText"></span>
+			</div>
+		</form>
+		<button class="btn btn-md btn-primary" ng-click="uploadBuildingImage($event, selectedBuilding)"　data-loading-text="Uploading...">Upload</button>
 		<hr>
 
      </div><!-- /.modal-content -->
