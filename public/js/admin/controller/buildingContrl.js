@@ -2,15 +2,6 @@ var utility = Utility.getInstance();
 
 // List buildings controller
 function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
-
-	// Show and hide remove button
-	$scope.showRemoveButton = function(e){
-		angular.element(e.currentTarget).find(".remove-button-list").show();
-	};
-	
-	$scope.hideRemoveButton = function(e){
-		angular.element(e.currentTarget).find(".remove-button-list").hide();		
-	};	
 	
     // List all buildings
 	$scope.loading = true;
@@ -22,8 +13,6 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 			count = obj.count,
 			totalPages = Math.ceil(count/offset),
 			buildings = obj.buildings;
-
-		console.log(buildings[0]);	
 
 		// Set icon url
 		buildings.forEach(function(building){
@@ -114,6 +103,152 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 
 	// Function for setup delete dialog
 	var deleteObj,
+		deleteModal = $("#deleteModal");		
+	$scope.deleteDialogSetup = function(building, useSecondDialog){
+		
+		deleteObj = this.building;
+		$("#removeContent").html(deleteObj.name);
+
+		if(useSecondDialog)
+			deleteModal.modal("show");
+		else
+			deleteModal2.modal("show");
+
+	};
+	
+	// Function for delete ad obj
+	$scope.deleteObj = function(e){
+		
+		// Hide modal
+		deleteModal.modal('hide');
+		
+		// Delete store
+		Building.delete({
+			
+			_id: deleteObj._id
+			
+		}, function(res){
+
+			if(res._id){
+				
+				// Remove store from view
+		    	var id = res._id;
+		    	for(var i=0; i<$scope.buildings.length; i++){			
+					if($scope.buildings[i]._id == id){    			
+						$scope.buildings.splice(i, 1);
+						break;
+					}
+		    	}
+		    	
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Remove successfully");
+				
+			}			
+			
+		}, function(res){
+
+			// Show error msg
+			var errorMsg = res && res.data && res.data.msg;
+			$().toastmessage('showErrorToast', errorMsg);						        
+
+		});
+		
+	};
+
+	// Function for load specific page
+	$scope.loadPage = function(e, page){
+
+		var element = angular.element(e.currentTarget);
+		Building.list({ page: page }, function(obj){
+			
+			var page = obj.page,
+				offset = obj.offset,
+				count = obj.count,
+				buildings = obj.buildings;
+
+			// Set icon url
+			buildings.forEach(function(building){
+				if(building.icon)
+					building.icon = "/" + imagePath + "/" + building.icon;
+				else
+					building.icon = "/img/no-image.png";
+			});		
+			$scope.buildings = buildings;
+
+		});
+
+	};
+
+	// Function for select specific building
+	$scope.selectBuilding = function(building){
+		$rootScope.selectedBuilding = building;
+		$rootScope.selectedBuildingClone = angular.copy($rootScope.selecedtBuilding); // Clone building for future rollback
+	};
+
+    // Function for rollback selected user info
+    $scope.cancelUpdateBuilding = function(){
+        angular.copy($rootScope.selectedBuildingClone, $scope.selectedBuilding);
+    };	
+
+	// Function for update building
+	$scope.updateBuilding = function(e, selectedBuilding) {
+		updateBuilding(e, selectedBuilding, Building, $scope, $rootScope);	
+	};
+
+	// Function for upload building image
+	$scope.uploadBuildingImage = function(e, selectedBuilding){
+		uploadImage(e, selectedBuilding, $scope, $rootScope);
+	};
+
+	// Function for package building mapzip
+	$scope.packageMapzip = function(e, selectedBuilding){
+		packageMapzip(e, selectedBuilding, Building, $scope, $rootScope);		
+	};		
+	
+}
+
+// Show specific building controller
+function BuildingShowCtrl($scope, $location, Building, $rootScope) {
+
+	var url = $location.absUrl(),
+		id = url.substring(url.lastIndexOf("/") + 1, url.length) || $rootScope.selectedBuilding.id;	
+	$scope.loadingBuilding = true;
+	$rootScope.loadingFloor = true;	
+	Building.get({ _id : id }, function(building){
+		if(building.icon)
+			building.icon = "/" + imagePath + "/" + building.icon;
+		else
+			building.icon = "/img/no-image.png";	    
+		$scope.selectedBuilding = building;
+		$rootScope.$emit('buildingFinishLoad', $scope.selectedBuilding);
+        $rootScope.selectedBuildingClone = angular.copy($scope.selectedBuilding); // Clone building for future rollback        
+    	$scope.loadingBuilding = false;
+	});
+
+    // Function for rollback selected user info
+    $scope.cancelUpdateBuilding = function(){
+        angular.copy($rootScope.selectedBuildingClone, $scope.selectedBuilding);
+    };
+
+	// Function for update building
+	$scope.updateBuilding = function(e, selectedBuilding) {
+		updateBuilding(e, selectedBuilding, Building, $scope, $rootScope);	
+	};
+
+	// Function for upload building image
+	$scope.uploadBuildingImage = function(e, selectedBuilding){
+		var building = this.building || selectedBuilding; 
+		uploadImage(e, building, $scope, $rootScope);
+	};
+	
+	// Function for package building mapzip
+	$scope.packageMapzip = function(e, selectedBuilding){
+		var building = this.building || selectedBuilding;
+		packageMapzip(e, building, Building, $scope, $rootScope);		
+	};
+		
+	// Function for setup delete dialog
+	var deleteObj,
 		deleteModal = $("#deleteModal");
 	$scope.deleteDialogSetup = function(){
 		deleteObj = this.building;
@@ -154,255 +289,21 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 		
 	};
 
-	// Function for load specific page
-	$scope.loadPage = function(e, page){
-
-		var element = angular.element(e.currentTarget);
-		Building.list({ page: page }, function(obj){
-			
-			var page = obj.page,
-				offset = obj.offset,
-				count = obj.count,
-				buildings = obj.buildings;
-
-			// Set icon url
-			buildings.forEach(function(building){
-				if(building.icon)
-					building.icon = "/" + imagePath + "/" + building.icon;
-				else
-					building.icon = "/img/no-image.png";
-			});		
-			$scope.buildings = buildings;
-
-		});
-
-	};
-
-	// ----------------------------------------------------------------------------------------------------
-
-	// Function for select specific building (cms)
-	$scope.selectBuilding = function(building){
-		$rootScope.selectedBuilding = building;
-		$rootScope.selectedBuildingClone = angular.copy($rootScope.selecedtBuilding); // Clone building for future rollback
-		$rootScope.floors = Floor.list({ buildingId: building._id }, function(floors){
-			$rootScope.floorUp = [];
-			$rootScope.floorDown = [];
-			floors.forEach(function(floor){
-				if(floor.layer > 0 )
-					$rootScope.floorUp.push(floor);
-				else
-					$rootScope.floorDown.push(floor);
-
-			});
-
-			$rootScope.currentUpFloor = $rootScope.floorUp.length + 1,
-			$rootScope.currentDownFloor = -($rootScope.floorDown.length) - 1;
-			$rootScope.loadingFloor = false;
-			console.log(floors);			
-		});
-	};
-
-	// Function for update building (cms)
-	$scope.updateBuilding = function(e, selectedBuilding) {
-		updateBuilding(e, selectedBuilding);	
-	};
-	
-}
-
-// Show specific building controller
-function BuildingShowCtrl($scope, $location, Building, $rootScope) {
-	var url = $location.absUrl(),
-		id = url.substring(url.lastIndexOf("/") + 1, url.length) || $rootScope.selectedBuilding.id;	
-	$scope.loadingBuilding = true;
-	$rootScope.loadingFloor = true;	
-	Building.get({ _id : id }, function(building){
-		if(building.icon)
-			building.icon = "/" + imagePath + "/" + building.icon;
-		else
-			building.icon = "/img/no-image.png";	    
-		$scope.building = building;
-		$rootScope.$emit('buildingFinishLoad', building);
-        $rootScope.buildingClone = angular.copy(building); // Clone building for future rollback        
-    	$scope.loadingBuilding = false;
-
-    	console.log(building);
-	});
-
-    // Function for rollback selected user info
-    $scope.cancelUpdateBuilding = function(){
-    	console.log($rootScope.buildingClone);
-    	console.log($scope.building);
-        angular.copy($rootScope.buildingClone, $scope.building);
-    };
-
-	// Function for update building
-	$scope.updateBuilding = function(e) {
-		console.log(this.building);
-		updateBuilding(e);	
-	};
-
-    // Function for upload building image
-	// Note: we won't use now, all map zip package from server automatically
-	/*
-    $scope.uploadMapzip = function(e){
-
-        var building = this.building,
-            uploadButton = angular.element(e.currentTarget),
-            form = uploadButton.prev(),
-            inputFields = form.find("input"),
-            errorMsgObj = form.find('.error-msg');
-
-        // Ajax from setup
-        var options = {
-
-            beforeSend : function(){ // pre-submit callback
-                inputFields.attr('disabled');
-                errorMsgObj.hide();
-                uploadButton.button("loading");
-                return true;
-            },
-            uploadProgress : function(event, position, total, percent){},
-            success : function(res, statusText){ // post-submit callback
-
-                // Show error msg
-                if(res.msg){
-                    errorMsgObj.find(".errorText").text(res.msg);
-                    errorMsgObj.show();
-                }else{
-                    $scope.$apply(function () {
-                        building.mapzipUpdateTime = res.mapzipUpdateTime;
-				        $rootScope.buildingClone = angular.copy(building); // clone building                        
-                    });
-                }
-
-                // Hide button
-                uploadButton.button("reset");
-                uploadButton.hide();
-                return true;
-            },
-
-            clearForm : true
-
-        };
-
-        form.ajaxSubmit(options);
-
-        return false;
-
-    };
-    */
-
-
-	// Function for upload building image
-	$scope.uploadBuildingImage = function(e){
-
-		var building = this.building,
-			uploadButton = angular.element(e.currentTarget),
-			form = uploadButton.prev(),
-			inputFields = form.find("input"),
-			errorMsgObj = form.find('.error-msg');
-
-		// Ajax from setup
-		var options = {
-
-			beforeSend : function(){ // pre-submit callback
-				inputFields.attr('disabled');
-				errorMsgObj.hide();
-				uploadButton.button("loading");
-				return true;
-			},
-			uploadProgress : function(event, position, total, percent){},
-			success : function(res, statusText){ // post-submit callback
-
-				// Show error msg
-				if(res.msg){
-					errorMsgObj.find(".errorText").text(res.msg);
-					errorMsgObj.show();
-				}else{
-					
-					// Update building 
-					$scope.$apply(function () {
-						building.icon = "/" + imagePath + "/" + res;
-				        $rootScope.buildingClone = angular.copy(building); // clone building						
-					});
-					
-			    	// Show success msg
-					$().toastmessage('showSuccessToast', "Upload successfully");									
-					
-				}
-
-				// Hide button
-				uploadButton.button("reset");
-				uploadButton.hide();
-				return true;
-			},
-			error : function(res, status){
-
-				// Show error msg
-				var resText = ( res.responseJSON && res.responseJSON.msg ) || "Fail to upload image"
-				$().toastmessage('showErrorToast', resText );		        
-
-			},			
-
-			clearForm : true
-
-		};
-
-		form.ajaxSubmit(options);
-
-		return false;
-
-	};
-	
-	// Function for package building mapzip
-	$scope.packageMapzip = function(e){
-		
-		var building = this.building,
-			updateButton = angular.element(e.currentTarget);
-		
-		updateButton.button('loading');
-		Building.packageMapzip({
-		
-			_id: building._id 
-				
-		}, function(res){
-						
-			if(res.msg){
-
-				building.mapzipUpdateTime = res.msg;				
-				
-			}else{
-				
-				building.mapzipUpdateTime = res.mapzipUpdateTime;
-				
-			}
-
-			updateButton.button('reset');
-			
-	    	// Show success msg
-			$().toastmessage('showSuccessToast', "Package successfully");							
-			
-		});		
-		
-	};
-		
 }
 
 
 // Function for update building
-function updateBuilding(e, selectedBuilding){
+function updateBuilding(e, selectedBuilding, Building, $scope, $rootScope){
 
 	var building = this.building || selectedBuilding,
 		updateButton = angular.element(e.currentTarget),
 		form = updateButton.parent(),
 		inputFields = form.find("input");
 		errorMsgObj = form.find(".error-msg"),
-		timeFields = form.find("input[data-provide=datepicker]"),
 		utility = Utility.getInstance(),
 		nameObj = form.find("input[name=name]"),
 		descObj = form.find("textarea[name=desc]");
 
-	console.log(building);
 	if (utility.emptyValidate(nameObj, errorMsgObj)) {
 
 		// Disable all fields before finish save
@@ -415,44 +316,139 @@ function updateBuilding(e, selectedBuilding){
 		// Set loading state of update button
 		updateButton.button('loading');
 
-		// building.$save( function(building){
+		Building.save( building, function(building){
 
-		// 	// Set back normal state of update button
-		// 	updateButton.button('reset');
+			// Set back normal state of update button
+			updateButton.button('reset');
 
-		// 	// Enable all input fields
-		// 	inputFields.removeAttr('disabled');
-		// 	descObj.removeAttr('disabled');
+			// Enable all input fields
+			inputFields.removeAttr('disabled');
+			descObj.removeAttr('disabled');
 
-		// 	// Update local buildings
-		// 	if(building.icon)
-		// 		building.icon = "/" + imagePath + "/" + building.icon;
-		// 	else
-		// 		building.icon = "/img/no-image.png";
+			// Update local buildings
+			if(building.icon)
+				building.icon = "/" + imagePath + "/" + building.icon;
+			else
+				building.icon = "/img/no-image.png";
 
-		// 	// Clone user info
-	 //        $rootScope.buildingClone = angular.copy(building);
+			// Clone user info
+	        $rootScope.buildingClone = angular.copy(building);
 
-	 //    	// Show success msg
-		// 	$().toastmessage('showSuccessToast', "Update successfully");						        
+	    	// Show success msg
+			$().toastmessage('showSuccessToast', "Update successfully");						        
 	        
-		// }, function(res){
+		}, function(res){
 
-		// 	// Show error msg
-		// 	errorMsgObj.find(".errorText").text(res.msg);
-		// 	errorMsgObj.show();
+			// Set back normal state of update button
+			updateButton.button('reset');
 
-		// 	// Set back normal state of update button
-		// 	updateButton.button('reset');
+			// Enable all input fields
+			inputFields.removeAttr('disabled');
+			descObj.removeAttr('disabled');
 
-		// 	// Enable all input fields
-		// 	inputFields.removeAttr('disabled');
-		// 	descObj.removeAttr('disabled');
+			// Show error msg
+			var errorMsg = res && res.data && res.data.msg;
+			errorMsgObj.find(".errorText").text(errorMsg);
+			errorMsgObj.show();
+			$().toastmessage('showErrorToast', errorMsg);						        
 
-		// });
+		});
 
 	}
 
 };
+
+// Function for upload building image
+function uploadImage(e, selectedBuilding, $scope, $rootScope){
+
+	var building = selectedBuilding,
+		uploadButton = angular.element(e.currentTarget),
+		form = uploadButton.prev(),
+		inputFields = form.find("input"),
+		errorMsgObj = form.find('.error-msg');
+
+	// Ajax from setup
+	var options = {
+
+		beforeSend : function(){ // pre-submit callback
+			inputFields.attr('disabled');
+			errorMsgObj.hide();
+			uploadButton.button("loading");
+			return true;
+		},
+		uploadProgress : function(event, position, total, percent){},
+		success : function(res, statusText){ // post-submit callback
+
+			// Show error msg
+			if(res.msg){
+				errorMsgObj.find(".errorText").text(res.msg);
+				errorMsgObj.show();
+			}else{
+				
+				// Update building 
+				$scope.$apply(function () {
+					building.icon = "/" + imagePath + "/" + res;
+			        $rootScope.buildingClone = angular.copy(building); // clone building						
+				});
+				
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Upload successfully");									
+				
+			}
+
+			// Hide button
+			uploadButton.button("reset");
+			uploadButton.hide();
+			return true;
+		},
+		error : function(res, status){
+
+			// Show error msg
+			var resText = ( res.responseJSON && res.responseJSON.msg ) || "Fail to upload image"
+			$().toastmessage('showErrorToast', resText );		        
+
+		},			
+
+		clearForm : true
+
+	};
+
+	form.ajaxSubmit(options);
+
+	return false;
+
+}
+
+// Function for package mapzip
+function packageMapzip(e, selectedBuilding, Building, $scope, $rootScope){
+		
+	var building = selectedBuilding,
+		updateButton = angular.element(e.currentTarget);
+	
+	updateButton.button('loading');
+	Building.packageMapzip({
+	
+		_id: building._id 
+			
+	}, function(res){
+					
+		// Update mapzip package time	
+		building.mapzipUpdateTime = res.mapzipUpdateTime;
+		
+		// Reset button
+		updateButton.button('reset');
+		
+    	// Show success msg
+		$().toastmessage('showSuccessToast', "Package successfully");							
+		
+	}, function(res){
+
+		// Show error msg
+		var resText = ( res.responseJSON && res.responseJSON.msg ) || "Fail to upload image"
+		$().toastmessage('showErrorToast', resText );		        			
+
+	});
+
+}
 
 // BuildingShowCtrl.$inject = ['$scope', 'Building'];

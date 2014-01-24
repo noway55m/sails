@@ -1,10 +1,11 @@
 // Include all service in app
 var app = angular.module('sails-admin', ['ngResource', 'buildingServices', 'floorServices', 
-                                   'storeServices', 'adServices', 'userServices', 'sdkServices']);
+                                   'storeServices', 'adServices', 'userServices', 'sdkServices',
+                                   'feedbackServices']);
 
 // REST API of Building
 angular.module('buildingServices', [ 'ngResource' ]).factory('Building', function($resource) {
-    return $resource('/building/:action/:_id', { _id : "@id"}, {
+    return $resource('/admin/building/:action/:_id', { _id : "@id"}, {
 
         get : {
             method : 'GET',
@@ -33,7 +34,7 @@ angular.module('buildingServices', [ 'ngResource' ]).factory('Building', functio
         list : {
             method : 'GET',
             params : {
-                action : 'listPage',
+                action : 'list',
                 page: 1
             }
         },
@@ -48,7 +49,7 @@ angular.module('buildingServices', [ 'ngResource' ]).factory('Building', functio
 
 // REST API of Floor
 angular.module('floorServices', [ 'ngResource' ]).factory('Floor', function($resource) {
-    return $resource('/floor/:action/:_id', { _id : "@id" }, {
+    return $resource('/admin/floor/:action/:_id', { _id : "@id" }, {
         get : {
             method : 'GET',
             params : {
@@ -86,7 +87,7 @@ angular.module('floorServices', [ 'ngResource' ]).factory('Floor', function($res
 
 // REST API of Store
 angular.module('storeServices', [ 'ngResource' ]).factory('Store', function($resource) {
-    return $resource('/store/:action/:_id', { _id : "@id" }, {
+    return $resource('/admin/store/:action/:_id', { _id : "@id" }, {
         get : {
             method : 'GET',
             params : {
@@ -124,7 +125,7 @@ angular.module('storeServices', [ 'ngResource' ]).factory('Store', function($res
 
 // REST API of Ad
 angular.module('adServices', [ 'ngResource' ]).factory('Ad', function($resource) {
-    return $resource('/ad/:action/:_id', { _id : "@id" }, {
+    return $resource('/admin/ad/:action/:_id', { _id : "@id" }, {
         get : {
             method : 'GET',
             params : {
@@ -217,6 +218,24 @@ angular.module('sdkServices', [ 'ngResource' ]).factory('Sdk', function($resourc
                 action : 'delete'
             }
         },      
+        list : {
+            method : 'GET',
+            params : {
+                action : 'list'
+            }
+        }          
+    });
+});
+
+// REST API of Feedback
+angular.module('feedbackServices', [ 'ngResource' ]).factory('Feedback', function($resource) {
+    return $resource('/admin/feedback/:action/:_id', { _id : "@id" }, {        
+        get : {
+            method : 'GET',
+            params : {
+                action : 'read'
+            }
+        },        
         list : {
             method : 'GET',
             params : {
