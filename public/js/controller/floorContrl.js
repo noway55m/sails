@@ -213,6 +213,12 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 			loadingModal.modal('hide');
 			
 			
+		}, function(res){
+
+			// Show error msg
+			var errorMsg = res && res.data && res.data.msg;
+			$().toastmessage('showErrorToast', errorMsg);						        
+
 		});
 		
 	};	
@@ -318,7 +324,7 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 	// Function for upload map.xml
 	$scope.uploadMap = function(e){
 		
-		var floor = this.floor
+		var floor = this.floor,
 			uploadButton = angular.element(e.currentTarget),
 			form = uploadButton.prev(),
 			inputFields = form.find("input"),
@@ -400,7 +406,7 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 	// Function for upload path.xml
 	$scope.uploadPath = function(e){
 		
-		var floor = this.floor
+		var floor = this.floor,
 			uploadButton = angular.element(e.currentTarget),
 			form = uploadButton.prev(),
 			inputFields = form.find("input"),

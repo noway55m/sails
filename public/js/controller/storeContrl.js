@@ -195,6 +195,12 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 				
 			}			
 			
+		}, function(res){
+
+			// Show error msg
+			var errorMsg = res && res.data && res.data.msg;
+			$().toastmessage('showErrorToast', errorMsg);						        
+
 		});
 		
 	};

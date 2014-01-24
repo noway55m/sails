@@ -150,6 +150,12 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 				
 			}			
 			
+		}, function(res){
+
+			// Show error msg
+			var errorMsg = res && res.data && res.data.msg;
+			$().toastmessage('showErrorToast', errorMsg);						        
+
 		});
 		
 	};
@@ -176,35 +182,6 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 
 		});
 
-	};
-
-	// ----------------------------------------------------------------------------------------------------
-
-	// Function for select specific building (cms)
-	$scope.selectBuilding = function(building){
-		$rootScope.selectedBuilding = building;
-		$rootScope.selectedBuildingClone = angular.copy($rootScope.selecedtBuilding); // Clone building for future rollback
-		$rootScope.floors = Floor.list({ buildingId: building._id }, function(floors){
-			$rootScope.floorUp = [];
-			$rootScope.floorDown = [];
-			floors.forEach(function(floor){
-				if(floor.layer > 0 )
-					$rootScope.floorUp.push(floor);
-				else
-					$rootScope.floorDown.push(floor);
-
-			});
-
-			$rootScope.currentUpFloor = $rootScope.floorUp.length + 1,
-			$rootScope.currentDownFloor = -($rootScope.floorDown.length) - 1;
-			$rootScope.loadingFloor = false;
-			console.log(floors);			
-		});
-	};
-
-	// Function for update building (cms)
-	$scope.updateBuilding = function(e, selectedBuilding) {
-		updateBuilding(e, selectedBuilding);	
 	};
 	
 }
@@ -426,21 +403,21 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 				
 		}, function(res){
 						
-			if(res.msg){
+			// Update info	
+			building.mapzipUpdateTime = res.mapzipUpdateTime;
 
-				building.mapzipUpdateTime = res.msg;				
-				
-			}else{
-				
-				building.mapzipUpdateTime = res.mapzipUpdateTime;
-				
-			}
-
+			// Reset button
 			updateButton.button('reset');
 			
 	    	// Show success msg
 			$().toastmessage('showSuccessToast', "Package successfully");							
 			
+		}, function(res){
+
+			// Show error msg
+			var resText = ( res.responseJSON && res.responseJSON.msg ) || "Fail to upload image"
+			$().toastmessage('showErrorToast', resText );		        			
+
 		});		
 		
 	};
