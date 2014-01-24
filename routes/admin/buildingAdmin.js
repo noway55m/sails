@@ -23,14 +23,100 @@ var	errorResInfo = utilityS.errorResInfo,
 	mapinfo_path = "/" + config.mapInfoPath,
 	image_path = config.imagePath;
 
+// GET Interface of list buildings or buildings of specific user (new support pagination)
+exports.index = function(req, res) {
+	res.render("admin-view/building/index.html");	
+};
+
+// GET Interface of list all buildings
+exports.list = function(req, res) {
+
+	// Pagination params
+	var page = ( req.query.page && req.query.page > 0 ? req.query.page - 1 : 0 ) || 0;
+
+    // Check user role for check with administration permission
+    var queryJson = null;
+    Building.find(queryJson)
+		.sort({ createdTime: -1 })
+		.limit(config.pageOffset)
+		.skip(page * config.pageOffset).exec( function(err, buildings){
+
+        if(err){
+
+            log.error(err);
+			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+			});  		
+
+		} else {
+
+			// Get buildings count
+			Building.count( queryJson, function(err, count) {
+
+				if( err ) {
+
+		            log.error(err);
+					res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+						msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					});  		
+
+				} else {
+
+					// Get building's owner if admin				
+					var ids = [];
+					for(index in buildings){
+						var building = buildings[index];
+						ids.push(building.userId.toString());
+					}
+
+					User.find({
+
+					    '_id': { $in: ids }
+
+					}, function(err, users){	
+
+						if(err){
+
+							log.error(err);
+
+						} else {
+
+							var nBuildings = JSON.parse(JSON.stringify(buildings));
+							for(var j=0; j<ids.length; j++){
+								var username = "";
+								for(var n=0; n<users.length; n++){
+									if(ids[j] == users[n].id.toString()){
+										username = users[n].username;
+										break;
+									}
+								}
+								nBuildings[j].userName = username;
+							}
+
+					        res.send(errorResInfo.SUCCESS.code, {						        	
+					        	page: page + 1,
+					        	offset: config.pageOffset,
+					        	count: count,
+					        	buildings: nBuildings
+					        });
+
+						}
+							
+					});	
+					
+				}
+
+			} );			
+    	
+    	}		
+
+    });
+
+};
+
 // GET Page for show specific building
 exports.show = function(req, res) {
 	res.render("admin-view/building/building-show.html");
-};
-
-// GET Interface of list buildings or buildings of specific user (new support pagination)
-exports.list = function(req, res) {
-	res.render("admin-view/building/building-list.html");	
 };
 
 // POST Interface of create new building
@@ -387,6 +473,187 @@ exports.del = function(req, res) {
 									
 		});		
 				
+	}
+	
+};
+
+// POST Interface of upload image
+exports.uploadImage = function(req, res) {
+
+	if(req.body._id && req.files.image){
+
+		// Get file name and extension
+		var fileName = req.files.image.name;
+		var extension = path.extname(fileName).toLowerCase() === '.png' ? ".png" : null ||
+						path.extname(fileName).toLowerCase() === '.jpg' ? ".jpg" : null ||
+						path.extname(fileName).toLowerCase() === '.gif' ? ".gif" : null;
+
+		console.log(extension);
+
+		// Check file format by extension
+		if(extension){
+
+			var tmpPath = req.files.image.path;
+			log.info("tmpPath: " + tmpPath);
+
+			// Read file and prepare hash
+			var md5sum = crypto.createHash('md5'),
+				stream = fs.ReadStream(tmpPath);
+
+			// Set target file name by hash the file
+			var targetFileName;
+			stream.on('data', function(d) {
+				md5sum.update(d);
+			});
+
+			stream.on('end', function() {
+
+				targetFileName = md5sum.digest('hex')  + extension;
+				var targetPath = path.resolve(config.imagePath + "/" + targetFileName);
+				log.info("targetPath: " + targetPath);
+
+				Building.findById(req.body._id, function(error, building){
+
+					if( building ) {
+
+						log.info("icon: " + building.icon);
+						log.info("targetName: " + targetFileName);
+						if(building.icon != targetFileName){
+
+							log.info("Update");
+							fs.rename(tmpPath, targetPath, function(err) {
+								if(err){
+
+									log.error(err);
+					    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					    			});  
+
+								}else{
+
+									// Delete old image if exist
+									if(building.icon){
+										var oldImgPath = path.resolve(config.imagePath + "/" + building.icon);
+										fs.unlink(oldImgPath, function(err){
+											log.error(err);
+										});
+									}
+									
+									// Update building
+									building.icon = targetFileName;
+									building.save( function(err) {
+
+										if( err ) {
+
+							    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+							    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							    			});  											
+
+										} else {
+
+											res.send( errorResInfo.SUCCESS.code, targetFileName );
+
+										}
+
+									});
+									
+									// Delete the temporary file
+		                            fs.unlink(tmpPath, function(err){
+		                            	log.error(err);
+		                            });										
+									
+								}
+							});								
+							
+						}else{
+
+							log.info("Same");
+							res.send( errorResInfo.SUCCESS.code, targetFileName );
+						}
+
+					} else {
+
+	        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+	        				msg: errorResInfo.INCORRECT_PARAMS.msg
+	        			});  						
+
+					}//end if
+
+				});
+
+			});
+
+		}else{
+
+			res.send( errorResInfo.INCORRECT_FILE_TYPE.code, { msg: "File extension should be .png or .jpg or gif" });
+
+		}
+
+
+	}
+
+};
+
+// Function for get map zip of all building
+exports.getMapzip = function(req, res){
+	
+    if(req.query.mapzip){
+    	
+        try{
+        	
+            var fileName = req.query.mapzip,
+	            filePath = path.dirname() + "/" + config.mapInfoPath + '/' + fileName,
+	            stat = fs.statSync(filePath);
+            res.writeHead(200, {
+                "Content-type": "application/octet-stream",
+                "Content-disposition": "attachment; filename=map.zip",
+                "Content-Length": stat.size
+            });
+
+            var readStream = fs.createReadStream(filePath);
+
+            // We replaced all the event handlers with a simple call to util.pump()
+            readStream.pipe(res);
+
+        }catch(e){
+
+            log.error(e);
+            res.json(400, {
+            	msg: "file doesn't exist"
+            });             
+
+        }
+    }
+	
+};
+
+// Function for package map zip of all floors in specific building
+exports.packageMapzip = function(req, res){
+	
+	if(req.body._id){
+		
+		utilityS.packageMapzip(req.body._id, function(errorObj){
+
+			if(errorObj.code != errorResInfo.SUCCESS.code){
+
+				res.json(errorObj.code, {
+					msg: errorObj.msg
+				});
+
+			}else{
+
+				res.json(errorObj.code, errorObj.building);
+
+			}
+
+		});
+		
+	} else {
+		
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		});			
+		
 	}
 	
 };
