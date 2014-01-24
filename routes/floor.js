@@ -79,26 +79,36 @@ exports.read = function(req, res) {
 // GET Interface for list floors of specific building
 exports.list = function(req, res) {
 
-	Floor.find({
+	if(req.query.buildingId) {
 
-		buildingId: req.query.buildingId
+		Floor.find({
 
-	}).sort({layer: -1}).execFind(function(err, floors){
+			buildingId: req.query.buildingId
 
-		if (err){
+		}).sort({layer: -1}).execFind(function(err, floors){
 
-			log.error(err);
-			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-			}); 	
+			if (err){
 
-		} else {
+				log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				}); 	
 
-			res.send(errorResInfo.SUCCESS.code, floors);
+			} else {
 
-		}
+				res.json(errorResInfo.SUCCESS.code, floors);
 
-	});
+			}
+
+		});
+
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		});  
+
+	}		
 
 };
 
@@ -653,7 +663,7 @@ exports.uploadMapAndPath = function(req, res) {
 							                                        log.error(err);
 
 							                                    if (floor)
-							                                        res.send(200, floor);
+							                                        res.json(errorResInfo.SUCCESS.code, floor);
 
 							                                    // Delete temped path.xml
 							                                    fs.unlink(tmpPathPath, function(err){});
@@ -1064,8 +1074,153 @@ exports.uploadMapzip = function(req, res) {
 
 							                                 } else {
 
+							                                 	res.json( errorResInfo.SUCCESS.code, floor );
+
+											                    // Auto-package mapzip
+											                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
+							                                 
+							                                 }   
+
+							                                // Delete the temporary file
+							                                fs.unlink( tmpPath, function(err){} );
+
+							                            });
+
+						                            }
+
+						                        });
+
+						                    });
+
+					    				} else {
+
+				                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+				                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+				                			});
+
+					    				}
+
+					    			});                    			
+
+	                    		} else {
+
+					                log.error(err);
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									}); 
+
+	                    		}
+
+	                    	}
+
+	                    });
+
+	                } else {
+
+						res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+							msg: errorResInfo.INCORRECT_PARAMS.msg
+						}); 
+
+	                }
+
+				}
+
+            });
+
+        }else{
+
+            res.send( errorResInfo.SUCCESS.code, { msg: "File extension should be .zip or .rar." } );
+        }
+
+    }
+
+};
+
+
+// POST Interface for upload btlezip
+exports.uploadBtlezip = function(req, res) {
+	
+    if(req.body._id && req.files.btlezip){
+    	    	
+        // Get file name and extension
+        var fileName = req.files.btlezip.name,
+            extension = path.extname(fileName).toLowerCase() === '.zip' ? ".zip" : null ||
+                        path.extname(fileName).toLowerCase() === '.rar' ? ".rar" : null;
+
+        // Check file format by extension
+        if(extension){
+
+            // Get floor
+            Floor.findById(req.body._id, function(err, floor) {
+
+                if(err){
+
+                    log.error(err);
+					res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+						msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					});                      
+
+				} else {
+
+	                if(floor){
+
+	                    // Get the temporary location of the file
+	                    var tmpPath = req.files.btlezip.path;
+
+	                    // File path: /${USER._ID}/${BUILDING._ID}/${FLOOR._ID}
+	                    Building.findById( floor.buildingId, function(err, building) {
+
+	                    	if(err){
+
+				                log.error(err);
+								res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+									msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+								});                     		
+
+	                    	} else {
+
+	                    		if( building ) {
+
+					    			// Check permisssion
+					    			utilityS.validatePermission(req.user, building, Building.modelName, function(result){
+
+					    				if(result){
+
+						                    var webLocation = building.userId + "/" + building._id + "/" + floor.layer,
+						                        folderPath = path.dirname() + "/" + config.mapInfoPath + '/' + webLocation;
+
+						                    mkdirp(folderPath, function(err, dd) {
+						                    	
+						                        var targetPath = folderPath + "/btle" + extension;
+						                        		                        
+						                        fs.rename(tmpPath, targetPath, function(err) {
+
+						                            if (err) {
+
+						                                log.error(err);
+														res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+															msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+														});   						                                                            
+						                            
+						                            } else {
+
+							                            floor.btlezip = webLocation + "/btle" + extension;
+							                            floor.save(function(err, floor) {
+
+							                                if (err) {
+
+							                                    log.error(err);
+																res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+																	msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+																});   							                                    
+
+							                                 } else {
+
 							                                 	res.send( errorResInfo.SUCCESS.code, floor );
 
+											                    // Auto-package mapzip
+											                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
+							                                 
 							                                 }   
 
 							                                // Delete the temporary file
@@ -1386,6 +1541,9 @@ exports.uploadMap = function(req, res) {
 
 										                        res.send( errorResInfo.SUCCESS.code, floor );
 
+											                    // Auto-package mapzip
+											                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
+
 									                        }		                          
 
 									                        // Delete temped path.xml
@@ -1530,6 +1688,9 @@ exports.uploadPath = function(req, res) {
 									                        } else {
 
 										                        res.send( errorResInfo.SUCCESS.code, floor );
+
+											                    // Auto-package mapzip
+											                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
 
 									                        }		                          
 
@@ -1676,6 +1837,9 @@ exports.uploadRender = function(req, res) {
 
 										                        res.send( errorResInfo.SUCCESS.code, floor );
 
+											                    // Auto-package mapzip
+											                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
+
 									                        }		                          
 
 									                        // Delete temped path.xml
@@ -1821,6 +1985,9 @@ exports.uploadRegion = function(req, res) {
 
 										                        res.send( errorResInfo.SUCCESS.code, floor );
 
+											                    // Auto-package mapzip
+											                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
+
 										                        // Start to parse region
 									                            fs.readFile(targetPathPath, 'utf8', function (err, data) {
 									
@@ -1891,6 +2058,12 @@ exports.uploadRegion = function(req, res) {
 	}
 
 };
+
+
+// POST Interface for upload btle.zip
+exports.uploadBtlezip = function(req, res){
+
+}
 
 
 // Function for parse applist.xml file
