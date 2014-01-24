@@ -2,6 +2,7 @@
 	
 	<div class="panel-group" id="accordion">
 
+	  <!-- Building functions -->	
 	  <div class="panel panel-info">
 	    <div class="panel-heading">
 	      <h4 class="panel-title" >
@@ -11,12 +12,13 @@
 	    <div id="leftNavBarBuildingContent" class="panel-collapse collapse in">
 	      <div class="panel-body">
 	      	<ul>
-	      		<li class="selected-left-nav"><a href="/admin/building/list">Building List</a></li>
+	      		<li class="selected-left-nav"><a href="/admin/building/index">Building List</a></li>
 	      	</ul>
 	      </div>
 	    </div>
 	  </div>
 
+	   <!-- Resource functions -->	
 	  <div class="panel panel-info">
 	    <div class="panel-heading">
 	      <h4 class="panel-title">
@@ -32,6 +34,7 @@
 	    </div>
 	  </div>
 
+	   <!-- User functions -->	
 	  <div class="panel panel-info">
 	    <div class="panel-heading">
 	      <h4 class="panel-title">	        
@@ -46,6 +49,39 @@
 	      </div>
 	    </div>
 	  </div>
+
+	   <!-- Feedback functions -->	
+	  <div class="panel panel-info">
+	    <div class="panel-heading">
+	      <h4 class="panel-title">	        
+	        <a data-toggle="collapse" data-parent="#accordion" href="#leftNavBarFeedbackContent">Feedback</a>
+	      </h4>
+	    </div>
+	    <div id="leftNavBarFeedbackContent" class="panel-collapse collapse">
+	      <div class="panel-body">
+	      	<ul>
+	      		<li class="selected-left-nav"><a href="/admin/feedback/index">Feedback List</a></li>
+	      	</ul>
+	      </div>
+	    </div>
+	  </div>	  
+
+	   <!-- Google Analytics functions -->	
+	  <div class="panel panel-info">
+	    <div class="panel-heading">
+	      <h4 class="panel-title">	        
+	        <a data-toggle="collapse" data-parent="#accordion" href="#leftNavBarStatisticContent">Statistic</a>
+	      </h4>
+	    </div>
+	    <div id="leftNavBarStatisticContent" class="panel-collapse collapse">
+	      <div class="panel-body">
+	      	<ul>
+	      		<li class="selected-left-nav"><a href="https://www.google.com/analytics/web" target="_blank">Google Analytics</a></li>
+	      	</ul>
+	      </div>
+	    </div>	    
+	  </div>	
+
 
 	</div>
 
@@ -66,6 +102,11 @@
 
 			$("div.left-navbar div.panel-collapse").removeClass('in');
 			$("#leftNavBarUserContent").addClass('in');
+
+		} else if( url.indexOf('feedback') != -1 ) {
+
+			$("div.left-navbar div.panel-collapse").removeClass('in');
+			$("#leftNavBarFeedbackContent").addClass('in');
 
 		}
 
