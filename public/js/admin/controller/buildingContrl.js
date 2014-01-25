@@ -371,10 +371,24 @@ function uploadImage(e, selectedBuilding, $scope, $rootScope){
 	var options = {
 
 		beforeSend : function(){ // pre-submit callback
-			inputFields.attr('disabled');
+
+			// Hide error msg block
 			errorMsgObj.hide();
-			uploadButton.button("loading");
-			return true;
+
+			// Check both file upload
+			if(!$(inputFields[1]).val()){
+				
+				errorMsgObj.find('.errorText').text("File is empty!");	
+				errorMsgObj.show();	
+				return false
+				
+			}else{
+				inputFields.attr('disabled');
+				errorMsgObj.hide();
+				uploadButton.button("loading");
+				return true;
+			}
+
 		},
 		uploadProgress : function(event, position, total, percent){},
 		success : function(res, statusText){ // post-submit callback

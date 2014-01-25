@@ -22,6 +22,11 @@
 	font-size: 14px;
 }
 
+#add-block .form-control{
+	max-width: 280px;
+	display: inline;
+}
+
 input.add{
 	width:300px; 
 	display:inline;

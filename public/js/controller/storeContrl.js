@@ -120,34 +120,41 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 				addButton.button('reset');
 				closeButton.show();
 				closeButtonTop.show();
-	
-				if(res.msg){
-	
-					// Show error msg
-					errorMsgObj.find(".errorText").text(res.msg);
-					errorMsgObj.show();
-	
-				}else{
 					
-					// add new store
-					if(res.icon)
-						res.icon = "/" + imagePath + "/" + res.icon;
-					else
-						res.icon = "/img/no-image.png";						
-					$rootScope.floor.stores.push(res);
-					
-					// Update size
-					$rootScope.floor.stores.size++; 
-					
-					// Clean all fields and close dialog
-					inputFields.val("");
-					form.parent().parent().parent().modal('hide');
-					
-			    	// Show success msg
-					$().toastmessage('showSuccessToast', "Create successfully");					
-					
-				}
-	
+				// add new store
+				if(res.icon)
+					res.icon = "/" + imagePath + "/" + res.icon;
+				else
+					res.icon = "/img/no-image.png";						
+				$rootScope.floor.stores.push(res);
+				
+				// Update size
+				$rootScope.floor.stores.size++; 
+				
+				// Clean all fields and close dialog
+				inputFields.val("");
+				form.parent().parent().parent().modal('hide');
+				
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Create successfully");					
+						
+			}, function(res){
+
+				// Enable all fields
+				inputFields.removeAttr('disabled');
+				floorObj.removeAttr('disabled');
+				
+				// Enable all buttons
+				addButton.button('reset');
+				closeButton.show();
+				closeButtonTop.show();			
+
+				// Show error msg
+				var errorMsg = res && res.data && res.data.msg;
+				errorMsgObj.find(".errorText").text(errorMsg);
+				errorMsgObj.show();
+				$().toastmessage('showErrorToast', errorMsg);						        
+
 			});
 	
 		}		
