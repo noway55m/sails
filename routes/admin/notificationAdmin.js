@@ -23,6 +23,7 @@ exports.emailSend = function(req, res) {
             content = req.body.content,
 			mailOptions = {
 				from : mailer.defaultOptions.from, // sender address
+				to : "sails-member@gmail.com", // default member group
 				subject : "Sails Cloud Announce", // Subject line
 				text : "Sails Cloud Announce", // plaintext body
 				html : content
@@ -74,12 +75,12 @@ exports.emailSend = function(req, res) {
 									var userEmails = "";
 									for(var p=0; p<users.length; p++) {
 										var theEmail = users[p].username.indexOf("@") == -1 ? "" : users[p].username;
-										userEmails += theEmail;
+										userEmails += theEmail + ",";
 									}
 									console.log("userEmails: " + userEmails);
 
 									// Send email
-									mailOptions.to = userEmails;
+									mailOptions.bcc = userEmails;
 									mailer.sendMail(mailOptions, function(error, response) {
 										if (error) {
 											log.error(error);
@@ -114,7 +115,7 @@ exports.emailSend = function(req, res) {
         	});
 
         	// Send email
-        	mailOptions.to = emails;
+        	mailOptions.bcc = emails;
 			mailer.sendMail(mailOptions, function(error, response) {
 				if (error) {
 					log.error(error);
