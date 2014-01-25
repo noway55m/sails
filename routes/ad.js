@@ -27,13 +27,21 @@ exports.list = function(req, res) {
 		
 		}, function(err, ads) {
 			
-			if(err)
+	        if (err){
+
 				log.error(err);
-			
-			var adsObj = [];
-			for(var i=0; i<ads.length; i++)
-				adsObj[i] = formatObjectDate(ads[i]);			
-			res.send(200, adsObj);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});  				
+
+	        } else {
+
+				var adsObj = [];
+				for(var i=0; i<ads.length; i++)
+					adsObj[i] = formatObjectDate(ads[i]);			
+				res.json( errorResInfo.SUCCESS.code, adsObj);
+
+	        }
 
 		});
 

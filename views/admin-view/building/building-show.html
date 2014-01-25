@@ -113,7 +113,8 @@
 								<th>region</th>
 								<th>mapzip</th>
 								<th>applist</th>
-								<th>lastXmlUpdateTime</th>																			
+								<th>btlezip</th>								
+								<th>lastXmlUpdateTime</th>							
 							</thead>
 							<tbody>
 								<tr ng-repeat="floor in floorUp" id="{{floor._id}}">				
@@ -153,6 +154,11 @@
 											<span class="glyphicon glyphicon-download" ng-bind="floor.applist"></span>
 										</a>
 									</td>
+									<td>
+										<a href="/admin/floor/getBtlezip?btlezip={{floor.btlezip}}" target="_blank" ng-show="floor.btlezip">
+											<span class="glyphicon glyphicon-download" ng-bind="floor.btlezip"></span>
+										</a>
+									</td>									
 									<td ng-bind="floor.lastXmlUpdateTime"></td>
 									<td>
 										<a data-toggle="modal" class="btn btn-default" href="#floor-edit-dialog" 
@@ -186,7 +192,8 @@
 								<th>region</th>
 								<th>mapzip</th>
 								<th>applist</th>
-								<th>lastXmlUpdateTime</th>																			
+								<th>btlezip</th>		
+								<th>lastXmlUpdateTime</th>	
 							</thead>
 							<tbody>
 								<tr ng-repeat="floor in floorDown" id="{{floor._id}}">				
@@ -226,6 +233,11 @@
 											<span class="glyphicon glyphicon-download" ng-bind="floor.applist"></span>
 										</a>
 									</td>
+									<td>
+										<a href="/admin/floor/getBtlezip?btlezip={{floor.btlezip}}" target="_blank" ng-show="floor.btlezip">
+											<span class="glyphicon glyphicon-download" ng-bind="floor.btlezip"></span>
+										</a>
+									</td>									
 									<td ng-bind="floor.lastXmlUpdateTime"></td>
 									<td>
 										<a data-toggle="modal" class="btn btn-default" href="#floor-edit-dialog" 

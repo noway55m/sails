@@ -44,7 +44,7 @@ exports.read = function(req, res) {
 
 				if (floor) {
 
-			    	res.send( errorResInfo.SUCCESS.code, floor );
+			    	res.json( errorResInfo.SUCCESS.code, floor );
 					
 				} else {
 
@@ -171,7 +171,7 @@ exports.create = function(req, res) {
 
 									} else {
 
-										res.send( errorResInfo.SUCCESS.code, floor );
+										res.json( errorResInfo.SUCCESS.code, floor );
 
 		                                var floorFolderPath = path.dirname() + "/" + config.mapInfoPath + "/" + building.userId + "/" + building.id + "/" + layer;
 
@@ -250,7 +250,7 @@ exports.update = function(req, res) {
 
 	                	} else {
 
-		                    res.send(errorResInfo.SUCCESS.code, floor);
+		                    res.json(errorResInfo.SUCCESS.code, floor);
 
 		                    // Auto-package mapzip
 		                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
@@ -595,11 +595,19 @@ exports.uploadMapAndPath = function(req, res) {
 					                                floor.lastXmlUpdateTime = new Date();                        
 					                                floor.save(function(err, floor) {
 
-					                                    if (err)
-					                                        log.error(err);
+					                                    if (err) {
 
-					                                    if (floor)
-					                                        res.send(200, floor);
+						                                	log.error(err);
+															res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+																msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+															}); 
+
+					                                    } else {
+
+						                                    if (floor)
+						                                        res.json( errorResInfo.SUCCESS.code, floor);
+
+					                                    }
 
 					                                    // Delete temped path.xml
 					                                    fs.unlink(tmpPathPath, function(err){});
@@ -623,7 +631,7 @@ exports.uploadMapAndPath = function(req, res) {
 
 					                                } else {
 
-					                                	res.send( errorResInfo.SUCCESS.code, floor );
+					                                	res.json( errorResInfo.SUCCESS.code, floor );
 
 					                                }
 					                                    
@@ -767,7 +775,7 @@ exports.uploadRenderAndRegion = function(req, res) {
 
 									                            } else {
 
-										                            res.send( errorResInfo.SUCCESS.code, floor);
+										                            res.json( errorResInfo.SUCCESS.code, floor);
 
 												                    // Auto-package mapzip
 												                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
@@ -839,44 +847,12 @@ exports.uploadRenderAndRegion = function(req, res) {
 
 };
 
-// GET Interface for get mapzip file of specific building
-exports.getMapzip = function(req, res){
-	
-    if(req.query.mapzip){
-
-        try{
-        	
-            var fileName = req.query.mapzip,
-            	filePath = path.dirname() + "/" + config.mapInfoPath + '/' + fileName,
-            	stat = fs.statSync(filePath);            
-            res.writeHead(200, {
-                "Content-type": "application/octet-stream",
-                "Content-disposition": "attachment; filename=map.zip",
-                "Content-Length": stat.size
-            });
-
-            var readStream = fs.createReadStream(filePath);
-
-            // We replaced all the event handlers with a simple call to util.pump()
-            readStream.pipe(res);
-
-        }catch(e){
-
-            log.error(e);
-            res.json(400, {
-            	msg: "file doesn't exist"
-            });            
-
-        }
-        
-    }
-
-};
 
 // GET Interface for get map.xml, path.xml, render, region.xml and applist.xml
 exports.getFile = function(req, res){
 	
-	if(req.query.map || req.query.path || req.query.render || req.query.region){
+	if(req.query.map || req.query.path || req.query.render || req.query.region ||
+		req.query.mapzip || req.query.btlezip){
 		
 		// Get file name
 		var fileName, resFileName;
@@ -900,17 +876,28 @@ exports.getFile = function(req, res){
 			fileName = req.query.region;
 			resFileName = "region.xml";	
 
-		} else {
+		} else if( req.query.aplist ) {
 
 			fileName = req.query.aplist;
 			resFileName = "aplist.xml";	
 
+		} else if( req.query.mapzip ) {
+
+			fileName = req.query.mapzip;
+			resFileName = "map.zip";	
+
+		} else if( req.query.btlezip ) {
+
+			fileName = req.query.btlezip;
+			resFileName = "btle.zip";	
+
 		}
+
         var filePath = path.dirname() + "/" + config.mapInfoPath + '/' + fileName;
         try{
         	
 	        var stat = fs.statSync(filePath);
-            res.writeHead(200, {
+            res.writeHead( errorResInfo.SUCCESS.code, {
                 "Content-type": "application/octet-stream",
                 "Content-disposition": "attachment; filename=" + resFileName,
                 "Content-Length": stat.size
@@ -924,7 +911,7 @@ exports.getFile = function(req, res){
         }catch(e){
         	
             log.error(e);
-            res.json(400, {
+            res.json( errorResInfo.INCORRECT_PARAMS.code, {
             	msg: "file doesn't exist"
             });
 
@@ -1009,7 +996,7 @@ exports.uploadMapzip = function(req, res) {
 
 					                                 } else {
 
-					                                 	res.send( errorResInfo.SUCCESS.code, floor );
+					                                 	res.json( errorResInfo.SUCCESS.code, floor );
 
 									                    // Auto-package mapzip
 									                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});							                                 
@@ -1054,7 +1041,7 @@ exports.uploadMapzip = function(req, res) {
 
         }else{
 
-            res.send( errorResInfo.SUCCESS.code, { msg: "File extension should be .zip or .rar." } );
+            res.json( errorResInfo.SUCCESS.code, { msg: "File extension should be .zip or .rar." } );
         }
 
     }
@@ -1140,7 +1127,7 @@ exports.uploadBtlezip = function(req, res) {
 
 							                                 } else {
 
-							                                 	res.send( errorResInfo.SUCCESS.code, floor );
+							                                 	res.json( errorResInfo.SUCCESS.code, floor );
 
 											                    // Auto-package mapzip
 											                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
@@ -1195,7 +1182,7 @@ exports.uploadBtlezip = function(req, res) {
 
         }else{
 
-            res.send( errorResInfo.SUCCESS.code, { msg: "File extension should be .zip or .rar." } );
+            res.json( errorResInfo.SUCCESS.code, { msg: "File extension should be .zip or .rar." } );
         }
 
     }
@@ -1221,7 +1208,7 @@ exports.uploadAplist = function(req, res) {
 					log.error(err);
 					
 					// Internal server error
-					res.send(errorResInfo.INTERNAL_SERVER_ERROR.code, {
+					res.json(errorResInfo.INTERNAL_SERVER_ERROR.code, {
 						msg: errorResInfo.INTERNAL_SERVER_ERROR.msg 
 					});				
 					
@@ -1251,7 +1238,7 @@ exports.uploadAplist = function(req, res) {
 							        	if (err){
 							        		
 							                log.error(err);
-											res.send(errorResInfo.INTERNAL_SERVER_ERROR.code, {
+											res.json(errorResInfo.INTERNAL_SERVER_ERROR.code, {
 												msg: errorResInfo.INTERNAL_SERVER_ERROR.msg 
 											});					        		
 							        		
@@ -1270,7 +1257,7 @@ exports.uploadAplist = function(req, res) {
 									                log.error(err);
 									                
 													// Internal server error
-													res.send(errorResInfo.INTERNAL_SERVER_ERROR.code, {
+													res.json(errorResInfo.INTERNAL_SERVER_ERROR.code, {
 														msg: errorResInfo.INTERNAL_SERVER_ERROR.msg 
 													});	
 								                    
@@ -1284,7 +1271,7 @@ exports.uploadAplist = function(req, res) {
 											                log.error(err);										                
 											                
 															// Internal server error
-															res.send(errorResInfo.INTERNAL_SERVER_ERROR.code, {
+															res.json(errorResInfo.INTERNAL_SERVER_ERROR.code, {
 																msg: errorResInfo.INTERNAL_SERVER_ERROR.msg 
 															});	
 							                            							                            	
@@ -1337,7 +1324,7 @@ exports.uploadAplist = function(req, res) {
 					}else{
 						
 						// floorId is not correct
-						res.send(errorResInfo.INCORRECT_PARAMS.code, {
+						res.json(errorResInfo.INCORRECT_PARAMS.code, {
 							msg: errorResInfo.INCORRECT_PARAMS.msg 
 						});						
 						
@@ -1350,7 +1337,7 @@ exports.uploadAplist = function(req, res) {
 		}else{
 
 			// file is not xml type
-			res.send(errorResInfo.INCORRECT_FILE_TYPE.code, {
+			res.json(errorResInfo.INCORRECT_FILE_TYPE.code, {
 				msg : errorResInfo.INCORRECT_FILE_TYPE.msg + " - applist have to be .xml format"
 			});
 
@@ -1359,7 +1346,7 @@ exports.uploadAplist = function(req, res) {
 	}else{
 		
 		// params is incorrect
-		res.send(errorResInfo.INCORRECT_PARAMS.code, {
+		res.json(errorResInfo.INCORRECT_PARAMS.code, {
 			msg: errorResInfo.INCORRECT_PARAMS.msg 
 		});
 		
@@ -1446,7 +1433,7 @@ exports.uploadMap = function(req, res) {
 							                        
 							                        } else {
 
-								                        res.send( errorResInfo.SUCCESS.code, floor );
+								                        res.json( errorResInfo.SUCCESS.code, floor );
 
 									                    // Auto-package mapzip
 									                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});							                                 
@@ -1579,7 +1566,7 @@ exports.uploadPath = function(req, res) {
 							                        
 							                        } else {
 
-								                        res.send( errorResInfo.SUCCESS.code, floor );
+								                        res.json( errorResInfo.SUCCESS.code, floor );
 
 									                    // Auto-package mapzip
 									                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});							                                 
@@ -1712,7 +1699,7 @@ exports.uploadRender = function(req, res) {
 							                        
 							                        } else {
 
-								                        res.send( errorResInfo.SUCCESS.code, floor );
+								                        res.json( errorResInfo.SUCCESS.code, floor );
 
 									                    // Auto-package mapzip
 									                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});							                                 
@@ -1845,7 +1832,7 @@ exports.uploadRegion = function(req, res) {
 							                        
 							                        } else {
 
-								                        res.send( errorResInfo.SUCCESS.code, floor );
+								                        res.json( errorResInfo.SUCCESS.code, floor );
 
 									                    // Auto-package mapzip
 									                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});							                                 

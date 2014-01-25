@@ -229,7 +229,8 @@ app.get('/admin/floor/getPath', isAdmin, floorAdmin.getFile);
 app.get('/admin/floor/getRender', isAdmin, floorAdmin.getFile);
 app.get('/admin/floor/getRegion', isAdmin, floorAdmin.getFile);
 app.get('/admin/floor/getAplist', isAdmin, floorAdmin.getFile);
-app.get('/admin/floor/getMapzip', isAdmin, floorAdmin.getMapzip);
+app.get('/admin/floor/getMapzip', isAdmin, floorAdmin.getFile);
+app.get('/admin/floor/getBtlezip', isAdmin, floorAdmin.getFile);
 app.post('/admin/floor/uploadBtlezip', isAdmin, floorAdmin.uploadBtlezip);
 
 // Admin store interfaces

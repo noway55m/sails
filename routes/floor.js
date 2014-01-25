@@ -2060,12 +2060,6 @@ exports.uploadRegion = function(req, res) {
 };
 
 
-// POST Interface for upload btle.zip
-exports.uploadBtlezip = function(req, res){
-
-}
-
-
 // Function for parse applist.xml file
 function parseApplist(applistXMLString, floorId){
 	

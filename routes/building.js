@@ -47,7 +47,7 @@ exports.listPublic = function(req, res){
 
         } else {
 
-	        res.send(errorResInfo.SUCCESS.code, buildings);
+	        res.json(errorResInfo.SUCCESS.code, buildings);
 
         }
             
