@@ -31,7 +31,8 @@ var express = require('express')
   , adAdmin = require('./routes/admin/adAdmin')      
   , resourceAdmin = require('./routes/admin/resourceAdmin')
   , userAdmin = require('./routes/admin/userAdmin')
-  , feedbackAdmin = require('./routes/admin/feedbackAdmin')  
+  , feedbackAdmin = require('./routes/admin/feedbackAdmin')
+  , notificationAdmin = require('./routes/admin/notificationAdmin')    
   , config = require('./config/config.js');
 
 
@@ -274,6 +275,11 @@ app.post('/admin/user/changePassword', isAdmin, userAdmin.changePassword);
 // Admin feedback interfaces
 app.get('/admin/feedback/index', isAdmin,  feedbackAdmin.index);
 app.get('/admin/feedback/list', isAdmin, feedbackAdmin.list); 
+
+
+// Admin notification interfaces
+app.get('/admin/notification/email', isAdmin,  notificationAdmin.email);
+app.post('/admin/notification/emailSend', isAdmin,  notificationAdmin.emailSend);
 
 
 /**************** Social URL Mapping ****************/
