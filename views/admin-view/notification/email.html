@@ -94,24 +94,30 @@
 				if(!$("#all-users").get(0).checked)
 					emails = $("#users").val();
 
-				var content = CKEDITOR.instances.editor1.getData();
-				var data = {
-					emails : emails,
-					content : content
-				}
+				var content = CKEDITOR.instances.editor1.getData(),
+					data = {
+						emails : emails,
+						content : content
+					},
+					sendButton = $(this),
+					inputFields =  $("html").find("input"),
+					textarea = $("html").find("textarea");
 
 				console.log(data);
-
 				if(!emails) {
 
 					alert("email list is empty");
 
 				} else {
 
+					// Disable all input fields and textarea
+					inputFields.attr("disabled", "disabled");
+					textarea.attr("disabled", "disabled");
+
 					// Change button status
 					$(this).button("loading");
 
-					// Ajax to server
+					//Ajax to server
 					$.ajax({
 					    type: "POST",
 					    url: "/admin/notification/emailSend",
@@ -120,10 +126,24 @@
 					    dataType: "json",
 					    success: function(data){
 
+							// Enable all input fields and textarea
+							inputFields.removeAttr("disabled");
+							textarea.removeAttr("disabled");
+
+							// Change button status
+							sendButton.button("reset");
+
 					    	alert(data);
 
 					    },
 					    failure: function(errMsg) {
+
+							// Enable all input fields and textarea
+							inputFields.removeAttr("disabled");
+							textarea.removeAttr("disabled");
+
+							// Change button status
+							sendButton.button("reset");
 
 					        alert(errMsg);
 
@@ -133,6 +153,18 @@
 				}
 
 			});
+
+
+			// Auto-complete by JQuery UI
+		    $( "#users" ).autocomplete({
+		      source: "/admin/user/findByUsername",
+		      minLength: 2,
+		      select: function( event, ui ) {
+		        log( ui.item ?
+		          "Selected: " + ui.item.value + " aka " + ui.item.id :
+		          "Nothing selected, input was " + this.value );
+		      }
+		    });
 
 
 		});
