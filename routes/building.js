@@ -699,7 +699,7 @@ exports.uploadImage = function(req, res) {
 
 		}else{
 
-			res.send( errorResInfo.INCORRECT_FILE_TYPE.code, { msg: "File extension should be .png or .jpg or gif" });
+			res.json( errorResInfo.INCORRECT_FILE_TYPE.code, { msg: "File extension should be .png or .jpg or gif" });
 
 		}
 

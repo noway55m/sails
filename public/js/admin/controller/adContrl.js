@@ -148,27 +148,18 @@ function AdListCtrl($scope, Ad, $rootScope) {
 			},
 			uploadProgress : function(event, position, total, percent){},
 			success : function(res, statusText){ // post-submit callback
-				// Show error msg
-				if(res.msg){
-
-					errorMsgObj.find(".errorText").text(res.msg);
-					errorMsgObj.show();
-
-				}else{
 					
-					// Update image
-					$scope.$apply(function () {
-						ad.image = "/" + imagePath + "/" + res;
-					});
+				// Update image
+				$scope.$apply(function () {
+					ad.image = "/" + imagePath + "/" + res;
+				});
 
-					// Clone ad	
-					$rootScope.selectedAdClone = angular.copy(ad);		
-			    	
-			    	// Show success msg
-					$().toastmessage('showSuccessToast', "Upload successfully");			    	
-					
-				}
-
+				// Clone ad	
+				$rootScope.selectedAdClone = angular.copy(ad);		
+		    	
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Upload successfully");			    	
+				
 				// Hide button
 				uploadButton.button("reset");
 				uploadButton.hide();
@@ -181,7 +172,8 @@ function AdListCtrl($scope, Ad, $rootScope) {
 				uploadButton.button("reset");
 
 				// Show error msg
-				$().toastmessage('showErrorToast', "Fail to upload file");		        
+				var resText = ( res.responseJSON && res.responseJSON.msg ) || "Fail to upload image"
+				$().toastmessage('showErrorToast', resText );	        
 
 			},	
 

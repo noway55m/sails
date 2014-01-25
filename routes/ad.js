@@ -1,5 +1,6 @@
 var log = require('log4js').getLogger(), 
 	utilityS = require("./utility"),
+	Store = require("../model/store"),	
 	Ad = require("../model/ad"),
 	crypto = require('crypto'),
 	fs = require('fs'),
@@ -49,7 +50,7 @@ exports.list = function(req, res) {
 
 };
 
-// Interface for read specific ad of store
+// Interface for read specific ad of ad
 exports.read = function(req, res){
 	
 	if(req.params._id) {
@@ -65,10 +66,24 @@ exports.read = function(req, res){
 
 			} else {
 
-				if(ad){
+				if(ad) {
 
-					var adObj = formatObjectDate(ad);
-					res.json( errorResInfo.SUCCESS.code, adObj );
+					utilityS.validatePermission(req.user, ad, Ad.modelName, function(result) {
+
+			    		if(result){
+
+							var adObj = formatObjectDate(ad);
+							res.json( errorResInfo.SUCCESS.code, adObj );
+
+			    		} else {
+
+                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+                			});
+
+			    		}
+
+					}, true);					
 				
 				} else {
 
@@ -86,35 +101,77 @@ exports.read = function(req, res){
 	
 }; 
 
-// Interface for create the new ad of store
+// Interface for create the new ad of ad
 exports.create = function(req, res) {
 
 	if (req.body.storeId && req.body.name && req.body.price && req.body.desc) {
 
-		new Ad({
 
-			name : req.body.name,
-			price : req.body.price,
-			desc : req.body.desc,
-			startTime : new Date(),
-			endTime : new Date(),
-			storeId : req.body.storeId
+		Store.findById( req.body.storeId, function(error, store) {
 
-		}).save(function(err, ad) {
+			if(error) {
 
-			if (err) {
-
-				log.error(err);
+				log.error(error);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
 					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-				});
+				}); 				
 
 			} else {
 
-				if (ad) {
+				if( store ) {
 
-					var adObj = formatObjectDate(ad);
-					res.json(errorResInfo.SUCCESS.code, adObj);
+					// Check permisssion
+	    			utilityS.validatePermission(req.user, store, Store.modelName, function(result){
+
+	    				if(result) {
+
+	    					// Create new ad
+							new Ad({
+
+								name : req.body.name,
+								price : req.body.price,
+								desc : req.body.desc,
+								startTime : new Date(),
+								endTime : new Date(),
+								storeId : req.body.storeId
+
+							}).save(function(err, ad) {
+
+								if (err) {
+
+									log.error(err);
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									});
+
+								} else {
+
+									if (ad) {
+
+										var adObj = formatObjectDate(ad);
+										res.json(errorResInfo.SUCCESS.code, adObj);
+
+									}
+
+								}
+
+							});
+
+	    				} else {
+
+                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+                			});
+
+	    				}
+
+	    			});
+
+				} else {
+
+        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+        				msg: errorResInfo.INCORRECT_PARAMS.msg
+        			});  
 
 				}
 
@@ -135,72 +192,145 @@ exports.create = function(req, res) {
 // Interface for create the new store in specific floor of specific building
 exports.update = function(req, res){
 	
-	log.info(req.body);
-	if(req.body._id && req.body.storeId && req.body.name && req.body.price && 
-			req.body.desc){
+	if(req.body._id && req.body.storeId && req.body.name && req.body.price && req.body.desc){
 		
 		Ad.findById(req.body._id, function(err, ad) {
 			
-			if (err)
-				log.error(err);
-			
-			if (ad) {				
-				
-				ad.name = req.body.name;
-				ad.price = req.body.price;				
-				ad.desc = req.body.desc;
-				ad.startTime = new Date(req.body.startTime);
-				ad.endTime = new Date(req.body.endTime);
-				// ad.storeId = req.body.storeId;				
-				ad.save(function(err, ad){
+			if (err) {
+
+				log.error(error);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				}); 	
+
+			} else {
+
+				if (ad) {				
 					
-					if(err)
-						log.error(err);
-					
-					if(ad){
-						var adObj = formatObjectDate(ad);			
-						res.send(200, adObj);											
-					}
-					
-				});
+	    			// Check permisssion
+	    			utilityS.validatePermission(req.user, ad, Ad.modelName, function(result) {
+
+	    				if(result) {
+
+							ad.name = req.body.name;
+							ad.price = req.body.price;				
+							ad.desc = req.body.desc;
+							ad.startTime = new Date(req.body.startTime);
+							ad.endTime = new Date(req.body.endTime);
+							// ad.storeId = req.body.storeId;				
+							ad.save(function(err, ad){
+								
+								if(err) {
+
+									log.error(error);
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									}); 
+
+								} else {
+
+									var adObj = formatObjectDate(ad);			
+									res.json( errorResInfo.SUCCESS.code, adObj);
+
+								}
+								
+							});
+
+	    				} else {
+
+                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+                			});
+
+	    				}	    					
+
+	    			})
+
+				} else {
+
+        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+        				msg: errorResInfo.INCORRECT_PARAMS.msg
+        			}); 
+
+				}				
+
 			}
 
 		});
+
 	}
+
 };		
 
 // POST Interface of delete specific ad
 exports.del = function(req, res){
 	
 	if(req.body._id){
-				
-		utilityS()
 		
-		Ad.findById(req.body._id, function(err, ad){
+		Ad.findById( req.body._id, function(err, ad) {
 			
-			if(err)
-				log.error(err);
-			
-			if(ad){
-				
-				// Delete ad image if exist
-				if(ad.image){
-					var oldImgPath = path.resolve(image_path + "/" + ad.image);
-					fs.unlink(oldImgPath, function(err){
-						log.error(err);
-					});				
+			if(err) {
+
+				log.error(error);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				}); 
+
+			} else {
+
+				if(ad) {
+					
+	    			// Check permisssion
+	    			utilityS.validatePermission(req.user, ad, Ad.modelName, function(result) {
+
+	    				if(result) {
+
+							// Delete ad image if exist
+							if(ad.image){
+								var oldImgPath = path.resolve(image_path + "/" + ad.image);
+								fs.unlink(oldImgPath, function(err){
+									log.error(err);
+								});				
+							}
+							
+							// Remove ad
+							ad.remove(function(err){
+								
+								if(err) {
+
+									log.error(error);
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									}); 
+
+								} else {
+
+									res.json( errorResInfo.SUCCESS.code, {
+										_id: req.body._id
+									});
+
+								}
+
+							});
+
+	    				} else {
+
+                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+                			});
+
+	    				}	    					
+
+	    			})
+					
+				} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					}); 
+
 				}
-				
-				// Remove ad
-				ad.remove(function(err){
-					if(err)
-						log.error(err);
-					else
-						res.json(200, {
-							_id: req.body._id
-						});						
-				});
-				
+
 			}
 			
 		});
@@ -248,13 +378,18 @@ exports.uploadImage = function(req, res) {
 						
 						log.info("image: " + ad.image);
 						log.info("targetName: " + targetFileName);						
-						if(ad.image != targetFileName){
+						if(ad.image != targetFileName) {
 							
 							log.info("Update");
-							fs.rename(tmpPath, targetPath, function(err) {			
-								if(err){									
+							fs.rename(tmpPath, targetPath, function(err) {
+
+								if(err){
+
 									log.error(err);
-									res.send(200, "Server error, please try again later");									
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									});
+
 								}else{									
 
 									// Delete old image	if exist
@@ -267,8 +402,21 @@ exports.uploadImage = function(req, res) {
 									
 									// Update ad
 									ad.image = targetFileName;
-									ad.save(function(){
-										res.send(200, targetFileName);																			
+									ad.save(function(err, ad) {
+
+										if(err) {
+
+											log.error(err);
+											res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+												msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+											});
+
+										} else {
+
+											res.send( errorResInfo.SUCCESS.code, targetFileName );
+
+										}
+																													
 									});								
 								
 									// Delete the temporary file
@@ -279,15 +427,18 @@ exports.uploadImage = function(req, res) {
 								}										
 							});							
 							
-						}else{
+						} else {
 							
-							log.info("Same");
-							res.send(200,  targetFileName);							
+							log.info("Same file, no need to update image");
+							res.send( errorResInfo.SUCCESS.code, targetFileName );
+
 						}						
 						
-					}else{
+					} else {
 						
-						res.send(200, { msg: "This building does not exist" });
+	        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+	        				msg: errorResInfo.INCORRECT_PARAMS.msg
+	        			});  						
 						
 					}//end if
 					
@@ -295,11 +446,13 @@ exports.uploadImage = function(req, res) {
 				
 			});			
 			
-		}else{
+		} else {
 			
-			res.send(200, { msg: "File extension should be .png or .jpg or gif" });
-		}
-		
+			res.json( errorResInfo.INCORRECT_FILE_TYPE.code, { 
+				msg: "File extension should be .png or .jpg or gif" 
+			});
+
+		}		
 		
 	}	
 	

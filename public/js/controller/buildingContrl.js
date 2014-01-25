@@ -349,23 +349,15 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 			},
 			uploadProgress : function(event, position, total, percent){},
 			success : function(res, statusText){ // post-submit callback
-
-				// Show error msg
-				if(res.msg){
-					errorMsgObj.find(".errorText").text(res.msg);
-					errorMsgObj.show();
-				}else{
 					
-					// Update building 
-					$scope.$apply(function () {
-						building.icon = "/" + imagePath + "/" + res;
-				        $rootScope.buildingClone = angular.copy(building); // clone building						
-					});
-					
-			    	// Show success msg
-					$().toastmessage('showSuccessToast', "Upload successfully");									
-					
-				}
+				// Update building 
+				$scope.$apply(function () {
+					building.icon = "/" + imagePath + "/" + res;
+			        $rootScope.buildingClone = angular.copy(building); // clone building						
+				});
+				
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Upload successfully");									
 
 				// Hide button
 				uploadButton.button("reset");
@@ -373,6 +365,9 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 				return true;
 			},
 			error : function(res, status){
+
+				// Hide button
+				uploadButton.button("reset");
 
 				// Show error msg
 				var resText = ( res.responseJSON && res.responseJSON.msg ) || "Fail to upload image"

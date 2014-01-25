@@ -27,13 +27,21 @@ exports.list = function(req, res) {
 		
 		}, function(err, ads) {
 			
-			if(err)
-				log.error(err);
-			
-			var adsObj = [];
-			for(var i=0; i<ads.length; i++)
-				adsObj[i] = formatObjectDate(ads[i]);			
-			res.send(200, adsObj);
+			if(err) {
+
+				log.error(error);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				}); 
+
+			} else {
+
+				var adsObj = [];
+				for(var i=0; i<ads.length; i++)
+					adsObj[i] = formatObjectDate(ads[i]);			
+				res.json(errorResInfo.SUCCESS.code, adsObj);
+
+			}
 
 		});
 
@@ -127,72 +135,115 @@ exports.create = function(req, res) {
 // Interface for create the new store in specific floor of specific building
 exports.update = function(req, res){
 	
-	log.info(req.body);
-	if(req.body._id && req.body.storeId && req.body.name && req.body.price && 
-			req.body.desc){
+	if(req.body._id && req.body.storeId && req.body.name && req.body.price && req.body.desc){
 		
 		Ad.findById(req.body._id, function(err, ad) {
 			
-			if (err)
+			if (err) {
+
 				log.error(err);
-			
-			if (ad) {				
-				
-				ad.name = req.body.name;
-				ad.price = req.body.price;				
-				ad.desc = req.body.desc;
-				ad.startTime = new Date(req.body.startTime);
-				ad.endTime = new Date(req.body.endTime);
-				// ad.storeId = req.body.storeId;				
-				ad.save(function(err, ad){
-					
-					if(err)
-						log.error(err);
-					
-					if(ad){
-						var adObj = formatObjectDate(ad);			
-						res.send(200, adObj);											
-					}
-					
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
 				});
+
+			} else {
+
+				if (ad) {				
+					
+					ad.name = req.body.name;
+					ad.price = req.body.price;				
+					ad.desc = req.body.desc;
+					ad.startTime = new Date(req.body.startTime);
+					ad.endTime = new Date(req.body.endTime);
+					// ad.storeId = req.body.storeId;				
+					ad.save(function(err, ad){
+						
+						if(err) {
+
+							log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							});
+
+						} else {
+
+							var adObj = formatObjectDate(ad);			
+							res.json(errorResInfo.SUCCESS.code, adObj);
+
+						}
+						
+					});
+
+				} else {
+
+        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+        				msg: errorResInfo.INCORRECT_PARAMS.msg
+        			}); 
+
+				}
+
 			}
 
 		});
+
 	}
+
 };		
 
 // POST Interface of delete specific ad
 exports.del = function(req, res){
 	
 	if(req.body._id){
-				
-		utilityS()
-		
+						
 		Ad.findById(req.body._id, function(err, ad){
 			
-			if(err)
-				log.error(err);
-			
-			if(ad){
-				
-				// Delete ad image if exist
-				if(ad.image){
-					var oldImgPath = path.resolve(image_path + "/" + ad.image);
-					fs.unlink(oldImgPath, function(err){
-						log.error(err);
-					});				
+			if(err) {
+
+				log.error(error);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				}); 
+
+			} else {
+
+				if(ad){
+					
+					// Delete ad image if exist
+					if(ad.image){
+						var oldImgPath = path.resolve(image_path + "/" + ad.image);
+						fs.unlink(oldImgPath, function(err){
+							log.error(err);
+						});				
+					}
+					
+					// Remove ad
+					ad.remove(function(err){
+						
+						if(err) {
+
+							log.error(error);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							}); 
+
+						} else {
+
+							res.json( errorResInfo.SUCCESS.code, {
+								_id: req.body._id
+							});	
+
+						}
+					
+					});
+					
+				} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					});
+
 				}
-				
-				// Remove ad
-				ad.remove(function(err){
-					if(err)
-						log.error(err);
-					else
-						res.json(200, {
-							_id: req.body._id
-						});						
-				});
-				
+
 			}
 			
 		});
