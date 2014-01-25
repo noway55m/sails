@@ -3,13 +3,17 @@
   <head>
   
 	<!-- Head meta, css or library include -->
-	<% include ../../layout/head-include.html %>
+	<% include ../layout/head-include.html %>
 	
 	<!-- JQuery Html Editor - CKEditor -->
 	<script type="text/javascript" src="/js/jquery/jquery-ckeditor/ckeditor.js"></script>
 
 	<!-- admin page css -->	
 	<link href="/stylesheets/style-admin.css" rel="stylesheet">
+	
+	<!-- jquery ui -->
+	<link href="/stylesheets/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+	<script src="/js/jquery/jquery-ui-1.10.4.custom.min.js"></script>
 	
 	<!-- Title -->
     <title>Sails CMS - Email Notification</title>
@@ -40,7 +44,7 @@
 								<h4>Email User List:</h4>
 								<input id="all-users" class="form-control" type="checkbox" name="all" style="max-width:24px;height:24px;display:inline;" checked>
 								<span>all</span>
-								<input id="users" class="form-control" placeholder="Mail List" name="users" style="max-width:400px;display:none;margin-left:40px;">			
+								<input id="users" class="form-control" placeholder="Send email to specific emails by at least three char." name="users" style="max-width:400px;display:none;margin-left:40px;">			
 							</div>	
 							<hr>
 
@@ -103,8 +107,7 @@
 					inputFields =  $("html").find("input"),
 					textarea = $("html").find("textarea");
 
-				console.log(data);
-				if(!emails) {
+				if(!emails || ) {
 
 					alert("email list is empty");
 
@@ -115,7 +118,7 @@
 					textarea.attr("disabled", "disabled");
 
 					// Change button status
-					$(this).button("loading");
+					sendButton.attr("disabled", "disabled");
 
 					//Ajax to server
 					$.ajax({
@@ -124,28 +127,28 @@
 					    data: JSON.stringify(data),
 					    contentType: "application/json; charset=utf-8",
 					    dataType: "json",
-					    success: function(data){
+					    success: function(res){
 
 							// Enable all input fields and textarea
 							inputFields.removeAttr("disabled");
 							textarea.removeAttr("disabled");
 
 							// Change button status
-							sendButton.button("reset");
+							sendButton.removeAttr("disabled");
 
-					    	alert(data);
+							alert("Send to total " + res.total + " users");
 
 					    },
-					    failure: function(errMsg) {
+					    failure: function(res) {
 
 							// Enable all input fields and textarea
 							inputFields.removeAttr("disabled");
 							textarea.removeAttr("disabled");
 
 							// Change button status
-							sendButton.button("reset");
+							sendButton.removeAttr("disabled");
 
-					        alert(errMsg);
+					        alert(res.msg);
 
 					    }
 					});
@@ -156,21 +159,37 @@
 
 
 			// Auto-complete by JQuery UI
+			function split( val ) {
+				return val.split( /,\s*/ );
+			}
+			function extractLast( term ) {
+				return split( term ).pop();
+			}
+
 		    $( "#users" ).autocomplete({
-		      source: "/admin/user/findByUsername",
-		      minLength: 2,
-		      select: function( event, ui ) {
-		        log( ui.item ?
-		          "Selected: " + ui.item.value + " aka " + ui.item.id :
-		          "Nothing selected, input was " + this.value );
-		      }
+				source: function(req, res){					
+					$.getJSON( "/admin/user/findByUsername", {
+						term: extractLast( req.term )
+					}, res );
+				},
+				minLength: 3,
+		       focus: function() {		          
+					return false; // prevent value inserted on focus
+				},
+				select: function( event, ui ) {
+					var terms = split( this.value );		          
+					terms.pop(); // remove the current input					
+					terms.push( ui.item.value ); // add the selected item					
+					terms.push( "" ); // add placeholder to get the comma-and-space at the end
+					this.value = terms.join( ", " );
+					return false;
+				}
 		    });
 
 
 		});
 
 	</script>
-
 
   </body>
 </html>
