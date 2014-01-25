@@ -1,7 +1,7 @@
 .container{
 	width: 100%;
 	max-width: 3200px;
-	min-width: 1920px;
+	min-width: 2560px;
 }
 .left-navbar{
 	width: 200px;
@@ -34,8 +34,8 @@ input.add{
 }
 
 div.panel-default table > tbody > tr > td{
-	max-width: 110px;
-	min-width: 110px;
+	max-width: 190px;
+	min-width: 130px;
 	overflow-x: auto;
 	text-overflow: clip;
 }
