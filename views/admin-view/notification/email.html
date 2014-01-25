@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sails">
+  <head>
+  
+	<!-- Head meta, css or library include -->
+	<% include ../../layout/head-include.html %>
+	
+	<!-- JQuery Html Editor - CKEditor -->
+	<script type="text/javascript" src="/js/jquery/jquery-ckeditor/ckeditor.js"></script>
+
+	<!-- admin page css -->	
+	<link href="/stylesheets/style-admin.css" rel="stylesheet">
+	
+	<!-- Title -->
+    <title>Sails CMS - Email Notification</title>
+
+  </head>
+
+  <body>
+
+    <!-- Fixed Top Navigation Bar Template -->
+	<% include ../../layout/top-navbar.html %>
+
+	<!-- Main Container -->
+    <div class="container">
+
+		<div class="jumbotron">
+
+			<!-- left navigation bar -->
+			<% include ../layout/left-navbar.html %>
+			
+			<div style="padding-left:230px;">
+
+				<div class="panel panel-default">	
+					<div class="panel-heading">
+
+						<form>
+
+							<div>
+								<h4>Email User List:</h4>
+								<input id="all-users" class="form-control" type="checkbox" name="all" style="max-width:24px;height:24px;display:inline;" checked>
+								<span>all</span>
+								<input id="users" class="form-control" placeholder="Mail List" name="users" style="max-width:400px;display:none;margin-left:40px;">			
+							</div>	
+							<hr>
+
+							<h4>HTML Content:</h4>				        
+				            <textarea id="editor1" name="editor1" rows="10" cols="80">
+				                This is my textarea to be replaced with CKEditor.
+				            </textarea>
+				            <script>
+				                // Replace the <textarea id="editor1"> with a CKEditor
+				                // instance, using default configuration.
+				                CKEDITOR.replace( 'editor1' );
+				            </script>
+
+				        </form>
+				        <hr>
+
+						<button class="btn btn-primary" data-loading-text="Sending..." id="send-email" ng-click="addBuilding($event)">Send Email</button>
+						<div class="alert alert-danger error-msg">
+							<span class="label label-danger">Error</span> <span class="errorText"></span>
+						</div>
+
+					</div>	
+				</div>	
+
+
+			</div>
+
+		</div>
+
+	</div>	
+
+	<!-- Body library include -->
+	<% include ../layout/body-include.html	%>
+
+	<script>
+
+		$(document).ready(function(){
+
+			// Toggle user list while uncheck all checkbox
+			$("#all-users").click(function(){
+				if(this.checked)
+					$("#users").css("display", "none");
+				else
+					$("#users").css("display", "inline");
+			});
+
+			// Send email while click send email button
+			$("#send-email").click(function(){
+
+				var emails = "all";
+				if(!$("#all-users").get(0).checked)
+					emails = $("#users").val();
+
+				var content = CKEDITOR.instances.editor1.getData();
+				var data = {
+					emails : emails,
+					content : content
+				}
+
+				console.log(data);
+
+				if(!emails) {
+
+					alert("email list is empty");
+
+				} else {
+
+					// Change button status
+					$(this).button("loading");
+
+					// Ajax to server
+					$.ajax({
+					    type: "POST",
+					    url: "/admin/notification/emailSend",
+					    data: JSON.stringify(data),
+					    contentType: "application/json; charset=utf-8",
+					    dataType: "json",
+					    success: function(data){
+
+					    	alert(data);
+
+					    },
+					    failure: function(errMsg) {
+
+					        alert(errMsg);
+
+					    }
+					});
+
+				}
+
+			});
+
+
+		});
+
+	</script>
+
+
+  </body>
+</html>
