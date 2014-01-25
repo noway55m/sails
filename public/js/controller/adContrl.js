@@ -98,15 +98,17 @@ function AdListCtrl($scope, Ad, $rootScope) {
 				
 			}, function(res){
 
-				// Show error msg
-				errorMsgObj.find(".errorText").text(res.msg);
-				errorMsgObj.show();
-
 				// Set back normal state of update button
 				updateButton.button('reset');
 
 				// Enable all input fields
 				inputFields.removeAttr('disabled');
+
+				// Show error msg
+				var errorMsg = res && res.data && res.data.msg;
+				errorMsgObj.find(".errorText").text(errorMsg);
+				errorMsgObj.show();
+				$().toastmessage('showErrorToast', errorMsg);				
 
 			});
 
@@ -220,27 +222,31 @@ function AdListCtrl($scope, Ad, $rootScope) {
 				closeButton.show();
 				closeButtonTop.show();
 
-				if(res.msg){
+				// Push new record to ads
+				res.image = "/img/no-image.png";	
+				$scope.ads.push(res);
+				$rootScope.adsClone.push(res);
 
-					// Show error msg
-					errorMsgObj.find(".errorText").text(res.msg);
-					errorMsgObj.show();
+				// Clean all fields and close dialog
+				inputFields.val("");
+				form.parent().parent().parent().modal('hide');
 
-				}else{
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Create successfully");					
 
-					// Push new record to ads
-					res.image = "/img/no-image.png";	
-					$scope.ads.push(res);
-					$rootScope.adsClone.push(res);
+			}, function(res){
 
-					// Clean all fields and close dialog
-					inputFields.val("");
-					form.parent().parent().parent().modal('hide');
+				// Enable all fields
+				inputFields.removeAttr('disabled');
 
-			    	// Show success msg
-					$().toastmessage('showSuccessToast', "Create successfully");					
-					
-				}
+				// Enable all buttons
+				addButton.button('reset');
+
+				// Show error msg
+				var errorMsg = res && res.data && res.data.msg;
+				errorMsgObj.find(".errorText").text(errorMsg);
+				errorMsgObj.show();
+				$().toastmessage('showErrorToast', errorMsg);
 
 			});
 
@@ -287,6 +293,14 @@ function AdListCtrl($scope, Ad, $rootScope) {
 				
 			}			
 			
+		}, function(res){
+
+			// Show error msg
+			var errorMsg = res && res.data && res.data.msg;
+			errorMsgObj.find(".errorText").text(errorMsg);
+			errorMsgObj.show();
+			$().toastmessage('showErrorToast', errorMsg);
+
 		});
 		
 	};

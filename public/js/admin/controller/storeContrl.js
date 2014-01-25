@@ -359,7 +359,7 @@ function uploadStoreImage(e, selectedStore, $scope, $rootScope){
 			uploadButton.button("reset");
 
 			// Show error msg
-			$().toastmessage('showErrorToast', "Fail to uploadButton file");		        
+			$().toastmessage('showErrorToast', "Fail to upload file");		        
 
 		},		
 

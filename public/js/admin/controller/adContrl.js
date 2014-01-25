@@ -27,26 +27,28 @@ function AdListCtrl($scope, Ad, $rootScope) {
 		
 	});
 		
+	// Function for select
+	$scope.selectAd = function(obj){
+		$rootScope.selectedAd = obj;
+		$rootScope.selectedAdClone = angular.copy($rootScope.selectedAd); // Clone selected for future rollback
+	};	
+
     // Function for rollback selected user info
     $scope.cancelUpdateAd = function(e){
-    	
+
     	var form = angular.element(e.currentTarget).parent();
-    	var id = angular.element(e.currentTarget).parent().attr('id');
-    	for(var i=0; i<$rootScope.adsClone.length; i++){			
-			if($rootScope.adsClone[i]._id == id){    			
-		        angular.copy($rootScope.adsClone[i], $scope.ads[i]);		        
-		        // Set start and end time manually, since not support while use datepicker.
-		        form.find("input[name=startTime]").val($rootScope.adsClone[i].startTime);
-		        form.find("input[name=endTime]").val($rootScope.adsClone[i].endTime);		        
-			}
-    	}
+    	angular.copy($rootScope.selectedAdClone, $rootScope.selectedAd);
+
+        // Set start and end time manually, since not support while use datepicker.
+        form.find("input[name=startTime]").val($rootScope.selectedAdClone.startTime);
+        form.find("input[name=endTime]").val($rootScope.selectedAdClone.endTime);
     	
     };	
 	
 	// Function for update info fields
-	$scope.updateAd = function(e){
+	$scope.updateAd = function(e, selectedAd){
 
-		var ad = this.ad,
+		var ad = selectedAd,
 			updateButton = angular.element(e.currentTarget),
 			form = updateButton.parent(),
 			inputFields = form.find("input");
@@ -55,11 +57,11 @@ function AdListCtrl($scope, Ad, $rootScope) {
 			utility = Utility.getInstance(),
 			nameObj = form.find("input[name=name]"),
 			priceObj = form.find("input[name=price]"),
-			descObj = form.find("input[name=desc]");
+			descObj = form.find("textarea[name=desc]");
 
 		if (utility.emptyValidate(nameObj, errorMsgObj) &&
-				utility.floatValidate(priceObj, errorMsgObj) &&
-				utility.emptyValidate(descObj, errorMsgObj)) {
+			utility.floatValidate(priceObj, errorMsgObj) &&
+			utility.emptyValidate(descObj, errorMsgObj)) {
 
 			// Disable all fields before finish save
 			inputFields.attr('disabled', 'disabled');
@@ -87,26 +89,24 @@ function AdListCtrl($scope, Ad, $rootScope) {
 					ad.image = "/" + imagePath + "/" + ad.image;
 				else
 					ad.image = "/img/no-image.png";					
-		    	var id = ad._id;
-		    	for(var i=0; i<$rootScope.adsClone.length; i++){			
-					if($rootScope.adsClone[i]._id == id)    			
-						$rootScope.adsClone[i] = angular.copy(ad); 			    		    		
-		    	}
-		    	
+				$rootScope.selectedAdClone = angular.copy(ad); 
+
 		    	// Show success msg
 				$().toastmessage('showSuccessToast', "Update successfully");		    	
 				
 			}, function(res){
-
-				// Show error msg
-				errorMsgObj.find(".errorText").text(res.msg);
-				errorMsgObj.show();
 
 				// Set back normal state of update button
 				updateButton.button('reset');
 
 				// Enable all input fields
 				inputFields.removeAttr('disabled');
+
+				// Show error msg
+				var errorMsg = res && res.data && res.data.msg;
+				errorMsgObj.find(".errorText").text(errorMsg);
+				errorMsgObj.show();
+				$().toastmessage('showErrorToast', errorMsg);					
 
 			});
 
@@ -115,9 +115,9 @@ function AdListCtrl($scope, Ad, $rootScope) {
 	};
 
 	// Function for update upload image
-	$scope.uploadAdImage = function(e){
+	$scope.uploadAdImage = function(e, selectedAd){
 
-		var ad = this.ad,
+		var ad = selectedAd,
 			uploadButton = angular.element(e.currentTarget),
 			form = uploadButton.prev(),
 			inputFields = form.find("input"),
@@ -150,21 +150,19 @@ function AdListCtrl($scope, Ad, $rootScope) {
 			success : function(res, statusText){ // post-submit callback
 				// Show error msg
 				if(res.msg){
+
 					errorMsgObj.find(".errorText").text(res.msg);
 					errorMsgObj.show();
+
 				}else{
 					
 					// Update image
 					$scope.$apply(function () {
 						ad.image = "/" + imagePath + "/" + res;
 					});
-					
-					// Clone ad
-			    	var id = ad._id;
-			    	for(var i=0; i<$rootScope.adsClone.length; i++){			
-						if($rootScope.adsClone[i]._id == id)    			
-							$rootScope.adsClone[i] = angular.copy(ad); 			    		    		
-			    	}
+
+					// Clone ad	
+					$rootScope.selectedAdClone = angular.copy(ad);		
 			    	
 			    	// Show success msg
 					$().toastmessage('showSuccessToast', "Upload successfully");			    	
@@ -176,6 +174,16 @@ function AdListCtrl($scope, Ad, $rootScope) {
 				uploadButton.hide();
 				return true;
 			},
+
+			error : function(res, status){
+
+				// Enable buttion
+				uploadButton.button("reset");
+
+				// Show error msg
+				$().toastmessage('showErrorToast', "Fail to upload file");		        
+
+			},	
 
 			clearForm : true,
 
@@ -190,10 +198,9 @@ function AdListCtrl($scope, Ad, $rootScope) {
 
 	// Function for create new ad
 	$scope.addAd = function(e){
+
 		var addButton = angular.element(e.currentTarget),
-			closeButton = addButton.prev(),
-			closeButtonTop = addButton.parent().prev().prev().find(".close"),
-			form = addButton.parent().prev(),
+			form = addButton.parent(),
 			inputFields = form.find("input"),
 			errorMsgObj = form.find(".error-msg"),
 			utility = Utility.getInstance(),
@@ -210,8 +217,6 @@ function AdListCtrl($scope, Ad, $rootScope) {
 
 			// Disable all buttons
 			addButton.button('loading');
-			closeButton.hide();
-			closeButtonTop.hide();
 
 			// Hide error msg
 			errorMsgObj.hide();
@@ -219,7 +224,7 @@ function AdListCtrl($scope, Ad, $rootScope) {
 			// Create new ad
 			Ad.create({
 
-				storeId: $rootScope.store._id,
+				storeId: $rootScope.selectedStore._id,
 				name: nameObj.val(),
 				price: priceObj.val(),
 				desc: descObj.val()
@@ -231,30 +236,31 @@ function AdListCtrl($scope, Ad, $rootScope) {
 
 				// Enable all buttons
 				addButton.button('reset');
-				closeButton.show();
-				closeButtonTop.show();
 
-				if(res.msg){
+				// Push new record to ads
+				res.image = "/img/no-image.png";	
+				$scope.ads.push(res);
+				$rootScope.adsClone.push(res);
 
-					// Show error msg
-					errorMsgObj.find(".errorText").text(res.msg);
-					errorMsgObj.show();
+				// Clean all fields and close dialog
+				inputFields.val("");
 
-				}else{
+		    	// Show success msg
+				$().toastmessage('showSuccessToast', "Create successfully");					
+									
+			}, function(res){
 
-					// Push new record to ads
-					res.image = "/img/no-image.png";	
-					$scope.ads.push(res);
-					$rootScope.adsClone.push(res);
+				// Enable all fields
+				inputFields.removeAttr('disabled');
 
-					// Clean all fields and close dialog
-					inputFields.val("");
-					form.parent().parent().parent().modal('hide');
+				// Enable all buttons
+				addButton.button('reset');
 
-			    	// Show success msg
-					$().toastmessage('showSuccessToast', "Create successfully");					
-					
-				}
+				// Show error msg
+				var errorMsg = res && res.data && res.data.msg;
+				errorMsgObj.find(".errorText").text(errorMsg);
+				errorMsgObj.show();
+				$().toastmessage('showErrorToast', errorMsg);				
 
 			});
 
@@ -301,6 +307,14 @@ function AdListCtrl($scope, Ad, $rootScope) {
 				
 			}			
 			
+		}, function(res){
+
+			// Show error msg
+			var errorMsg = res && res.data && res.data.msg;
+			errorMsgObj.find(".errorText").text(errorMsg);
+			errorMsgObj.show();
+			$().toastmessage('showErrorToast', errorMsg);
+
 		});
 		
 	};

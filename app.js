@@ -249,6 +249,7 @@ app.get('/admin/ad/read/:_id', isAdmin, adAdmin.read);
 app.post('/admin/ad/create', isAdmin, adAdmin.create);
 app.post('/admin/ad/update', isAdmin, adAdmin.update);
 app.post('/admin/ad/delete', isAdmin, adAdmin.del);
+app.post('/admin/ad/uploadImage', isAdmin, adAdmin.uploadImage);
 
 
 // Admin resource interfaces

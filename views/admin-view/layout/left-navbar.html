@@ -66,11 +66,11 @@
 	    </div>
 	  </div>	  
 
-	   <!-- Google Analytics functions -->	
+	   <!-- Statistics functions -->	
 	  <div class="panel panel-info">
 	    <div class="panel-heading">
 	      <h4 class="panel-title">	        
-	        <a data-toggle="collapse" data-parent="#accordion" href="#leftNavBarStatisticContent">Statistic</a>
+	        <a data-toggle="collapse" data-parent="#accordion" href="#leftNavBarStatisticContent">Statistics</a>
 	      </h4>
 	    </div>
 	    <div id="leftNavBarStatisticContent" class="panel-collapse collapse">
@@ -82,6 +82,21 @@
 	    </div>	    
 	  </div>	
 
+	  <!-- Email functions -->	
+	  <div class="panel panel-info">
+	    <div class="panel-heading">
+	      <h4 class="panel-title">	        
+	        <a data-toggle="collapse" data-parent="#accordion" href="#leftNavBarNotificationContent">Notification</a>
+	      </h4>
+	    </div>
+	    <div id="leftNavBarNotificationContent" class="panel-collapse collapse">
+	      <div class="panel-body">
+	      	<ul>
+	      		<li class="selected-left-nav"><a href="/admin/notification/email" target="_blank">Email</a></li>
+	      	</ul>
+	      </div>
+	    </div>	    
+	  </div>	
 
 	</div>
 
@@ -107,6 +122,11 @@
 
 			$("div.left-navbar div.panel-collapse").removeClass('in');
 			$("#leftNavBarFeedbackContent").addClass('in');
+
+		} else if( url.indexOf('notification') != -1 ) {
+
+			$("div.left-navbar div.panel-collapse").removeClass('in');
+			$("#leftNavBarNotificationContent").addClass('in');
 
 		}
 

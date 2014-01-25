@@ -33,7 +33,7 @@
 
 				<!-- Store info -->
 				<div class="panel panel-default">	
-					<div class="panel-heading">Store - {{store._id}}</div>
+					<div class="panel-heading">Store - {{selectedStore._id}}</div>
 					<table class="table">
 						<thead>
 							<th>_id</th>
@@ -46,21 +46,21 @@
 							<th></th>																
 						</thead>
 						<tbody>
-							<tr id="{{store._id}}">				
+							<tr id="{{selectedStore._id}}">				
 								<td>
-									<a href="/admin/store/show/{{store._id}}" ng-bind="store._id"></a>
+									<a href="/admin/store/show/{{store._id}}" ng-bind="selectedStore._id"></a>
 								</td>
-								<td ng-bind="store.name"></td>
+								<td ng-bind="selectedStore.name"></td>
 								<td>
-									<img ng-src="{{store.icon}}" alt="store icon" width="100"/>
+									<img ng-src="{{selectedStore.icon}}" alt="store icon" width="100"/>
 								</td>					
-								<td ng-bind="store.link"></td>
-								<td ng-bind="store.phone"></td>	
-								<td ng-bind="store.memo"></td>	
-								<td ng-bind="store.floorId"></td>
+								<td ng-bind="selectedStore.link"></td>
+								<td ng-bind="selectedStore.phone"></td>	
+								<td ng-bind="selectedStore.memo"></td>	
+								<td ng-bind="selectedStore.floorId"></td>
 								<td>
 									<a data-toggle="modal" class="btn btn-default" href="#store-edit-dialog" 
-										ng-click="selectStore(store)">
+										ng-click="selectStore(selectedStore)">
 										<span class="glyphicon glyphicon-edit"></span>
 									</a>					
 								</td>																	
@@ -73,8 +73,24 @@
 
 				<!-- Ad List of store -->
 				<div class="panel panel-default" ng-controller='AdListCtrl'>	
-					<div class="panel-heading">Ads</div>
-					
+					<div class="panel-heading">
+
+						<!-- Add store form block -->
+						<div id="add-block">
+							<input class="form-control" placeholder="Ad Name" name="name" maxlength="30">
+							<input class="form-control" placeholder="Ad Price" name="price" maxlength="15">
+							<input class="form-control" placeholder="Ad Description" name="desc" maxlength="100">
+							<button class="btn btn-primary" data-loading-text="Add..." ng-click="addAd($event)">Add New Ad</button>
+							<div class="alert alert-danger error-msg">
+								<span class="label label-danger">Error</span> <span class="errorText"></span>
+							</div>
+						</div>
+
+						<!-- Stores info -->						
+						<h3>Ads - Total Count: <span ng-bind="ads.length"></span></h3>
+						<p></p>
+
+					</div>
 					<table class="table">
 						<thead>
 							<th>_id</th>
@@ -91,7 +107,7 @@
 						<tbody>
 							<tr ng-repeat="ad in ads" id="{{ad._id}}">				
 								<td>
-									<a href="/admin/store/show/{{ad._id}}" ng-bind="ad._id"></a>
+									<a href="#/admin/ad/show/{{ad._id}}" ng-bind="ad._id"></a>
 								</td>
 								<td ng-bind="ad.name"></td>
 								<td>
@@ -103,13 +119,12 @@
 								<td ng-bind="ad.desc"></td>	
 								<td ng-bind="ad.storeId"></td>
 								<td>
-									<a data-toggle="modal" class="btn btn-default" href="#ad-edit-dialog" 
-										ng-click="selectAd(ad)">
+									<a data-toggle="modal" class="btn btn-default" href="#ad-edit-dialog" ng-click="selectAd(ad)">
 										<span class="glyphicon glyphicon-edit"></span>
 									</a>					
 								</td>						
 								<td>
-									<a data-toggle="modal" class="btn btn-default" ng-click="selectAd(ad)">
+									<a data-toggle="modal" class="btn btn-default" ng-click="deleteDialogSetup(ad)">
 										<span class="glyphicon glyphicon-remove"></span>
 									</a>					
 								</td>																									

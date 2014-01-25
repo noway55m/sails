@@ -60,7 +60,7 @@ exports.read = function(req, res){
 				if(ad){
 
 					var adObj = formatObjectDate(ad);
-					res.send( errorResInfo.SUCCESS.code, adObj );
+					res.json( errorResInfo.SUCCESS.code, adObj );
 				
 				} else {
 
@@ -94,14 +94,31 @@ exports.create = function(req, res) {
 
 		}).save(function(err, ad) {
 
-			if (err)
-				log.error(err);
+			if (err) {
 
-			if (ad) {
-				var adObj = formatObjectDate(ad);
-				res.send(200, adObj);
+				log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});
+
+			} else {
+
+				if (ad) {
+
+					var adObj = formatObjectDate(ad);
+					res.json(errorResInfo.SUCCESS.code, adObj);			
+
+				}
+
 			}
+
 		});
+
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
 
 	}
 
