@@ -7,6 +7,8 @@ var log = require('log4js').getLogger("Register"),
 	config = require('../../config/config.js'),
 	utilityS = require("../utility.js");
 
+var	errorResInfo = utilityS.errorResInfo;
+
 // GET Page of Email notification
 exports.email = function(req, res) {
 	res.render("admin-view/notification/email.html");
@@ -15,12 +17,9 @@ exports.email = function(req, res) {
 // POST Interface for authenticate and register new user
 exports.emailSend = function(req, res) {
 		
-	console.log(req.body.emails);
-	console.log(req.body.content);
-
     if(req.body.emails && req.body.content){
     
-        var emails = req.body.emails,
+        var emails = req.body.emails.trim(),
             content = req.body.content,
 			mailOptions = {
 				from : mailer.defaultOptions.from, // sender address
@@ -31,7 +30,11 @@ exports.emailSend = function(req, res) {
 
         if(emails == "all") {
 
-        	User.count( {}, function(err, count) {
+        	User.count( {
+
+        		username: new RegExp("@", "i")
+
+        	}, function(err, count) {
 
 				if(err) {
 
@@ -47,11 +50,15 @@ exports.emailSend = function(req, res) {
 					var count = count;
 		        	var userLimit = 400;
 		        	var totalPage = Math.ceil(count/userLimit);
+		        	res.json(errorResInfo.SUCCESS.code, {
+		        		total: count		        		
+		        	});
+
 		        	for( var k=0; k<totalPage; k++){
 
 		        		(function(page){
 
-						    User.find({})
+						    User.find({ username: new RegExp("@", "i") })
 							.limit(userLimit)
 							.skip(page * userLimit)
 							.exec( function(err, users){
@@ -69,6 +76,7 @@ exports.emailSend = function(req, res) {
 										var theEmail = users[p].username.indexOf("@") == -1 ? "" : users[p].username;
 										userEmails += theEmail;
 									}
+									console.log("userEmails: " + userEmails);
 
 									// Send email
 									mailOptions.to = userEmails;
@@ -93,6 +101,17 @@ exports.emailSend = function(req, res) {
         	});	
 
         } else {
+
+        	if(emails.charAt(emails.length - 1) == ",")
+        		emails = emails.slice(0, -1);
+
+        	var total = 1;
+        	if( emails.indexOf(",") != -1 )
+	        	total = emails.split(",").length;
+
+        	res.json(errorResInfo.SUCCESS.code, {
+        		total: total		        		
+        	});
 
         	// Send email
         	mailOptions.to = emails;

@@ -457,3 +457,47 @@ exports.del = function(req, res) {
 	}
 	
 };
+
+// Get Interface for find user by username
+exports.findByUsername = function(req, res){
+
+	if(req.query.term){
+
+		User.find({
+
+			username: new RegExp(req.query.term, "i")
+
+		}, function(err, users){
+
+			if(err) {
+
+				log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});
+
+			} else {
+
+				var result = [];
+				for(var i=0; i<users.length; i++){
+
+					// Make sure email
+					if(users[i].username.indexOf("@") == -1)
+						continue;
+
+					result[i] = {
+						id: users[i]._id,
+						label: users[i].username,
+						value: users[i].username
+					};
+					
+				}
+				res.json( errorResInfo.SUCCESS.code, result);
+
+			}
+
+		});
+
+	}
+
+}

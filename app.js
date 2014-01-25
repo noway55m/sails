@@ -271,6 +271,8 @@ app.post('/admin/user/create', isAdmin, userAdmin.create);
 app.post('/admin/user/update', isAdmin, userAdmin.update);
 app.post('/admin/user/delete', isAdmin, userAdmin.del);
 app.post('/admin/user/changePassword', isAdmin, userAdmin.changePassword);
+app.get('/admin/user/findByUsername', isAdmin, userAdmin.findByUsername);
+
 
 // Admin feedback interfaces
 app.get('/admin/feedback/index', isAdmin,  feedbackAdmin.index);
