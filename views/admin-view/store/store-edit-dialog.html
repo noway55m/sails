@@ -1,11 +1,11 @@
 <!-- Store edit dialog -->
-<div class="modal fade" id="store-edit-dialog" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="store-edit-dialog" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" ng-controller='StoreListCtrl'>
    <div class="modal-dialog">
      <div class="modal-content">
 
 		<!-- Header -->
 		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true" ng-click="cancelUpdateStore()">&times;</button>
 			<h4 class="modal-title">Edit Store</h4>
 			<p>Please kindly finish following fields of this store.</p>
 		</div>
@@ -21,15 +21,15 @@
 			</div>
 			<div class="form-group">
 				<label for="link">link</label> 
-				<input class="form-control" placeholder="Link" name="link" maxlength="100" ng-model="selectedBuilding.link">
+				<input class="form-control" placeholder="Link" name="link" maxlength="100" ng-model="selectedStore.link">
 			</div>
 			<div class="form-group">
 				<label for="phone">phone</label> 
-				<input class="form-control" placeholder="Phone" name="phone" maxlength="100" ng-model="selectedBuilding.phone">
+				<input class="form-control" placeholder="Phone" name="phone" maxlength="100" ng-model="selectedStore.phone">
 			</div>			
 			<div class="form-group">
 				<label for="memo">memo</label> 
-				<input class="form-control" placeholder="Memo" name="memo" maxlength="100" ng-model="selectedBuilding.memo">
+				<input class="form-control" placeholder="Memo" name="memo" maxlength="100" ng-model="selectedStore.memo">
 			</div>
 			
 			<!-- error msg -->
@@ -40,22 +40,24 @@
 
 		</div>
 
-		<button type="button" class="btn btn-default" data-dismiss="modal" style="margin-left: 400px;">Close</button>
+		<button type="button" class="btn btn-default" data-dismiss="modal" style="margin-left: 400px;" ng-click="cancelUpdateStore()">Close</button>
 		<button type="submit" class="btn btn-primary" data-loading-text="Updating" ng-click="updateStore($event, selectedStore)">Update</button>
 		<hr>
 
 		<!-- Upload image -->
-		<form name="form" action="/admin/store/uploadImage" method="POST" enctype="multipart/form-data">
-			<input type="hidden" class="form-control" name="_id" value="{{selectedBuilding._id}}">
-			<label for="map">Upload icon</label>
-			<input type="file" class="form-control upload-file" name="image">							
-			<div class="alert alert-danger error-msg">
-				<span class="label label-danger">Error</span> <span class="errorText"></span>
-			</div>
-		</form>
-		<button class="btn btn-md btn-primary" ng-click="uploadStoreImage($event, selectedStore)"　data-loading-text="Uploading...">Upload</button>
-		<hr>
-
+		<div class="modal-body">
+			<form name="form" action="/admin/store/uploadImage" method="POST" enctype="multipart/form-data">
+				<input type="hidden" class="form-control" name="_id" value="{{selectedStore._id}}">
+				<label for="map">Upload icon</label>
+				<input type="file" class="form-control upload-file" name="image">							
+				<div class="alert alert-danger error-msg">
+					<span class="label label-danger">Error</span> <span class="errorText"></span>
+				</div>
+			</form>
+			<button class="btn btn-md btn-primary" ng-click="uploadStoreImage($event, selectedStore)" data-loading-text="Uploading..."
+			style="margin:20px 0px 0px 450px;">Upload</button>
+			<hr>
+		</div>	
 
      </div><!-- /.modal-content -->
    </div><!-- /.modal-dialog -->

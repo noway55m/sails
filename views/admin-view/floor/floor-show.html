@@ -64,7 +64,7 @@
 								<td ng-bind="floor.lastXmlUpdateTime"></td>
 								<td>
 									<a data-toggle="modal" class="btn btn-default" href="#floor-edit-dialog" 
-										ng-click="selectBuilding(floor)">
+										ng-click="selectFloor(floor)">
 										<span class="glyphicon glyphicon-edit"></span>
 									</a>					
 								</td>									
@@ -77,8 +77,26 @@
 
 				<!-- Store List of floor -->
 				<div class="panel panel-default" ng-controller='StoreListCtrl'>	
-					<div class="panel-heading">Stores</div>
 					
+					<div class="panel-heading">
+
+						<!-- Add store form block -->
+						<div id="add-block">
+							<input class="form-control" placeholder="Store Name" name="name" maxlength="30">
+							<input class="form-control" placeholder="Store Phone" name="phone" maxlength="15">
+							<input class="form-control" placeholder="Store Memo" name="memo" maxlength="100">
+							<input class="form-control" placeholder="Store Link" name="link" maxlength="250">
+							<button class="btn btn-primary" data-loading-text="Add..." ng-click="add($event)">Add New Store</button>
+							<div class="alert alert-danger error-msg">
+								<span class="label label-danger">Error</span> <span class="errorText"></span>
+							</div>
+						</div>
+
+						<!-- Stores info -->						
+						<h3>Stores - Total Count: <span ng-bind="stores.length"></span></h3>
+						<p></p>
+
+					</div>
 					<table class="table">
 						<thead>
 							<th>_id</th>
