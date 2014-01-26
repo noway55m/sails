@@ -23,29 +23,29 @@ GoogleAnalytics.measurementTool = {
 
 GoogleAnalytics.measurementTool.pageTracking = function(req, title, desc){
 
-	console.log(req.user);
-	console.log("api host: " + this.url);
-	console.log("api path: " + this.path);	
-	console.log("api version: " + this.version);
-	console.log("ip: " + req.ip);
-	console.log("title: " + title);
-	console.log("desc: " + desc); 
+	//console.log(req.user);
+	//console.log("api host: " + this.url);
+	//console.log("api path: " + this.path);	
+	//console.log("api version: " + this.version);
+	//console.log("ip: " + req.ip);
+	//console.log("title: " + title);
+	//console.log("desc: " + desc); 
 
 	// Check mobile or pc
-	var type = isCallerMobile(req) ? "appview" : "pageview";
-	console.log("type: " + type);
+	var isMobile = isCallerMobile(req);
+	console.log("isMobile: " + isMobile);
 
 	// Construct url and params
 	var payload = "v=" + this.version 
 			+ "&tid=" + config.gaAccountId	// google analytics user account id  
 			+ "&cid=" + req.user._id  // req.user._id
-			+ "&t=" + type // type: 'pageview', 'appview', 'event', 'transaction', 'item', 'social', 'exception'
+			+ "&t=pageview" // type: 'pageview', 'appview', 'event', 'transaction', 'item', 'social', 'exception'
 			+ "&dp=" + encodeURI(req.path); // document path
 
 	// Setup ip param if exist		
-	var ip = req.ip;
-    if(ip)
-    	payload += "&aip=" + ip; // ip
+	// var ip = req.ip;
+    // if(ip)
+    //	payload += "&aip=" + ip; // ip
 
     // Setup title param if exist
     if(title)
@@ -57,8 +57,8 @@ GoogleAnalytics.measurementTool.pageTracking = function(req, title, desc){
 
     // Setup header
 	var headers = {};
-  	var iphone4UA = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5";
-  	var chromeUA = "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1667.0 Safari/537.36";
+  	//var iphone4UA = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5";
+  	//var chromeUA = "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1667.0 Safari/537.36";
 	headers['user-agent'] = req.get('user-agent');
 	headers['accept-language'] = req.get('accept-language');
 
