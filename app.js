@@ -159,7 +159,8 @@ app.sget('/ap/queryBuildingAndFloor', ap.queryBuildingAndFloor);
 app.post('/iD/update', iD.update);
 
 //--------------------------
-app.post('/feedback', feedback.comment);
+app.get('/feedback/index', feedback.index);
+app.post('/feedback/create', feedback.create);
 
 
 //-----------------------------------

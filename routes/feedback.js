@@ -14,8 +14,17 @@ var	errorResInfo = utilityS.errorResInfo,
 	mapinfo_path = "/" + config.mapInfoPath,
 	image_path = config.imagePath;
 
-// POST Page for show specific building
-exports.comment = function(req, res) {
+// GET Page for user feedback
+exports.index = function(req, res) {
+    res.render("feedback/index.html", {
+        url : req.url.toString(), // use in layout for identify display info
+        errorMsg : req.flash('msg') || "",
+        user: null,
+    });
+}
+
+// POST Interface for create feeedback
+exports.create = function(req, res) {
 
     if( req.body.name && req.body.comment ) {
 

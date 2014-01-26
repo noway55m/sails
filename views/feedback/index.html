@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  
+	<!-- Head meta, css or library include -->
+	<% include ../layout/head-include.html %>
+	
+	<!-- Title -->	  
+    <title>Sails - Feedback</title>
+
+  </head>
+  <body>
+
+    <!-- Fixed Top Navigation Bar -->
+	<% include ../layout/top-navbar.html %>
+
+  	<div class="container">
+  		<div class="wrapper">
+
+  			<h1>Feedback</h1>
+
+	  		<!-- Register Form -->
+			<form role="form" action="register/auth" method="post" id="registerForm" onsubmit="return submit_form()">
+
+			  <!-- Form fields -->
+			  <div class="form-group">
+			    <label for="name">Name</label>
+			    <input type="text" class="form-control" id="name" placeholder="Your Name" name="name" maxlength="100">
+			  </div>
+			  <div class="form-group">
+			    <label for="email">Email</label>
+			    <input type="text" class="form-control" id="email" placeholder="Contact Email" name="email" maxlength="100">
+			  </div>			  
+			  <div class="form-group">
+			    <label for="comment">Comment</label>
+			    <textarea class="form-control" id="comment" placeholder="Password" name="comment" value="" maxlength="60"
+			    rows="10"></textarea>
+			  </div>
+
+			  <!-- Submit button -->
+			  <button type="submit" class="btn btn-default" id="submit">Submit</button>
+
+			</form>
+
+		</div>
+  	</div>
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/utility.js"></script>
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/feedback/main.js"></script>
+
+  </body>
+</html>

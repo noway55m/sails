@@ -6,7 +6,7 @@
 
 ## Usage
 
-
+	forever start -l sails-log.txt -o sails-out.txt -e sails-error.txt app.js
 
 ## Developing
 
