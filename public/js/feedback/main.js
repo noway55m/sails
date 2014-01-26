@@ -4,16 +4,17 @@ $(document).ready(function(){
 
     $("#submit").click( function(){
 
-        // Hide error msg
-        errorMsgObj.hide();
-        successMsgObj.hide();
-
         var submitButton = $("#submit"),
             nameObj = $("#name"),
             emailObj = $("#email"),
             commentObj = $("#comment"),
             errorMsgObj = $(".error-msg"),
             successMsgObj = $(".success-msg");
+
+        // Hide error msg
+        errorMsgObj.hide();
+        successMsgObj.hide();
+
 
          if (utility.emptyValidate(nameObj, errorMsgObj) &&
              utility.emptyValidate(emailObj, errorMsgObj) &&
