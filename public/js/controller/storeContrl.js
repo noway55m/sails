@@ -258,7 +258,6 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
     					$scope.floor = floor;
     					
     					// Check is floor or basement
-    					console.log()
     			    	if($scope.floor.layer > 0)
     			        	$scope.up = true;
     			    	else

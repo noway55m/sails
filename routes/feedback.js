@@ -20,6 +20,7 @@ exports.index = function(req, res) {
         url : req.url.toString(), // use in layout for identify display info
         errorMsg : req.flash('msg') || "",
         user: null,
+        imagePath: image_path
     });
 }
 

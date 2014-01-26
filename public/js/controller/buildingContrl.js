@@ -23,8 +23,6 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 			totalPages = Math.ceil(count/offset),
 			buildings = obj.buildings;
 
-		console.log(buildings[0]);	
-
 		// Set icon url
 		buildings.forEach(function(building){
 			if(building.icon)
@@ -201,8 +199,6 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 		$rootScope.$emit('buildingFinishLoad', building);
         $rootScope.buildingClone = angular.copy(building); // Clone building for future rollback        
     	$scope.loadingBuilding = false;
-
-    	console.log(building);
 	});
 
     // Function for rollback selected user info
