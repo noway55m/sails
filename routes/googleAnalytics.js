@@ -60,7 +60,7 @@ GoogleAnalytics.measurementTool.pageTracking = function(req, title, desc){
   	//var iphone4UA = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5";
   	//var chromeUA = "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1667.0 Safari/537.36";
 	headers['user-agent'] = req.get('user-agent');
-	headers['accept-language'] = req.get('accept-language');
+	headers['accept-language'] = req.get('accept-language') ? req.get('accept-language') : "zh-TW,zh;q=0.8,en-US;q=0.6,en;q=0.4,de;q=0.2";
 
 	var options = {
 		hostname: this.url,
