@@ -4,6 +4,10 @@ $(document).ready(function(){
 
     $("#submit").click( function(){
 
+        // Hide error msg
+        errorMsgObj.hide();
+        successMsgObj.hide();
+
         var submitButton = $("#submit"),
             nameObj = $("#name"),
             emailObj = $("#email"),
@@ -14,10 +18,6 @@ $(document).ready(function(){
          if (utility.emptyValidate(nameObj, errorMsgObj) &&
              utility.emptyValidate(emailObj, errorMsgObj) &&
              utility.emptyValidate(commentObj, errorMsgObj) ) {
-
-            // Hide error msg
-            errorMsgObj.hide();
-            successMsgObj.hide();
 
             // Change button status
             submitButton.button("loading");
@@ -67,7 +67,7 @@ $(document).ready(function(){
                     errorMsgObj.show(res.msg);
 
                 }
-                
+
             });
 
          }   
