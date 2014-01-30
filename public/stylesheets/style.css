@@ -7,7 +7,7 @@ body {
 	position: relative;
 	border-radius: 10px;
 	box-shadow: 5px 5px 5px #888888;
-	margin-top:20px;
+	margin-top: 3px;
 	min-height: 220px;
 }
 .edit-block {
@@ -44,8 +44,8 @@ body {
 .edit-button{
 	display:none;
 	position: absolute;
-	right:50px;
-	top:8px;
+	right:17px;
+	top:10px;
 	cursor: pointer;
 }
 

@@ -239,36 +239,19 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
     	// Get floor
     	$scope.floor = Floor.get({ _id: store.floorId }, function(floor){
 
-           	// Get floors of building
-        	Floor.list({ buildingId: floor.buildingId }, function(floors){
-        		
-        		// Differentiate floor and basement
-        		$scope.floorUp = [];
-        		$scope.floorDown = [];
-    			floors.forEach(function(floor){
-    				
-    				if(floor.layer > 0 )
-    					$scope.floorUp.push(floor);
-    				else
-    					$scope.floorDown.push(floor);
-    				
-    				if(floor._id == store.floorId){					
-    			    	
-    					// Get store's floor					
-    					$scope.floor = floor;
-    					
-    					// Check is floor or basement
-    			    	if($scope.floor.layer > 0)
-    			        	$scope.up = true;
-    			    	else
-    			        	$scope.up = false;
-    			    	
-    				}
-    				
-    			});           		        		
-    		
-        	});
-    	
+			// Get store's floor					
+			$scope.floor = floor;
+
+			// Check is floor or basement
+	    	if(floor.layer > 0)
+	        	$scope.up = true;
+	    	else
+	        	$scope.up = false;
+
+	        // Get floor's building
+	        Building.get({ _id: floor.buildingId}, function(building){
+	        	$scope.building = building;
+	        })	    		
 
 			// TODO: Select the floor in edit mode, we need to use setTimeout, since we have to render after dom is ready.
 			setTimeout(function(){
