@@ -19,7 +19,10 @@
 
 		<!-- Navigator bar to display current store of floor of specific building -->
 		<ol class="breadcrumb">
-		  <li><a href="/user">My Building</a></li>
+		  <li><a href="/user">My Buildings</a></li>
+		  <li class="active" ng-hide="loadingBuilding" style="display:none;">
+			<span ng-bind="building.name"></span>
+		  </li>		  
 		</ol>
 
 		<!-- Main component for a primary marketing message or call to action -->
@@ -70,7 +73,7 @@
 				</div>				
 							
 			</div>
-
+			<hr/>
 
 			<!-- Building Index Basic Information Edit Block -->
 			<div id="building-index-basic-edit" class="row edit-block">

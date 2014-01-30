@@ -20,13 +20,19 @@
 		<ol class="breadcrumb">
 			<!-- Loading -->
 			<div class="loading" ng-show="loadingAd" >&nbsp;<img src="/img/loading.gif" alt="loading.." /></div>
-
-			<li><a href="/building/show/{{floor.buildingId}}">Building</a></li>
-			<li ng-hide="loadingAd" style="display: none;">
-				<a href="/floor/show/{{store.floorId}}" ng-show="up"> <span ng-bind="floor.layer"></span> F</a>
-				<a href="/floor/show/{{store.floorId}}" ng-show="!up" ng-hide="loadingAd"> B <span ng-bind="Math.abs(floor.layer)"></span></a>
+			<li><a href="/user">My Buildings</a></li>
+			<li ng-hide="loadingAd" style="display:none;">
+				<a href="/building/show/{{floor.buildingId}}" ng-bind="building.name"></a>
 			</li>
-			<li class="active" ng-bind="store.name" ng-hide="loadingAd" style="display: none;"></li>
+			<li ng-hide="loadingAd" style="display:none;">
+				<a href="/floor/show/{{store.floorId}}" ng-show="up">
+					<span ng-bind="floor.layer"></span> F
+				</a>
+				<a href="/floor/show/{{store.floorId}}" ng-show="!up"> 
+					B <span ng-bind="Math.abs(floor.layer)"></span>
+				</a>
+			</li>
+			<li class="active" ng-bind="store.name" ng-hide="loadingAd"></li>
 		</ol>
 
 		<div class="jumbotron">
@@ -62,7 +68,7 @@
 					</div>
 
 					<!-- Edit trigger button -->
-					<span class="glyphicon glyphicon-edit edit-button" id="kkkkkkk"></span>
+					<span class="glyphicon glyphicon-edit edit-button" style="display:inline;"></span>
 
 				</div>
 				<hr/>

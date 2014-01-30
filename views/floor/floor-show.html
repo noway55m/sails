@@ -20,15 +20,19 @@
 		<ol class="breadcrumb">		
 			<!-- Loading -->
 			<div class="loading" ng-show="loadingFloor">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>		
-		
+			<li><a href="/user">My Buildings</a></li>
 			<li>
 				<a href="/building/show/{{floor.buildingId}}" ng-hide="loadingFloor" style="display:none;">
 					{{building.name}}
 				</a>
 			</li>
 			<li class="active" ng-hide="loadingFloor" style="display:none;">
-				<a href="#" ng-show="up"><span ng-bind="floor.layer"></span> F </a> 
-				<a href="#" ng-show="!up"> B <span ng-bind="Math.abs(floor.layer)"></span></a>
+				<span ng-show="up">
+					<span ng-bind="floor.layer"></span> F
+				</span> 
+				<span ng-show="!up">
+					B <span ng-bind="Math.abs(floor.layer)"></span>
+				</span> 
 			</li>
 		</ol>
 
