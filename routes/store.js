@@ -1,5 +1,6 @@
 var log = require('log4js').getLogger(),
-	utilityS = require("./utility.js"), 
+	utilityS = require("./utility.js"),
+	Floor = require("../model/floor"), 
 	Store = require("../model/store"),
 	Ad = require("../model/ad"),
 	crypto = require('crypto'),
@@ -147,64 +148,110 @@ exports.list = function(req, res) {
 // POST Interface for create the new store in specific floor of specific building
 exports.create = function(req, res){
 	
-	if(req.body.name && req.body.floorId){
+	if(req.body.name && req.body.floorId) {
 		
-		// Use find rather than fineOne for check duplicate stores
-		Store.find({
-			
-			name: req.body.name,
-			floorId: req.body.floorId
-			
-		}, function( err, stores ){
-			
-			if(err) {
+		Floor.findById(req.body.floorId, function(err, floor){
+
+			if (err){
 
 				log.error(err);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
 					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-				});				
-
+				});					
+			
 			} else {
 
-				if( stores.length > 0 ){
-					
-					res.json( errorResInfo.SUCCESS.code, {
-						msg: "Store name is duplicate!"
-					});
-					
-				}else{
-					
-					new Store({
+				if(floor) {
 
-					    name: req.body.name,
-					    link: req.body.link,			    
-					    phone: req.body.phone,			    
-					    memo: req.body.memo,			    		    
-					    floorId: req.body.floorId
+		            // Check permission
+		            utilityS.validatePermission( req.user, floor, Floor.modelName, function(result) {
 
-					}).save(function(error, store){
+		            	if(result) {
 
-						if( err ) {
+							// Use find rather than fineOne for check duplicate stores
+							Store.find({
+								
+								name: req.body.name,
+								floorId: req.body.floorId
+								
+							}, function( err, stores ){
+								
+								if(err) {
 
-							log.error(err);
-							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-							});	
+									log.error(err);
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									});				
 
-						} else {
+								} else {
 
-							res.json( errorResInfo.SUCCESS.code, store );
+									if( stores.length > 0 ){
+										
+										res.json( errorResInfo.SUCCESS.code, {
+											msg: "Store name is duplicate!"
+										});
+										
+									}else{
+										
+										new Store({
 
-						}
+										    name: req.body.name,
+										    link: req.body.link,			    
+										    phone: req.body.phone,			    
+										    memo: req.body.memo,			    		    
+										    floorId: req.body.floorId
 
-					});	
-					
+										}).save(function(error, store){
+
+											if( err ) {
+
+												log.error(err);
+												res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+													msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+												});	
+
+											} else {
+
+												res.json( errorResInfo.SUCCESS.code, store );
+
+											}
+
+										});	
+										
+									}
+
+								}
+								
+							});
+
+		            	} else {
+
+		        			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+		        				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+		        			});
+
+		            	}
+
+		            });
+
+				} else {
+
+	    			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+	    				msg: errorResInfo.INCORRECT_PARAMS.msg
+	    			});					
+
 				}
 
 			}
-			
+
 		});
 				
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		});	
+
 	}
 		
 };
@@ -306,6 +353,12 @@ exports.update = function(req, res){
 
 		});
 		
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		});	
+
 	}
 	
 };		
@@ -416,6 +469,12 @@ exports.del = function(req, res){
 			
 		});		
 				
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		});	
+
 	}
 		
 };
@@ -455,70 +514,98 @@ exports.uploadImage = function(req, res) {
 				
 				Store.findById(req.body._id, function(error, store){
 					
-					if(store){
-						
-						log.info("icon: " + store.icon);
-						log.info("targetName: " + targetFileName);						
-						if(store.icon != targetFileName){
+					if(error) {
+
+		                log.error(err);
+						res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+							msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+						});
+
+					} else {
+
+						if(store) {
 							
-							log.info("Update");
-							fs.rename(tmpPath, targetPath, function(err) {			
-								if(err){
+			    			// Check permisssion
+			    			utilityS.validatePermission(req.user, store, Store.modelName, function(result){
 
-									log.error(err);
-					    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-					    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-					    			});  
-																		
-								}else{									
-									
-									// Delete old image if exist
-									if(store.icon){
-										var oldImgPath = path.resolve(image_path + "/" + store.icon);
-										fs.unlink(oldImgPath, function(err){
-											log.error(err);
-										});
-									}
-									
-									// Update store
-									store.icon = targetFileName;
-									store.save( function( err ) {
+			    				if(result) {
 
-										if( err ) {
+									log.info("icon: " + store.icon);
+									log.info("targetName: " + targetFileName);						
+									if(store.icon != targetFileName){
+										
+										log.info("Update");
+										fs.rename(tmpPath, targetPath, function(err) {
 
-							    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-							    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-							    			});  											
+											if(err){
 
-										} else {
+												log.error(err);
+								    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+								    			});  
+																					
+											}else{									
+												
+												// Delete old image if exist
+												if(store.icon){
+													var oldImgPath = path.resolve(image_path + "/" + store.icon);
+													fs.unlink(oldImgPath, function(err){
+														log.error(err);
+													});
+												}
+												
+												// Update store
+												store.icon = targetFileName;
+												store.save( function( err ) {
 
-											res.send( errorResInfo.SUCCESS.code, targetFileName );
+													if( err ) {
 
-										}
+										    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+										    			});  											
 
-									});
-									
-									// Delete the temporary file
-		                            fs.unlink(tmpPath, function(err){
-		                            	log.error(err);
-		                            });									
-									
-								}										
-							});															
+													} else {
+
+														res.send( errorResInfo.SUCCESS.code, targetFileName );
+
+													}
+
+												});
+												
+												// Delete the temporary file
+					                            fs.unlink(tmpPath, function(err){
+					                            	log.error(err);
+					                            });									
+												
+											}										
+										});															
+										
+									}else{
+										
+										log.info("Same");
+										res.json( errorResInfo.SUCCESS.code, targetFileName );
+
+									}	
+
+			    				} else {
+
+		                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+		                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+		                			});	
+
+			    				}
+
+			    			});												
 							
 						}else{
 							
-							log.info("Same");
-							res.send( errorResInfo.SUCCESS.code, targetFileName );						
-						}						
-						
-					}else{
-						
-	        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-	        				msg: errorResInfo.INCORRECT_PARAMS.msg
-	        			}); 
-						
-					}//end if
+		        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+		        				msg: errorResInfo.INCORRECT_PARAMS.msg
+		        			}); 
+							
+						}//end if
+
+					}					
 					
 				});
 				
@@ -526,11 +613,18 @@ exports.uploadImage = function(req, res) {
 			
 		}else{
 			
-			res.send( errorResInfo.INCORRECT_FILE_TYPE.code, { msg: "File extension should be .png or .jpg or gif" });
+			res.send( errorResInfo.INCORRECT_FILE_TYPE.code, { 
+				msg: "File extension should be .png or .jpg or gif" 
+			});
 
-		}
+		}		
 		
-		
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		});			
+
 	}	
 	
 };
