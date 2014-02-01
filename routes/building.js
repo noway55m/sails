@@ -65,7 +65,7 @@ exports.list = function(req, res) {
 
     Building.find(queryJson, function(err, buildings){
 
-        if(err){
+        if(err) {
 
             log.error(err);
             res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
@@ -75,7 +75,7 @@ exports.list = function(req, res) {
         } else {
 
             // Get building's owner if admin
-            if(req.user.role == User.ROLES.ADMIN){
+            if(req.user.role == User.ROLES.ADMIN) {
 
                 var ids = [];
                 for(index in buildings){
@@ -89,32 +89,32 @@ exports.list = function(req, res) {
 
                 }, function(err, users){        
 
-                        if(err){
+                    if(err){
 
-                                log.error(err);
+						log.error(err);
 
-                        } else {
+                    } else {
 
-                                var nBuildings = JSON.parse(JSON.stringify(buildings));
-                                for(var j=0; j<ids.length; j++){
-                                        var username = "";
-                                        for(var n=0; n<users.length; n++){
-                                                if(ids[j] == users[n].id.toString()){
-                                                        username = users[n].username;
-                                                        break;
-                                                }
+                        var nBuildings = JSON.parse(JSON.stringify(buildings));
+                        for(var j=0; j<ids.length; j++){
+                                var username = "";
+                                for(var n=0; n<users.length; n++){
+                                        if(ids[j] == users[n].id.toString()){
+                                                username = users[n].username;
+                                                break;
                                         }
-                                        nBuildings[j].userName = username;
                                 }
-                        res.send(errorResInfo.SUCCESS.code, nBuildings);
-
+                                nBuildings[j].userName = username;
                         }
+                    	res.json(errorResInfo.SUCCESS.code, nBuildings);
+
+					}
                                 
                 });        
 
             } else {
 
-            	res.send(errorResInfo.SUCCESS.code, buildings);            
+            	res.json(errorResInfo.SUCCESS.code, buildings);            
 
             }        
         
@@ -594,7 +594,7 @@ exports.del = function(req, res) {
 // POST Interface of upload image
 exports.uploadImage = function(req, res) {
 
-	if(req.body._id && req.files.image){
+	if(req.body._id && req.files.image) {
 
 		// Get file name and extension
 		var fileName = req.files.image.name;
@@ -602,10 +602,8 @@ exports.uploadImage = function(req, res) {
 						path.extname(fileName).toLowerCase() === '.jpg' ? ".jpg" : null ||
 						path.extname(fileName).toLowerCase() === '.gif' ? ".gif" : null;
 
-		console.log(extension);
-
 		// Check file format by extension
-		if(extension){
+		if(extension) {
 
 			var tmpPath = req.files.image.path;
 			log.info("tmpPath: " + tmpPath);
@@ -628,70 +626,97 @@ exports.uploadImage = function(req, res) {
 
 				Building.findById(req.body._id, function(error, building){
 
-					if( building ) {
+					if(error) {
 
-						log.info("icon: " + building.icon);
-						log.info("targetName: " + targetFileName);
-						if(building.icon != targetFileName){
-
-							log.info("Update");
-							fs.rename(tmpPath, targetPath, function(err) {
-								if(err){
-
-									log.error(err);
-					    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-					    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-					    			});  
-
-								}else{
-
-									// Delete old image if exist
-									if(building.icon){
-										var oldImgPath = path.resolve(config.imagePath + "/" + building.icon);
-										fs.unlink(oldImgPath, function(err){
-											log.error(err);
-										});
-									}
-									
-									// Update building
-									building.icon = targetFileName;
-									building.save( function(err) {
-
-										if( err ) {
-
-							    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-							    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-							    			});  											
-
-										} else {
-
-											res.send( errorResInfo.SUCCESS.code, targetFileName );
-
-										}
-
-									});
-									
-									// Delete the temporary file
-		                            fs.unlink(tmpPath, function(err){
-		                            	log.error(err);
-		                            });										
-									
-								}
-							});								
-							
-						}else{
-
-							log.info("Same");
-							res.send( errorResInfo.SUCCESS.code, targetFileName );
-						}
+		                log.error(err);
+						res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+							msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+						});
 
 					} else {
 
-	        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-	        				msg: errorResInfo.INCORRECT_PARAMS.msg
-	        			});  						
+						if( building ) {
 
-					}//end if
+			    			// Check permisssion
+			    			utilityS.validatePermission(req.user, building, Building.modelName, function(result){
+
+			    				if(result) {
+
+									log.info("icon: " + building.icon);
+									log.info("targetName: " + targetFileName);
+									if(building.icon != targetFileName){
+
+										log.info("Update");
+										fs.rename(tmpPath, targetPath, function(err) {
+											if(err){
+
+												log.error(err);
+								    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+								    			});  
+
+											}else{
+
+												// Delete old image if exist
+												if(building.icon){
+													var oldImgPath = path.resolve(config.imagePath + "/" + building.icon);
+													fs.unlink(oldImgPath, function(err){
+														log.error(err);
+													});
+												}
+												
+												// Update building
+												building.icon = targetFileName;
+												building.save( function(err) {
+
+													if( err ) {
+
+										    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+										    			});  											
+
+													} else {
+
+														res.send( errorResInfo.SUCCESS.code, targetFileName );
+
+													}
+
+												});
+												
+												// Delete the temporary file
+					                            fs.unlink(tmpPath, function(err){
+					                            	log.error(err);
+					                            });										
+												
+											}
+										});								
+										
+									}else{
+
+										log.info("Same");
+										res.send( errorResInfo.SUCCESS.code, targetFileName );
+
+									}
+
+			    				} else {
+
+		                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+		                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+		                			});		    					
+
+			    				}
+
+			    			});
+
+						} else {
+
+		        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+		        				msg: errorResInfo.INCORRECT_PARAMS.msg
+		        			});  						
+
+						}//end if
+
+					}
 
 				});
 
@@ -699,10 +724,17 @@ exports.uploadImage = function(req, res) {
 
 		}else{
 
-			res.json( errorResInfo.INCORRECT_FILE_TYPE.code, { msg: "File extension should be .png or .jpg or gif" });
+			res.json( errorResInfo.INCORRECT_FILE_TYPE.code, { 
+				msg: "File extension should be .png or .jpg or gif" 
+			});
 
 		}
 
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		});	
 
 	}
 

@@ -22,29 +22,75 @@ exports.list = function(req, res) {
 
 	if (req.query.storeId) {
 
-		Ad.find({
-			
-			storeId : req.query.storeId
-		
-		}, function(err, ads) {
-			
-	        if (err){
+		Store.findById( req.query.storeId, function(err, store) {
+
+			if(err) {
 
 				log.error(err);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
 					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-				});  				
+				}); 
 
-	        } else {
+			} else {
 
-				var adsObj = [];
-				for(var i=0; i<ads.length; i++)
-					adsObj[i] = formatObjectDate(ads[i]);			
-				res.json( errorResInfo.SUCCESS.code, adsObj);
+				if(store) {
 
-	        }
+		            // Check permission
+		            utilityS.validatePermission( req.user, store, Store.modelName, function(result) {
+
+		            	if(result) {
+
+							Ad.find({
+								
+								storeId : req.query.storeId
+							
+							}, function(err, ads) {
+								
+						        if (err){
+
+									log.error(err);
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									});  				
+
+						        } else {
+
+									var adsObj = [];
+									for(var i=0; i<ads.length; i++)
+										adsObj[i] = formatObjectDate(ads[i]);			
+									res.json( errorResInfo.SUCCESS.code, adsObj);
+
+						        }
+
+							});
+
+		            	} else {
+
+		        			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+		        				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+		        			});
+
+		            	}
+
+		            }, true);
+
+				} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					}); 
+
+				}
+
+			}
 
 		});
+
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
 
 	}
 
@@ -97,6 +143,12 @@ exports.read = function(req, res){
 			
 		});			
 		
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
+
 	}
 	
 }; 
@@ -374,73 +426,99 @@ exports.uploadImage = function(req, res) {
 				
 				Ad.findById(req.body._id, function(error, ad){
 					
-					if(ad){
-						
-						log.info("image: " + ad.image);
-						log.info("targetName: " + targetFileName);						
-						if(ad.image != targetFileName) {
+					if(error) {
+
+		                log.error(err);
+						res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+							msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+						});
+
+					} else {
+
+						if(ad){
 							
-							log.info("Update");
-							fs.rename(tmpPath, targetPath, function(err) {
+			    			// Check permisssion
+			    			utilityS.validatePermission(req.user, ad, Ad.modelName, function(result){
 
-								if(err){
+			    				if(result) {
 
-									log.error(err);
-									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-									});
+									log.info("image: " + ad.image);
+									log.info("targetName: " + targetFileName);						
+									if(ad.image != targetFileName) {
+										
+										log.info("Update");
+										fs.rename(tmpPath, targetPath, function(err) {
 
-								}else{									
+											if(err){
 
-									// Delete old image	if exist
-									if(ad.image){
-										var oldImgPath = path.resolve(image_path + "/" + ad.image);
-										fs.unlink(oldImgPath, function(err){
-											log.error(err);
-										});
+												log.error(err);
+												res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+													msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+												});
+
+											}else{									
+
+												// Delete old image	if exist
+												if(ad.image){
+													var oldImgPath = path.resolve(image_path + "/" + ad.image);
+													fs.unlink(oldImgPath, function(err){
+														log.error(err);
+													});
+												}
+												
+												// Update ad
+												ad.image = targetFileName;
+												ad.save(function(err, ad) {
+
+													if(err) {
+
+														log.error(err);
+														res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+															msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+														});
+
+													} else {
+
+														res.send( errorResInfo.SUCCESS.code, targetFileName );
+
+													}
+																																
+												});								
+											
+												// Delete the temporary file
+					                            fs.unlink(tmpPath, function(err){
+					                            	log.error(err);
+					                            });										
+												
+											}										
+										});							
+										
+									} else {
+										
+										log.info("Same file, no need to update image");
+										res.send( errorResInfo.SUCCESS.code, targetFileName );
+
 									}
-									
-									// Update ad
-									ad.image = targetFileName;
-									ad.save(function(err, ad) {
 
-										if(err) {
+			    				} else {
 
-											log.error(err);
-											res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-												msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-											});
+		                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+		                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+		                			});	
 
-										} else {
+			    				}
 
-											res.send( errorResInfo.SUCCESS.code, targetFileName );
-
-										}
-																													
-									});								
-								
-									// Delete the temporary file
-		                            fs.unlink(tmpPath, function(err){
-		                            	log.error(err);
-		                            });										
-									
-								}										
-							});							
+			    			});												
 							
 						} else {
 							
-							log.info("Same file, no need to update image");
-							res.send( errorResInfo.SUCCESS.code, targetFileName );
+		        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+		        				msg: errorResInfo.INCORRECT_PARAMS.msg
+		        			});  						
+							
+						}//end if
 
-						}						
-						
-					} else {
-						
-	        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-	        				msg: errorResInfo.INCORRECT_PARAMS.msg
-	        			});  						
-						
-					}//end if
+					}
 					
 				});
 				
@@ -454,6 +532,12 @@ exports.uploadImage = function(req, res) {
 
 		}		
 		
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
+
 	}	
 	
 };
