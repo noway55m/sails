@@ -72,15 +72,72 @@ exports.list = function(req, res) {
 	
 	if (req.query.floorId) {
 
-		Store.find({
+		Floor.findById(req.query.floorId, function(err, floor){
+
+			if (err) {
+
+				log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});					
 			
-			floorId : req.query.floorId
-		
-		}, function(error, stores) {
-			
-			res.send( errorResInfo.SUCCESS.code, stores );
+			} else {
+
+				if(floor) {
+
+		            // Check permissionco
+		            utilityS.validatePermission( req.user, floor, Floor.modelName, function(result) {
+
+		            	if(result) {
+
+							Store.find({
+								
+								floorId : req.query.floorId
+							
+							}, function(err, stores) {
+								
+								if(err) {
+
+									log.error(err);
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									});	
+
+								} else {
+
+									res.json( errorResInfo.SUCCESS.code, stores );
+
+								}
+								
+							});
+
+		            	} else {
+
+		        			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+		        				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+		        			});
+
+		            	}
+
+		            }, true);
+
+				} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					});	
+
+				}
+
+			}
 
 		});
+
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		});	
 
 	}
 
