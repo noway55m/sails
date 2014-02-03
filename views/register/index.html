@@ -5,6 +5,22 @@
 	<!-- Head meta, css or library include -->
 	<% include ../layout/head-include.html %>
 	
+	<!-- Google recaptcha -->
+	<script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
+	<script type="text/javascript">
+		
+		function showRecaptcha(element) {
+			Recaptcha.create("<%= recaptchaPublicKey %>", element, {
+			theme: "clean",
+			callback: Recaptcha.focus_response_field});
+		}
+
+		$(document).ready(function(){
+			showRecaptcha("recaptcha");
+		});
+
+	</script>
+
 	<!-- Title -->	  
     <title>Register</title>
 
@@ -33,6 +49,7 @@
 		  </div>
 
   			<h1>Register</h1>
+  			<hr>
 
 	  		<!-- Register Form -->
 			<form role="form" action="register/auth" method="post" id="registerForm" onsubmit="return submit_form()">
@@ -66,6 +83,10 @@
 
 			    </div>		    
 			  </div>
+
+			  <!-- Recaptcha -->
+			  <div id="recaptcha"></div>
+			  <hr>
 
 			  <!-- Submit button -->
 			  <button type="submit" class="btn btn-default" id="submit">Submit</button>

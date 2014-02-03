@@ -60,6 +60,11 @@ module.exports = {
 
 	gaAccountIdTest2: "UA-28254038-3", // chewinggun.net - frank.hsu
 
-	gaAccountId: "UA-47307984-1" // cloud.sailtech.com
+	gaAccountId: "UA-47307984-1", // cloud.sailtech.com
+
+	/******** Recaptcha public and private key ********/
+	recaptchaPublicKey: "6Lco-u0SAAAAAM_vZInahzRKgLZMmHN_zJII7QU5",
+
+	recaptchaPrivateKey: "6Lco-u0SAAAAAASO_2mDmdc4aaHP2p4jFBa6hhZ9"
 
 };

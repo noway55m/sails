@@ -14,7 +14,8 @@ function submit_form(){
             password = $("#password"),
             confirmPassword = $("#confirm-password"),
             acceptTerm = $("#acceptTerm"),
-            errorMsgObj = $("#error-dialog");
+            errorMsgObj = $("#error-dialog"),
+            recaptchaResponseObj = $("#recaptcha_response_field");
 
         // Clean error msg
         errorMsgObj.css({display: "none"});
@@ -22,6 +23,7 @@ function submit_form(){
 
         // Check format
         if(utiliy.emailValidate(email, errorMsgObj) &&
+            utiliy.emptyValidate(recaptchaResponseObj, errorMsgObj) &&
             utiliy.passwordValidate(password, errorMsgObj) &&
             utiliy.newPasswordValidate(password, confirmPassword, errorMsgObj)){
 
