@@ -249,6 +249,32 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 			$rootScope.building = building;
 		});
 
+		// Get floors of building
+		Floor.list({ buildingId: floor.buildingId }, function(floors){
+			var layers = [];			  
+			for(var j=-maxBasementNumber; j<=maxFloorNumber; j++){
+
+				var isFound = false;			  
+				for(var i=0; i<floors.length; i++)
+					if( j == floors[i].layer && j!= floor.layer)
+						isFound = true;
+				if(!isFound) {
+					if(j<0)
+						layers.push({
+							name : 'B' + Math.abs(j),
+							value : j							
+						});											
+					else
+						if(j!=0)
+							layers.push({
+								name : 'F' + j,
+								value : j							
+							});																			
+				}				
+			}
+			$scope.layers = layers;
+		});
+
 		// Clone floor for future rollback
         $rootScope.floorClone = angular.copy(floor); 
 				
@@ -257,6 +283,15 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 		$rootScope.loadingFloor = false;
 		
 	});
+
+	
+	// Function for update floor or basement stuts of current floor
+	$scope.updateUp = function() {
+		if($rootScope.floor.layer > 0)
+			$rootScope.up = true;
+		else
+			$rootScope.up = false;
+	}
 
     // Function for rollback selected user info
     $scope.cancelUpdateFloor = function(){

@@ -22,7 +22,10 @@ var	errorResInfo = utilityS.errorResInfo,
 
 // GET Page of specific building
 exports.show = function(req, res) {
-	res.render("floor/floor-show.html");
+	res.render("floor/floor-show.html", {
+		maxFloorNumber: config.maxFloorNumber,
+		maxBasementNumber: config.maxBasementNumber
+	});
 };
 
 // GET Interface for read specific floor
@@ -81,22 +84,61 @@ exports.list = function(req, res) {
 
 	if(req.query.buildingId) {
 
-		Floor.find({
+		Building.findById(req.query.buildingId, function(err, building){
 
-			buildingId: req.query.buildingId
-
-		}).sort({layer: -1}).execFind(function(err, floors){
-
-			if (err){
+			if(err) {
 
 				log.error(err);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
 					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-				}); 	
+				}); 
 
 			} else {
 
-				res.json(errorResInfo.SUCCESS.code, floors);
+				if(building) {
+
+	    			utilityS.validatePermission(req.user, building, Building.modelName, function(result) {
+
+	    				if(result) {
+
+							Floor.find({
+
+								buildingId: building._id
+
+							}).sort({layer: -1}).execFind(function(err, floors){
+
+								if (err){
+
+									log.error(err);
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									}); 	
+
+								} else {
+
+									res.json(errorResInfo.SUCCESS.code, floors);
+
+								}
+
+							});
+
+	    				} else {
+
+                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+                			});
+
+	    				}
+
+	    			}, true);
+
+				} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					}); 
+
+				}
 
 			}
 
@@ -266,42 +308,84 @@ exports.update = function(req, res) {
 
 	            if( floor ) {
 	                
-	    			// Check permisssion
-	    			utilityS.validatePermission(req.user, floor, Floor.modelName, function(result){
+	            	Building.findById(floor.buildingId, function(err, building){
 
-	    				if(result){
+	            		if(err) {
 
-			                floor.name = req.body.name;
-			                floor.desc = req.body.desc;
-			                floor.save(function(err, floor){
+			                log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							}); 
 
-			                	if( err ) {
+	            		} else {
 
-					                log.error(err);
-									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-									}); 
+			    			// Check permisssion
+			    			utilityS.validatePermission(req.user, building, Building.modelName, function(result){
 
-			                	} else {
+			    				if(result){
 
-				                    res.send(errorResInfo.SUCCESS.code, floor);
+			    					// temp original layer
+			    					var oriLayer = floor.layer;
+			    					if( oriLayer != req.body.layer) {
 
-				                    // Auto-package mapzip
-				                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
+			    						// Change folder name
+			    						var oriFolderPath = path.dirname() + "/" + config.mapInfoPath + "/" + building.userId + "/" + building.id +
+			    							"/" + oriLayer;
+			    						var newFolderPath = path.dirname() + "/" + config.mapInfoPath + "/" + building.userId + "/" + building.id +
+			    							"/" + req.body.layer;	
+			    						fs.rename(oriFolderPath, newFolderPath, function(err) {
 
-			                	}
+			    							if(err) {
 
-			                });
+								                log.error(err);
+												res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+													msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+												}); 
 
-	    				} else {
+			    							} else {
 
-                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
-                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
-                			});
+								                floor.name = req.body.name;
+								                floor.desc = req.body.desc;
+								                floor.layer = req.body.layer;			                
+								                floor.save(function(err, floor){
 
-	    				}
+								                	if( err ) {
 
-	    			});
+										                log.error(err);
+														res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+															msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+														}); 
+
+								                	} else {
+
+									                    res.send(errorResInfo.SUCCESS.code, floor);
+
+									                    // Auto-package mapzip
+									                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
+
+								                	}
+
+								                });
+
+			    							}
+
+			    						});	
+
+			    					}
+
+			    				} else {
+
+		                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+		                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+		                			});
+
+			    				}
+
+			    			});
+
+	            		}
+
+	            	});
 
 	            } else {
 
