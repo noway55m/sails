@@ -42,7 +42,7 @@ body {
 }
 
 .edit-button{
-	display:none;
+	display:""; /* shoould by none for mathc ting's requirement now*/
 	position: absolute;
 	right:17px;
 	top:10px;

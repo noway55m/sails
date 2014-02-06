@@ -4,14 +4,14 @@ $(document).ready(function(){
 	$(document).on('mouseover', ".display-block", function(){
 
 		// Toggle edit button
-		 $(this).find(".edit-button").fadeIn();
-		 $(this).find(".remove-button").fadeIn();
+		// $(this).find(".edit-button").fadeIn();
+		// $(this).find(".remove-button").fadeIn();
 
 	}).on('mouseleave', ".display-block", function(){
 
 		// Toggle edit button
-		 $(this).find(".edit-button").fadeOut();
-		 $(this).find(".remove-button").fadeOut();
+		// $(this).find(".edit-button").fadeOut();
+		// $(this).find(".remove-button").fadeOut();
 
 		
 	}).on('click', ".edit-button", function(){
