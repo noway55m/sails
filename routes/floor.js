@@ -179,7 +179,6 @@ exports.create = function(req, res) {
 
 							var layer;
 							var sortOrder = req.body.layer > 0 ? -1 : 1;
-							console.log(sortOrder);
 							Floor.findOne({ buildingId: building.id})
 								.sort({ layer: sortOrder })
 								.select('layer')
@@ -194,13 +193,10 @@ exports.create = function(req, res) {
 
 								} else {
 
-									console.log("---------------------------------------------------");
-									console.log(tfloor);
 									var nextLayer = tfloor && tfloor.layer ? tfloor.layer : 0;
 									if( (req.body.layer<0 && nextLayer > 0) ||
 										(req.body.layer>0 && nextLayer < 0 ) )
 										nextLayer = 0;									
-									console.log(nextLayer);
 									
 									if(req.body.layer > 0) {
 										building.upfloor = nextLayer + 1;
