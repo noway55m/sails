@@ -16,7 +16,8 @@ var express = require('express')
   , ap = require('./routes/ap')
   , iD = require('./routes/iD')
   , feedback = require('./routes/feedback') 
-  , others = require('./routes/others')    
+  , others = require('./routes/others')
+  , errorHandler = require('./routes/errorHandler')      
   , http = require('http')
   , https = require('https')
   , httpProxy = require('http-proxy')
@@ -32,7 +33,7 @@ var express = require('express')
   , resourceAdmin = require('./routes/admin/resourceAdmin')
   , userAdmin = require('./routes/admin/userAdmin')
   , feedbackAdmin = require('./routes/admin/feedbackAdmin')
-  , notificationAdmin = require('./routes/admin/notificationAdmin')    
+  , notificationAdmin = require('./routes/admin/notificationAdmin')
   , config = require('./config/config.js');
 
 
@@ -65,6 +66,11 @@ app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/sails-resource/download/doc/android', express.static(path.join(__dirname, '/resource/sails-relative-res/android/doc')));
 app.use('/sails-resource/download/doc/ios', express.static(path.join(__dirname, '/resource/sails-relative-res/ios/doc')));
+
+// Custom  Error Handler
+app.use(errorHandler.error500);
+app.use(errorHandler.error404);
+
 
 // Support html by nodejs module "ejs"
 app.engine('html', require('ejs').renderFile);

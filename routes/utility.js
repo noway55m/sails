@@ -52,7 +52,12 @@ Utility.errorResInfo = {
 	BASEMENT_OVER_LIMITATION_DENY : {		
 		msg: "Basement number is over limitation.",
 		code: 403		
-	},					
+	},
+
+	NOT_FOUND : {		
+		msg: "can not find this url.",
+		code: 404		
+	},						
 	
 	INTERNAL_SERVER_ERROR : {
 		msg: "Internal server error, please try again later",
