@@ -178,84 +178,110 @@ exports.create = function(req, res) {
 	    				if(result) {
 
 							var layer;
-							if( req.body.layer>0) {
+							var sortOrder = req.body.layer > 0 ? -1 : 1;
+							console.log(sortOrder);
+							Floor.findOne({ buildingId: building.id})
+								.sort({ layer: sortOrder })
+								.select('layer')
+								.exec(function(err, tfloor){
 
-								building.upfloor = building.upfloor + 1;
-								layer = building.upfloor;
+								if(err) {
 
-							} else {
+									log.error(error);
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									}); 
 
-								building.downfloor =  building.downfloor + 1;
-								layer = -( building.downfloor );
+								} else {
 
-							}
-
-							if( layer > config.maxFloorNumber ) {
-
-								res.json( errorResInfo.FLOOR_OVER_LIMITATION_DENY.code , { 
-									msg: errorResInfo.FLOOR_OVER_LIMITATION_DENY.msg
-								}); 	
-
-							} else if ( -(layer) > config.maxBasementNumber ) {
-
-								res.json( errorResInfo.BASEMENT_OVER_LIMITATION_DENY.code , { 
-									msg: errorResInfo.BASEMENT_OVER_LIMITATION_DENY.msg
-								}); 	
-
-							} else {
-
-								building.save( function( err, building ) {
+									console.log("---------------------------------------------------");
+									console.log(tfloor);
+									var nextLayer = tfloor && tfloor.layer ? tfloor.layer : 0;
+									if( (req.body.layer<0 && nextLayer > 0) ||
+										(req.body.layer>0 && nextLayer < 0 ) )
+										nextLayer = 0;									
+									console.log(nextLayer);
 									
-									if( err ) {
+									if(req.body.layer > 0) {
+										building.upfloor = nextLayer + 1;
+										nextLayer++;
+									} else { 	
+										building.downfloor = nextLayer - 1;
+										nextLayer--;
+									}									
+									layer = nextLayer;
 
-										log.error(err);
-										res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-											msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									if( layer > config.maxFloorNumber ) {
+
+										res.json( errorResInfo.FLOOR_OVER_LIMITATION_DENY.code , { 
+											msg: errorResInfo.FLOOR_OVER_LIMITATION_DENY.msg
+										}); 	
+
+									} else if ( -(layer) > config.maxBasementNumber ) {
+
+										res.json( errorResInfo.BASEMENT_OVER_LIMITATION_DENY.code , { 
+											msg: errorResInfo.BASEMENT_OVER_LIMITATION_DENY.msg
 										}); 	
 
 									} else {
 
-										new Floor({
-						
-											layer: layer,
-						
-											buildingId: building._id
-						
-										}).save(function(error, floor){
-												
-											if(error) {
+										building.save( function( err, building ) {
+											
+											if( err ) {
 
-												log.error(error);
+												log.error(err);
 												res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
 													msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
 												}); 	
 
 											} else {
 
-												res.send( errorResInfo.SUCCESS.code, floor );
+												new Floor({
+								
+													layer: layer,
+								
+													buildingId: building._id
+								
+												}).save(function(error, floor){
+														
+													if(error) {
 
-				                                var floorFolderPath = path.dirname() + "/" + config.mapInfoPath + "/" + building.userId + "/" + building.id + "/" + layer;
+														log.error(error);
+														res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+															msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+														}); 	
 
-				                                // Create floor's folder
-				                                mkdirp(floorFolderPath, function(err, dd) {
+													} else {
 
-				                                	if(err)
-				                                		log.error(err);
+														res.send( errorResInfo.SUCCESS.code, floor );
 
-				                                	// Auto-package mapzip		                                
-				                                	utilityS.packageMapzip(building._id, function(errorObj){});
+						                                var floorFolderPath = path.dirname() + "/" + config.mapInfoPath + "/" + building.userId + "/" + building.id + "/" + layer;
 
-				                                });										
+						                                // Create floor's folder
+						                                mkdirp(floorFolderPath, function(err, dd) {
 
-											}
+						                                	if(err)
+						                                		log.error(err);
 
-										});	
+						                                	// Auto-package mapzip		                                
+						                                	utilityS.packageMapzip(building._id, function(errorObj){});
 
-									}				
-									
-								});
+						                                });										
 
-							}
+													}
+
+												});	
+
+											}				
+											
+										});
+
+									}
+
+
+								}
+
+							});
 
 	    				} else {
 
