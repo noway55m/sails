@@ -37,34 +37,10 @@
 					<table class="table">
 						<thead>
 							<th>name</th>
-							<th>type(not use)</th>				
-							<th>pub</th>
-							<th>upfloor</th>
-							<th>downfloor</th>
-							<th>icon</th>
-							<th>desc</th>
-							<th>mapzip</th>
-							<th>mapzipUpdateTime</th>
-							<th>userId</th>
-							<th>address</th>
-							<th>createdTime</th>																						
 						</thead>
 						<tbody>
 							<tr id="{{building._id}}">				
 								<td ng-bind="building.name"></td>
-								<td ng-bind="building.type"></td>					
-								<td ng-bind="building.pub"></td>
-								<td ng-bind="building.upfloor"></td>
-								<td ng-bind="building.downfloor"></td>
-								<td>
-									<img ng-src="{{building.icon}}" alt="building icon" width=100 />
-								</td>
-								<td ng-bind="building.desc"></td>
-								<td ng-bind="building.mapzip"></td>
-								<td ng-bind="building.mapzipUpdateTime"></td>
-								<td ng-bind="building.userId"></td>
-								<td ng-bind="building.address"></td>
-								<td ng-bind="building.createdTime"></td>
 								<td>
 									<a data-toggle="modal" class="btn btn-default" href="#building-edit-dialog" 
 										ng-click="selectBuilding(building)">

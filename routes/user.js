@@ -69,6 +69,11 @@ exports.read = function(req, res){
 // GET Index page of user showing all his/her buildings.
 exports.index = function(req, res){
 
+	//	console.log(ff);
+	// var error = new Error("fffff");
+	// error.status = 409;
+	// throw error;
+
 	res.render("user/index.html", {
 		url: req.url.toString(), // use in layout for identify display info
 		user: req.user,
