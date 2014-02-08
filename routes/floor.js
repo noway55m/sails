@@ -199,11 +199,11 @@ exports.create = function(req, res) {
 										nextLayer = 0;									
 									
 									if(req.body.layer > 0) {
-										building.upfloor = nextLayer + 1;
 										nextLayer++;
-									} else { 	
-										building.downfloor = nextLayer - 1;
-										nextLayer--;
+										building.upfloor = nextLayer;										
+									} else {
+										nextLayer--; 	
+										building.downfloor = nextLayer;										
 									}									
 									layer = nextLayer;
 
@@ -368,7 +368,7 @@ exports.update = function(req, res) {
 
 								                floor.name = req.body.name;
 								                floor.desc = req.body.desc;
-								                floor.layer = req.body.layer;			                
+								                floor.layer = req.body.layer;
 								                floor.save(function(err, floor){
 
 								                	if( err ) {
@@ -380,7 +380,23 @@ exports.update = function(req, res) {
 
 								                	} else {
 
-									                    res.send(errorResInfo.SUCCESS.code, floor);
+								                		// Update top floor and buottom basement
+								                		if(req.body.layer > building.upfloor || req.body.layer < -building.downfloor) {
+
+									                		if(req.body.layer > building.upfloor)
+									                			building.upfloor = req.body.layer;
+
+									                		if(req.body.layer < -building.downfloor)
+									                			building.downfloor = req.body.layer;
+
+									                		building.save(function(err, building){
+									                			if(err) 
+									                				log.error(err);
+									                		});
+
+								                		}
+
+									                    res.json(errorResInfo.SUCCESS.code, floor);
 
 									                    // Auto-package mapzip
 									                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
