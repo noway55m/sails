@@ -11,7 +11,7 @@ exports.error404 = function(req, res){
 
 	console.log("--- error 404 ---");
 
-	var acceptType = req.accepts('html, json', 'text');
+	var acceptType = req.accepts('html, json, text');
 	console.log("acceptType: " + acceptType);
 
 	// Respond with json
@@ -48,11 +48,18 @@ exports.error500 = function(err, req, res, next){
 	console.log(err);
 
 	var errorStatus = err.status || errorResInfo.INTERNAL_SERVER_ERROR.code;
-	var acceptType = req.accepts('html, json', 'text');
+	var acceptType = req.accepts('html, json, text');
 	console.log("acceptType: " + acceptType);
 
 	// Respond with html page
-	if( acceptType =='html') {
+	if( acceptType =='json') {
+
+		res.json( errorStatus, { 
+			msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+		}); 
+		return;
+
+	} else if ( acceptType == 'html') {
 
 		res.status(errorStatus);				
 		res.render('500.html', {
@@ -60,19 +67,12 @@ exports.error500 = function(err, req, res, next){
 		});
 		return;
 
-	} else if ( acceptType == 'json') {
-
-		res.json( errorStatus, { 
-			msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-		}); 
-		return;
-
 	} else {
 
 		// Default text
 		res.send(errorStatus, errorResInfo.INTERNAL_SERVER_ERROR.msg);
 		return;
-		
+
 	}
 
 };
