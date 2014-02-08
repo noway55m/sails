@@ -4,13 +4,8 @@
 	<!-- Loading -->
 	<div class="loading" ng-show="loadingStore">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>		
 
-	<!-- only admin have permission to create store -->	
-	<% if(user.role == roles.ADMIN ){ %>
-
-		<!-- Add store dialog and trigger button -->
-		<% include ../store/store-add-dialog.html %>
-										
-	<% } %>
+	<!-- Add store dialog and trigger button -->
+	<% include ../store/store-add-dialog.html %>
 					
 	<div class="panel-body" ng-hide="loadingStore" style="display:none;">
 		<h4>Stores</h4>
