@@ -409,6 +409,31 @@ exports.update = function(req, res) {
 
 			    						});	
 
+			    					} else {
+
+						                floor.name = req.body.name;
+						                floor.desc = req.body.desc;
+						                floor.save(function(err, floor){
+
+						                	if( err ) {
+
+								                log.error(err);
+												res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+													msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+												}); 
+
+						                	} else {
+
+							                    res.json(errorResInfo.SUCCESS.code, floor);
+
+							                    // Auto-package mapzip
+							                    utilityS.packageMapzip(floor.buildingId, function(errorObj){});
+
+
+						                	}
+
+						                });			    					
+
 			    					}
 
 			    				} else {
