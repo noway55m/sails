@@ -3,7 +3,7 @@ var mongoose = require("./dataSource.js"),
 
 
 /**
- * Floor model
+ * Store model
  */
 var storeSchema = new Schema({
 	
