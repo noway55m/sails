@@ -17,8 +17,12 @@ var iBeaconDeviceSchema = new Schema({
 
     lon: Number,
 
-    floorId: String
+    floorId: String,
     
+    createdTime: Date,
+
+    updatedTime: Date
+
 });
 
 var iBeaconDevice = mongoose.model( 'iBeaconDevice', iBeaconDeviceSchema );

@@ -17,7 +17,11 @@ var couponSchema = new Schema({
 
 	qeCode: String,
 
-    userId: String
+    userId: String,
+
+    createdTime: Date,
+
+    updatedTime: Date    
     
 });
 

@@ -9,7 +9,11 @@ var geofenceSchema = new Schema({
 	   
     name: String,
 
-    floorId: String
+    floorId: String,
+
+    createdTime: Date,
+
+    updatedTime: Date
     
 });
 

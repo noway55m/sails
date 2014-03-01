@@ -11,7 +11,9 @@ var mobileDeviceSchema = new Schema({
 
     mdUid: String,
 
-    macAddress: String
+    macAddress: String,
+
+    createdTime: Date    
     
 });
 
