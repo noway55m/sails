@@ -140,6 +140,12 @@ Utility.validatePermission = function(user, obj, type, next, isRead){
 			}
 			break;
 		
+		// iBeaconDevice Model
+		case iBeaconDevice.modelName:	
+
+		// Geofence Model
+		case Geofence.modelName:	
+
 		// Store Model	
 		case Store.modelName:
 

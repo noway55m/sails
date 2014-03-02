@@ -96,7 +96,7 @@ exports.list = function(req, res) {
 
 };
 
-// Interface for read specific ad of ad
+// GET Interface for read specific ad of ad
 exports.read = function(req, res){
 	
 	if(req.params._id) {
@@ -153,7 +153,7 @@ exports.read = function(req, res){
 	
 }; 
 
-// Interface for create the new ad of ad
+// POST Interface for create the new ad of ad
 exports.create = function(req, res) {
 
 	if (req.body.storeId && req.body.name && req.body.price && req.body.desc) {
@@ -241,7 +241,7 @@ exports.create = function(req, res) {
 
 };
 
-// Interface for create the new store in specific floor of specific building
+// POST Interface for create the new store in specific floor of specific building
 exports.update = function(req, res){
 	
 	if(req.body._id && req.body.storeId && req.body.name && req.body.price && req.body.desc){

@@ -17,6 +17,9 @@ var express = require('express')
   , iD = require('./routes/iD')
   , feedback = require('./routes/feedback') 
   , others = require('./routes/others')
+  , iBeaconDevice = require('./routes/iBeaconDevice')
+  , geofence = require('./routes/geofence')
+  , coupon = require('./routes/coupon')
   , errorHandler = require('./routes/errorHandler')      
   , http = require('http')
   , https = require('https')
@@ -185,6 +188,28 @@ app.get('/sails-resource/download/doc/android/*', ensureAuthenticated, function(
 app.get('/sails-resource/download/doc/ios/*', ensureAuthenticated, function(req, res, next) {
   next();
 });
+
+
+//--------------------------
+app.sget('/iBeaconDevice/read/:_id', iBeaconDevice.read);
+app.sget('/iBeaconDevice/list', iBeaconDevice.list);
+app.spost('/iBeaconDevice/create', iBeaconDevice.create);
+app.spost('/iBeaconDevice/update', iBeaconDevice.update);
+app.spost('/iBeaconDevice/delete', iBeaconDevice.del);
+
+//--------------------------
+app.sget('/geofence/read/:_id', geofence.read);
+app.sget('/geofence/list', geofence.list);
+app.spost('/geofence/create', geofence.create);
+app.spost('/geofence/update', geofence.update);
+app.spost('/geofence/delete', geofence.del);
+
+//--------------------------
+app.sget('/coupon/read/:_id', coupon.read);
+app.sget('/coupon/list', coupon.list);
+app.spost('/coupon/create', coupon.create);
+app.spost('/coupon/update', coupon.update);
+app.spost('/coupon/delete', coupon.del);
 
 
 //------------------------------ admin page and interface (only use in admin)
