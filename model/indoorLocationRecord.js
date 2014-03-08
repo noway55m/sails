@@ -15,7 +15,7 @@ var indoorLocationRecordSchema = new Schema({
 
     floorId: String,
 
-    mobileDeviceId: String
+    mdUid: String
     
 });
 

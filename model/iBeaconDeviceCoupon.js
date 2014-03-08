@@ -7,7 +7,7 @@ var mongoose = require("./dataSource.js"),
  */
 var iBeaconDeviceCouponSchema = new Schema({
 	   
-    iBeaconDeviceId: String
+    iBeaconDeviceId: String,
 
     couponId: String
     

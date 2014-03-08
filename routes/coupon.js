@@ -1,12 +1,17 @@
 var log = require('log4js').getLogger(),
 	moment = require('moment'), 
 	utilityS = require("./utility"),
+	User = require("../model/user"),	
 	iBeaconDevice = require("../model/iBeaconDevice"),	
 	iBeaconDeviceCoupon = require("../model/iBeaconDeviceCoupon"),
-	Coupon = require("../model/coupon"),	
+	Coupon = require("../model/coupon"),
+	GeofenceCoupon = require("../model/geofenceCoupon"),		
 	fs = require('fs'),
 	path = require('path'),
 	config = require('../config/config');
+
+// Static variable
+var	errorResInfo = utilityS.errorResInfo;
 
 
 // GET Interface for list coupons of specific user

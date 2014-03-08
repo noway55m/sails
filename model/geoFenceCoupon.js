@@ -7,7 +7,7 @@ var mongoose = require("./dataSource.js"),
  */
 var geofenceCouponSchema = new Schema({
 	   
-    geofenceId: String
+    geofenceId: String,
 
     couponId: String
     

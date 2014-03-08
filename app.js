@@ -19,7 +19,8 @@ var express = require('express')
   , others = require('./routes/others')
   , iBeaconDevice = require('./routes/iBeaconDevice')
   , geofence = require('./routes/geofence')
-  , coupon = require('./routes/coupon')
+  , coupon = require('./routes/coupon')  
+  , indoorLocationRecord = require('./routes/indoorLocationRecord')
   , errorHandler = require('./routes/errorHandler')      
   , http = require('http')
   , https = require('https')
@@ -191,10 +192,11 @@ app.get('/sails-resource/download/doc/ios/*', ensureAuthenticated, function(req,
 
 
 //--------------------------
-app.sget('/iBeaconDevice/read/:_id', iBeaconDevice.read);
+app.sget('/iBeaconDevice/read/:deviceUid', iBeaconDevice.read);
 app.sget('/iBeaconDevice/list', iBeaconDevice.list);
 app.spost('/iBeaconDevice/create', iBeaconDevice.create);
 app.spost('/iBeaconDevice/update', iBeaconDevice.update);
+app.spost('/iBeaconDevice/bindCoupons', iBeaconDevice.bindCoupons);
 app.spost('/iBeaconDevice/delete', iBeaconDevice.del);
 
 //--------------------------
@@ -202,6 +204,7 @@ app.sget('/geofence/read/:_id', geofence.read);
 app.sget('/geofence/list', geofence.list);
 app.spost('/geofence/create', geofence.create);
 app.spost('/geofence/update', geofence.update);
+app.spost('/geofence/bindCoupons', geofence.bindCoupons);
 app.spost('/geofence/delete', geofence.del);
 
 //--------------------------
@@ -210,6 +213,11 @@ app.sget('/coupon/list', coupon.list);
 app.spost('/coupon/create', coupon.create);
 app.spost('/coupon/update', coupon.update);
 app.spost('/coupon/delete', coupon.del);
+
+
+//--------------------------
+app.sget('/indoorLocationRecord/list', indoorLocationRecord.list);
+app.post('/indoorLocationRecord/upload', indoorLocationRecord.upload);
 
 
 //------------------------------ admin page and interface (only use in admin)
