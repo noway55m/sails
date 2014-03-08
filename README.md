@@ -48,3 +48,10 @@
 
 Created with [Nodeclipse v0.4](https://github.com/Nodeclipse/nodeclipse-1)
  ([Eclipse Marketplace](http://marketplace.eclipse.org/content/nodeclipse), [site](http://www.nodeclipse.org))   
+
+ 
+ ## Dependencies
+ 
+	1. "convas" and "qrcode" modules need to install "python 2.7" 
+		
+		ref: https://github.com/LearnBoost/node-canvas/wiki/Installation---Ubuntu
