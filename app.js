@@ -21,6 +21,7 @@ var express = require('express')
   , geofence = require('./routes/geofence')
   , coupon = require('./routes/coupon')  
   , indoorLocationRecord = require('./routes/indoorLocationRecord')
+  , mobileDevice = require('./routes/mobileDevice')  
   , errorHandler = require('./routes/errorHandler')      
   , http = require('http')
   , https = require('https')
@@ -216,7 +217,12 @@ app.spost('/coupon/delete', coupon.del);
 
 
 //--------------------------
-app.sget('/indoorLocationRecord/list', indoorLocationRecord.list);
+app.sget('/mobileDevice/read/:mdUid', mobileDevice.read);
+app.post('/mobileDevice/create', mobileDevice.create);
+app.post('/mobileDevice/delete', mobileDevice.del);
+
+//--------------------------
+app.get('/indoorLocationRecord/list', indoorLocationRecord.list);
 app.post('/indoorLocationRecord/upload', indoorLocationRecord.upload);
 
 

@@ -7,7 +7,7 @@ var mongoose = require("./dataSource.js"),
  */
 var userMobileDeviceSchema = new Schema({
 	   
-    userId: String
+    userId: String,
 
     mobileDeviceId: String
     

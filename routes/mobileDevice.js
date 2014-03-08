@@ -2,7 +2,8 @@ var log = require('log4js').getLogger(),
 	moment = require('moment'), 
 	utilityS = require("./utility"),
 	MobileDevice = require("../model/mobileDevice"),	
-	User = require("../model/user"),	
+	User = require("../model/user"),
+	UserMobileDevice = require("../model/userMobileDevice"),			
 	fs = require('fs'),
 	path = require('path'),
 	config = require('../config/config');
@@ -118,7 +119,6 @@ exports.create = function(req, res) {
 					    mdUid: req.body.mdUid,
 					    macAddress: req.body.macAddress,
 					    osType: req.body.osType,
-					    userId: req.user._id.toString(),									    
 					    createdTime: new Date()
 
 					}).save(function(err, md) {
@@ -132,12 +132,45 @@ exports.create = function(req, res) {
 
 						} else {
 
-							if (md) {
-		
-								var mdObj = formatObjectDate(md);
-								res.json(errorResInfo.SUCCESS.code, mdObj);
-		
+							// Check user login or not
+							if(req.user && req.user._id.toString()) {
+
+								UserMobileDevice.findOne({
+
+									userId: req.user._id.toString(),
+									mobileDeviceId: md._id.toString()
+
+								}, function(err, umd) {
+
+									if(err) {
+
+										log.error(err);
+
+									} else {
+
+										new UserMobileDevice({
+
+											userId: req.user._id.toString(),
+											mobileDeviceId: md._id.toString()
+
+										}, function(err, umd){
+
+											if(err) {
+
+												log.error(err);
+											
+											}
+
+										});
+
+									}
+
+								});
+
 							}
+
+							var mdObj = formatObjectDate(md);
+							res.json(errorResInfo.SUCCESS.code, mdObj);
 
 						}
 
