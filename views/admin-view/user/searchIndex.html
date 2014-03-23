@@ -9,7 +9,7 @@
 		<link href="/stylesheets/style-admin.css" rel="stylesheet">
 
 		<!-- Title -->
-		<title>User Info</title>
+		<title>User Search</title>
 	
 	</head>
 	<body>
@@ -30,28 +30,17 @@
 					<div class="panel panel-default">	
 						<div class="panel-heading">
 
-							<!-- Add user fields -->
+							<!-- Search user fields -->
 							<div>
 								<input class="form-control add" placeholder="Username" name="username" value="">
-								<input class="form-control add" placeholder="Passwrord" name="password" value="">
-								<div class="form-group" style="display:inline;">
-									<label for="floor">Role</label>
-									<select name="role" style="height: 30px;">
-										<option value="<%= ROLES.ADMIN %>">Administrator</option>
-										<option value="<%= ROLES.DEVELOPER %>">Developer</option>
-										<option value="<%= ROLES.FREE %>">Free</option>
-									</select>
-								</div>
-
 								<button type="submit" class="btn btn-primary" data-loading-text="Adding"
-									ng-click="addUser($event)" style="margin-left: 30px;">Add New User</button>
+									ng-click="searchUser($event)" style="margin-left: 30px;">Search</button>
 
 								<!-- error msg -->
 								<div class="alert alert-danger error-msg">
 									<span class="label label-danger">Error</span>
 									<span class="errorText"></span>
-								</div>
-								
+								</div>									
 							</div>	
 
 							<h3>Users - Total Count: <span ng-bind="count"></span></h3>
