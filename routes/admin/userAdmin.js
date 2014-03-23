@@ -33,6 +33,77 @@ exports.index = function(req, res){
 
 };
 
+
+// Page for search users
+exports.searchIndex = function(req, res){
+
+	res.render("admin-view/user/searchIndex.html", {
+		url: req.url.toString(), // use in layout for identify display info
+		user: req.user,
+        imagePath: public_image_path,
+        ROLES: User.ROLES
+	});
+
+};
+
+
+// GET Interface for search users by username
+exports.search = function(req, res){
+
+	// Pagination params
+	var page = ( req.query.page && req.query.page > 0 ? req.query.page - 1 : 0 ) || 0;
+	var queryJson = null;
+
+	// Parse username
+	if(req.query.username){
+		queryJson = {
+			'username': { $regex: req.query.username, $options: 'i' }
+		}
+	}
+
+    User.find(queryJson)
+		.sort({ createdTime: -1 })
+		.limit(config.pageOffset)
+		.skip(page * config.pageOffset).exec( function(err, users){
+
+        if(err){
+
+            log.error(err);
+			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+			});  		
+
+		} else {
+
+			// Get users count
+		    User.count(queryJson, function(err, count){
+
+				if( err ) {
+
+		            log.error(err);
+					res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+						msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					});  		
+
+				} else {
+
+			        res.send(errorResInfo.SUCCESS.code, {						        	
+			        	page: page + 1,
+			        	offset: config.pageOffset,
+			        	count: count,
+			        	users: users
+			        });
+	
+				}
+
+			} );			
+    	
+    	}
+
+	});
+			
+};
+
 // GET Interface for get all users
 exports.list = function(req, res){
 
