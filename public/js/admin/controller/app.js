@@ -192,7 +192,13 @@ angular.module('userServices', [ 'ngResource' ]).factory('User', function($resou
             params : {
                 action : 'changePassword'
             }        	
-        }           
+        },
+        search : {
+            method : 'GET',
+            params : {
+                action : 'search'
+            }            
+        }                 
     });
 });
 

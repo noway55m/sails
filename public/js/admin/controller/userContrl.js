@@ -1,6 +1,6 @@
 var utility = Utility.getInstance();
 
-// Controller for list stores
+// Controller for list users
 function UserListCtrl($scope, User, $rootScope, $compile) {
 
 	// List all users
@@ -300,20 +300,98 @@ function UserListCtrl($scope, User, $rootScope, $compile) {
 	// Function for load specific page
 	$scope.loadPage = function(e, page){
 
-		var element = angular.element(e.currentTarget);
-		User.list({ page: page }, function(obj){
-			
-			var page = obj.page,
-				offset = obj.offset,
-				count = obj.count,
-				users = obj.users;
+		var url = window.location.toString(),
+			element = angular.element(e.currentTarget);		
+		if(url.indexOf("searchIndex")!=-1) {
 
-			$rootScope.users = users;
+			var username = $("input[name=username]").val();
+			User.search({ 
 
-		});
+				page: page, 
+				username: username
+
+			}, function(obj){
+				
+				var page = obj.page,
+					offset = obj.offset,
+					count = obj.count,
+					users = obj.users;
+
+				$rootScope.users = users;
+
+			});
+
+		} else {
+
+			User.list({ page: page }, function(obj){
+				
+				var page = obj.page,
+					offset = obj.offset,
+					count = obj.count,
+					users = obj.users;
+
+				$rootScope.users = users;
+
+			});
+
+		}
 
 	};
 
+
+	// Search users with specific username
+	$scope.searchUser = function(e){
+
+		// Get search username string
+		var addButton = angular.element(e.currentTarget),
+			form = addButton.parent(),
+			username = form.find("input[name=username]").val();	
+			
+		// Get all search results	
+		User.search({ 
+
+			username: username
+
+		}, function(obj){
+
+			var page = obj.page,
+				offset = obj.offset,
+				count = obj.count,
+				totalPages = Math.ceil(count/offset),
+				users = obj.users;
+
+			$rootScope.count = count;	
+			$rootScope.users = users;
+
+			// Trigger pagination		
+			if( totalPages > 1 ) {
+
+				$("#pagination").css("display", "");
+				$("#pagination").paginate({
+					count: totalPages,
+					start: 1,
+					display: 5,
+					border: false,
+					text_color: '#79B5E3',
+					background_color: 'none',	
+					text_hover_color: '#2573AF',
+					background_hover_color: 'none',
+					mouse: 'press'
+				});
+				$compile( angular.element('#pagination').contents() )($scope);
+
+			} else {
+
+				$("#pagination").css("display", "none");
+
+			}
+
+		});	
+
+	}
+
+
 }
+
 
 // StoreListCtrl.$inject = ['$scope', 'Building'];
