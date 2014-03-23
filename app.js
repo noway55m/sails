@@ -318,6 +318,8 @@ app.post('/admin/user/update', isAdmin, userAdmin.update);
 app.post('/admin/user/delete', isAdmin, userAdmin.del);
 app.post('/admin/user/changePassword', isAdmin, userAdmin.changePassword);
 app.get('/admin/user/findByUsername', isAdmin, userAdmin.findByUsername);
+app.get('/admin/user/searchIndex', isAdmin, userAdmin.searchIndex);
+app.get('/admin/user/search', isAdmin, userAdmin.search);
 
 
 // Admin feedback interfaces
@@ -370,3 +372,11 @@ http.createServer(app).listen(app.get('port'), function(){
 
 /**************** Bootstrap ****************/
 bootstrap();
+
+
+
+/**************** Schedule job using cron library ****************/
+// var cronJob = require('cron').CronJob;
+// new cronJob('3 * * * * *', function(){
+//     console.log('You will see this message every second');
+// }, null, true, "America/Los_Angeles");
