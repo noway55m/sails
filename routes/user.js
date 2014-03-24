@@ -400,7 +400,8 @@ exports.upgradeDeveloper = function(req, res){
 			to : mailer.defaultOptions.from, // list of receivers
 			subject : "Upgrade Developer Request", // Subject line
 			text : "Upgrade Developer Request", // plaintext body
-			html : "<b>Upgrade Developer Request from user with userId: " + req.user.id + "</b>" + 
+			html : "<b>Upgrade Developer Request from user with userId: " + req.user.id + " username:" + req.user.username +
+			"</b>" + 
 				"<p>message:" + req.body.msg + "</p>"// html body// html body
 		};
 
