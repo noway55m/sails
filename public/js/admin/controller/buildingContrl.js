@@ -14,6 +14,8 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 			totalPages = Math.ceil(count/offset),
 			buildings = obj.buildings;
 
+		$scope.count = count;
+
 		// Set icon url
 		buildings.forEach(function(building){
 			if(building.icon)
@@ -85,6 +87,9 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 					building.icon = "/img/no-image.png";					
 				$scope.buildings.push(building);
 				
+				// Add count
+				$scope.count++;
+
 		    	// Show success msg
 				$().toastmessage('showSuccessToast', "Create successfully");				
 
@@ -108,11 +113,7 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 		
 		deleteObj = this.building;
 		$("#removeContent").html(deleteObj.name);
-
-		if(useSecondDialog)
-			deleteModal.modal("show");
-		else
-			deleteModal2.modal("show");
+		deleteModal.modal("show");
 
 	};
 	
@@ -140,6 +141,9 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 					}
 		    	}
 		    	
+				// Subtract count
+				$scope.count--;
+
 		    	// Show success msg
 				$().toastmessage('showSuccessToast', "Remove successfully");
 				
@@ -165,6 +169,8 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 				offset = obj.offset,
 				count = obj.count,
 				buildings = obj.buildings;
+
+			$scope.count=count;
 
 			// Set icon url
 			buildings.forEach(function(building){
