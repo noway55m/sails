@@ -257,6 +257,9 @@ app.post('/admin/building/uploadImage', isAdmin, buildingAdmin.uploadImage);
 app.post('/admin/building/packageMapzip', isAdmin, buildingAdmin.packageMapzip);
 app.get('/admin/building/getMapzip', isAdmin, buildingAdmin.getMapzip);
 //app.post('/admin/building/uploadBeaconlist', isAdmin, buildingAdmin.uploadBeaconlist);
+app.get('/admin/building/searchIndex', isAdmin, buildingAdmin.searchIndex);
+app.get('/admin/building/search', isAdmin, buildingAdmin.search);
+
 
 // Admin floor interfaces
 app.get('/admin/floor/list', isAdmin, floorAdmin.list);

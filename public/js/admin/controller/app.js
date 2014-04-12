@@ -43,7 +43,13 @@ angular.module('buildingServices', [ 'ngResource' ]).factory('Building', functio
             params : {
                 action : 'packageMapzip'
             }
-        }                
+        },
+        search : {
+            method : 'GET',
+            params : {
+                action : 'search'
+            }            
+        }                          
     });
 });
 

@@ -162,28 +162,152 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 	// Function for load specific page
 	$scope.loadPage = function(e, page){
 
-		var element = angular.element(e.currentTarget);
-		Building.list({ page: page }, function(obj){
+		var url = window.location.toString(),
+			element = angular.element(e.currentTarget);
+		if(url.indexOf("searchIndex")!=-1) {
+
+			var buildingId = form.find("input[name=buildingId]").val(),
+				buildingName = form.find("input[name=buildingName]").val(),
+				username = form.find("input[name=username]").val(),
+				userId = form.find("input[name=userId]").val();
+
+			var query = {};
+			if($("input[name=queryWay]:checked").val() == 1) {
+				query.buildingId = buildingId;
+			} else {
+				query.buildingName = buildingName;
+				query.username = username;
+				query.userId = userId;
+				query.page = page;
+			}			
+								
+			Building.search(query, function(obj){
+				
+				var page = obj.page,
+					offset = obj.offset,
+					count = obj.count,
+					buildings = obj.buildings;
+
+				$scope.count=count;
+
+				// Set icon url
+				buildings.forEach(function(building){
+					if(building.icon)
+						building.icon = "/" + imagePath + "/" + building.icon;
+					else
+						building.icon = "/img/no-image.png";
+				});	
+
+				$scope.buildings = buildings;
+
+			});
+
+		} else {
+
+			Building.list({ page: page }, function(obj){
+				
+				var page = obj.page,
+					offset = obj.offset,
+					count = obj.count,
+					buildings = obj.buildings;
+
+				$scope.count=count;
+
+				// Set icon url
+				buildings.forEach(function(building){
+					if(building.icon)
+						building.icon = "/" + imagePath + "/" + building.icon;
+					else
+						building.icon = "/img/no-image.png";
+				});		
+				$scope.buildings = buildings;
+
+			});
+
+		}		
+
+	};
+
+
+	// Search way control
+	$("input[name=queryWay]").change(function(event) {
+		if(this.value == "1"){
+			$("input[name=buildingId]").css("display", "");
+			$("input[name=buildingName]").css("display", "none");
+			$("input[name=username]").css("display", "none");
+			$("input[name=userId]").css("display", "none");			
+		} else {
+			$("input[name=buildingId]").css("display", "none");
+			$("input[name=buildingName]").css("display", "");
+			$("input[name=username]").css("display", "");
+			$("input[name=userId]").css("display", "");
+		}
+	});
+
+	// Search buildings with specific building id, name, user id, name
+	$scope.searchBuilding = function(e){
+
+		// Get search username string
+		var addButton = angular.element(e.currentTarget),
+			form = addButton.parent(),
+			buildingId = form.find("input[name=buildingId]").val(),
+			buildingName = form.find("input[name=buildingName]").val(),
+			username = form.find("input[name=username]").val(),
+			userId = form.find("input[name=userId]").val();	
 			
+		var query = {};
+		if($("input[name=queryWay]:checked").val() == 1) {
+			query.buildingId = buildingId;
+		} else {
+			query.buildingName = buildingName;
+			query.username = username;
+			query.userId = userId;
+		}	
+
+		// Get all search results	
+		Building.search(query, function(obj){
+
 			var page = obj.page,
 				offset = obj.offset,
 				count = obj.count,
+				totalPages = Math.ceil(count/offset),
 				buildings = obj.buildings;
 
-			$scope.count=count;
-
-			// Set icon url
-			buildings.forEach(function(building){
-				if(building.icon)
-					building.icon = "/" + imagePath + "/" + building.icon;
-				else
-					building.icon = "/img/no-image.png";
-			});		
+			$scope.count = count;	
 			$scope.buildings = buildings;
 
-		});
+			// Trigger pagination		
+			if( totalPages > 1 ) {
 
-	};
+				$("#pagination").css("display", "");
+				$("#pagination").paginate({
+					count: totalPages,
+					start: 1,
+					display: 5,
+					border: false,
+					text_color: '#79B5E3',
+					background_color: 'none',	
+					text_hover_color: '#2573AF',
+					background_hover_color: 'none',
+					mouse: 'press'
+				});
+				$compile( angular.element('#pagination').contents() )($scope);
+
+			} else {
+
+				$("#pagination").css("display", "none");
+
+			}
+
+		}, function(res){
+
+			// Show error msg
+			var errorMsg = res && res.data && res.data.msg;
+			$().toastmessage('showErrorToast', errorMsg);						        
+
+		});	
+
+	}
 
 	// Function for select specific building
 	$scope.selectBuilding = function(building){

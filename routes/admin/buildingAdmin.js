@@ -2,6 +2,7 @@ var log = require('log4js').getLogger(),
 	http = require('http'),
     utilityS = require("../utility.js"),
     mkdirp = require("mkdirp"),
+    ObjectId = require('mongoose').Types.ObjectId,
 	User = require("../../model/user"),
     Building = require("../../model/building"),
     Floor = require("../../model/floor"),
@@ -21,12 +22,116 @@ var log = require('log4js').getLogger(),
 // Static variable
 var	errorResInfo = utilityS.errorResInfo,
 	mapinfo_path = "/" + config.mapInfoPath,
+	public_image_path = "client-image",
 	image_path = config.imagePath;
 
 // GET Interface of list buildings or buildings of specific user (new support pagination)
 exports.index = function(req, res) {
 	res.render("admin-view/building/index.html");	
 };
+
+
+// Page for search buildings
+exports.searchIndex = function(req, res){
+
+	res.render("admin-view/building/searchIndex.html", {
+		url: req.url.toString(), // use in layout for identify display info
+		user: req.user,
+        imagePath: public_image_path,
+        ROLES: User.ROLES
+	});
+
+};
+
+
+// GET Interface for search buildings by id, name, username or userId
+exports.search = function(req, res){
+
+	// Pagination params
+	var page = ( req.query.page && req.query.page > 0 ? req.query.page - 1 : 0 ) || 0;
+	var queryJson = null;
+
+	// Parse buildingId
+	if(req.query.buildingId){
+		var theId;
+		try {
+			theId = new ObjectId(req.query.buildingId);
+		} catch (e) {
+			res.send(errorResInfo.INCORRECT_PARAMS.code, {
+				msg: "Incorrect building id"
+			});
+		}
+
+		queryJson = {
+			'_id': theId
+		}
+	}
+
+	// Parse buildingName
+	if(req.query.buildingName){
+		queryJson = {
+			'name': { $regex: req.query.buildingName, $options: 'i' }
+		}
+	}
+
+	// Parse username
+	if(req.query.username){
+		queryJson = {
+			'username': { $regex: req.query.username, $options: 'i' }
+		}
+	}
+
+	// Parse userId
+	if(req.query.userId){
+		queryJson = {
+			'userId': req.query.userId
+		}
+	}
+
+
+    Building.find(queryJson)
+		.sort({ createdTime: -1 })
+		.limit(config.pageOffset)
+		.skip(page * config.pageOffset).exec( function(err, buildings){
+
+        if(err){
+
+            log.error(err);
+			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+			});  		
+
+		} else {
+
+			// Get buildings count
+		    Building.count(queryJson, function(err, count){
+
+				if( err ) {
+
+		            log.error(err);
+					res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+						msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					});  		
+
+				} else {
+
+			        res.send(errorResInfo.SUCCESS.code, {						        	
+			        	page: page + 1,
+			        	offset: config.pageOffset,
+			        	count: count,
+			        	buildings: buildings
+			        });
+	
+				}
+
+			} );			
+    	
+    	}
+
+	});
+			
+};
+
 
 // GET Interface of list all buildings
 exports.list = function(req, res) {

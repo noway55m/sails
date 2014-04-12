@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sails-admin" ng-controller='BuildingListCtrl'>
+  <head>
+  
+	<!-- Head meta, css or library include -->
+	<% include ../../layout/head-include.html %>
+		
+	<!-- admin page css -->	
+	<link href="/stylesheets/style-admin.css" rel="stylesheet">
+
+	<!-- Title -->
+    <title>Building</title>
+
+  </head>
+
+  <body>
+
+    <!-- Fixed Top Navigation Bar Template -->
+	<% include ../../layout/top-navbar.html %>
+
+
+
+	<!-- Main Container -->
+    <div class="container">
+
+		<div class="jumbotron">
+
+			<!-- left navigation bar -->
+			<% include ../layout/left-navbar.html %>
+			
+			<div style="padding-left:230px;">
+
+				<div class="panel panel-default">	
+					<div class="panel-heading">
+
+							<!-- Search user fields -->
+							<div>
+								<input type="radio" checked class="form-control" name="queryWay" value="1" style="width:20px;display:inline;"><label style="font-size:20px;padding:10px 20px;">Search by Id</label>
+								<input class="form-control add" placeholder="Building Id" name="buildingId" value="">
+								<br/>
+								<!-- -------------------------------- -->
+								<input type="radio" class="form-control" name="queryWay" value="2" style="width:20px;display:inline;"><label style="font-size:20px;padding:10px 20px;">Search by Multiple Condition</label>
+								<input class="form-control add" placeholder="Building Name" name="buildingName" value="" style="display:none;">
+								<input class="form-control add" placeholder="Username" name="username" value="" style="display:none;">
+								<input class="form-control add" placeholder="User Id" name="userId" value="" style="display:none;">							
+								
+
+								<button type="submit" class="btn btn-primary" data-loading-text="Searching"
+									ng-click="searchBuilding($event)" style="margin-left: 30px;">Search</button>
+
+								<!-- error msg -->
+								<div class="alert alert-danger error-msg">
+									<span class="label label-danger">Error</span>
+									<span class="errorText"></span>
+								</div>									
+							</div>	
+
+						<!-- Building info -->						
+						<h3>Buildings - Total Count: <span ng-bind="count"></span></h3>
+						<p></p>
+					</div>
+					<table class="table">
+						<thead>
+							<th>_id</th>
+							<th>name</th>
+							<th>type(not use)</th>				
+							<th>pub</th>
+							<th>upfloor</th>
+							<th>downfloor</th>
+							<th>icon</th>
+							<th>desc</th>
+							<th>mapzip</th>
+							<th>mapzipUpdateTime</th>
+							<th>userId</th>
+							<th>address</th>
+							<th>createdTime</th>
+							<th></th>
+							<th></th>
+							<th></th>		
+						</thead>
+						<tbody>
+							<tr ng-repeat="building in buildings" id="{{building._id}}">				
+								<td>
+									<a href="/admin/building/show/{{building._id}}" ng-bind="building._id"></a>
+								</td>
+								<td ng-bind="building.name"></td>
+								<td ng-bind="building.type"></td>					
+								<td ng-bind="building.pub"></td>
+								<td ng-bind="building.upfloor"></td>
+								<td ng-bind="building.downfloor"></td>
+								<td>
+									<img ng-src="{{building.icon}}" alt="building icon" width=100 />
+								</td>
+								<td ng-bind="building.desc"></td>
+								<td>
+									<a href="/admin/building/getMapzip?mapzip={{building.mapzip}}" target="_blank">
+										<span class="glyphicon glyphicon-download" ng-bind="building.mapzip"></span>
+									</a>
+								</td>
+								<td ng-bind="building.mapzipUpdateTime"></td>
+								<td ng-bind="building.userId"></td>
+								<td ng-bind="building.address"></td>
+								<td ng-bind="building.createdTime"></td>
+								<td>
+									<button class="btn btn-primary" data-loading-text="Packaging..."　
+									ng-click="packageMapzip($event, building)">Package mapzip </button>
+								</td>
+								<td>
+									<a data-toggle="modal" class="btn btn-default" href="#building-edit-dialog" 
+										ng-click="selectBuilding(building)">
+										<span class="glyphicon glyphicon-edit"></span>
+									</a>					
+								</td>						
+								<td>
+									<a data-toggle="modal" class="btn btn-default" ng-click="deleteDialogSetup(building)">
+										<span class="glyphicon glyphicon-remove"></span>
+									</a>					
+								</td>										
+							</tr>
+						</tbody>
+					</table>		
+				</div>
+			</div>
+
+			<div id="pagination"></div>			
+
+		</div>
+
+	</div>	
+
+	<!-- Edit and Delete Dialog -->
+	<% include building-edit-dialog.html %>
+	<% include ../layout/delete-confirm-dialog.html %>	
+
+	<!-- Body library include -->
+	<% include ../../layout/body-include.html %>
+
+    <!-- Controller -->    
+	<script src="/js/admin/controller/app.js"></script>    
+    <script src="/js/admin/controller/buildingContrl.js"></script>
+
+  </body>
+
+</html>
