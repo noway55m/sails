@@ -74,13 +74,6 @@ exports.search = function(req, res){
 		}
 	}
 
-	// Parse username
-	if(req.query.username){
-		queryJson = {
-			'username': { $regex: req.query.username, $options: 'i' }
-		}
-	}
-
 	// Parse userId
 	if(req.query.userId){
 		queryJson = {

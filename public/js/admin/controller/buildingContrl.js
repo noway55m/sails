@@ -168,7 +168,6 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 
 			var buildingId = form.find("input[name=buildingId]").val(),
 				buildingName = form.find("input[name=buildingName]").val(),
-				username = form.find("input[name=username]").val(),
 				userId = form.find("input[name=userId]").val();
 
 			var query = {};
@@ -176,7 +175,6 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 				query.buildingId = buildingId;
 			} else {
 				query.buildingName = buildingName;
-				query.username = username;
 				query.userId = userId;
 				query.page = page;
 			}			
@@ -252,7 +250,6 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 			form = addButton.parent(),
 			buildingId = form.find("input[name=buildingId]").val(),
 			buildingName = form.find("input[name=buildingName]").val(),
-			username = form.find("input[name=username]").val(),
 			userId = form.find("input[name=userId]").val();	
 			
 		var query = {};
@@ -260,7 +257,6 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 			query.buildingId = buildingId;
 		} else {
 			query.buildingName = buildingName;
-			query.username = username;
 			query.userId = userId;
 		}	
 
