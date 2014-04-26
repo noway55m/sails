@@ -2,7 +2,8 @@ var log = require('log4js').getLogger(),
     fs = require('fs'),
     utilityS = require("./utility.js"),     
 	path = require('path'), 
-    Sdk = require("../model/sdk"),       
+    Sdk = require("../model/sdk"),
+    SdkDownloadLog = require("../model/admin/sdkDownloadLog"),           
 	config = require('../config/config');
 
 
@@ -77,6 +78,10 @@ exports.downloadSdk = function(req, res){
     // We replaced all the event handlers with a simple call to util.pump()
     readStream.pipe(res);
 
+
+    // Record the download log
+    recordSdkDownloadLog(platform, req.user._id);
+
 }
 
 // Interface for download ios or android sdk
@@ -97,5 +102,48 @@ exports.downloadSampleCode = function(req, res){
 
     // We replaced all the event handlers with a simple call to util.pump()
     readStream.pipe(res);
+
+}
+
+// Function for record sdk download log
+function recordSdkDownloadLog(platform, userId) {
+
+    var platformCode = 0;
+    if(platform == "android")
+        platformCode = Sdk.OS_TYPE.ANDROID;
+    else
+        platformCode = Sdk.OS_TYPE.IOS;
+
+
+    Sdk.findOne({
+
+        isCurrentVersion: true,
+        osType: platformCode
+
+    }, function(err, sdk) {
+
+        if(err) {
+
+            log.error(err);
+
+        } else {
+
+            new SdkDownloadLog({
+
+                osType: platformCode,
+                sdkId: sdk._id,
+                userId: userId,
+                createdTime: new Date()        
+
+            }).save(function(err, sdkDownloadLog){
+
+                if(err)
+                    log.error(err);
+
+            });
+
+        }
+
+    });
 
 }
