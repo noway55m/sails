@@ -55,10 +55,10 @@ module.exports = {
 	/******** Pagination offset per page ********/	
 	pageOffset: 30,
 
-	/******** Google Analystic Relative ********/
-	gaAccountIdTest1: "UA-28254038-2", // chewinggun.net - frank.hsu
+	/******** Google Analystic Relative ********/	
+	gaAccountIdTest1: "UA-50387624-1", // chewinggun.net - frank.hsu
 
-	gaAccountIdTest2: "UA-28254038-3", // chewinggun.net - frank.hsu
+	gaAccountIdTest2: "UA-28254038-2", // chewinggun.net - frank.hsu
 
 	gaAccountId: "UA-47307984-1", // cloud.sailtech.com
 
