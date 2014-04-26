@@ -4,7 +4,8 @@ var log = require('log4js').getLogger(),
 	path = require('path'), 
     Sdk = require("../model/sdk"),
     SdkDownloadLog = require("../model/admin/sdkDownloadLog"),           
-	config = require('../config/config');
+	config = require('../config/config'),
+    ga = require('./googleAnalytics');
 
 
 // Static variable
@@ -79,8 +80,13 @@ exports.downloadSdk = function(req, res){
     readStream.pipe(res);
 
 
+    // Use ga to collect all user download times
+    var title = platform + " sdk download";
+    ga.measurementTool.pageTracking(req, title);
+
+
     // Record the download log
-    recordSdkDownloadLog(platform, req.user._id);
+    //recordSdkDownloadLog(platform, req.user._id);
 
 }
 
