@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sails-admin" ng-controller='SdkGlobalVersionCtrl'>
+  <head>
+  
+	<!-- Head meta, css or library include -->
+	<% include ../../layout/head-include.html %>
+		
+	<!-- admin page css -->	
+	<link href="/stylesheets/style-admin.css" rel="stylesheet">
+
+	<!-- Title -->
+    <title>Sdk Global Version</title>
+
+  </head>
+
+  <body>
+
+    <!-- Fixed Top Navigation Bar Template -->
+	<% include ../../layout/top-navbar.html %>
+
+	<!-- Main Container -->
+    <div class="container">
+
+		<div class="jumbotron">
+
+			<!-- left navigation bar -->
+			<% include ../layout/left-navbar.html %>
+			
+			<div style="padding-left:230px;">
+
+					<div class="form-group">
+
+						<h3>
+							Android Global Version: 
+							<span class="label label-default">{{sdkGlobalVersion.android}}</span>
+							<button id="android-version-edit" class="btn btn-primary" ng-click="showAndroidEditBlock()">Edit</button>
+							<div id="android-version-edit-block" style="display:none;margin-left:30px;width:400px;">
+								<hr>
+								<select name="androidGlobalVersion" style="height:30px;" ng-model="sdkGlobalVersion.android">
+									<% for(var i=0; i<sdksAndroid.length; i++) {%>
+									   <option><%= sdksAndroid[i].version %></option>
+									<% } %>
+								</select>
+								<button id="android-version-confirm" class="btn btn-primary" data-loading-text="Update..." ng-click="updateAndroidGlobalVersion($event)">Confirm</button>
+								<button id="android-version-cancel" class="btn btn-primary" data-loading-text="Cancel" ng-click="cancelUpdateAndoridGlobalVersion($event)">Cancel</button>
+							</div>	
+						</h3>
+						<hr> 							
+						<h3>
+							IOS Global Version: 
+							<span class="label label-default">{{sdkGlobalVersion.ios}}</span>
+							<button id="ios-version-edit" class="btn btn-primary" ng-click="showIosEditBlock()">Edit</button>
+							<div id="ios-version-edit-block" style="display:none;margin-left:30px;width:400px;">
+								<hr>
+								<select name="iosGlobalVersion" style="height:30px;" ng-model="sdkGlobalVersion.ios">
+									<% for(var i=0; i<sdksIos.length; i++) {%>
+									   <option><%= sdksIos[i].version %></option>
+									<% } %>
+								</select>
+								<button id="ios-version-confirm" class="btn btn-primary" data-loading-text="Update..." ng-click="updateIosGlobalVersion($event)">Confirm</button>
+								<button id="ios-version-cancel" class="btn btn-primary"  data-loading-text="Cancel" ng-click="cancelUpdateIosGlobalVersion($event)">Cancel</button>
+							</div>								
+						</h3> 
+					</div>
+
+			</div>	
+
+		</div>
+
+	</div>	
+
+
+	<!-- Body library include -->
+	<% include ../../layout/body-include.html %>
+
+    <!-- Controller -->
+	<script src="/js/admin/controller/app.js"></script>    
+    <script src="/js/admin/controller/sdkContrl.js"></script>
+
+
+  </body>
+
+</html>
