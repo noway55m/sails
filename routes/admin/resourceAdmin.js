@@ -7,7 +7,8 @@ var log = require('log4js').getLogger(),
     Floor = require("../../model/floor"),
     Store = require("../../model/store"),    
     Ad = require("../../model/ad"),
-    Sdk = require("../../model/admin/sdk"),
+    Sdk = require("../../model/sdk"),
+    SdkGlobalVersion = require("../../model/sdkGlobalVersion"),    
     crypto = require('crypto'),
     AdmZip = require('adm-zip'),
     archiver = require('archiver'),
@@ -30,6 +31,149 @@ exports.sdkIndex = function(req, res) {
 	res.render("admin-view/resource/sdkIndex.html", {
 		osType: Sdk.OS_TYPE
 	});
+
+};
+
+// GET Page for show global sdk version info
+exports.sdkGlobalVersionIndex = function(req, res) {
+
+	var sdksAndroid = [],
+		sdksIos = [];
+
+    // Get total sdk list
+	Sdk.find({})
+		.sort({ version: -1 })
+		.exec(function(err, sdks){
+
+		if(err) {
+
+            log.error(err);
+            res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+                msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+            });  
+
+		} else {
+
+			// Classify different type of sdk
+			for(var i=0; i<sdks.length; i++){
+				if(sdks[i].osType == Sdk.OS_TYPE.ANDROID)
+					sdksAndroid.push(sdks[i]);
+				else
+					sdksIos.push(sdks[i]);
+			}
+
+            res.render("admin-view/resource/sdkGlobalVersionIndex.html", {
+				sdksAndroid: sdksAndroid,
+				sdksIos: sdksIos
+			});
+
+		}
+
+	});
+
+};
+
+
+// GET Interface for get sdk global version info
+exports.getGlobalVersion = function(req, res){
+
+    SdkGlobalVersion.findOne({}, function(err, sdkGlobalVersion){
+
+        if(err) {
+
+            log.error(err);
+            res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+                msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+            });  
+
+        } else {
+
+	        res.json(errorResInfo.SUCCESS.code, {
+	        	sdkGlobalVersion: sdkGlobalVersion
+	        });
+
+        }
+
+    });
+
+};
+
+
+// POST Interface for update sdk global version info
+exports.updateGlobalVersion = function(req, res){
+
+    SdkGlobalVersion.findOne({}, function(err, sdkGlobalVersion){
+
+        if(err) {
+
+            log.error(err);
+            res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+                msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+            });  
+
+        } else {
+
+            console.log(sdkGlobalVersion);
+            console.log(req.body);
+
+            if(!sdkGlobalVersion) {
+
+            	new SdkGlobalVersion({
+
+            		android: req.body.android,
+            		ios: req.body.ios
+
+            	}).save(function(err, sdkGlobalVersion){
+
+	            	if(err) {
+
+			            log.error(err);
+			            res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+			                msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+			            });  
+
+	            	} else {
+
+				        res.json(errorResInfo.SUCCESS.code, {
+				        	sdkGlobalVersion: sdkGlobalVersion
+				        });
+
+	            	}
+
+            	});
+
+            } else {
+
+	            if(req.body.android)
+	            	sdkGlobalVersion.android = req.body.android;
+
+	            if(req.body.ios)
+	            	sdkGlobalVersion.ios = req.body.ios;
+
+	            sdkGlobalVersion.save(function(err, sdkGlobalVersion){
+
+	            	if(err) {
+
+			            log.error(err);
+			            res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+			                msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+			            });  
+
+	            	} else {
+
+				        res.json(errorResInfo.SUCCESS.code, {
+				        	sdkGlobalVersion: sdkGlobalVersion
+				        });
+
+	            	}
+
+	            });
+
+            }
+
+        }
+
+    });
 
 };
 

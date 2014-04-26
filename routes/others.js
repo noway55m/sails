@@ -2,7 +2,7 @@ var log = require('log4js').getLogger(),
     fs = require('fs'),
     utilityS = require("./utility.js"),     
 	path = require('path'), 
-    Sdk = require("../model/admin/sdk"),       
+    Sdk = require("../model/sdk"),       
 	config = require('../config/config');
 
 

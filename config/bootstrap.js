@@ -10,7 +10,7 @@ var crypto = require('crypto'),
 	Store = require('../model/store'),	
 	Floor = require('../model/floor'),
 	Building = require('../model/building'),
-	Sdk = require('../model/admin/sdk'),
+	Sdk = require('../model/sdk'),
 	utilityS = require("../routes/utility.js"),
 	config = require('../config/config');
 
