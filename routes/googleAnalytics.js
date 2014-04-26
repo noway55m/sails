@@ -1,5 +1,6 @@
 var http = require('http')
   , https = require('https')
+  , uuid = require('node-uuid')
   , config = require('../config/config.js'); 
 
 /* 
@@ -37,8 +38,9 @@ GoogleAnalytics.measurementTool.pageTracking = function(req, title, desc){
 
 	// Construct url and params
 	var payload = "v=" + this.version 
-			+ "&tid=" + config.gaAccountId	// google analytics user account id  
-			+ "&cid=" + req.user._id  // req.user._id
+			+ "&tid=" + config.gaAccountId	// google analytics user account id
+			+ "&cid=" + uuid.v4() 
+			+ "&uid=" + req.user._id  // req.user._id
 			+ "&t=pageview" // type: 'pageview', 'appview', 'event', 'transaction', 'item', 'social', 'exception'
 			+ "&dp=" + encodeURI(req.path); // document path
 
