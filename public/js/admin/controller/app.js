@@ -1,6 +1,6 @@
 // Include all service in app
 var app = angular.module('sails-admin', ['ngResource', 'buildingServices', 'floorServices', 
-                                   'storeServices', 'adServices', 'userServices', 'sdkServices',
+                                   'storeServices', 'adServices', 'userServices', 'sdkServices', 'sdkGlobalVersionServices',
                                    'feedbackServices']);
 
 // REST API of Building
@@ -235,7 +235,25 @@ angular.module('sdkServices', [ 'ngResource' ]).factory('Sdk', function($resourc
             params : {
                 action : 'list'
             }
-        }          
+        }
+    });
+});
+
+// REST API of Sdk Global Version
+angular.module('sdkGlobalVersionServices', [ 'ngResource' ]).factory('SdkGlobalVersion', function($resource) {
+    return $resource('/admin/resource/sdk/globalVersion/:action/:_id', { _id : "@id" }, {        
+        save : {
+            method : 'POST',
+            params : {
+                action : 'update'
+            }
+        },        
+        get : {
+            method : 'GET',
+            params : {
+                action : 'read'
+            }
+        }         
     });
 });
 

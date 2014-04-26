@@ -1,6 +1,6 @@
 var utility = Utility.getInstance();
 
-// List buildings controller
+// List sdks controller
 function SdkListCtrl($scope, Sdk, $compile, $rootScope, $compile) {
 	
     // List all sdks
@@ -241,6 +241,158 @@ function SdkListCtrl($scope, Sdk, $compile, $rootScope, $compile) {
 	
 }
 
+// Show sdk global version controller
+function SdkGlobalVersionCtrl($scope, Sdk, SdkGlobalVersion, $compile, $rootScope) {
+
+    // Get sdk global version
+	$scope.loading = true;
+	SdkGlobalVersion.get(function(obj){
+
+		if(obj.sdkGlobalVersion) {
+			$scope.sdkGlobalVersion = obj.sdkGlobalVersion
+		} else {
+			$scope.sdkGlobalVersion = {};
+			$scope.sdkGlobalVersion.ios = "not set yet";	
+			$scope.sdkGlobalVersion.android = "not set yet";			
+		}
+
+        $scope.sdkGlobalVersionClone = angular.copy($scope.sdkGlobalVersion); // Clone sdkGlobalVersion for future rollback        
+		$scope.loading = false;
+
+	});
+
+	// Android version edit control
+	$scope.showAndroidEditBlock = function(e) {
+		$("#android-version-edit-block").css("display", "");
+		$("#android-version-edit").css("display", "none");		
+	}
+
+	$scope.cancelUpdateAndoridGlobalVersion = function(){
+
+        angular.copy($scope.sdkGlobalVersionClone, $scope.sdkGlobalVersion);
+		$("#android-version-edit-block").css("display", "none");
+		$("#android-version-edit").css("display", "");				
+	}
+
+	$scope.updateAndroidGlobalVersion = function(e){
+
+		var sdkGlobalVersion = this.sdkGlobalVersion,
+			updateButton = angular.element(e.currentTarget),
+			cancelButton = updateButton.next(),
+		    inputs = updateButton.parent().find("input");
+
+		// Disable all fields and buttons
+		inputs.attr("disabled", "disabled");
+		updateButton.button('loading');
+		cancelButton.button('loading');
+
+		//androidGlobalVersion: $("input[name=androidGlobalVersion]").val()
+		// Update
+		SdkGlobalVersion.save(sdkGlobalVersion, function(obj){
+
+			// Set back normal state of button
+			updateButton.button('reset');
+			cancelButton.button('reset');
+
+			// Enable all input fields
+			inputs.removeAttr('disabled');
+
+			// Clone user info
+	        $scope.sdkGlobalVersionClone = angular.copy(obj.sdkGlobalVersion);
+
+	    	// Show success msg
+			$().toastmessage('showSuccessToast', "Update successfully");	
+
+
+			$("#android-version-edit-block").css("display", "none");
+			$("#android-version-edit").css("display", "");
+
+		}, function(err){
+
+			// Set back normal state of button
+			updateButton.button('reset');
+			cancelButton.button('reset');
+
+			// Enable all input fields
+			inputs.removeAttr('disabled');
+
+			// Show error msg
+			var errorMsg = res && res.data && res.data.msg;
+			errorMsgObj.find(".errorText").text(errorMsg);
+			errorMsgObj.show();
+			$().toastmessage('showErrorToast', errorMsg);	
+
+		});
+
+	}
+
+	// IOS version edit control
+	$scope.showIosEditBlock = function(e) {
+		$("#ios-version-edit-block").css("display", "");
+		$("#ios-version-edit").css("display", "none");		
+	}
+
+	$scope.cancelUpdateIosGlobalVersion = function(){
+        angular.copy($scope.sdkGlobalVersionClone, $scope.sdkGlobalVersion);
+		$("#ios-version-edit-block").css("display", "none");
+		$("#ios-version-edit").css("display", "");				
+	}
+
+	$scope.updateIosGlobalVersion = function(e){
+
+		var sdkGlobalVersion = this.sdkGlobalVersion,
+			updateButton = angular.element(e.currentTarget),
+			cancelButton = updateButton.next(),
+		    inputs = updateButton.parent().find("input");
+
+		// Disable all fields and buttons
+		inputs.attr("disabled", "disabled");
+		updateButton.button('loading');
+		cancelButton.button('loading');
+
+		//androidGlobalVersion: $("input[name=androidGlobalVersion]").val()
+		// Update
+		SdkGlobalVersion.save(sdkGlobalVersion, function(obj){
+
+			// Set back normal state of button
+			updateButton.button('reset');
+			cancelButton.button('reset');
+
+			// Enable all input fields
+			inputs.removeAttr('disabled');
+
+			// Clone user info
+	        $scope.sdkGlobalVersionClone = angular.copy(obj.sdkGlobalVersion);
+
+	    	// Show success msg
+			$().toastmessage('showSuccessToast', "Update successfully");	
+
+
+			$("#ios-version-edit-block").css("display", "none");
+			$("#ios-version-edit").css("display", "");
+
+		}, function(err){
+
+			// Set back normal state of button
+			updateButton.button('reset');
+			cancelButton.button('reset');
+
+			// Enable all input fields
+			inputs.removeAttr('disabled');
+
+			// Show error msg
+			var errorMsg = res && res.data && res.data.msg;
+			errorMsgObj.find(".errorText").text(errorMsg);
+			errorMsgObj.show();
+			$().toastmessage('showErrorToast', errorMsg);	
+
+		});
+
+	}		
+
+
+}
+
 // Function for update building
 function updateSdk(e, selectedSdk, $scope, $rootScope, Sdk){
 
@@ -321,4 +473,4 @@ function updateSdk(e, selectedSdk, $scope, $rootScope, Sdk){
 
 };
 
-// BuildingShowCtrl.$inject = ['$scope', 'Sdk' ];
+// BuildingShowCtrl.$inject = ['$scope', 'Sdk', 'SdkGlobalVersion'];

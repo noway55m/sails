@@ -15,6 +15,7 @@ var express = require('express')
   , ad = require('./routes/ad')  
   , ap = require('./routes/ap')
   , iD = require('./routes/iD')
+  , sdk = require('./routes/sdk')  
   , feedback = require('./routes/feedback') 
   , others = require('./routes/others')
   , iBeaconDevice = require('./routes/iBeaconDevice')
@@ -226,6 +227,9 @@ app.get('/indoorLocationRecord/list', indoorLocationRecord.list);
 app.post('/indoorLocationRecord/upload', indoorLocationRecord.upload);
 
 
+//--------------------------
+app.get('/sdk/globalVersion/read', sdk.getGlobalVersion);
+
 //------------------------------ admin page and interface (only use in admin)
 
 // Function for check user role is admin
@@ -312,6 +316,11 @@ app.post('/admin/resource/sdk/delete', isAdmin, resourceAdmin.sdkDelete);
 app.post('/admin/resource/sdk/uploadSdkAndSampleCode', isAdmin, resourceAdmin.uploadSdkAndSampleCode); 
 app.post('/admin/resource/sdk/uploadSdk', isAdmin, resourceAdmin.uploadSdk); 
 app.post('/admin/resource/sdk/uploadSampleCode', isAdmin, resourceAdmin.uploadSampleCode); 
+app.get('/admin/resource/sdk/sdkGlobalVersionIndex', isAdmin, resourceAdmin.sdkGlobalVersionIndex);
+
+app.get('/admin/resource/sdk/globalVersion/read', isAdmin, resourceAdmin.getGlobalVersion);
+app.post('/admin/resource/sdk/globalVersion/update', isAdmin, resourceAdmin.updateGlobalVersion);
+
 
 // Admin user interfaces
 app.get('/admin/user/index', isAdmin,  userAdmin.index); 
