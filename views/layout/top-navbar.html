@@ -38,6 +38,11 @@
 						  </div>	
 						  <ul class="dropdown-menu" role="menu">
 						    <li><a href="/user/profile">Profile</a></li>
+
+						    <% if(user.role == roles.ADMIN || user.role == roles.DEVELOPER){ %>
+						    	<li><a href="/developer/app">Developer</a></li>
+						    <% } %>
+
 						    <li class="divider"></li>
 						    <li><a href="/logout">Logout</a></li>
 						  </ul>
