@@ -13,11 +13,59 @@ var	errorResInfo = utilityS.errorResInfo,
 
 // GET Page for show apps of developer
 exports.appIndex = function(req, res) {
-	res.render("developer/app-index.html");
+	res.render("developer/app-index.html", {
+		API_KEY_TYPE: DeveloperApplication.API_KEY_TYPE
+	});
 };
 
 // GET Interface for list apps of developer
 exports.appList = function(req, res) {
+
+	// Pagination params
+	var page = ( req.query.page && req.query.page > 0 ? req.query.page - 1 : 0 ) || 0;
+	var queryJson = { userId: req.user._id };	
+
+    DeveloperApplication.find(queryJson)
+		.sort({ createdTime: -1 })
+		.limit(config.pageOffset)
+		.skip(page * config.pageOffset).exec( function(err, developerApplications){
+
+		if(err) {
+
+			log.error(error);
+			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+			}); 
+
+		} else {
+
+			// Get developerApplication count
+			DeveloperApplication.count( queryJson, function(err, count) {
+
+				if( err ) {
+
+		            log.error(err);
+					res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+						msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					});  		
+
+				} else {
+
+			        res.json(errorResInfo.SUCCESS.code, {						        	
+			        	page: page + 1,
+			        	offset: config.pageOffset,
+			        	count: count,
+			        	developerApplications: developerApplications
+					});    	
+
+				}
+
+			} );	
+
+		}
+
+	})
+
 };
 
 // POST Interface for create new app
