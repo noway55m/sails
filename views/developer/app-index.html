@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sails" ng-controller="DeveloperListCtrl">
+  <head>
+  
+	<!-- Head meta, css or library include -->
+	<% include ../layout/head-include.html %>
+	
+	<!-- Title -->
+    <title>Profile</title>
+
+    <script>
+    	var API_KEY_TYPE = {
+    		ANDROID: <%= API_KEY_TYPE.ANDROID %>,
+    		IOS: <%= API_KEY_TYPE.IOS %>,
+    		SERVER: <%= API_KEY_TYPE.SERVER %>,
+    		BROWSER: <%= API_KEY_TYPE.BROWSER %>
+    	} ;
+    </script>
+
+  </head>
+
+  <body>
+
+    <!-- Fixed Top Navigation Bar Template -->
+	<% include ../layout/top-navbar.html %>
+
+	<!-- Main Container -->
+    <div class="container">
+    		
+		<div class="jumbotron">
+			<h2>Public API Access</h2>
+			<p>
+				Use of this key does not require any user action or consent, does not grant access 
+				to any account information, and is not used for authorization				
+			</p>
+
+			<!-- Create app Dialog -->
+			<% include ./app-create-dialog.html %>	
+
+			<!-- Edit android Dialog -->
+			<% include ./app-android-edit-dialog.html %>	
+
+			<!-- Edit ios Dialog -->
+			<% include ./app-ios-edit-dialog.html %>	
+
+			<!-- Edit server Dialog -->
+			<% include ./app-server-edit-dialog.html %>	
+
+			<!-- Edit browser Dialog -->
+			<% include ./app-browser-edit-dialog.html %>	
+
+			<!-- Confrim regnerate key Dialog -->
+			<% include ./app-regenerate-key-alert-dialog.html %>	
+
+
+			<!-- List apps block -->
+			<div id="profile-display-block" class="row display-block" ng-repeat="devApp in developerApplications" style="margin:20px 20px;">
+				
+				<div class="col-xs-6 col-sm-8 col-md-9" ng-mouseenter="showRemoveButton($event)" ng-mouseleave="hideRemoveButton($event)">
+					<h3 ng-bind="devApp.typeDesc"></h3>
+					<div>
+						<span class="col-xs-3">API Key</span>
+						<span class="col-xs-6" ng-bind="devApp.apiKey"></span>
+					</div>
+
+					<!-- For android application -->
+					<div ng-if="devApp.type == API_KEY_TYPE.ANDROID">
+						<span class="col-xs-3">Android App</span>
+						<span class="col-xs-6" ng-bind="devApp.verifier"></span>	
+						<br/>
+					</div>
+
+					<!-- For ios application -->
+					<div ng-if="devApp.type == API_KEY_TYPE.IOS">
+						<span class="col-xs-3">IOS App</span>
+						<span class="col-xs-6" ng-bind="devApp.verifier"></span>	
+						<hr/>
+					</div>
+
+					<!-- For server application -->
+					<div ng-if="devApp.type == API_KEY_TYPE.SERVER">
+						<span class="col-xs-3">IPs</span>
+						<span class="col-xs-6" ng-bind="devApp.verifier"></span>	
+						<hr/>
+					</div>
+
+					<!-- For browser application -->
+					<div ng-if="devApp.type == API_KEY_TYPE.BROWSER">
+						<span class="col-xs-3">Referes</span>
+						<span class="col-xs-6" ng-bind="devApp.verifier"></span>	
+						<hr/>
+					</div>
+					
+					<div>	
+						<span class="col-xs-3">Created Date</span>
+						<span class="col-xs-6" ng-bind="devApp.createdTime"></span>
+					</div>						
+				</div>
+				<hr/>
+				<div class="col-xs-6 col-sm-8 col-md-9" style="margin:10px 20px;">				
+					<button class="btn btn-primary" data-toggle="modal" data-target="#edit-app-android-verifier-dialog" ng-if="devApp.type == API_KEY_TYPE.ANDROID" ng-click="selectApp($event)" style="margin:10px 10px;">Edit Allowed Android App</button>
+
+					<button class="btn btn-primary" data-toggle="modal" data-target="#edit-app-ios-verifier-dialog" ng-if="devApp.type == API_KEY_TYPE.IOS" ng-click="selectApp($event)" style="margin:10px 10px;">Edit Allowed IOS App</button>
+					
+					<button class="btn btn-primary" data-toggle="modal" data-target="#edit-app-server-verifier-dialog" ng-if="devApp.type == API_KEY_TYPE.SERVER" ng-click="selectApp($event)" style="margin:10px 10px;">Edit Allowed IPs</button>
+					
+					<button class="btn btn-primary" data-toggle="modal" data-target="#edit-app-browser-verifier-dialog" ng-if="devApp.type == API_KEY_TYPE.BROWSER" ng-click="selectApp($event)" style="margin:10px 10px;">Edit Allowed Referes</button>																
+					<button class="btn btn-primary" ng-click="regenerateKeyDialogSetup($event)" style="margin:10px 10px;">Regenerate Key</button>
+					
+					<button class="btn btn-primary" ng-click="deleteDialogSetup($event)" style="margin:10px 10px;">Delete</button>
+
+				</div>
+
+			</div>
+
+			<div id="pagination"></div>
+		
+		</div>
+		
+    </div>
+
+
+	<!-- Body library include -->
+	<% include ../layout/body-include.html	%>
+	
+	<% include ../layout/delete-confirm-dialog.html %>	
+
+	<!-- Controller -->
+    <script src="/js/controller/developerContrl.js"></script>  
+
+  </body>
+</html>
