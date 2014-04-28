@@ -1,5 +1,6 @@
 var mongoose = require("./dataSource.js"),
-	Schema = mongoose.Schema;
+	Schema = mongoose.Schema,
+	uuid = require('node-uuid');
 
 
 /**
@@ -22,5 +23,17 @@ var developerApplicationSchema = new Schema({
 });
 
 var developerApplication = mongoose.model( 'DeveloperApplication', developerApplicationSchema );
+
+developerApplication.API_KEY_TYPE = {
+    ANDROID: 1,
+    IOS: 2,
+    SERVER: 3,
+    BROWSER: 4
+}
+
+// Function for generate token
+developerApplication.genApiKey = function(){
+	return uuid.v4().replace(/-/g, "");
+};
 
 module.exports = developerApplication;
