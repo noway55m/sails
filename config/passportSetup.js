@@ -6,6 +6,8 @@ var passport = require('passport'),
 	log = require('log4js').getLogger(),
 	User = require('../model/user'),
 	CookieToken = require('../model/cookieToken'),	
+	DeveloperApplication = require('../model/developerApplication'),
+	SdkGlobalVersion = require('../model/sdkGlobalVersion'),		
 	config = require('./config.js'),
 	utilityS = require("../routes/utility.js");
 
@@ -296,6 +298,82 @@ passport.configSecureHttpRequest = function(app){
         
     }
     
+    // Function for API key authentication(Android, IOS, Server and Browser)
+    function apiKeyAuth(req, res, callback){
+
+		var apiKey = req.get("Authorization"),
+			verifier = req.get("Verifier"),
+			version =  req.get("Version");
+		
+		// Ccheck verifier since old version sdk not include
+		if(verifier) {
+
+			checkSdkVersion(version, function(result){
+
+				if( result ) {
+
+					DeveloperApplication.findOne({
+
+						apiKey: apiKey,
+						verifier: verifier
+					
+					}, function(err, devApp){
+						
+						if(err)
+							log.error(err);
+						
+						if(devApp) {
+
+							User.findById( devApp.userId, function(err, user){
+
+								if(err)
+									log.error(err);
+
+								if(user){
+
+					    			req.user = user;
+					    			callback(req, res);
+								
+								}else{
+									
+									res.json(401, { 
+										msg: "Unavailable api key or verifier" 
+									});	
+									
+								}
+
+							});
+
+						} else {
+
+							res.json(401, { 
+								msg: "Unavailable api key or verifier" 
+							});
+
+						}
+
+					});
+
+				} else {
+
+					res.json(401, { 
+						msg: "Sdk version is too old, please update to latest one" 
+					});	
+
+				}
+
+			});
+
+		} else {
+
+			res.json(401, { 
+				msg: "Sdk version is too old, please update to latest one" 
+			});	
+
+		}
+
+	}
+
     // Function about token authentication
     function tokenAuth(req, res, callback){
     	
@@ -377,9 +455,12 @@ passport.configSecureHttpRequest = function(app){
     // Configure secure get
     app.sget = function(url, callback) {
         app.get(url, function(req, res){                    	        	
+        	
         	// Check authentication way
-        	if(req.get("Authorization"))        		
-        		tokenAuth(req, res, callback);
+        	if(req.get("Authorization"))
+        		apiKeyAuth(req, res, callback);
+        	//else if(req.get("Authorization"))        		
+        	//	tokenAuth(req, res, callback);
         	else if(req.cookies.cookieToken)
         		cookieTokenAuth(req, res, callback);        	
         	else        	        	
@@ -390,9 +471,12 @@ passport.configSecureHttpRequest = function(app){
     // Configure secure post
     app.spost = function(url, callback) {
         app.post(url, function(req, res){
+        	
         	// Check authentication way
-        	if(req.get("Authorization"))        		
-        		tokenAuth(req, res, callback);        		
+        	if(req.get("Authorization"))
+        		apiKeyAuth(req, res, callback);
+        	//else if(req.get("Authorization"))        		
+        	//	tokenAuth(req, res, callback);        		
         	else if(req.cookies.cookieToken)
         		cookieTokenAuth(req, res, callback);
         	else        	        	
@@ -403,6 +487,53 @@ passport.configSecureHttpRequest = function(app){
     return app;
     
 };
+
+
+// Function for check sdk version
+function checkSdkVersion(version, next) {
+
+	if(version) {
+
+		SdkGlobalVersion.findOne({}, function(err, sgv){
+
+			if(err) {
+
+				log.error(err);
+				next(false);
+
+			} else {
+
+				var temp = version.split(";"),
+					type = temp[0],
+					ver = temp[1];
+
+				if(type == "android") {
+
+					if(ver >= sgv.android)
+						next(true);
+					else	
+						next(false);
+
+				} else if (type == "ios") {
+
+					if(ver >= sgv.ios)
+						next(true);
+					else	
+						next(false);
+
+				}	
+
+			}
+
+		});
+
+	} else {
+
+		next(false);
+
+	}
+
+}
 
 log.info("Finish passport setup");
 
