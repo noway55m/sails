@@ -1,6 +1,6 @@
 // Include all service in app
 var app = angular.module('sails', ['ngResource', 'buildingServices', 'floorServices', 
-                                   'storeServices', 'adServices', 'userServices']);
+                                   'storeServices', 'adServices', 'userServices', 'developerApplicationServices']);
 
 // REST API of Building
 angular.module('buildingServices', [ 'ngResource' ]).factory('Building', function($resource) {
@@ -187,5 +187,41 @@ angular.module('userServices', [ 'ngResource' ]).factory('User', function($resou
                 action : 'upgradeDeveloper'
             }        	
         }            
+    });
+});
+
+// REST API of Developer
+angular.module('developerApplicationServices', [ 'ngResource' ]).factory('DeveloperApplication', function($resource) {
+    return $resource('/developer/app/:action/:_id', { _id : "@id" }, {
+        create : {
+            method : 'POST',
+            params : {
+                action : 'create'
+            }
+        },
+        save : {
+            method : 'POST',
+            params : {
+                action : 'update'
+            }
+        },
+        "delete" : {
+            method : 'POST',
+            params : {
+                action : 'delete'
+            }
+        },
+        list : {
+            method : 'GET',
+            params : {
+                action : 'list'
+            }
+        },
+        regenerateKey : {
+            method : 'POST',
+            params : {
+                action : 'regenerateKey'
+            }           
+        }                
     });
 });
