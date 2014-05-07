@@ -455,7 +455,10 @@ passport.configSecureHttpRequest = function(app){
     // Configure secure get
     app.sget = function(url, callback) {
         app.get(url, function(req, res){                    	        	
-        	
+			
+			// Setup local variables        	
+			res.locals.domainUrl = config.domainUrl;
+
         	// Check authentication way
         	if(req.get("Authorization"))
         		apiKeyAuth(req, res, callback);
@@ -471,6 +474,9 @@ passport.configSecureHttpRequest = function(app){
     // Configure secure post
     app.spost = function(url, callback) {
         app.post(url, function(req, res){
+
+			// Setup local variables        	
+			res.locals.domainUrl = config.domainUrl;
         	
         	// Check authentication way
         	if(req.get("Authorization"))
