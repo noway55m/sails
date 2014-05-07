@@ -269,8 +269,9 @@ function DeveloperListCtrl($scope, DeveloperApplication, $compile, $rootScope) {
 	// Rollback while dialog close
 	$("#edit-app-android-verifier-dialog,#edit-app-ios-verifier-dialog,#edit-app-server-verifier-dialog,#edit-app-browser-verifier-dialog")
 	.on('hidden.bs.modal', function (e) {
-		angular.copy($scope.selectedDevAppClone, $scope.selectedDevApp);
-		$scope.$apply();
+		$scope.$apply(function(){
+			angular.copy($scope.selectedDevAppClone, $scope.selectedDevApp);		
+		});
 	});
 	
 	// Function update the verifier
@@ -294,7 +295,6 @@ function DeveloperListCtrl($scope, DeveloperApplication, $compile, $rootScope) {
 
 			// Clone
 			$scope.selectedDevAppClone = angular.copy(devAppr);
-			$scope.$apply();
 
 			// Hide dialog
 			$("#edit-app-android-verifier-dialog").modal('hide');
