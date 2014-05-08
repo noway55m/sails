@@ -30,7 +30,11 @@
 						<span><%= user.username %></span>
 						<hr>
 					</div>
+
+					<!-- Hide facebook or twitter or google plus binding display now since not use these login yet -->
+					<!--					
 					<div class="col-xs-12 col-sm-8 col-md-9">
+						
 						<label>Account Binding: </label>
 						<span>
 							<% if(user.fid){ %>
@@ -43,35 +47,27 @@
 								No Binding
 							<% } %>								
 						</span>
+						
 						<% if( !user.fid && !user.tid && !user.gid){ %>
 						<div id="binding-social-form">
 							<div class="form-group">
-								<!--
 								<label>Binding social network:</label>
 								<a href="#"><img src="/img/facebook.png" alot="facebook bindg" /></a>
 								<a href="#"><img src="/img/twitter.png" alot="facebook bindg" /></a>
 								<a href="#"><img src="/img/googleplus.png" alot="facebook bindg" /></a>
-								-->																		 
 							</div>
 						</div>
 						<% } %>								
 						<hr>
-					</div>					
+					</div>
+					-->					
 					<div class="col-xs-12 col-sm-8 col-md-9">
 						<label>Level: </label>
 						<span>
 							<% if(user.role == roles.ADMIN){ %>
 								Administrator
-								<div>
-									<label>token:</label>
-									<span><%= user.token %></span>																							
-								</div>
 							<% } else if(user.role == roles.DEVELOPER){ %>
 								Developer
-								<div>
-									<label>token:</label>
-									<span><%= user.token %></span>																							
-								</div>															
 							<% } else { %>
 								Free User
 								<button class="btn btn-md btn-primary" id="upgradeDeveloperButton" ng-click="showUpgradeDeveloperBlock()">Upgrade Developer</button>
