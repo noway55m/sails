@@ -32,15 +32,18 @@ GoogleAnalytics.measurementTool.pageTracking = function(req, title, desc){
 	//console.log("title: " + title);
 	//console.log("desc: " + desc); 
 
+	// Check developer userId
+	var uid = req.query.userId ? req.query.userId : req.user._id;
+
 	// Check mobile or pc
 	var isMobile = isCallerMobile(req);
-	console.log("isMobile: " + isMobile);
+	//console.log("isMobile: " + isMobile);
 
 	// Construct url and params
 	var payload = "v=" + this.version 
-			+ "&tid=" + config.gaAccountId	// google analytics user account id
+			+ "&tid=" + config.gaAccountIdTest1	// google analytics user account id
 			+ "&cid=" + uuid.v4() 
-			+ "&uid=" + req.user._id  // req.user._id
+			+ "&uid=" + uid
 			+ "&t=pageview" // type: 'pageview', 'appview', 'event', 'transaction', 'item', 'social', 'exception'
 			+ "&dp=" + encodeURI(req.path); // document path
 
@@ -72,8 +75,8 @@ GoogleAnalytics.measurementTool.pageTracking = function(req, title, desc){
 		headers: headers	  
 	};
 
-	console.log(options);
-	console.log(payload);
+	//console.log(options);
+	//console.log(payload);
 	var reqest = http.request(options, function(res) {
 	  res.setEncoding('utf8');
 	  res.on('data', function (chunk) {
