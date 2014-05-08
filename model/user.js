@@ -19,11 +19,11 @@ var userSchema = new Schema({
     role: {
     	
     	type: Number, // 1: admin, 2: developer(has pay money to us), 3: free user 
-    	default: 3
+    	default: 2
     	
     },
     
-    token: String, // Developer token
+    token: String, // Developer token: not use anymore, use application now
     
     fid: String, // Facebook ID
     
