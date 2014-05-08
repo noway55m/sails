@@ -5,6 +5,7 @@
 
 var express = require('express')
   , routes = require('./routes')
+  , fs = require('fs')
   , authentication = require('./routes/authentication')
   , register = require('./routes/register')
   , UserModel = require('./model/user')
@@ -15,6 +16,7 @@ var express = require('express')
   , ad = require('./routes/ad')  
   , ap = require('./routes/ap')
   , iD = require('./routes/iD')
+  , developer = require('./routes/developer')    
   , sdk = require('./routes/sdk')  
   , feedback = require('./routes/feedback') 
   , others = require('./routes/others')
@@ -76,6 +78,15 @@ app.use('/sails-resource/download/doc/ios', express.static(path.join(__dirname, 
 // Custom  Error Handler
 app.use(errorHandler.error500);
 app.use(errorHandler.error404);
+
+
+// Force use all get use https
+app.get('*',function(req,res,next){
+  if(req.protocol !='https')
+    res.redirect( config.domainUrl + req.url)
+  else
+    next() /* Continue to other routes if we're not redirecting */
+});
 
 
 // Support html by nodejs module "ejs"
@@ -173,6 +184,15 @@ app.post('/iD/update', iD.update);
 //--------------------------
 app.get('/feedback/index', feedback.index);
 app.post('/feedback/create', feedback.create);
+
+
+//--------------------------
+app.sget('/developer/app', developer.appIndex);
+app.sget('/developer/app/list', developer.appList);
+app.spost('/developer/app/create', developer.appCreate);
+app.spost('/developer/app/update', developer.appUpdate);
+app.spost('/developer/app/delete', developer.appDelete);
+app.spost('/developer/app/regenerateKey', developer.appRegenerateKey);
 
 
 //-----------------------------------
@@ -380,6 +400,16 @@ httpProxy.createServer(app.get('port'), 'localhost').listen(80);
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+
+// Create http server
+var options = {
+  key: fs.readFileSync("./config/keys/sails.key"),
+  cert: fs.readFileSync("./config/keys/sails.cert")
+}
+https.createServer(options, app).listen(443, function(){
+  console.log('Express server listening on port 443');
+});
+
 
 
 /**************** Bootstrap ****************/
