@@ -41,7 +41,7 @@ GoogleAnalytics.measurementTool.pageTracking = function(req, title, desc){
 
 	// Construct url and params
 	var payload = "v=" + this.version 
-			+ "&tid=" + config.gaAccountIdTest1	// google analytics user account id
+			+ "&tid=" + config.gaAccountId	// google analytics user account id
 			+ "&cid=" + uuid.v4() 
 			+ "&uid=" + uid
 			+ "&t=pageview" // type: 'pageview', 'appview', 'event', 'transaction', 'item', 'social', 'exception'
