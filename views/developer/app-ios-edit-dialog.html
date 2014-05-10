@@ -7,19 +7,22 @@
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3 class="modal-title">Edit allowed IOS applications</h3>
+			<hr>
 			<p>
-				<strong>This key can be deployed in your iOS applications.</strong>
-				API requests are sent directly to Google from your clients' iOS devices. Google verifies that each request originates from an iOS application that matches one of the bundle identifiers listed below.
+				<strong>This key will be deployed into Sails IOS SDK using in your IOS application.</strong><br>
+				<small>
+					API requests are sent directly to Sails from your clients' iOS devices. Sails verifies that each request originates from an iOS application that matches one of the bundle identifiers listed below.
+				</small>
 				<br>
-				<strong>Accept requests from an iOS application with one of the bundle identifiers listed below</strong>		
-				One bundle identifier per line. Example: com.example.MyAppxample
+				<small>One bundle identifier per line. <strong>Example:<strong></small>
+				<br>
+				<code style="font-size:12px;">com.example.MyAppxample</code>
 			</p>
 		</div>
 		
 		<!-- Body -->
 		<div class="modal-body">
 			<div class="form-group">
-				<label>Bundle ID</label>				
 				<textarea class="form-control" placeholder="${BUNDDLE_ID}" name="bundleId" ng-model="selectedDevApp.verifier"></textarea>
 				<!-- error msg -->
 				<div class="alert alert-danger error-msg">

@@ -6,30 +6,29 @@
 		<!-- Header -->
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3 class="modal-title">Edit allowed Android applications</h3>
+			<h3 class="modal-title">Edit allowed Android applications</h3><hr>
 			<p>
-				<strong>This key can be deployed in your Android application.</strong>
-				API requests are sent directly to Google from your client Android device.
-				Google verifies that each request originates from an Android application that
-				matches one of the certificate SHA1 fingerprints and package names listed below.
-				You can discover the SHA1 fingerprint of your developer certificate using the following
-				command:
+				<strong>This API key will be deployed into Sails Android SDK using in your Android application.</strong>
 				<br>
-				<strong>
-					Accept requests from an Android application with one of the certificate fingerprints and 
-					package names listed below
-				</strong>		
-				One SHA1 certificate fingerprint and package name (separated by a semicolon) per line.
-				Example: 
-				45:B5:E4:6F:36:AD:0A:98:94:B4:02:66:2B:12:17:F2:56:26:A0:E0;com.example
+				<small>
+					API requests are sent directly to Sails from your client Android device.
+					Sails verifies that each request originates from an Android application that matches one of the certificate SHA1 fingerprints and package names listed below. You can discover the SHA1 fingerprint with base64 encode of your developer certificate by keytool using the following command:
+				</small>
+				<br>
+				<code style="font-size:12px;">keytool -exportcert -alias <RELEASE_KEY_ALIAS> -keystore <RELEASE_KEY_PATH> | openssl sha1 -binary | openssl base64</code>
+				<br>		
+				<small>
+					One SHA1 certificate fingerprint with base64 encode and package name (separated by a semicolon) per line. <strong>Example:</strong>
+				</small>
+				<br>
+				<code style="font-size:12px;">478uEnKQV+fMQT8Dy4AKvHkYibo=;com.example</code>
 			</p>
 		</div>
 		
 		<!-- Body -->
 		<div class="modal-body">
 			<div class="form-group">
-				<label>SHA1 Certificate Fingerprint with Package Name</label>
-				<textarea class="form-control" placeholder="${SHA1_CERTIFICATE_FINGERPRINT};${PACKAGE_NAME}" name="fingerprintAndPackageName" ng-model="selectedDevApp.verifier"></textarea>
+				<textarea class="form-control" placeholder="${SHA1_CERTIFICATE_FINGERPRINT_WITH_BASE64_ENCODE};${PACKAGE_NAME}" name="fingerprintAndPackageName" ng-model="selectedDevApp.verifier"></textarea>
 				<!-- error msg -->
 				<div class="alert alert-danger error-msg">
 					<span class="label label-danger">Error</span>
