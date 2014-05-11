@@ -123,12 +123,8 @@ var configuration = {
 
 
 // Get enviroment argument
-var arguments = process.argv,
-	env = "";	
-if(arguments.length > 2)
-	env = arguments[2]; // use second arguments
-console.log("Set enviroment >>> " + env);
-
+console.log("Configuration get current config env: " + process.CONFIG_ENV);
+var env = process.CONFIG_ENV;	
 
 // Get utility config
 var returnConfig = {};
@@ -154,6 +150,9 @@ if(env == "dev") {
 		returnConfig[key2] = configuration["prod"][key2];
 
 }
+
+console.log("----------------- CONFIG " + env + "-----------------");
 console.log(returnConfig);
+console.log("----------------- CONFIG " + env + "-----------------");
 
 module.exports = returnConfig;
