@@ -1,8 +1,11 @@
+// Get environment
+console.log("Set env: " + process.argv)
+if(process.argv.length >=3)
+  process.CONFIG_ENV = process.argv[2] || "prod";
 
 /**
  * Module dependencies.
  */
-
 var express = require('express')
   , routes = require('./routes')
   , fs = require('fs')
@@ -404,7 +407,8 @@ http.createServer(app).listen(app.get('port'), function(){
 // Create http server
 var options = {
   key: fs.readFileSync("./config/keys/sails.key"),
-  cert: fs.readFileSync("./config/keys/sails.cert")
+  cert: fs.readFileSync("./config/keys/sails.cert"),
+  passphrase: process.argv[3]
 }
 https.createServer(options, app).listen(443, function(){
   console.log('Express server listening on port 443');
