@@ -1,0 +1,57 @@
+<!-- Navigator bar to display current store of floor of specific area -->
+<ol class="breadcrumb">
+  <li><a href="/user">My Areas</a></li>
+</ol>
+
+<!-- Area List include in page 'user/index.html' -->
+<div class="jumbotron" ng-controller="AreaListCtrl">
+
+	<!-- Areas list -->
+	<div class="row display-block">
+
+		<div style="float:right;maring-right:300px;">
+
+			<!-- POI copies -->
+			<% include ../poi/poi-copies.html %>
+
+			<!-- POI template copies -->
+			<% include ../poi/poi-template-copies.html %>
+		
+		</div>
+
+		<!-- Add area form block -->
+		<% include ../area/area-add.html %>
+		<hr/>
+				
+		<!-- Content (relative for loading icon)-->
+		<div class="panel-body" style="position:relative;">
+
+			<!-- Loading -->
+			<div class="loading" ng-show="loading">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>	
+
+			<!-- area list -->
+			<div class="belement ng-hide" ng-repeat="area in areas" ng-mouseenter="showRemoveButton($event)" ng-mouseleave="hideRemoveButton($event)" ng-hide="loading" id="{{area._id}}">
+				<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup()"></span>
+				<a href="/area/show/{{area._id}}">
+					<img ng-src="{{area.icon}}" alt="Image Icon" class="default-icon area-icon"/>
+				</a>	
+				<a href="/area/show/{{area._id}}"><span ng-bind="area.name"></span></a>
+				<% if(user.role == roles.ADMIN){ %>
+					<!-- Show building's owner if admin -->
+					<h6>{{area.userName}}</h6>
+				<% } %>
+			</div>			
+		</div>
+
+		<div id="pagination"></div>
+
+	</div>
+	
+	<!-- Delete Confirm Dialog -->
+	<% include ../layout/delete-confirm-dialog.html %>	
+
+    <!-- Controller -->
+    <script src="../js/controller/areaContrl.js"></script>
+    
+
+</div>
