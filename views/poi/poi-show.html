@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sails" ng-controller="PoiShowCtrl">
+	<head>
+	
+		<!-- Head meta, css or library include -->
+		<% include ../layout/head-include.html %>
+		
+		<!-- Title -->
+		<title>{{area.name}}</title>
+
+		<!-- bootstrap tag manager library -->
+		<script src="/js/jquery/typeahead.js"></script>
+		<script src="/js/jquery/tagmanager.js"></script>
+		<link href="/stylesheets/tagmanager.css" rel="stylesheet"/>
+
+		<!-- zeroclipboard library -->
+		<script src="/js/jquery/ZeroClipboard.min.js"></script>
+
+		<!-- custom fields library -->
+		<script src="/js/controller/customFields.js"></script>
+
+	</head>
+<body>
+
+    <!-- Fixed Top Navigation Bar -->
+	<% include ../layout/top-navbar.html %>
+
+	<div class="container">
+
+		<!-- Navigator bar to display current store of floor of specific area -->
+		<ol class="breadcrumb">
+		  <li><a href="/user">My Areas</a></li>
+		  <li class="ng-hide" ng-hide="loadingPoi">
+		  	<a href="/area/show/{{area._id}}">
+				<span class="glyphicon glyphicon-globe"></span>
+				<span ng-bind="area.name"></span>
+		  	</a>
+		  </li>	
+		  <li class="active ng-hide" ng-hide="loadingPoi">
+		  	<span class="glyphicon glyphicon-pushpin"></span>
+		  	<span ng-bind="poi.name"></span>
+		  </li>	  
+		</ol>
+
+		<!-- Main component for a primary marketing message or call to action -->
+		<div class="jumbotron">
+
+			<!-- Area basic info display and editor -->
+			<div class="row display-block" style="padding:10px 13px;">
+				
+				<!-- Loading -->
+				<div class="loading" ng-show="loadingPoi">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>
+
+				<!-- ID ,name and building binding block -->
+				<div class="col-xs-12 col-sm-12 col-md-12 ng-hide" style="padding:15px 5px;" ng-hide="loadingPoi">
+					<div class="ng-hide" ng-hide="loadingPoi" style="text-align:left;">
+						<!-- ID -->
+						<span id="poiId" ng-bind="poi._id" data-clipboard-text="{{poi._id}}" data-toggle="tooltip" data-placement="top" class="label label-primary"></span><hr/>					    
+						<!-- Name -->
+						<div class="poi-title">Name</div>
+						<div class="nameDisplayBlock" style="display:inline;">							
+							<span ng-bind="poi.name" ng-click="toogleNameBlock(0)"></span>
+						</div>
+						<div class="nameEditBlock" style="display:none;">
+							<input class="form-control col-xs-11 col-sm-12 col-md-3" style="width:150px" ng-model="poi.name"/>
+							<span class="nameButtonSave glyphicon glyphicon-floppy-disk" ng-click="update()"></span>
+							<span class="nameButtonCancel glyphicon glyphicon-ban-circle" ng-click="cancelUpdate()"></span>
+						</div>
+						<!-- Binding building -->						
+						<br/>
+						<div class="poi-title">Binding Building</div>
+						<div class="dropdown" style="display:inline;">
+						  <button class="btn btn-default dropdown-toggle" type="button" id="buildingDropdownMenu" data-toggle="dropdown">
+						    <span ng-bind="poiBuilding.name"></span>
+						    <span class="caret"></span>
+						  </button>
+						  <ul class="dropdown-menu" role="menu" aria-labelledby="buildingDropdownMenu">
+						    <li ng-repeat="building in buildings" role="presentation">
+						    	<a role="menuitem" tabindex="-1" href="#" ng-bind="building.name" ng-click="bindBuilding($event, building)"></a>
+						    </li>
+						  </ul>
+						</div>
+					</div>
+				</div>
+				<hr/>		
+				
+				<!-- Tags -->
+				<div class="col-xs-12 col-sm-12 col-md-12 ng-hide" style="padding:15px 5px;" ng-hide="loadingPoi">
+					<input id="poi-tag-input" type="text" name="poiTags" class="tm-input tm-input-success form-control" 
+					placeholder="Add tag"/>
+					<!-- buttons -->
+					<span class="tagsButtonSave glyphicon glyphicon-floppy-disk" ng-click="tagSave($event)"></span>
+					<span class="tagsButtonCancel glyphicon glyphicon-ban-circle" ng-click="tagCancel($event)"></span>
+				</div>
+				<hr/>
+
+				<!-- Custom fields -->
+				<div class="col-xs-12 col-sm-12 col-md-12 ng-hide" style="padding:15px 5px;" ng-hide="loadingPoi" id="customFieldsWrapper">
+
+					<!-- Create buuton and type menu(entry point) -->
+					<div>
+						<!-- Create button --> 
+						<span id="customFieldsCreateButton" class="glyphicon glyphicon-plus" ng-click="cfg.toogleTypeMenu()"></span>
+						
+						<!-- Button groups of field type\ -->
+						<div class="btn-group" style="display:none" id="customFieldsTypeMenu">
+						  <button id="customFieldsText" type="button" class="btn btn-default">Text</button>
+						  <button id="customFieldsLink" type="button" class="btn btn-default">Link</button>
+						  <button id="customFieldsImage" type="button" class="btn btn-default">Image</button>
+						  <button id="customFieldsVideo" type="button" class="btn btn-default">Video</button>
+						  <button id="customFieldsAudio" type="button" class="btn btn-default">Audio</button>
+						  <button id="customFieldsFile" type="button" class="btn btn-default">File</button>		
+						</div>
+					</div>
+
+					<!-- Custom fields display -->
+					<div id="customFieldsDisplayArea">						
+						<div ng-repeat="field in poi.customFields" >
+						
+							<!-- template of field of text type -->	
+							<div class="templateCustomField bg-info" ng-if="field.type == 1">
+								<!-- Display Block -->
+								<div class="templateCustomFieldsDisplay">
+									<!-- fields -->
+									<div class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-bind="field.key" ng-click="cfg.toggleMultipleLineMode($event, 0, field)"></div>
+									<div class="customFieldsValue col-xs-11 col-sm-12 col-md-7" ng-bind-html-unsafe="field.value" ng-click="cfg.toggleMultipleLineMode($event, 0, field)"></div>
+									<!-- buttons -->
+									<span class="customFieldsButtonEdit glyphicon glyphicon-edit" ng-click="cfg.toggleMultipleLineMode($event, 0, field)"></span>
+									<span class="customFieldsButtonRemove glyphicon glyphicon-remove" ng-click="cfg.removeField($index)"></span>
+								</div>
+								<!-- Edit Block -->
+								<div class="templateCustomFieldsEdit">
+									<!-- fields -->
+									<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key"/>
+									<textarea class="customFieldsValue col-xs-11 col-sm-12 col-md-7" ng-model="field.value"></textarea>
+									<!-- buttons -->
+									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.updateField()"></span>
+									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.toggleMultipleLineMode($event, 1, field)"></span>
+								</div>
+								<div style="float:left;clear:both;"></div>
+							</div>
+
+							<!-- template of create link -->
+							<div class="templateCustomField bg-info" ng-if="field.type == '2'">
+								<!-- Display Block -->
+								<div class="templateCustomFieldsDisplay">
+									<!-- fields -->
+									<div class="customFieldsValue col-xs-11 col-sm-11 col-md-10">
+										<a href="{{field.value}}" ng-bind="field.key"></a>
+									</div>
+									<!-- buttons -->
+									<span class="customFieldsButtonEdit glyphicon glyphicon-edit"></span>
+									<span class="customFieldsButtonRemove glyphicon glyphicon-remove" ng-click="cfg.removeField($index)"></span>
+								</div>
+								<!-- Edit Block -->
+								<div class="templateCustomFieldsEdit">
+									<!-- fields -->
+									<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key"/>
+									<input class="customFieldsValue col-xs-11 col-sm-12 col-md-7" ng-model="field.value"/>
+									<!-- buttons -->
+									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.updateField()"></span>									
+									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.cancelField()"></span>
+								</div>
+								<div style="float:left;clear:both;"></div>
+							</div>	
+
+							<!-- template of create image -->						
+							<div class="templateCustomField bg-info" ng-if="field.type == '3'">
+								<!-- Display Block -->
+								<div class="templateCustomFieldsDisplay">
+									<!-- fields -->
+									<div class="customFieldsKey cimage col-xs-11 col-sm-12 col-md-10">										
+										<img ng-src="{{field.displayValue}}" width=150 alt="image" />
+										<span ng-bind="field.key"></span>
+									</div>														<!-- buttons -->
+									<span class="customFieldsButtonEdit glyphicon glyphicon-edit"></span>
+									<span class="customFieldsButtonRemove glyphicon glyphicon-remove" ng-click="cfg.removeField($index)"></span>
+								</div>
+								<!-- Edit Block -->
+								<div class="templateCustomFieldsEdit">
+									<!-- fields -->
+									<form action="/poi/uploadFile" method="POST" enctype="multipart/form-data">
+										<input type="hidden" name="_id" value="{{poi._id}}"/>
+										<input type="hidden" name="type" value="image"/>
+										<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key" name="imageName"/>
+										<div class="customFieldsValue cimage col-xs-11 col-sm-12 col-md-7" style="background:url() no-repeat;height:300px;">
+											<input type="file" placeholder="Image" name="file"/>
+										</div>
+										<div class="alert alert-danger error-msg">
+											<span class="label label-danger">Error</span> <span class="errorText"></span>
+										</div>										
+									</form>
+									<!-- buttons -->
+									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.submitPoiFile($event, field, 'image')"></span>
+									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.cancelField()"></span>
+								</div>
+								<div style="float:left;clear:both;"></div>
+							</div>
+
+							<!-- template of create video -->
+							<div class="templateCustomField bg-info" ng-if="field.type == 4">
+								<!-- Display Block -->
+								<div class="templateCustomFieldsDisplay">
+
+									<!-- fields -->
+									<div class="customFieldsKey cvideo col-xs-11 col-sm-12 col-md-10">
+										<iframe ng-src="{{field.value}}" width="100%" height="215"  frameborder="0" ></iframe>
+										<span ng-bind="field.key"></span>
+									</div>														<!-- buttons -->
+									<span class="customFieldsButtonEdit glyphicon glyphicon-edit"></span>
+									<span class="customFieldsButtonRemove glyphicon glyphicon-remove" ng-click="cfg.removeField($index)"></span>
+								</div>
+								<!-- Edit Block -->
+								<div class="templateCustomFieldsEdit">
+									<!-- fields -->
+									<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key"/>
+									<input class="customFieldsValue col-xs-11 col-sm-12 col-md-7" ng-model="field.value"/>								
+									<!-- buttons -->
+									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.updateField()"></span>
+									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.cancelField()"></span>
+								</div>
+								<div style="float:left;clear:both;"></div>
+							</div>
+
+							<!-- template of create audio -->
+							<div class="templateCustomField bg-info" ng-if="field.type == 5">
+								<!-- Display Block -->
+								<div class="templateCustomFieldsDisplay">
+									<!-- fields -->
+									<div class="customFieldsKey col-xs-11 col-sm-12 col-md-10">
+										<span class="glyphicon glyphicon-music" ng-bind="field.key"></span>
+										<audio controls>
+										  <source src="{{field.value}}" type="audio/mpeg"/>
+										  <embed height="50" width="100" src="{{field.value}}"/>
+										</audio>
+									</div>														
+									<!-- buttons -->
+									<span class="customFieldsButtonEdit glyphicon glyphicon-edit"></span>
+									<span class="customFieldsButtonRemove glyphicon glyphicon-remove" ng-click="cfg.removeField($index)"></span>
+								</div>
+								<!-- Edit Block -->
+								<div class="templateCustomFieldsEdit">
+									<!-- fields -->
+									<form action="/poi/uploadFile" method="POST" enctype="multipart/form-data">
+										<input type="hidden" name="_id" value="{{poi._id}}"/>
+										<input type="hidden" name="type" value="audio"/>
+										<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key" name="fileName"/>
+										<div class="customFieldsValue col-xs-11 col-sm-12 col-md-7">
+											<input type="file" placeholder="File" name="file"/>
+										</div>
+										<div class="alert alert-danger error-msg">
+											<span class="label label-danger">Error</span> <span class="errorText"></span>
+										</div>										
+									</form>
+									<!-- buttons -->
+									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" data-loading-text="Loading..." ng-click="cfg.submitPoiFile($event, field, 'file')"></span>
+									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.cancelField()"></span>
+
+								</div>
+								<div style="float:left;clear:both;"></div>
+							</div>
+
+							<!-- template of create file -->
+							<div class="templateCustomField bg-info" ng-if="field.type == 6">
+								<!-- Display Block -->
+								<div class="templateCustomFieldsDisplay">
+									<!-- fields -->
+									<div class="customFieldsKey col-xs-11 col-sm-12 col-md-10">
+										<a href="{{field.value}}"/>
+											<span class="glyphicon glyphicon-download" ng-bind="field.key"></span>
+										</a>										
+									</div>														
+									<!-- buttons -->
+									<span class="customFieldsButtonEdit glyphicon glyphicon-edit"></span>
+									<span class="customFieldsButtonRemove glyphicon glyphicon-remove" ng-click="cfg.removeField($index)"></span>
+								</div>
+								<!-- Edit Block -->
+								<div class="templateCustomFieldsEdit">
+									<!-- fields -->
+									<form action="/poi/uploadFile" method="POST" enctype="multipart/form-data">
+										<input type="hidden" name="_id" value="{{poi._id}}"/>
+										<input type="hidden" name="type" value="file"/>
+										<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key" name="fileName"/>
+										<div class="customFieldsValue col-xs-11 col-sm-12 col-md-7">
+											<input type="file" placeholder="File" name="file"/>
+										</div>
+										<div class="alert alert-danger error-msg">
+											<span class="label label-danger">Error</span> <span class="errorText"></span>
+										</div>										
+									</form>
+									<!-- buttons -->
+									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.submitPoiFile($event, field, 'file')"></span>
+									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.cancelField()"></span>
+
+
+
+								</div>
+								<div style="float:left;clear:both;"></div>
+							</div>
+
+
+						</div>
+					</div>
+
+				</div>	
+
+			</div>
+			<hr/>
+
+		</div>
+
+	</div>
+	<!-- /container -->
+	
+	<!-- Body library include -->
+	<% include ../layout/body-include.html	%>
+		
+    <!-- Controller -->
+    <script src="/js/controller/poiContrl.js"></script>
+    
+  </body>
+</html>

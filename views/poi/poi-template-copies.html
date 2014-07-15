@@ -1,0 +1,30 @@
+<!-- POI copy templates include in area/area-list.html -->
+<div class="dropdown ng-hide" id="copy-poi-template-dropdown" ng-show="copyPoiTemplateList.length > 0">
+  <a data-toggle="dropdown" href="#" id="copy-poi-template-trigger-button" style="text-decoration: none;">
+  	<span class="label label-warning copy-template">Copied POI Templates</span>
+  </a>
+  <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+	<div id="poi-copy-tempates">
+		<div ng-repeat="poi in copyPoiTemplateList" class="copy-poi-template" id="copy-template-{{poi._id}}">
+			<img ng-src="{{poi.icon}}" alt="Image Icon" class="icon"/>
+			<div class="content">
+				<span>{{poi.name}}</span><span>(full copy)</span><br/>
+				<span>{{poi._id}}</span><br/>
+				<button type="button" class="btn btn-default btn-xs" ng-show="isAreaShowPage" ng-click="copyPoiHere($event, poi)">Copy to here</button>
+				<button type="button" class="btn btn-danger btn-xs"  ng-click="removeCopyPoi($event, poi, $index)">Remove</button>				
+			</div>
+		</div>
+	</div>
+  </ul>
+</div>	
+<script>
+	$(document).on("mouseenter", ".copy-poi-template:not(.initiated)", function(){
+		$(this).draggable({
+			revert: "invalid",
+			helper: "clone",
+			cursor: "move",
+			containment: "document",
+		}).addClass("initiated");
+	});
+	$("#copy-poi-template-dropdown").draggable();
+</script>
