@@ -20,8 +20,6 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 					$rootScope.floorDown.push(floor);
 			});
 
-			$rootScope.currentUpFloor = $rootScope.floorUp.length + 1,
-			$rootScope.currentDownFloor = -($rootScope.floorDown.length) - 1;
 			$rootScope.loadingFloor = false;
 			
 		});
@@ -39,14 +37,13 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 		Floor.create({
 
 			buildingId: $rootScope.building._id,
-			layer: 1 // $rootScope.currentUpFloor
+			layer: 1
 
 		}, function(floor) {
 
 			// Update local buildings
 			$rootScope.floors.unshift(floor);
 			$rootScope.floorUp.unshift(floor);
-			$rootScope.currentUpFloor = $rootScope.currentUpFloor + 1;
 
 			// Reset button status
 			addButton.button('reset');
@@ -82,14 +79,13 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 		Floor.create({
 
 			buildingId: $rootScope.building._id,
-			layer: -1 // $rootScope.currentDownFloor
+			layer: -1
 			
 		}, function(floor) {
 
 			// Update local buildings
 			$rootScope.floors.push(floor);
 			$rootScope.floorDown.push(floor);
-			$rootScope.currentDownFloor = $rootScope.currentDownFloor - 1;
 
 			// Reset button status
 			addButton.button('reset');
@@ -153,9 +149,6 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 		    	if(deleteObj.layer > 0){
 		    		
 		    		for(var i=0; i<$rootScope.floorUp.length; i++){						
-		    			// Update other floor's layer
-		    			if($rootScope.floorUp[i].layer > deleteObj.layer)
-		    				$rootScope.floorUp[i].layer = $rootScope.floorUp[i].layer - 1;
 		    			// Get removed floor index
 		    			if($rootScope.floorUp[i]._id == id)    			
 							j = i;		    			
@@ -164,15 +157,9 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 	    			// Remove floor
 		    		$rootScope.floorUp.splice(j, 1);
 		    		
-		    		// Update current up floor
-		    		$rootScope.currentUpFloor = $rootScope.currentUpFloor - 1;
-		    		
 		    	}else{
 		    		
 		    		for(var i=0; i<$rootScope.floorDown.length; i++){						
-		    			// Update other floor's layer
-		    			if($rootScope.floorDown[i].layer < deleteObj.layer)		    				
-		    				$rootScope.floorDown[i].layer = $rootScope.floorDown[i].layer + 1;		    			
 		    			// Get removed floor index
 		    			if($rootScope.floorDown[i]._id == id)    			
 		    				j = i;		    			
@@ -180,9 +167,6 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 		    		
 		    		// Remove floor
 					$rootScope.floorDown.splice(j, 1);
-		    		
-		    		// Update current down floor
-		    		$rootScope.currentDownFloor = $rootScope.currentDownFloor + 1;
 		    				    		
 		    	}
 		    	
