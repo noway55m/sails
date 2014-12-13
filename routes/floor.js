@@ -186,7 +186,7 @@ exports.create = function(req, res) {
 
 								if(err) {
 
-									log.error(error);
+									log.error(err);
 									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
 										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
 									}); 
@@ -522,7 +522,6 @@ exports.del = function( req, res ) {
 																																																	
 										// Remove floor
 										var floorLayer = floor.layer;
-										console.log(floorLayer);
 										floor.remove(function(err){	
 																	
 											if( err ) {
@@ -535,7 +534,7 @@ exports.del = function( req, res ) {
 											} else {
 
 												// Update building
-												if(floorLayer == building.upfloor || floorLayer == -building.downfloor) {
+												if(floorLayer == building.upfloor || floorLayer == building.downfloor) {
 													
 													var sortOrder = floorLayer > 0 ? -1 : 1;
 													Floor.findOne({ buildingId: building.id})
@@ -559,17 +558,9 @@ exports.del = function( req, res ) {
 															else	
 																building.upfloor = clayer;
 
-															building.save( function( err, building ) {
-																
-																if( err ) {
-
+															building.save( function( err, building ) {																
+																if( err )
 																	log.error(err);
-																	res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-																		msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-																	}); 	
-
-																}
-
 															});
 													
 														}
