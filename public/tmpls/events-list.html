@@ -8,8 +8,7 @@
 					data-event-class="<%= event['class'] %>" class="event-item">
 					<%= event.title %>
 				</a>
-				<span class="glyphicon glyphicon-remove" style="cursor:pointer;color:#d9534f;float:right" 
-				onclick="showDeleteDialog('<%= event.id %>', '<%= event.title %>')"></span>&nbsp;					
+				<span class="glyphicon glyphicon-remove" data-event-id="<%= event.id %>" style="cursor:pointer;color:#d9534f;float:right"></span>&nbsp;
 			</li>
 		<% }) %>
 	</ul>
