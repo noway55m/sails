@@ -117,10 +117,9 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 	};
 
 	// Function for setup delete dialog
-	var deleteObj, deleteModal;
-	$scope.deleteDialogSetup = function(e){
+	var deleteObj, deleteModal = $("#deleteModal");
+	$scope.deleteDialogSetup = function(){
 		deleteObj = this.building;
-		deleteModal = $(e.currentTarget).parent().parent().next().next();
 		deleteModal.find("#removeContent").html(deleteObj.name);
 		deleteModal.modal("show");
 	};

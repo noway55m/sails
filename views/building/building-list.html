@@ -39,14 +39,14 @@
 
 			<!-- Building list -->
 			<div class="belement ng-hide" ng-repeat="building in buildings" ng-mouseenter="showRemoveButton($event)" ng-mouseleave="hideRemoveButton($event)" ng-hide="loadingBuilding">
-				<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup($event)"></span>
+				<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup()"></span>
 				<a href="/building/show/{{building._id}}">	
 					<img ng-src="{{building.icon}}" alt="Image Icon" class="default-icon"/>
 				</a>	
 				<a href="/building/show/{{building._id}}"><span ng-bind="building.name"></span></a>
 				<% if(user.role == roles.ADMIN){ %>
 					<!-- Show building's owner if admin -->
-					<h6>{{building.userName}}</h6>
+					<h6 ng-bind="building.userName"></h6>
 				<% } %>								
 			</div>
 
