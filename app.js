@@ -9,10 +9,12 @@ if(process.argv.length >=3)
 var express = require('express')
   , routes = require('./routes')
   , fs = require('fs')
+  , customFilter = require('./routes/customFilter')
   , authentication = require('./routes/authentication')
   , register = require('./routes/register')
   , UserModel = require('./model/user')
   , user = require('./routes/user')
+  , poi = require('./routes/poi')    
   , building = require('./routes/building')  
   , floor = require('./routes/floor')
   , store = require('./routes/store')
@@ -45,10 +47,34 @@ var express = require('express')
   , userAdmin = require('./routes/admin/userAdmin')
   , feedbackAdmin = require('./routes/admin/feedbackAdmin')
   , notificationAdmin = require('./routes/admin/notificationAdmin')
-  , config = require('./config/config.js');
+  , config = require('./config/config.js')
+  , i18n = require("i18n");
+
+// Set events size
+var events = require('events');
+events.EventEmitter.defaultMaxListeners = 100;
 
 
 var app = express();
+
+// i18n setup
+i18n.configure({
+
+    // you may alter a site wide default locale
+    defaultLocale: 'en',
+
+    // Support locales  
+    locales:['en', 'zh_tw', "zh_cn"],
+
+    // Folder
+    directory: './locales',
+
+    // Enable object notation 
+    objectNotation: true
+
+});
+app.use(i18n.init);
+
 
 // Connect data source
 require('./model/dataSource');
@@ -82,15 +108,20 @@ app.use('/sails-resource/download/doc/ios', express.static(path.join(__dirname, 
 app.use(errorHandler.error500);
 app.use(errorHandler.error404);
 
-
 // Force use all get use https
 app.get('*',function(req,res,next){
-  if(req.protocol !='https')
+  if(req.protocol !='https'){
     res.redirect( config.domainUrl + req.url)
-  else
+  }else{
     next() /* Continue to other routes if we're not redirecting */
+  }
 });
 
+// Set locale
+app.get('*', function(req,res,next){
+  customFilter.setLocaleF(req, res);
+  next();
+});
 
 // Support html by nodejs module "ejs"
 app.engine('html', require('ejs').renderFile);
@@ -112,6 +143,8 @@ app.get('/register', register.index);
 app.post('/register/auth', register.auth);
 app.get('/register/activate/:token', register.activate);
 
+app.get('/setLocale', customFilter.setLocale);
+
 //---------------------------------
 app.sget('/user', user.index);
 app.sget('/user/profile', user.profile);
@@ -121,6 +154,30 @@ app.spost('/user/changePassword', user.changePassword);
 app.get('/user/resetPassword/:token', user.resetPassword);
 app.post('/user/resetPasswordAuth', user.resetPasswordAuth);
 app.post('/user/upgradeDeveloper', user.upgradeDeveloper);
+app.get('/user/poiTags', user.getPoiTags);
+
+//----------------------------------
+app.sget('/poi/show/:_id', poi.show);
+app.sget('/poi/read/:_id', poi.read);
+app.spost('/poi/create', poi.create);
+app.spost('/poi/update', poi.update);
+app.spost('/poi/delete', poi.del);
+app.sget('/poi/list', poi.list);
+app.spost('/poi/uploadFile', poi.uploadFile);
+app.spost('/poi/copy', poi.copy);
+app.spost('/poi/copyTemplate', poi.copyTemplate);
+app.sget('/poi/getCopies', poi.getCopies);
+app.sget('/poi/getCopyTemplates', poi.getCopyTemplates);
+app.spost('/poi/removeCopy', poi.removeCopy);
+app.spost('/poi/removeCopyTemplate', poi.removeCopyTemplate);
+app.sget('/poi/getFile', poi.getFile);
+app.get('/poi/search', poi.search);
+
+app.sget('/poi/event/index', poi.indexEvent);
+app.sget('/poi/event/list', poi.listEvent);
+app.spost('/poi/event/create', poi.createEvent);
+app.spost('/poi/event/update', poi.updateEvent);
+app.spost('/poi/event/delete', poi.deleteEvent);
 
 
 //----------------------------------
@@ -199,6 +256,7 @@ app.spost('/developer/app/regenerateKey', developer.appRegenerateKey);
 
 
 //-----------------------------------
+app.get('/terms', others.terms);
 app.sget('/sails-resource/download', others.download);
 app.sget('/sails-resource/download/sdk/:platform/:fileName', others.downloadSdk);
 app.sget('/sails-resource/download/sample-code/:platform/:fileName', others.downloadSampleCode);
@@ -283,7 +341,7 @@ app.get('/admin/building/list', isAdmin, buildingAdmin.list);
 app.post('/admin/building/uploadImage', isAdmin, buildingAdmin.uploadImage);
 app.post('/admin/building/packageMapzip', isAdmin, buildingAdmin.packageMapzip);
 app.get('/admin/building/getMapzip', isAdmin, buildingAdmin.getMapzip);
-//app.post('/admin/building/uploadBeaconlist', isAdmin, buildingAdmin.uploadBeaconlist);
+app.post('/admin/building/uploadBeaconlist', isAdmin, buildingAdmin.uploadBeaconlist);
 app.get('/admin/building/searchIndex', isAdmin, buildingAdmin.searchIndex);
 app.get('/admin/building/search', isAdmin, buildingAdmin.search);
 
