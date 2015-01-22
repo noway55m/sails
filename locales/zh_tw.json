@@ -1,73 +1,257 @@
 {
-	"Hello": "幹幹站",
-	"bbb.ffff": "bbb.ffff",
-	"bbb": "bbb",
-	"usernameFieldPlaceHolder": "usernameFieldPlaceHolder",
-	"index": {
-		"title": "index.title",
-		"username": "index.username",
-		"usernameFieldPlaceHolder": "index.usernameFieldPlaceHolder",
-		"password": "index.password",
-		"passwordFieldPlaceHolder": "index.passwordFieldPlaceHolder",
-		"rememberMe": "index.rememberMe",
-		"signIn": "index.signIn",
-		"register": "index.register",
-		"forgetPassword": "index.forgetPassword"
-	},
 	"header": {
-		"home": "header.home",
-		"support": "header.support",
-		"knowledgeBase": "header.knowledgeBase",
-		"blog": "header.blog",
-		"terms": "header.terms",
-		"downloadSDK": "header.downloadSDK",
-		"profile": "header.profile",
-		"developer": "header.developer",
-		"logout": "header.logout"
+		"home": "首頁",
+		"support": "支援",
+		"knowledgeBase": "相關知識",
+		"blog": "部落格",
+		"terms": "條款",
+		"downloadSDK": "下載SDK",
+		"cms": "CMS",
+		"profile": "個人資訊",
+		"developer": "開發者",
+		"logout": "登出"
 	},
-	"error": {
-		"title": "error.title",
-		"404Error": "error.404Error",
-		"loginMissingFieldMsg": "error.loginMissingFieldMsg",
-		"500Error": "error.500Error"
+	"footer": {},
+	"buttons": {
+		"change": "改變",
+		"changing": "改變中...",
+		"create": "建立",
+		"creating": "建立中...",
+		"confirm": "確認",
+		"confirming": "確認中...",
+		"cancel": "取消",
+		"canceling": "取消中...",
+		"close": "關閉",
+		"add": "新增",
+		"adding": "新增中...",
+		"package": "打包",
+		"packaging": "打包中...",
+		"update": "更新",
+		"updating": "更新中...",
+		"upload": "上傳",
+		"uploading": "上傳中...",
+		"remove": "移除",
+		"Removing": "移除中...",
+		"delete": "刪除",
+		"deleting": "刪除中...",
+		"copy": "複製",
+		"copyTemplate": "複製樣板",
+		"copying": "複製中...",
+		"submit": "提交",
+		"submiting": "提交中...",
+		"inform": "通知",
+		"informing": "通知中...",
+		"editing": "編輯中...",
+		"edit": "編輯"
+	},
+	"others": {
+		"download": {
+			"title": "下載",
+			"downloadSailsSDK": "下載Sails SDK",
+			"downloadSailsSDKDesc": "點選下方連結下載各平台開發套件.",
+			"androidSDK": "Android SDK",
+			"sampleCode": "範例程式",
+			"javaDoc": "Java文檔",
+			"iosSDK": "IOS SDK"
+		}
+	},
+	"feedback": {
+		"title": "建議回饋",
+		"thanks": "謝謝,我們已收到你的回饋!",
+		"fields": {
+			"name": "名字",
+			"email": "信箱",
+			"comment": "評論內容"
+		}
+	},
+	"developer": {
+		"title": "開發者",
+		"publicAPIAccess": "公開API存取",
+		"publicAPIAccessDesc": "Use of this key does not require any user action or consent, does not grant access to any account information, and is not used for authorization",
+		"APIKey": "API Key",
+		"androidApp": "Android App",
+		"iosApp": "IOS App",
+		"ips": "IPs",
+		"referes": "Referes",
+		"createdDate": "建立日期",
+		"editAllowedAndroidApp": "編輯所允許的Android App",
+		"editAllowedIOSApp": "編輯所允許的IOS App",
+		"editAllowedIPs": "編輯所允許的IP",
+		"editAllowedRefers": "編輯所允許的參考",
+		"regenerateKey": "重新產生Key",
+		"example": "範例:",
+		"andorid": {
+			"title": "編輯所允許的Android App",
+			"deployDesc": "當您的App使用Android SDK開發套件時,需將Key設定取代為此.",
+			"verifyDesc": "所有來自您App所發送的要求,Sails系統皆會驗證來源端是否為以下所允許的SHA1指紋憑證.你可以藉由'keytool'取得SHA1指紋憑證.",
+			"certificateFingerprintDesc": "一行請輸入一個Base64 encoded的指紋憑證和Package名稱的SHA1(以分號區分)."
+		},
+		"ios": {
+			"title": "編輯所允許的IOS App",
+			"deployDesc": "當您的App使用IOS SDK開發套件時,需將Key設定取代為此.",
+			"verifyDesc": "所有來自您App所發送的要求,Sails系統皆會驗證來源端是否為以下所允許的Bundle ID.",
+			"identifierDesc": "一個Bundle ID一行."
+		}
+	},
+	"navbar": {
+		"buildings": "建築物",
+		"poiEvents": "POI事件"
+	},
+	"index": {
+		"title": "登入",
+		"username": "使用者",
+		"usernameFieldPlaceHolder": "信箱郵件",
+		"password": "密碼",
+		"passwordFieldPlaceHolder": "密碼",
+		"rememberMe": "記住密碼",
+		"signIn": "登入",
+		"register": "註冊",
+		"forgetPassword": "忘記密碼"
 	},
 	"forgetPasswordDialog": {
-		"title": "forgetPasswordDialog.title",
-		"desc": "forgetPasswordDialog.desc",
-		"emailAddress": "forgetPasswordDialog.emailAddress"
+		"title": "忘記密碼",
+		"desc": "請輸入您所註冊的信箱郵件.",
+		"emailAddress": "信箱郵件"
 	},
-	"buttons": {
-		"close": "buttons.close",
-		"confirming": "buttons.confirming",
-		"confirm": "buttons.confirm",
-		"remove": "buttons.remove",
-		"creating": "buttons.creating",
-		"create": "buttons.create",
-		"cancel": "buttons.cancel"
+	"resetPassword": {
+		"title": "重設密碼",
+		"desc": "請重新輸入您的密碼.",
+		"originalPassword": "原始密碼",
+		"newPassword": "新密碼",
+		"confirmNewPassword": "確認新密碼"
+	},
+	"error": {
+		"title": "錯誤",
+		"success": "成功",
+		"loginMissingFieldMsg": "帳號或密碼為空白!",
+		"loginNotActiveErrorMsg": "您的帳號尚未被激活!",
+		"loginIncorretUsernameOrPasswordErrorMsg": "不正確的帳號或密碼!",
+		"unavailableApiKeyOrVerifier": "不正確的API金鑰或驗證碼!",
+		"unavailableSDKVersion": "SDK套件版本過舊,請更新最新版本!",
+		"404Error": "404找不到網頁! ",
+		"500Error": "500系統錯誤,請稍後再試!"
+	},
+	"building": {
+		"add": {
+			"addBuildingTitle": "新增建築物",
+			"createHint": "請輸入所創建的建築物名稱"
+		},
+		"list": {
+			"buildings": "建築物",
+			"totalCount": "總數:"
+		},
+		"show": {
+			"buildings": "建築物",
+			"uploadIconImage": "上傳ICON"
+		},
+		"fields": {
+			"name": "名字",
+			"pub": "是否公開",
+			"desc": "描述",
+			"address": "地址",
+			"lastPackageTime": "上次打包時間"
+		},
+		"msg": {}
+	},
+	"poi": {
+		"add": {
+			"addPoiTitle": "新增POI"
+		},
+		"list": {
+			"pois": "POIs",
+			"totalCount": "總數:"
+		},
+		"show": {},
+		"types": {
+			"text": "文字",
+			"link": "連結",
+			"image": "圖片",
+			"video": "影片",
+			"audio": "聲音",
+			"file": "檔案"
+		},
+		"fields": {
+			"name": "名字",
+			"startTime": "開始時間",
+			"endTime": "結束時間"
+		},
+		"copies": {
+			"title": "已複製的POI",
+			"copyToHere": "複製POI到此"
+		},
+		"templateCopies": {
+			"title": "已複製的POI樣板",
+			"copyToHere": "複製POI樣板到此"
+		},
+		"event": {
+			"title": "POI事件",
+			"calendar": "行事曆",
+			"prev": "<< 前一個月",
+			"today": "今天",
+			"next": "下一個月 >>",
+			"year": "年",
+			"month": "月",
+			"week": "週",
+			"day": "日",
+			"add": {
+				"title": "新增POI事件"
+			},
+			"fields": {
+				"title": "標題",
+				"desc": "描述",
+				"startTime": "開始時間",
+				"endTime": "結束時間"
+			},
+			"update": {
+				"title": "更新POI事件"
+			}
+		}
+	},
+	"floor": {
+		"add": {},
+		"list": {
+			"floors": "樓層",
+			"totalCount": "總數:",
+			"addFloor": "新增樓層(上)",
+			"addBasement": "新增樓層(下)",
+			"details": "內容"
+		},
+		"show": {
+			"lastXMLUpdateTime": "上次XML更新時間:",
+			"uploadMapHere": "上傳Map圖資檔案",
+			"howCanStart": "如何開始建置圖資?",
+			"uploadPathHere": "上傳Path圖資檔案"
+		},
+		"fields": {
+			"name": "名字",
+			"layer": "樓層",
+			"desc": "描述",
+			"mapXML": "Map.xml",
+			"pathXML": "Path.xml"
+		}
 	},
 	"user": {
 		"index": {
-			"title": "user.index.title"
-		}
-	},
-	"building": {
-		"list": {
-			"buildings": "building.list.buildings",
-			"totalCount": "building.list.totalCount"
+			"title": "首頁"
 		},
-		"add": {
-			"createHint": "building.add.createHint"
-		}
-	},
-	"poi": {
-		"templateCopies": {
-			"title": "poi.templateCopies.title"
-		},
-		"copies": {
-			"copyToHere": "poi.copies.copyToHere"
+		"profile": {
+			"title": "個人資訊",
+			"usernameEmail": "帳號(信箱郵件)",
+			"administrator": "管理者",
+			"developer": "開法者",
+			"freeUser": "一般帳號",
+			"upgradeDeveloper": "升級開發者",
+			"contactUs": "聯絡我們",
+			"email": "信箱",
+			"message": "訊息",
+			"password": "密碼",
+			"changePassword": "修改密碼",
+			"originalPassword": "原始密碼",
+			"newPassword": "新密碼",
+			"confirmPassword": "確認新密碼"
 		}
 	},
 	"deleteDialog": {
-		"title": "deleteDialog.title"
+		"title": "確認移除"
 	}
 }
