@@ -22,7 +22,6 @@ var utility = Utility.getInstance(),
  	Poi.get({ _id: poiId }, function(poiObj){
 
  		$scope.poi = poiObj;
- 		console.log($scope.poi);
  		$scope.loadingPoi = false;
 
 		// Get building
@@ -39,7 +38,7 @@ var utility = Utility.getInstance(),
 
 		});
 
-		// Get poi event list
+		// Get poi event list by start time and end time
 		var type = calendar.options.view,
 			cstart = calendar.options.position.start,
 			yearMonth =  cstart.getFullYear() + "-" + (cstart.getMonth() + 1),
@@ -90,7 +89,7 @@ var utility = Utility.getInstance(),
 				calendar.options.events_source.push(event);
 			}
 
-			// Update view
+			// Update view by calendar method
 			calendar.view();
 
 		}, function(res) {
@@ -99,8 +98,7 @@ var utility = Utility.getInstance(),
 			var errorMsg = res && res.data && res.data.msg;
 			$().toastmessage('showErrorToast', errorMsg); 
 
-		})
-
+		});
 
  	}, function(res) {
 
@@ -323,6 +321,24 @@ var utility = Utility.getInstance(),
 
 	}
 
+
+	// Function for delete poi event
+	$scope.deletePoiEvent = function(){		
+		PoiEvent.delete({ _id: this.selectedDeleteEvent.id }, function(){
+
+			// Show success msg
+			$().toastmessage('showSuccessToast', "success"); 
+			$("#delete-poi-event-dialog").modal('hide');
+
+		}, function(res){
+
+			// Show error msg
+			var errorMsg = res && res.data && res.data.msg;
+			$().toastmessage('showErrorToast', errorMsg); 
+
+		});	
+	}
+
  }]);
 
 
@@ -338,6 +354,7 @@ function setupCalenderUI($scope, $compile) {
 		tmpl_cache: false,
 		day: 'now',
 		modal : "#update-poi-event-dialog",
+		deleteModal: "#delete-poi-event-dialog",
 		modal_type : "template", 
 		modal_title : function (e) { return e.title },		
 		onAfterEventsLoad: function(events) {
@@ -402,84 +419,8 @@ function setupCalenderUI($scope, $compile) {
 	$('#events-in-modal').change(function(){
 		var val = $(this).is(':checked') ? $(this).val() : null;
 		calendar.setOptions({modal: val});
-	});
-
-
-	/*
-	calendar.options.events_source.push({
-       "id": 293,
-       "title": "Evensadfsdfsadft 1",
-       "url": "http://example.com",
-       "class": "event-important",
-       "start": 1420862340079, // Milliseconds
-       "end":   1420869340079 // Milliseconds
 	});	
-	calendar.options.events_source.push({
-       "id": 294,
-       "title": "Event 2",
-       "url": "http://example.com",
-       "class": "event-important",
-       "start": 1420867350079, // Milliseconds
-       "end":   1420868370079 // Milliseconds
-	});	
-
-	calendar.options.events_source.push({
-       "id": 2977,
-       "title": "幹",
-       "url": "http://example.com",
-       "class": "event-important",
-       "start": 1420300800000, // Milliseconds
-       "end":   1420761600000 // Milliseconds
-	});
-	calendar.view()
-	*/		
-
-
-	// // tooltip setup
-	// $('a.pull-left').popover({
-	// 	"content": "kddkdkkddkdkkd",
-	// 	"trigger": "hover"
-
-	// });
-	// $('.pull-left').on('mouseover', function(){
-	// 	console.log("ddd")
-	// 	$(this).popover('show');
-
-	// });
 
 	return calendar;
-
-}
-
-
-var deleteSelectedPoiEventId = null,
-	deleteDialog = $("#deleteModal");
-function showDeleteDialog(id, title, $http) {
-	$("#removeContent").html(title);
-	deleteDialog.modal('show');
-	deleteSelectedPoiEventId = id;
-}
-
-// Function for delete poi event
-function deletePoiEvent() {
-
-	$.post("/poi/event/delete", { _id: deleteSelectedPoiEventId }).done(function(res){
-
-		console.log(res);
-		deleteDialog.modal('hide');
-
-		// Show success msg
-		$().toastmessage('showSuccessToast', "success"); 
-
-	}, function(res){
-
-		console.log(res);
-
-		// Show error msg
-		var errorMsg = res && res.data && res.data.msg;
-		$().toastmessage('showErrorToast', errorMsg); 
-
-
-	});
 
 }
