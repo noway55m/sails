@@ -6,15 +6,16 @@
 		<!-- Header -->
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3 class="modal-title">Edit allowed IOS applications</h3>
+			<h3 class="modal-title"><%= __('developer.ios.title') %></h3>
 			<hr>
 			<p>
-				<strong>This key will be deployed into Sails IOS SDK using in your IOS application.</strong><br>
-				<small>
-					API requests are sent directly to Sails from your clients' iOS devices. Sails verifies that each request originates from an iOS application that matches one of the bundle identifiers listed below.
-				</small>
+				<strong><%= __('developer.ios.deployDesc') %></strong><br>
+				<small><%= __('developer.ios.verifyDesc') %></small>
 				<br>
-				<small>One bundle identifier per line. <strong>Example:<strong></small>
+				<small>
+					<%= __('developer.ios.identifierDesc') %>
+				 	<strong><%= __('developer.example') %><strong>
+				 	</small>
 				<br>
 				<code style="font-size:12px;">com.example.MyAppxample</code>
 			</p>
@@ -26,11 +27,11 @@
 				<textarea class="form-control" placeholder="${BUNDDLE_ID}" name="bundleId" ng-model="selectedDevApp.verifier"></textarea>
 				<!-- error msg -->
 				<div class="alert alert-danger error-msg">
-					<span class="label label-danger">Error</span>
+					<span class="label label-danger"><%= __('error.title') %></span>
 					<span class="errorText"></span>
 				</div>
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<button type="submit" class="btn btn-primary" data-loading-text="Updating..." ng-click="updateVerifier($event)">Update</button>																	
+				<button type="button" class="btn btn-default" data-dismiss="modal"><%= __('buttons.close') %></button>
+				<button type="submit" class="btn btn-primary" data-loading-text="<%= __('buttons.updating') %>" ng-click="updateVerifier($event)"><%= __('buttons.update') %></button>																	
 			</div>			
 		</div>
 

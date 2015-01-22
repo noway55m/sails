@@ -9,7 +9,7 @@
 		<% include layout/ga.html %>
 	
 		<!-- Title -->
-	    <title>Sails - Login</title>
+	    <title><%= __("index.title") %></title>
 
 	</head>
 	<body>
@@ -24,12 +24,12 @@
 		<% include layout/top-navbar.html %>
 	
 		<div class="container" id="index-container">
-	
+						
 			<form class="form-signin" method="post" action="/auth">
 				
 				<!-- error msg -->
 				<div class="alert alert-danger" style='display:none;' id="error-dialog">
-					<span class="label label-danger">Error</span> <span
+					<span class="label label-danger"><%= __("error.title") %></span> <span
 						class="errorText"> <% if ( errorMsg ) { %> <%= errorMsg %>
 						<% } else {} %> </span>
 					<!-- Check is there any error msg for display -->
@@ -39,20 +39,20 @@
 					</script>
 				</div>
 				
-				<label>Username</label>
-				<input type="text" class="form-control" placeholder="Email address" autofocus name="username">
+				<label><%= __('index.username') %></label>
+				<input type="text" class="form-control" placeholder="<%= __('index.usernameFieldPlaceHolder') %>" autofocus name="username">
 				</br> 
-				<label>Password</label>									
-				<input type="password" class="form-control" placeholder="Password" name="password" value="">
+				<label><%= __('index.password') %></label>									
+				<input type="password" class="form-control" placeholder="<%= __('index.passwordFieldPlaceHolder') %>" name="password" value="">
 				</br>
-				<input type="checkbox" name="rememberMe"> <label for="checkbox">Remember me</label>
+				<input type="checkbox" name="rememberMe"> <label for="checkbox"><%= __('index.rememberMe') %></label>
 				</br>
-				<button class="btn btn-lg btn-primary" type="submit">Sign In</button>
+				<button class="btn btn-lg btn-primary" type="submit"><%= __('index.signIn') %></button>
 				</br>
 	
 				<!-- Register and Forget Password -->
-				<a href="register" id="register-link">Register</a> | 
-				<a data-toggle="modal" href="#forget-password-dialog" >Forget Password</a>
+				<a href="register" id="register-link"><%= __('index.register') %></a> | 
+				<a data-toggle="modal" href="#forget-password-dialog" ><%= __('index.forgetPassword') %></a>
 				
 				<div id="socialSignIn">
 					<!-- App not support yet  -->										

@@ -331,6 +331,12 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 		packageMapzip(e, selectedBuilding, Building, $scope, $rootScope);		
 	};		
 	
+	// Function for upload building beacon list
+	$scope.uploadBeaconList = function(e, selectedBuilding){
+		var building = this.building || selectedBuilding; 
+		uploadBeaconList(e, building, $scope, $rootScope);
+	};
+
 }
 
 // Show specific building controller
@@ -588,6 +594,69 @@ function packageMapzip(e, selectedBuilding, Building, $scope, $rootScope){
 		$().toastmessage('showErrorToast', resText );		        			
 
 	});
+
+}
+
+
+// Function for upload beacon list
+function uploadBeaconList(e, selectedBuilding, $scope, $rootScope){
+
+	var building = selectedBuilding,
+		uploadButton = angular.element(e.currentTarget),
+		form = uploadButton.prev(),
+		inputFields = form.find("input"),
+		errorMsgObj = form.find('.error-msg');
+
+	// Ajax from setup
+	var options = {
+
+		beforeSend : function(){ // pre-submit callback
+
+			// Hide error msg block
+			errorMsgObj.hide();
+
+			// Check both file upload
+			if(!$(inputFields[1]).val()){
+				
+				errorMsgObj.find('.errorText').text("File is empty!");	
+				errorMsgObj.show();	
+				return false
+				
+			}else{
+				inputFields.attr('disabled');
+				errorMsgObj.hide();
+				uploadButton.button("loading");
+				return true;
+			}
+
+		},
+		uploadProgress : function(event, position, total, percent){},
+		success : function(res, statusText){ // post-submit callback
+
+			// Show error msg
+			$().toastmessage('showSuccessToast', "Upload successfully");
+
+			// Reset button
+			uploadButton.button("reset");
+			return true;
+		},
+		error : function(res){
+
+			// Show error msg
+			var errorMsg = res && res.data && res.data.msg;
+			errorMsgObj.find(".errorText").text(errorMsg);
+			errorMsgObj.show();
+			$().toastmessage('showErrorToast', errorMsg);						        
+
+		},			
+
+		clearForm : true
+
+	};
+
+	form.ajaxSubmit(options);
+
+	return false;
 
 }
 

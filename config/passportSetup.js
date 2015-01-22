@@ -9,7 +9,8 @@ var passport = require('passport'),
 	DeveloperApplication = require('../model/developerApplication'),
 	SdkGlobalVersion = require('../model/sdkGlobalVersion'),		
 	config = require('./config.js'),
-	utilityS = require("../routes/utility.js");
+	utilityS = require("../routes/utility.js"),
+	i18n = require("i18n");
 
 
 //Static variable
@@ -55,13 +56,13 @@ passport.use(new localStrategy(function(username, password, done) {
 				return done(null, user);
 			else
 				return done(null, false, {
-					message : 'User account not activate yet'
+					message : i18n.__('error.loginNotActiveErrorMsg') // 'User account not activate yet'
 				});				
 			
 		} else {
 
 			return done(null, false, {
-				message : 'Incorrect username or password!!'
+				message : i18n.__('error.loginIncorretUsernameOrPasswordErrorMsg') // 'Incorrect username or password!!'
 			});
 
 		}		
@@ -337,7 +338,7 @@ passport.configSecureHttpRequest = function(app){
 								}else{
 									
 									res.json(401, { 
-										msg: "Unavailable api key or verifier" 
+										msg:  i18n.__('error.unavailableApiKeyOrVerifier') // "Unavailable api key or verifier" 
 									});	
 									
 								}
@@ -347,7 +348,7 @@ passport.configSecureHttpRequest = function(app){
 						} else {
 
 							res.json(401, { 
-								msg: "Unavailable api key or verifier" 
+								msg: i18n.__('error.unavailableApiKeyOrVerifier') // "Unavailable api key or verifier" 
 							});
 
 						}
@@ -357,7 +358,7 @@ passport.configSecureHttpRequest = function(app){
 				} else {
 
 					res.json(401, { 
-						msg: "Sdk version is too old, please update to latest one" 
+						msg: i18n.__('error.unavailableSDKVersion') //"Sdk version is too old, please update to latest one" 
 					});	
 
 				}
@@ -367,7 +368,7 @@ passport.configSecureHttpRequest = function(app){
 		} else {
 
 			res.json(401, { 
-				msg: "Sdk version is too old, please update to latest one" 
+				msg: i18n.__('error.unavailableSDKVersion') //"Sdk version is too old, please update to latest one" 
 			});	
 
 		}
@@ -379,7 +380,9 @@ passport.configSecureHttpRequest = function(app){
     	
 		var token = req.get("Authorization");
 		User.findOne({
-			token: token
+			token: token,
+			enabled: true,
+			role: { $ne: User.ROLES.FREE }
 		}, function(err, user){
 			if(err)
 				log.error(err);
@@ -460,10 +463,10 @@ passport.configSecureHttpRequest = function(app){
 			res.locals.domainUrl = config.domainUrl;
 
         	// Check authentication way
-        	if(req.get("Authorization"))
-        		apiKeyAuth(req, res, callback);
-        	//else if(req.get("Authorization"))        		
-        	//	tokenAuth(req, res, callback);
+        	//if(req.get("Authorization"))
+        	//	apiKeyAuth(req, res, callback);
+        	if(req.get("Authorization"))        		
+        		tokenAuth(req, res, callback);
         	else if(req.cookies.cookieToken)
         		cookieTokenAuth(req, res, callback);        	
         	else        	        	

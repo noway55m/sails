@@ -1,6 +1,125 @@
 // Include all service in app
-var app = angular.module('sails', ['ngResource', 'buildingServices', 'floorServices', 
+var app = angular.module('sails', ['ngResource', 'ngSanitize', 'poiServices', 'poiEventServices', 'buildingServices', 'floorServices',
                                    'storeServices', 'adServices', 'userServices', 'developerApplicationServices']);
+
+// REST API of Poi
+angular.module('poiServices', [ 'ngResource' ]).factory('Poi', function($resource) {
+    return $resource('/poi/:action/:_id', { _id : "@id"}, {
+
+        get : {
+            method : 'GET',
+            params : {
+                action : 'read'
+            }
+        },
+        create : {
+            method : 'POST',
+            params : {
+                action : 'create'
+            }
+        },
+        save : {
+            method : 'POST',
+            params : {
+                action : 'update'
+            }
+        },
+        "delete" : {
+            method : 'POST',
+            params : {
+                action : 'delete'
+            }
+        },
+        list : {
+            method : 'GET',
+            params : {
+                action : 'list',
+                page: 1
+            }
+        },
+        copy : {
+            method : 'POST',
+            params : {
+                action : 'copy'
+            },
+            isArray : true
+        },
+        getCopies : {
+            method : 'GET',
+            params : {
+                action : 'getCopies'
+            },
+            isArray : true
+        },        
+        copyTemplate : {
+            method : 'POST',
+            params : {
+                action : 'copyTemplate'
+            },
+            isArray : true            
+        },
+        getCopyTemplates : {
+            method : 'GET',
+            params : {
+                action : 'getCopyTemplates'
+            },
+            isArray : true
+        },
+        removeCopy : {
+            method : 'POST',
+            params : {
+                action : 'removeCopy'
+            },
+            isArray : true
+        },
+        removeCopyTemplate : {
+            method : 'POST',
+            params : {
+                action : 'removeCopyTemplate'
+            },
+            isArray : true
+        },                                           
+    });
+});
+
+// REST API of Poi event
+angular.module('poiEventServices', ['ngResource']).factory('PoiEvent', function($resource){
+   return $resource('/poi/event/:action/:_id', { _id : "@id"}, {
+        get : {
+            method : 'GET',
+            params : {
+                action : 'read'
+            }
+        },
+        create : {
+            method : 'POST',
+            params : {
+                action : 'create'
+            }
+        },
+        updated : {
+            method : 'POST',
+            params : {
+                action : 'update',
+                _id: ""
+            }
+        },
+        "delete" : {
+            method : 'POST',
+            params : {
+                action : 'delete'
+            }
+        },
+        list : {
+            method : 'GET',
+            params : {
+                action : 'list',
+                page: 1
+            },
+            isArray : true            
+        }
+    });
+})
 
 // REST API of Building
 angular.module('buildingServices', [ 'ngResource' ]).factory('Building', function($resource) {
@@ -186,7 +305,14 @@ angular.module('userServices', [ 'ngResource' ]).factory('User', function($resou
             params : {
                 action : 'upgradeDeveloper'
             }        	
-        }            
+        },
+        poiTags : {
+            method : 'GET',
+            params : {
+                action : 'poiTags'
+            },
+            isArray : true                       
+        }                    
     });
 });
 

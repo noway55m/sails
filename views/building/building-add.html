@@ -1,9 +1,9 @@
 <!-- Building Add include in page 'building/building-list.html' -->
-<div id="add-building-block">
-	<input class="form-control" placeholder="name" name="name" value="" maxlength="30">
-	<input class="form-control" placeholder="description" name="desc" value="" maxlength="250">
-	<button class="btn btn-primary" data-loading-text="Add..." id="add-new-building-button" ng-click="addBuilding($event)">Add New Building</button>
+<div id="add-building-block" style="padding:30px 50px 20px 50px;">
+	<input class="form-control" placeholder="<%= __('building.add.createHint') %>" name="name" value="" maxlength="100">
+	<button class="btn btn-primary" data-loading-text="<%= __('buttons.creating') %>" ng-click="addBuilding($event)"><%= __('buttons.create') %></button>
 	<div class="alert alert-danger error-msg">
-		<span class="label label-danger">Error</span> <span class="errorText"></span>
+		<span class="label label-danger"><%= __('error.title') %></span>
+		<span class="errorText"></span>
 	</div>
 </div>

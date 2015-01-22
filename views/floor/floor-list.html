@@ -1,26 +1,26 @@
 <!-- Floors list include in building/index.html -->
-<div class="row display-block" ng-controller="FloorListCtrl">
+<div id="floor-list" class="tab-pane active" ng-controller="FloorListCtrl">
 	
 	<!-- Loading -->
 	<div class="loading" ng-show="loadingFloor">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>	
 	
 	<!-- Delete Confirm Dialog -->
-	<% include ../layout/delete-confirm-dialog.html %>
+	<% include ../floor/delete-confirm-dialog.html %>
 
 	<!-- Loading Dialog -->
 	<% include ../layout/loading-dialog.html %>
 
 	<!-- Add floor, add basement and add store buttons -->
-	<button class="btn btn-md btn-default" ng-click="addFloor($event)" data-loading-text="Adding..." ng-hide="loadingFloor" style="display:none;margin:20px 20px;">
-		<span class="glyphicon glyphicon-plus" ></span> Add Floor
+	<button class="btn btn-md btn-default ng-hide" ng-click="addFloor($event)" data-loading-text="Adding..." ng-hide="loadingFloor" style="margin:20px 20px;">
+		<span class="glyphicon glyphicon-plus" ></span> <%= __('floor.list.addFloor') %>
 	</button>
 
-	<button class="btn btn-md btn-default" ng-click="addBasement($event)" data-loading-text="Adding..." ng-hide="loadingFloor" style="display:none;margin:20px 0px;">
-		<span class="glyphicon glyphicon-plus" ></span> Add Basement
+	<button class="btn btn-md btn-default ng-hide" ng-click="addBasement($event)" data-loading-text="Adding..." ng-hide="loadingFloor" style="margin:20px 0px;">
+		<span class="glyphicon glyphicon-plus" ></span> <%= __('floor.list.addBasement') %>
 	</button>
 
 	<!-- List floors block -->
-	<div id="index-floor" class="panel-collapse collapse in" ng-hide="loadingFloor" style="display:none;">
+	<div id="index-floor" class="panel-collapse collapse in ng-hide" ng-hide="loadingFloor">
 		<div class="panel-body">
 			<div class="panel-group" id="index-upfloor-accordion" ng-repeat="floor in floorUp">
 
@@ -31,10 +31,14 @@
 								href="#{{floor._id}}" ng-bind="floor.layer"></a><span> F</span>
 							
 							<!-- Show link -->
-							<span><a href="/floor/show/{{floor._id}}">details</a></span>
+							<span>
+								<a href="/floor/show/{{floor._id}}">
+									<%= __('floor.list.details') %>
+								</a>
+							</span>
 							
 							<!-- Delete Icon -->
-							<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup()"></span>
+							<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup($event)"></span>
 															
 						</h4>
 					</div>
@@ -50,7 +54,7 @@
 	</div>
 
 	<!-- List basements block -->
-	<div id="index-layer" class="panel-collapse collapse in" ng-hide="loadingFloor" style="display:none;">
+	<div id="index-layer" class="panel-collapse collapse in ng-hide" ng-hide="loadingFloor">
 		<div class="panel-body">
 			<div class="panel-group" id="index-downfloor-accordion" ng-repeat="floor in floorDown">
 
@@ -61,7 +65,11 @@
 								href="#{{floor._id}}" ng-bind="Math.abs(floor.layer)"></a>
 							
 							<!-- Show link -->
-							<span><a href="/floor/show/{{floor._id}}">details</a></span>
+							<span>
+								<a href="/floor/show/{{floor._id}}">
+									<%= __('floor.list.details') %>
+								</a>
+							</span>
 							
 							<!-- Delete Icon -->
 							<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup()"></span>

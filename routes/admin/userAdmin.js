@@ -253,7 +253,7 @@ exports.update = function(req, res){
 
 				    // Check upgrade user to "admin" or "developer" for get token
 					if( (req.body.role == User.ROLES.ADMIN || req.body.role == User.ROLES.DEVELOPER) &&
-					   user.role == User.ROLES.FREE)
+					   user.role == User.ROLES.FREE && !user.token)
 					    user.token = User.genToken();
 					user.role = req.body.role;
 					user.enabled = req.body.enabled;

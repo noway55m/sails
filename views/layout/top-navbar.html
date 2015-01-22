@@ -11,25 +11,65 @@
 		</div>
 		<div class="navbar-collapse collapse">
 			<ul class="nav navbar-nav">
-				<li class="active"><a href="/">Home</a></li>
-				<li><a href="http://support.sailstech.com" target="_blank">Support</a></li>						
-				<li><a href="http://support.sailstech.com/kb" target="_blank">Knowlege Base</a></li>
-				<li><a href="http://blog1.sailstech.com" target="_blank">Blog</a></li>
+				<li class="active"><a href="/"><%= __('header.home') %></a></li>
+				<li><a href="http://support.sailstech.com" target="_blank"><%= __('header.support') %></a></li>						
+				<li><a href="http://support.sailstech.com/kb" target="_blank"><%= __('header.knowledgeBase') %></a></li>
+				<li><a href="http://blog1.sailstech.com" target="_blank"><%= __('header.blog') %></a></li>
+				<li><a href="./terms" target="_blank"><%= __('header.terms') %></a></li>
 				
 				<!-- Use support.cloudtech.com feedback -->
 				<!-- <li><a href="/feedback/index" target="_blank">Feedback</a></li> -->
 
 				<% if(user){ %>	
-					<li><a href="/sails-resource/download" target="_blank">Download SDK</a></li>
+					<li><a href="/sails-resource/download" target="_blank"><%= __('header.downloadSDK') %></a></li>
 				<% } %>
 
 				<% if(user && user.role == roles.ADMIN ){ %>	
-					<li><a href="/admin/building/index" target="_blank">CMS</a></li>
-				<% } %>								
+					<li><a href="/admin/building/index" target="_blank"><%= __('header.cms') %></a></li>
+				<% } %>
 
+				<!-- Search bar -->
+				<!--
+				<li>
+					<div id="searchBar" class="input-group">
+					  <span class="input-group-addon">
+						  <span class="glyphicon glyphicon-search"></span>
+					  </span>
+					  <input type="text" class="form-control" placeholder="Seach something">
+					</div>
+				</li>
+				-->
+
+				<!-- Locale selection bar -->
+				<li>
+					<select id="locale-selector" class="form-control" >
+						<option value="en">English</option>
+						<option value="zh_tw">Chinese Tradition</option>
+						<option value="zh_cn">Chinese Simiply</option>
+					</select>
+					<script>
+						$(document).ready(function(){
+							var localSelector = $("#locale-selector"),
+								locale = '<%= locale %>';
+							if(locale)
+								localSelector.find("option[value=" + locale + "]").attr("selected", true);
+							else
+								localSelector.find("option[value='en").attr("selected", true);
+
+							localSelector.change(function(){
+								var value = $(this).find("option:selected").val(),
+								 	returnUrl = location.pathname,
+									nurl = "/setLocale?locale=" + value + "&returnUrl=" + returnUrl;
+								location.href = nurl; 
+							});
+						});
+					</script>
+				</li>
 
 			</ul>
-			<ul class="nav navbar-nav navbar-right">											
+			<ul class="nav navbar-nav navbar-right">
+
+				<!-- User profile -->														
 				<% if(user){ %>
 					<li>							
 						<div class="btn-group" style="margin: 12px 10px; cursor:pointer;">
@@ -40,14 +80,14 @@
 						  	<span class="caret"></span>								  
 						  </div>	
 						  <ul class="dropdown-menu" role="menu">
-						    <li><a href="/user/profile">Profile</a></li>
+						    <li><a href="/user/profile"><%= __('header.profile') %></a></li>
 
 						    <% if(user.role == roles.ADMIN || user.role == roles.DEVELOPER){ %>
-						    	<li><a href="/developer/app">Developer</a></li>
+						    	<li><a href="/developer/app"><%= __('header.developer') %></a></li>
 						    <% } %>
 
 						    <li class="divider"></li>
-						    <li><a href="/logout">Logout</a></li>
+						    <li><a href="/logout"><%= __('header.logout') %></a></li>
 						  </ul>
 						</div>
 					</li>								

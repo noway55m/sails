@@ -1,0 +1,329 @@
+<!-- POI event add dialog include in poi/poi-event-index.html -->
+<button id="addPoiEventButton" data-toggle="modal" href="#add-poi-event-dialog" class="btn btn-default" style="display:none;"><%= __('poi.event.add.title') %></button>
+<div class="modal fade" id="add-poi-event-dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+
+			<!-- Header -->
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title"><%= __('poi.event.add.title') %></h4>
+			</div>
+
+			<!-- Body -->
+			<div class="modal-body">
+				<div class="form-group">
+					<label for="poi-event-title"><%= __('poi.event.add.title') %></label>
+					<input id="poi-event-title" class="form-control" placeholder="<%= __('poi.event.fields.title') %>" name="title" ng-model="newPoi.title" maxlength="250" />
+				</div>
+				<div class="form-group">
+					<label for="poi-event-desc"><%= __('poi.event.fields.desc') %></label>
+					<textarea id="poi-event-desc" class="form-control" placeholder="<%= __('poi.event.fields.desc') %>" name="desc" ng-model="newPoi.desc" maxlength="500"></textarea>
+				</div>
+				<div class="form-group">
+					<label for="startTimeHour"><%= __('poi.event.fields.startTime') %></label>&nbsp;&nbsp;
+					<select class="form-control" id="startTimeHour" name="startTimeHour" >
+						<option value="0">00</option>				
+						<option value="1">01</option>
+						<option value="2">02</option>
+						<option value="3">03</option>
+						<option value="4">04</option>
+						<option value="5">05</option>
+						<option value="6">06</option>
+						<option value="7">07</option>
+						<option value="8">08</option>
+						<option value="9">09</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+						<option value="15">15</option>
+						<option value="16">16</option>
+						<option value="17">17</option>
+						<option value="18">18</option>
+						<option value="19">19</option>
+						<option value="20">20</option>
+						<option value="21">21</option>
+						<option value="22">22</option>
+						<option value="23">23</option>
+					</select>
+					<span>&nbsp;:&nbsp;</span>
+					<select class="form-control" name="startTimeMin">
+						<option value="0">00</option>				
+						<option value="1">01</option>
+						<option value="2">02</option>
+						<option value="3">03</option>
+						<option value="4">04</option>
+						<option value="5">05</option>
+						<option value="6">06</option>
+						<option value="7">07</option>
+						<option value="8">08</option>
+						<option value="9">09</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+						<option value="15">15</option>
+						<option value="16">16</option>
+						<option value="17">17</option>
+						<option value="18">18</option>
+						<option value="19">19</option>
+						<option value="20">20</option>
+						<option value="21">21</option>
+						<option value="22">22</option>
+						<option value="23">23</option>
+						<option value="24">24</option>
+						<option value="25">25</option>
+						<option value="26">26</option>
+						<option value="27">27</option>
+						<option value="28">28</option>
+						<option value="29">29</option>
+						<option value="30">30</option>
+						<option value="31">31</option>
+						<option value="32">32</option>
+						<option value="33">33</option>
+						<option value="34">34</option>
+						<option value="35">35</option>
+						<option value="36">36</option>	
+						<option value="37">37</option>	
+						<option value="38">38</option>	
+						<option value="39">39</option>	
+						<option value="40">40</option>	
+						<option value="41">41</option>	
+						<option value="42">42</option>	
+						<option value="43">43</option>	
+						<option value="44">44</option>	
+						<option value="45">45</option>	
+						<option value="46">46</option>	
+						<option value="47">47</option>								
+						<option value="48">48</option>								
+						<option value="49">49</option>								
+						<option value="50">50</option>								
+						<option value="51">51</option>								
+						<option value="52">52</option>								
+						<option value="53">53</option>								
+						<option value="54">54</option>								
+						<option value="55">55</option>
+						<option value="56">56</option>
+						<option value="57">57</option>
+						<option value="58">58</option>
+						<option value="59">59</option>					
+					</select>
+					<hr/>
+					<label for="endTimeHour"><%= __('poi.event.fields.endTime') %></label>&nbsp;&nbsp;			
+					<select class="form-control" id="endTimeHour" name="endTimeHour" disabled>
+						<option value="0">00</option>				
+						<option value="1">01</option>
+						<option value="2">02</option>
+						<option value="3">03</option>
+						<option value="4">04</option>
+						<option value="5">05</option>
+						<option value="6">06</option>
+						<option value="7">07</option>
+						<option value="8">08</option>
+						<option value="9">09</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+						<option value="15">15</option>
+						<option value="16">16</option>
+						<option value="17">17</option>
+						<option value="18">18</option>
+						<option value="19">19</option>
+						<option value="20">20</option>
+						<option value="21">21</option>
+						<option value="22">22</option>
+						<option value="23">23</option>
+					</select>
+					<span>&nbsp;:&nbsp;</span>
+					<select class="form-control" name="endTimeMin" disabled>
+						<option value="0">00</option>				
+						<option value="1">01</option>
+						<option value="2">02</option>
+						<option value="3">03</option>
+						<option value="4">04</option>
+						<option value="5">05</option>
+						<option value="6">06</option>
+						<option value="7">07</option>
+						<option value="8">08</option>
+						<option value="9">09</option>
+						<option value="10">10</option>
+						<option value="11">11</option>
+						<option value="12">12</option>
+						<option value="13">13</option>
+						<option value="14">14</option>
+						<option value="15">15</option>
+						<option value="16">16</option>
+						<option value="17">17</option>
+						<option value="18">18</option>
+						<option value="19">19</option>
+						<option value="20">20</option>
+						<option value="21">21</option>
+						<option value="22">22</option>
+						<option value="23">23</option>
+						<option value="24">24</option>
+						<option value="25">25</option>
+						<option value="26">26</option>
+						<option value="27">27</option>
+						<option value="28">28</option>
+						<option value="29">29</option>
+						<option value="30">30</option>
+						<option value="31">31</option>
+						<option value="32">32</option>
+						<option value="33">33</option>
+						<option value="34">34</option>
+						<option value="35">35</option>
+						<option value="36">36</option>	
+						<option value="37">37</option>	
+						<option value="38">38</option>	
+						<option value="39">39</option>	
+						<option value="40">40</option>	
+						<option value="41">41</option>	
+						<option value="42">42</option>	
+						<option value="43">43</option>	
+						<option value="44">44</option>	
+						<option value="45">45</option>	
+						<option value="46">46</option>	
+						<option value="47">47</option>								
+						<option value="48">48</option>								
+						<option value="49">49</option>								
+						<option value="50">50</option>								
+						<option value="51">51</option>								
+						<option value="52">52</option>								
+						<option value="53">53</option>								
+						<option value="54">54</option>								
+						<option value="55">55</option>
+						<option value="56">56</option>
+						<option value="57">57</option>
+						<option value="58">58</option>
+						<option value="59">59</option>					
+					</select>						
+				</div>
+				<div class="alert alert-danger error-msg">
+					<span class="label label-danger"><%= __('error.title') %></span>
+					<span class="errorText"></span>
+				</div>	
+			</div>	
+
+			<!-- Footer -->
+			<div class="modal-footer">		
+				<button type="button" class="btn btn-default" data-dismiss="modal"><%= __('buttons.close') %></button>
+				<button type="submit" class="btn btn-primary" data-loading-text="<%= __('buttons.adding') %>" ng-click="addPoiEvent($event)"><%= __('buttons.add') %></button>
+			</div>
+
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script>
+$(document).ready(function(){
+
+	var currentDialog = $("#add-poi-event-dialog");
+
+	// Reset all fields while show
+	currentDialog.on("show.bs.modal", function() {
+		$(this).find('input').val("");
+		$(this).find('textarea').val("");
+		$(this).find('select option').removeAttr("disabled");				
+		$(this).find('select option:selected').removeAttr("selected");		
+		$(this).find("select[name='endTimeHour']").attr("disabled", true);
+		$(this).find("select[name='endTimeMin']").attr("disabled", true);
+	});
+
+	// Setup poi add dialog ui component 	
+	startTimeControl.call(currentDialog, "add");
+});
+
+// Function for setup startTime and endTime
+function startTimeControl(type) {
+
+	var isUpdate = type == "update" ? true : false,
+		theDialog = this,
+		startTimeHourEle = theDialog.find("select[name='startTimeHour']"),
+		startTimeMinEle = theDialog.find("select[name='startTimeMin']"),
+		endTimeHourEle = theDialog.find("select[name='endTimeHour']"),
+		endTimeMinEle = theDialog.find("select[name='endTimeMin']");		
+
+	function changeHandler() {
+
+		var startTimeHourVal = startTimeHourEle.find("option:selected").val(),
+			startTimeMinVal = startTimeMinEle.find("option:selected").val();
+
+		// Update to integer format avoiding compare problem	
+		startTimeHourVal = parseInt(startTimeHourVal);
+		startTimeMinVal = parseInt(startTimeMinVal);		
+
+		if(endTimeHourEle.attr("disabled")) {
+			startTimeChangeFirst = true;
+			endTimeHourEle.removeAttr('disabled');
+			endTimeMinEle.removeAttr('disabled');			
+		}
+
+		updateEndTimeOtpion.call(theDialog, startTimeHourVal, startTimeMinVal);
+	}	
+
+	if(isUpdate) {
+		var startTimeHourVal = startTimeHourEle.find("option:selected").val(),
+			startTimeMinVal = startTimeMinEle.find("option:selected").val();
+
+		// Update to integer format avoiding compare problem	
+		startTimeHourVal = parseInt(startTimeHourVal);
+		startTimeMinVal = parseInt(startTimeMinVal);		
+
+		endTimeHourEle.removeAttr('disabled');
+		endTimeMinEle.removeAttr('disabled');
+		updateEndTimeOtpion.call(theDialog, startTimeHourVal, startTimeMinVal);					
+	}
+
+	startTimeHourEle.change(changeHandler);
+	startTimeMinEle.change(changeHandler);
+	endTimeHourEle.change(changeHandler);
+	endTimeMinEle.change(changeHandler);
+
+}
+
+// Function for update end time
+function updateEndTimeOtpion(startTimeHourVal, startTimeMinVal) {
+	
+	var	theDialog = this,
+		endTimeHourEle = theDialog.find("select[name='endTimeHour']"),
+		endTimeMinEle = theDialog.find("select[name='endTimeMin']");
+		endTimeHourVal = endTimeHourEle.find("option:selected").val(),
+		endTimeMinVal = endTimeMinEle.find("option:selected").val();
+
+	// Update to integer format avoiding compare problem	
+	endTimeHourVal = parseInt(endTimeHourVal);
+	endTimeMinVal = parseInt(endTimeMinVal);		
+
+	// Disable and enable the options of end time hour 	
+	endTimeHourEle.find('option').each(function(index, elem){
+		if(parseInt(elem.value) < parseInt(startTimeHourVal))
+			elem.disabled = true;
+		else
+			elem.disabled = false;
+	});
+
+	// Disable and enable the options of start time hour
+	if(parseInt(endTimeHourVal) == parseInt(startTimeHourVal)) {
+		endTimeMinEle.find('option').each(function(index, elem){
+			if(parseInt(elem.value) < parseInt(startTimeMinVal))
+				elem.disabled = true;
+			else
+				elem.disabled = false;
+		});		
+	} 	
+	
+	// Set time while over
+	if(endTimeHourVal < startTimeHourVal) {
+		endTimeHourEle.val(startTimeHourVal);
+	} else if(endTimeHourVal == startTimeHourVal) {
+		if(endTimeMinVal < startTimeMinVal)
+			endTimeMinEle.val(startTimeMinVal);
+	}	
+
+} 	
+ </script>

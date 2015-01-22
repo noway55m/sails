@@ -3,6 +3,7 @@ var log = require('log4js').getLogger(),
     utilityS = require("./utility.js"),
     mkdirp = require("mkdirp"),
 	User = require("../model/user"),
+    Poi = require("../model/poi"),
     Building = require("../model/building"),
     Floor = require("../model/floor"),
     Store = require("../model/store"),    
@@ -231,7 +232,6 @@ exports.create = function(req, res) {
 
     if(req.body.name){
 
-
     	Building.count({
 
     		userId: req.user._id
@@ -270,7 +270,7 @@ exports.create = function(req, res) {
 
 				            if(building){
 
-				                res.send( errorResInfo.SUCCESS.code, building );
+				                res.json( errorResInfo.SUCCESS.code, building );
 
 				            }else{
 
@@ -295,9 +295,15 @@ exports.create = function(req, res) {
 
 			}
 
-    	});
+		});
 
-    }
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		});    	      		
+
+	}
 
 };
 
@@ -450,143 +456,114 @@ exports.del = function(req, res) {
 
 	if(req.body._id){
 				
-		// Remove building folder
-		var folderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + req.body._id,
-			folderZipPath = folderPath + ".zip";
-		
-		fs.exists(folderPath, function(exist){
+		// Find building
+		Building.findById(req.body._id, function(err, building){
+			
+			if(err) {
 
-			// Delete the folder removed floor 
-			if(exist)
-				rimraf(folderPath, function(err){
-					if(err)
-						log.error(err);
-				});	
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});  
 
-			// Find building
-			Building.findById(req.body._id, function(err, building){
-				
-				if(err)
-					log.error(err);
-				
+
+			} else {
+
 				if(building){
 					
-					// Remove building icon
-					if(building.icon){
-						var oldImgPath = path.resolve(image_path + "/" + building.icon);
-						fs.unlink(oldImgPath, function(err){
-							log.error(err);
-						});	
-					}							
-					
-					// Remove building
-					building.remove(function(err){
-						if(err)
-							log.error(err);
-						else
-							res.send(200, {
-								_id: req.body._id
-							});
+                	utilityS.validatePermission(req.user, building, Building.modelName, function(result){
+
+                		if(result) {
 							
+							// Remove building
+							building.remove(function(err){
+								if(err){
+
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+				        				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				        			});  
+
+								} else {
+
+									// Response remove building successfully
+									res.json(errorResInfo.SUCCESS.code, {
+										_id: req.body._id
+									});
+
+									// Remove building icon
+									if(building.icon){
+										var oldImgPath = path.resolve(image_path + "/" + building.icon);
+										fs.unlink(oldImgPath, function(err){
+											log.error(err);
+										});	
+									}							
+									
+									var folderPath = path.dirname() + mapinfo_path + '/' + req.user._id + "/" + req.body._id,
+										folderZipPath = folderPath + ".zip";
+									
+									// Remove building folder
+									fs.exists(folderPath, function(exist){
+										if(exist)
+											rimraf(folderPath, function(err){
+												if(err)
+													log.error(err);
+											});											
+									});		
+									
+									// Remove building mapzip
+									fs.exists(folderZipPath, function(exist){
+										if(exist)
+											rimraf(folderZipPath, function(err){
+												if(err)
+													log.error(err);
+											});	
+									});
+
+									// Remove all floors of building
+									Floor.remove({ buildingId: req.body._id }, function(err){
+								 		if(err)
+								 			log.error(err);												
+									});
+
+									// Update poi binding buildingId to null
+									Poi.update({ buildingId: building._id }, 
+										{ $set: { buildingId: null } },
+									 	{ multi: true}, function(err, count, msgObj){
+									 		if(err)
+									 			log.error(err);
+									});
+								
+								}
+							});							
+
+                		} else {
+
+                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+                			});
+
+                		}
+
+                	});
+
+				} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
 					});
-										
+
 				}
-				
-			});
+
+			}			
 			
-		});		
-		
-
-		// Remove building mapzip
-		fs.exists(folderZipPath, function(exist){
-
-			// Delete if exist
-			if(exist)
-				rimraf(folderZipPath, function(err){
-					if(err)
-						log.error(err);
-				});	
-
 		});
 
-		// Find all floors
-		Floor.find({
-			
-			buildingId: req.body._id
-			
-		}, function(err, floors){
-			
-			if(err)
-				log.error(err);
-			
-			for(var i=0; i<floors.length; i++){
 				
-				Store.find({
-					
-					floorId: floors[i]._id
-					
-				}, function(err, stores){
-					
-					if(err)
-						log.error(err);
-					
-					for(var j=0; j<stores.length; j++){		
-						
-						// Remove ad
-						Ad.find({
-							
-							storeId: stores[j].id
-							
-						}, function(err, ads){					
-							
-							if(err)
-								log.error(err);
-							
-							for(var k=0; k<ads.length; k++){
-								
-								// Delete ad image if exist
-								if(ads[k].image){
-									var oldImgPathAd = path.resolve(image_path + "/" + ads[k].image);
-									fs.unlink(oldImgPathAd, function(err){
-										log.error(err);
-									});	
-								}
-								
-								// Remove ad
-								ads[k].remove(function(err){
-									log.error(err);
-								});						
-								
-							}
-												
-						});			
-												
-						// Delete store icon if exist
-						if(stores[j].icon){
-							var oldImgPath = path.resolve(image_path + "/" + stores[j].icon);
-							fs.unlink(oldImgPath, function(err){
-								log.error(err);
-							});	
-						}							
-						
-						// Remove store
-						stores[j].remove(function(err){
-							log.error(err);
-						});
-						
-					}
-					
-				});
-				
-				// Remove floor
-				floors[i].remove(function(err){
-					log.error(err);
-				});
-				
-			}
-									
-		});		
-				
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		});
+
 	}
 	
 };

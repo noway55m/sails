@@ -11,6 +11,8 @@ var configuration = {
 	
 	mapInfoPath: "resource/map-info",
 
+	mapInfoResourcePath: "resource", // ${mapInfoPath}/${USER_ID}/${mapInfoResourcePath}
+
 	/******** Download sdk, online doc and sample code path ********/
 
 	sailsResPath: "resource/sails-relative-res",
@@ -33,8 +35,8 @@ var configuration = {
 	defaultTokenDuration: 86400, // 1 day: 86400 <=> 60 * 60 * 24
 	
 	/******** Max number of building count ********/	
-	maxBuildingNumberOfUser: 50,
-
+	maxBuildingNumberOfUser: 50, 
+	
 	/******** Max number of floor count ********/	
 	maxFloorNumber: 100,
 	maxBasementNumber: 20,

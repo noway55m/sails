@@ -13,6 +13,13 @@ var errorResInfo = utilityS.errorResInfo,
     mapinfo_path = "/" + config.mapInfoPath,
     image_path = config.imagePath;
 
+// Page for terms	
+exports.terms = function(req, res) {	
+	res.render("others/terms.html",{
+		user: null,
+		imagePath: image_path
+	});
+}	
 
 // Page for show downalod links, like: sdk, sample code an doc of android and ios
 exports.download = function(req, res) {	

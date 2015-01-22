@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="sails" ng-controller="PoiEventCtrl">
+	<head>
+	
+		<!-- Head meta, css or library include -->
+		<% include ../layout/head-include.html %>
+		
+		<!-- Calendar style -->
+		<link href="/stylesheets/calendar.css" rel="stylesheet">
+	    <!-- Calendar library -->
+		<script src="/js/bootstrap/calendar.js"></script>
+		<script src="/js/underscore-min.js"></script>
+
+		<!-- Title -->
+		<title ng-bind="poi.name"></title>
+	
+	</head>
+
+<body>
+
+    <!-- Fixed Top Header -->
+	<% include ../layout/top-navbar.html %>
+
+	<div class="container">
+
+		<!-- Navigator bar -->
+		<ol class="breadcrumb">
+		  <!-- Buildings -->
+		  <li>
+		  	<a href="/user">
+				<span class="glyphicon glyphicon-home"></span>		  		
+		  		<span><%= __("navbar.buildings") %></span>
+		  	</a>
+		  </li>
+		  <!-- Building -->
+		  <li class="ng-hide" ng-hide="loadingBuilding">
+		  	<a href="/building/show/{{building._id}}">
+				<span class="glyphicon glyphicon-tower"></span>
+				<span ng-bind="building.name"></span>
+		  	</a>
+		  </li>	
+		  <!-- POI -->
+		  <li class="ng-hide" ng-hide="loadingPoi">
+		  	<a href="/poi/show/{{poi._id}}">
+				<span class="glyphicon glyphicon-pushpin"></span>
+		  		<span ng-bind="poi.name"></span>
+		  	</a>		  	
+		  </li>
+		  <!-- POI events -->
+		  <li class="active ng-hide" ng-hide="loadingPoiEvent">
+		  	<span class="glyphicon glyphicon-calendar"></span>
+		  	<span><%= __('navbar.poiEvents') %></span>
+		  </li>		  		  		  
+		</ol>
+
+		<!-- Main component -->
+		<div class="jumbotron">
+
+			<!-- Add POI Event -->
+			<% include ./poi-event-add.html %>
+
+			<!-- Update POI Event -->
+			<% include ./poi-event-update.html %>
+
+			<!-- Delete POI Event -->
+			<% include ./poi-event-delete.html %>
+
+			<!-- Calendar navigator -->
+			<div class="pull-right form-inline">
+				<div class="btn-group">
+					<button class="btn btn-primary" data-calendar-nav="prev"><%= __('poi.event.prev') %></button>
+					<button class="btn" data-calendar-nav="today"><%= __('poi.event.today') %></button>
+					<button class="btn btn-primary" data-calendar-nav="next"><%= __('poi.event.next') %></button>
+				</div>
+				<div class="btn-group">
+					<!-- <button class="btn btn-warning" data-calendar-view="year"><%= __('poi.event.year') %></button> -->
+					<button class="btn btn-warning active" data-calendar-view="month"><%= __('poi.event.month') %></button>
+					<!-- <button class="btn btn-warning" data-calendar-view="week"><%= __('poi.event.week') %></button> -->
+					<button class="btn btn-warning" data-calendar-view="day"><%= __('poi.event.day') %></button>
+				</div>
+			</div>
+
+			<!-- Calendar current selected date -->
+			<h4 id="calendar-title" style="display:inline;margin:0px 5px;"></h4>			
+
+			<!-- Calendar area -->			
+			<div id="calendar"></div>
+
+		</div>
+
+	</div>
+	
+	<!-- Body library include -->
+	<% include ../layout/body-include.html	%>
+		
+    <!-- Controller -->
+    <script src="/js/controller/poiEventContrl.js"></script>
+
+  </body>
+</html>

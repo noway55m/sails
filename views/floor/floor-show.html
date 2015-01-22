@@ -26,13 +26,11 @@
 		<ol class="breadcrumb">		
 			<!-- Loading -->
 			<div class="loading" ng-show="loadingFloor">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>		
-			<li><a href="/user">My Buildings</a></li>
+			<li><a href="/user"><%= __("navbar.buildings") %></a></li>
 			<li>
-				<a href="/building/show/{{floor.buildingId}}" ng-hide="loadingFloor" style="display:none;">
-					{{building.name}}
-				</a>
+				<a href="/building/show/{{floor.buildingId}}" class="ng-hide" ng-hide="loadingFloor" ng-bind="building.name"></a>
 			</li>
-			<li class="active" ng-hide="loadingFloor" style="display:none;">
+			<li class="active ng-hide" ng-hide="loadingFloor">
 				<span ng-show="up">
 					<span ng-bind="floor.layer"></span> F
 				</span> 
@@ -51,7 +49,7 @@
 					<div class="loading" ng-show="loadingFloor">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>		
 
 					<!-- Layer, name and description -->
-					<div class="col-xs-12 col-sm-3 col-md-2" style="text-align:center;padding:15px 5px;display:none;" ng-hide="loadingFloor">
+					<div class="col-xs-12 col-sm-3 col-md-2 ng-hide" style="text-align:center;padding:15px 5px;" ng-hide="loadingFloor">
 					  	<div href="#" ng-show="up">
 					  		<span ng-bind="floor.layer"></span> F
 					  	</div>
@@ -59,23 +57,23 @@
 					  		B <span ng-bind="Math.abs(floor.layer)"></span>
 					  	</div>
 						<div>
-							<span class="title">Name:</span>
+							<span class="title"><%= __('floor.fields.name') %>:</span>
 							<span ng-bind="floor.name"></span>
 						</div>
 					</div>
-					<div class="col-xs-12 col-sm-8 col-md-9" ng-hide="loadingFloor" style="display:none;">
-						<span class="title">Description</span>
+					<div class="col-xs-12 col-sm-8 col-md-9 ng-hide" ng-hide="loadingFloor">
+						<span class="title"><%= __('floor.fields.desc') %></span>
 						<p ng-bind="floor.desc" style="padding:10px;"></p>
 					</div>
 
 					<br/><br/><hr>
 					<!-- Edit trigger button -->
-					<div class="col-xs-12 col-sm-8 col-md-9" ng-hide="loadingStore" style="display:none;">
+					<div class="col-xs-12 col-sm-8 col-md-9 ng-hide" ng-hide="loadingStore">
 						<a href="/floor/getMap?map={{floor.map}}" target="_blank" ng-show="floor.map">
-							<span class="glyphicon glyphicon-download">Map.xml</span>
+							<span class="glyphicon glyphicon-download"><%= __('floor.fields.mapXML') %></span>
 						</a>&nbsp;
 						<a href="/floor/getPath?path={{floor.path}}" target="_blank" ng-show="floor.path">
-							<span class="glyphicon glyphicon-download">Path.xml</span>
+							<span class="glyphicon glyphicon-download"><%= __('floor.fields.pathXML') %></span>
 						</a>
 					</div>	
 					<!-- Edit trigger button -->
@@ -95,45 +93,46 @@
 
 						<!-- text fields -->
 						<div class="form-group">
-							<label for="name">Name</label>
-							<input class="form-control" placeholder="Floor Name" name="name" ng-model="floor.name" maxlength="30">
+							<label for="name"><%= __('floor.fields.name') %></label>
+							<input class="form-control" placeholder="<%= __('floor.fields.name') %>" name="name" ng-model="floor.name" maxlength="30">
 						</div>
 						<div class="form-group">
-							<label for="layer">layer</label>
+							<label for="layer"><%= __('floor.fields.layer') %></label>
 					        <select ng-model="floor.layer" ng-options="c.value as c.name for c in layers | orderBy:'value'" ng-change="updateUp()"></select>
 						</div>						
 						<div class="form-group">
-							<label for="desc">Description</label>
-							<input class="form-control" placeholder="Floor Description" name="desc" ng-model="floor.desc" maxlength="250">
+							<label for="desc"><%= __('floor.fields.desc') %></label>
+							<input class="form-control" placeholder="<%= __('floor.fields.desc') %>" name="desc" ng-model="floor.desc" maxlength="250">
 						</div>
 
 						<!-- error msg -->
 						<div class="alert alert-danger error-msg">
-							  	<span class="label label-danger">Error</span>
+							  	<span class="label label-danger"><%= __('error.title') %></span>
 							  	<span class="errorText"></span>
 						</div>
-						<button class="btn btn-md btn-primary" data-loading-text="Updating"
-							ng-click="updateFloor($event)">Update</button>
+						<button class="btn btn-md btn-primary" data-loading-text="<%= __('buttons.updating') %>"
+							ng-click="updateFloor($event)"><%= __('buttons.update') %></button>
 
 					</div>
 					<hr/>
 
 					<!-- Upload map area -->
 					<div>
-						<span class="title" style="width:150px;">Last Xml update time: </span>
+						<span class="title" style="width:150px;"><%= ('floor.show.lastXMLUpdateTime') %></span>
 						<span ng-bind="floor.lastXmlUpdateTime"></span>																		
 						<form name="form" action="/floor/uploadMap" method="POST" enctype="multipart/form-data">
 							<input type="hidden" class="form-control" name="_id" value="{{floor._id}}">
-							<label for="map">Upload Map file here</label>
-							<a href="http://support.sailstech.com/kb/tutorial/create-indoor-map-and-path-routing-by-using-josm" target="_blank">	How can I get started on the map?
+							<label for="map"><%= __('floor.show.uploadMapHere') %></label>
+							<a href="http://support.sailstech.com/kb/tutorial/create-indoor-map-and-path-routing-by-using-josm" target="_blank">
+								&nbsp;&nbsp;<%= __('floor.show.howCanStart') %>
 							</a>
 							<input type="file" class="form-control upload-file" name="map">							
 							<div class="alert alert-danger error-msg">
-								<span class="label label-danger">Error</span> <span class="errorText"></span>
+								<span class="label label-danger"><%= __('error.title') %></span> <span class="errorText"></span>
 							</div>
 						</form>
 						<button class="btn btn-md btn-primary" style="display:none;" ng-click="uploadMap($event)"
-							data-loading-text="Uploading...">Upload</button>
+							data-loading-text="<%= __('buttons.uploading') %>"><%= __('buttons.upload') %></button>
 					</div>
 					</br>
 					
@@ -141,21 +140,21 @@
 					<div>
 						<form name="form" action="/floor/uploadPath" method="POST" enctype="multipart/form-data">
 							<input type="hidden" class="form-control" name="_id" value="{{floor._id}}">						
-							<label for="path">Upload Path Routing file here</label>
+							<label for="path"><%= __('floor.show.uploadPathHere') %></label>
 							<input type="file" class="form-control upload-file" name="path">
 							<div class="alert alert-danger error-msg">
-								<span class="label label-danger">Error</span> <span class="errorText"></span>
+								<span class="label label-danger"><%= __('error.title') %></span> <span class="errorText"></span>
 							</div>
 						</form>
 						<button class="btn btn-md btn-primary" style="display:none;" ng-click="uploadPath($event)"
-							data-loading-text="Uploading...">Upload</button>
+							data-loading-text="<%= __('buttons.uploading') %>"><%= __('buttons.upload') %></button>
 					</div>
 
 				</div>
 
 				<!-- Stores Block -->
-				<% include ../store/store-list.html	%>
-
+				<% include ../store/store-list.html %>
+			
 			</div>
 
 		</div>

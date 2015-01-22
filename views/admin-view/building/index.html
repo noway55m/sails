@@ -103,7 +103,10 @@
 									<a data-toggle="modal" class="btn btn-default" ng-click="deleteDialogSetup(building)">
 										<span class="glyphicon glyphicon-remove"></span>
 									</a>					
-								</td>										
+								</td>
+								<td>
+									<a data-toggle="modal" class="btn btn-primary" href="#upload-beacon-list-dialog" ng-click="selectBuilding(building)">Upload Beacon List</a>			
+								</td>									
 							</tr>
 						</tbody>
 					</table>		
@@ -118,7 +121,8 @@
 
 	<!-- Edit and Delete Dialog -->
 	<% include building-edit-dialog.html %>
-	<% include ../layout/delete-confirm-dialog.html %>	
+	<% include ../layout/delete-confirm-dialog.html %>
+	<% include upload-beacon-list-dialog.html %>		
 
 	<!-- Body library include -->
 	<% include ../../layout/body-include.html %>

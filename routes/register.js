@@ -26,11 +26,16 @@ exports.index = function(req, res) {
 // GET Interface for authenticate and register new user
 exports.auth = function(req, res) {
 	
-    if(req.body.email && req.body.password && req.body.recaptcha_challenge_field && req.body.recaptcha_response_field){
-    
-		recaptcha.verify(config.recaptchaPrivateKey , req.connection.remoteAddress, req.body.recaptcha_challenge_field, 
-			req.body.recaptcha_response_field, function(result) {
+    if(req.body.email && req.body.password) {
 
+    	// TODO: Hide google recaptcha for now (Since china people can not connect google)
+    	// && req.body.recaptcha_challenge_field && req.body.recaptcha_response_field){
+    	
+    	// TODO: Hide google recaptcha for now (Since china people can not connect google)
+		//recaptcha.verify(config.recaptchaPrivateKey , req.connection.remoteAddress, req.body.recaptcha_challenge_field, 
+		//	req.body.recaptcha_response_field, function(result) {
+
+			var result = "success";
 			if(result.indexOf("success")!=-1) {
 
 		        var email = req.body.email.trim().toLowerCase(),
@@ -61,7 +66,8 @@ exports.auth = function(req, res) {
 			                new User({
 			            	
 								username : email,
-								password : User.encodePassword(passwd)
+								password : User.encodePassword(passwd),
+								token : User.genToken()
 
 							}).save(function(err, nuser) {
 
@@ -119,8 +125,13 @@ exports.auth = function(req, res) {
 												req.flash('activate', "Please check your email address for activate your user account.");
 												res.redirect("/");
 												
-												// Start to create default building after response
-												utilityS.createSampleBuilding(nuser);
+												// Create mapinfo resource folder
+												utilityS.createMapinfoResourceFolder(nuser, function(){
+
+													// Start to create default building after response
+													utilityS.createSampleBuilding(nuser);
+
+												});
 																																	
 											}
 											
@@ -145,7 +156,7 @@ exports.auth = function(req, res) {
 
 			}
 
-		});
+		//});
 
     }
 

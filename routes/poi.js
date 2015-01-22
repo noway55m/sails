@@ -1,9 +1,11 @@
-var log = require('log4js').getLogger(),
+var log = require('log4js').getLogger("Poi routes"),
+	crypto = require('crypto'),
 	mkdirp = require("mkdirp"),
 	utilityS = require("./utility"),
-	User = require("../model/user"),		
-	Area = require("../model/area"),		
-	Poi = require("../model/poi"),	
+	User = require("../model/user"),
+	Building = require("../model/building"),			
+	Poi = require("../model/poi"),
+	PoiEvent = require("../model/poiEvent"),	
 	PoiTag = require("../model/poiTag"),	
 	fs = require('fs'),
 	path = require('path'),
@@ -11,6 +13,302 @@ var log = require('log4js').getLogger(),
 
 // Static variable
 var	errorResInfo = utilityS.errorResInfo;
+
+// GET Page for show poi event
+exports.indexEvent = function(req, res){
+	res.render("poi/poi-event-index.html");
+}
+
+// GET Interface for list poi event (list the specific month)
+exports.listEvent = function(req, res){
+	
+	console.log(req.query);
+
+	if(req.query.poiId && req.query.start && req.query.end) {
+
+		// Caculate the query duration between start time and end time by params startDate 
+		var start, end;
+		try {
+			start = new Date(req.query.start);
+			end = new Date(req.query.end);
+		} catch(e) {
+			log.error("Poi list event error parse date");
+			log.error(e);			
+		}
+
+		console.log(start);
+		console.log(end);
+
+		// Execute query
+		PoiEvent.find({
+
+			poiId: req.query.poiId,
+			start: { $gte: start },
+			end: { $lte: end }
+
+		}, function(err, poiEvents) {
+
+			if(err) {
+
+	            log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				}); 
+
+			} else {
+
+				res.json(errorResInfo.SUCCESS.code, poiEvents);				
+
+			}
+
+		});
+
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
+
+	}
+
+}
+
+// POST Interface for create poi event
+exports.createEvent = function(req, res){
+
+	console.log(req.body);
+
+	if(req.body.poiId && req.body.title && req.body.start && req.body.end ) {
+
+		Poi.findById(req.body.poiId, function(err, poi){
+
+			if(err) {
+
+	            log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});  
+
+			} else {
+
+				if(poi) {
+
+					// Parse start time and end time
+					var start, 
+						end, 
+						createdTime = new Date(); 
+					try {
+						start = new Date(req.body.start);
+						end = new Date(req.body.end);
+					} catch(e) {
+						log.error("Poi event parse start or end time error")
+						res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+							msg: "Poi event parse start or end time error"
+						}); 			
+					}	
+
+					PoiEvent.create({
+
+						title: req.body.title,
+						desc: req.body.desc,
+						poiId: req.body.poiId,
+						start: start,
+						end: end,			
+						createdTime: createdTime,
+						updatedTime: createdTime
+
+					}, function(err, poiEvent){
+
+						if(err) {
+
+				            log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							});  		
+
+						} else {
+
+					    	res.json(errorResInfo.SUCCESS.code, poiEvent);				
+
+						}
+
+					});
+
+				} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					}); 
+
+				}
+
+			}
+
+		});
+
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
+
+	}
+
+}
+
+// POST Interface for update poi event
+exports.updateEvent = function(req, res){
+
+	console.log(req.body);
+
+	if(req.body._id && req.body.title && req.body.start && req.body.end ) {
+
+		PoiEvent.findById(req.body._id, function(err, poiEvent){
+
+			if(err) {
+
+	            log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});  
+
+			} else {
+
+				if(poiEvent) {
+
+					// Parse start time and end time
+					var start, 
+						end, 
+						updatedTime = new Date(); 
+					try {
+						start = new Date(req.body.start);
+						end = new Date(req.body.end);
+					} catch(e) {
+						log.error("Poi event parse start or end time error")
+						res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+							msg: "Poi event parse start or end time error"
+						}); 			
+					}	
+
+					poiEvent.title = req.body.title;
+					poiEvent.desc = req.body.desc;
+					poiEvent.start = start;
+					poiEvent.end = end;
+					poiEvent.updatedTime = updatedTime;
+					poiEvent.save(function(err, poiEvent){
+
+						if(err) {
+
+				            log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							});  		
+
+						} else {
+
+					    	res.json(errorResInfo.SUCCESS.code, poiEvent);				
+
+						}
+
+					});
+
+				} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					}); 
+
+				}
+
+			}
+
+		});
+
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		}); 
+
+	}
+	
+}
+
+// POST Interface for delete poi event
+exports.deleteEvent = function(req, res){
+
+	if(req.body._id){
+				
+		// Find building
+		PoiEvent.findById(req.body._id, function(err, poiEvent){
+			
+			if(err) {
+
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});  
+
+
+			} else {
+
+				if(poiEvent){
+					
+                	utilityS.validatePermission(req.user, poiEvent, PoiEvent.modelName, function(result){
+
+                		if(result) {
+							
+							poiEvent.remove(function(err){
+
+								if(err) {
+
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+				        				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				        			});
+
+								} else {
+
+									// Response remove successfully
+									res.json(errorResInfo.SUCCESS.code, {
+										_id: req.body._id
+									});
+
+								}
+
+							});
+
+                		} else {
+
+                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+                			});
+
+                		}
+
+                	});
+
+				} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					});
+
+				}
+
+			}			
+			
+		});
+
+				
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: errorResInfo.INCORRECT_PARAMS.msg
+		});
+
+	}	
+
+}
+
 
 // POST Interface for copy poi
 exports.copy = function(req, res){
@@ -124,30 +422,31 @@ exports.show = function(req, res) {
 // GET Interface for list pois of specific user
 exports.list = function(req, res) {
 
-    if(req.query.areaId) {
+    if(req.query.buildingId) {
 
-	 	// Pagination params
-		var page = ( req.query.page && req.query.page > 0 ? req.query.page - 1 : 0 ) || 0;
+    	Building.findById(req.query.buildingId, function(err, building){
 
-		var queryJson = { areaId: req.query.areaId };
-	    Poi.find(queryJson)
-			.sort({ createdTime: -1 })
-			.limit(config.pageOffset)
-			.skip(page * config.pageOffset).exec( function(err, pois){
+    		if(err) {
 
-		        if(err){
+				log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				});	
 
-		            log.error(err);
-					res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-						msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-					});  		
+    		} else {
 
-				} else {
+    			if(building) {
 
-					// Get area count
-					Poi.count( queryJson, function(err, count) {
+				 	// Pagination params
+					var page = ( req.query.page && req.query.page > 0 ? req.query.page - 1 : 0 ) || 0;
 
-						if( err ) {
+					var queryJson = { buildingId: req.query.buildingId };
+				    Poi.find(queryJson)
+						.sort({ createdTime: -1 })
+						.limit(config.pageOffset)
+						.skip(page * config.pageOffset).exec( function(err, pois){
+
+				        if(err){
 
 				            log.error(err);
 							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
@@ -156,21 +455,44 @@ exports.list = function(req, res) {
 
 						} else {
 
-					        res.json(errorResInfo.SUCCESS.code, {						        	
-					        	page: page + 1,
-					        	offset: config.pageOffset,
-					        	count: count,
-					        	pois: pois
-							});    	
+							// Get area count
+							Poi.count( queryJson, function(err, count) {
+
+								if( err ) {
+
+						            log.error(err);
+									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									});  		
+
+								} else {
+
+							        res.json(errorResInfo.SUCCESS.code, {						        	
+							        	page: page + 1,
+							        	offset: config.pageOffset,
+							        	count: count,
+							        	pois: pois
+									});    	
+
+								}
+
+							});
 
 						}
 
-					} );
+					});
 
-				}
+    			} else {
 
-			});
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: errorResInfo.INCORRECT_PARAMS.msg
+					});  
 
+    			}
+
+    		}
+
+    	});
 
     } else {
 
@@ -235,9 +557,9 @@ exports.read = function(req, res){
 exports.create = function(req, res) {
 
 	console.log(req.body);
-	if (req.body.name && req.body.areaId) {
+	if (req.body.name && req.body.buildingId) {
 
-		Area.findById(req.body.areaId, function(err, area){
+		Building.findById(req.body.buildingId, function(err, building){
 
 			if(err) {
 
@@ -248,21 +570,21 @@ exports.create = function(req, res) {
 
 			} else {
 
-				if(area) {
+				if(building) {
 
 					// check permission
-					utilityS.validatePermission(req.user, area, Area.modelName, function(result) {
+					utilityS.validatePermission(req.user, building, Building.modelName, function(result) {
 
 						if(result) {
 
+							var theDate = new Date();
 							new Poi({
 
 								name: req.body.name,
 								tags: req.body.tags ? req.body.tags : [],
-							    areaId: req.body.areaId,
-							    userId: req.user._id,
-							    createdTime: new Date(),
-							    updatedTime: new Date() 			
+							    buildingId: req.body.buildingId,
+							    createdTime: theDate,
+							    updatedTime: theDate 			
 
 							}).save(function(err, poi){
 
@@ -687,6 +1009,56 @@ exports.search = function(req, res) {
 	console.log(req.query);
 	if(req.query.q) {
 
+		// Construct query json object (Search by name or custom fields key or value)
+		var regex = new RegExp(req.query.q, "i");
+		var queryJson = {
+			userId: req.user._id,
+			$or: [ { name: regex }, { customFields: { key:  regex } }, { customFields: { value:  regex } }  ]
+		};
+
+		// Setup pagination	(default page 1)
+		var page = ( req.query.page && req.query.page > 0 ? req.query.page - 1 : 0 ) || 0;
+		var skip = page * config.pageOffset;
+
+		Poi.find(queryJson)
+		.skip()
+		.limit(config.pageOffset)
+		.exec(function(err, pois){
+
+			if(err) {
+
+				log.error(err);
+    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+    			});
+
+			} else {
+
+				Poi.count(queryJson, function(err, count){
+
+					if(err) {
+
+						log.error(err);
+		    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+		    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+		    			});
+
+					} else {
+
+				        res.json(errorResInfo.SUCCESS.code, {						        	
+				        	page: page + 1,
+				        	offset: config.pageOffset,
+				        	count: count,
+				        	pois: pois
+						});  						
+
+					}
+
+				});
+
+			}
+
+		});
 
 	} else {
 

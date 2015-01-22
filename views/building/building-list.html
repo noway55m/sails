@@ -1,41 +1,63 @@
+<!-- Navigator bar -->
+<ol class="breadcrumb">
+  <li><a href="/user"><%= __('building.list.buildings') %></a></li>
+</ol>
+
 <!-- Building List include in page 'user/index.html' -->
 <div class="jumbotron" ng-controller="BuildingListCtrl">
 
-	<!-- Title -->
-	<h3 style="display:inline;">My buildings</h3>
+	<!-- Building list -->
+	<div class="row display-block">
 
-	<!-- Add building form block -->
-	<% include ../building/building-add.html %>
-	<br>
+		<!-- POI copies and template -->
+		<div style="float:right;maring-right:300px;">
 
-	<!-- Buildings list -->
-	<div id="building-list" class="row display-block">
+			<!-- POI copies -->
+			<% include ../poi/poi-copies.html %>
+
+			<!-- POI template copies -->
+			<% include ../poi/poi-template-copies.html %>
 		
-		<!-- Loading -->
-		<div class="loading" ng-show="loading">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>	
-		
-		<!-- Content -->
-		<div class="panel-body">
-			<div class="belement" ng-repeat="building in buildings" ng-mouseenter="showRemoveButton($event)" ng-mouseleave="hideRemoveButton($event)">
-				<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup()"></span>
-				<img ng-src="{{building.icon}}" alt="Image Icon" class="default-icon" ng-hide="loading" style="display:none;"/>
-				<a href="/building/show/{{building._id}}"><span ng-bind="building.name"></span></a>				
+		</div>
+
+		<!-- Content (relative for loading icon) -->
+		<div class="panel-body" style="position:relative;">
+
+			<!-- Add building form block -->
+			<% include ../building/building-add.html %>
+
+			<!-- Delete Confirm Dialog -->
+			<% include ../layout/delete-confirm-dialog.html %>	
+
+			<!-- Loading -->
+			<div class="loading" ng-show="loading">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>	
+
+			<!-- Total count -->
+			<div class="ng-hide" ng-hide="loadingBuilding" style="padding:30px 50px 20px 50px;">
+				<h6 style="display:inline;"><%= __('building.list.totalCount') %><span ng-bind="buildings.length"></span></h6>
+			</div>
+
+			<!-- Building list -->
+			<div class="belement ng-hide" ng-repeat="building in buildings" ng-mouseenter="showRemoveButton($event)" ng-mouseleave="hideRemoveButton($event)" ng-hide="loadingBuilding">
+				<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup($event)"></span>
+				<a href="/building/show/{{building._id}}">	
+					<img ng-src="{{building.icon}}" alt="Image Icon" class="default-icon"/>
+				</a>	
+				<a href="/building/show/{{building._id}}"><span ng-bind="building.name"></span></a>
 				<% if(user.role == roles.ADMIN){ %>
 					<!-- Show building's owner if admin -->
 					<h6>{{building.userName}}</h6>
-				<% } %>
+				<% } %>								
 			</div>
+
 		</div>
 
+		<!-- Pagination -->
 		<div id="pagination"></div>
-					
-	</div>
-	
-	<!-- Delete Confirm Dialog -->
-	<% include ../layout/delete-confirm-dialog.html %>	
 
-    <!-- Controller -->
-    <script src="../js/controller/buildingContrl.js"></script>
-    
+	</div>
 
 </div>
+
+<!-- Controller -->
+<script src="/js/controller/buildingContrl.js"></script>

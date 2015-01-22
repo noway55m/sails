@@ -3,9 +3,15 @@ var log = require('log4js').getLogger("authentication"),
 	User = require('../model/user'),
 	CookieToken = require('../model/cookieToken'),
 	config = require('../config/config.js');
+	i18n = require("i18n");
 
 // Get Login page
 exports.index = function(req, res) {
+
+	console.log(req.getLocale());
+	//req.setLocale('zh_tw');
+	//console.log(req.getLocale());
+	
 	res.render('login.html', {
 		url : req.url.toString(), // use in layout for identify display info
 		errorMsg : req.flash('msg') || "",
@@ -22,7 +28,7 @@ exports.index = function(req, res) {
 // POST Interface for authenticate user by username and password (Web Browser)
 exports.auth = function(req, res, next) {
 
-	passport.authenticate( 'local', function(err, user, info) {
+	passport.authenticate( 'local', { badRequestMessage: i18n.__("error.loginMissingFieldMsg") },  function(err, user, info) {
 
 		if (err)
 			return next(err);

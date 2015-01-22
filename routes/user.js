@@ -4,6 +4,7 @@ var log = require('log4js').getLogger("User"),
 	Building = require("../model/building"),
 	User = require("../model/user"),
 	ResetPasswordToken = require("../model/resetPasswordToken"),	
+    PoiTag = require("../model/poiTag"),
     mailer = require('../config/nodemailerSetup'),
     config = require('../config/config.js'),
     utilityS = require("./utility.js");
@@ -429,3 +430,39 @@ exports.upgradeDeveloper = function(req, res){
 	}
 		
 };
+
+
+// GET Interface for get poi tags of user
+exports.getPoiTags = function(req, res){
+
+	PoiTag.find({
+
+		userId: req.user._id
+
+	}, function(err, poiTags){
+
+		if(err) {
+
+			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+			});  				
+
+        } else {
+
+        	// Test data
+        	var test = ["Apple","Orange","Banana","Watermelon","Grape","Lemon"];
+        	if(poiTags.length == 0)
+        		poiTags = test;
+
+        	var newPoiTags = [];
+        	for(var key in poiTags){
+        		newPoiTags.push({"data" : poiTags[key]});
+        	}
+
+			res.json(errorResInfo.SUCCESS.code, newPoiTags);
+		}
+
+	});
+
+}
+
