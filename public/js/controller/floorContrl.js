@@ -144,14 +144,14 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 		// Delete store
 		Floor.delete({
 			
-			_id: deleteObj._id
+			_id: deleteObj2._id
 			
 		}, function(res){
 
 			if(res._id){
 		    	
 				var id = res._id, j;
-		    	if(deleteObj.layer > 0){
+		    	if(deleteObj2.layer > 0){
 		    		
 		    		for(var i=0; i<$rootScope.floorUp.length; i++){						
 		    			// Get removed floor index
