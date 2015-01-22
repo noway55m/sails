@@ -145,7 +145,7 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
 		// Delete poi
 		Poi.delete({
 			
-			_id: deleteObj._id
+			_id: deleteObj3._id
 			
 		}, function(res){
 
