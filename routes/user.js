@@ -450,6 +450,7 @@ exports.getPoiTags = function(req, res){
         } else {
 
         	// Test data
+        	/*
         	var test = ["Apple","Orange","Banana","Watermelon","Grape","Lemon"];
         	if(poiTags.length == 0)
         		poiTags = test;
@@ -460,6 +461,8 @@ exports.getPoiTags = function(req, res){
         	}
 
 			res.json(errorResInfo.SUCCESS.code, newPoiTags);
+			*/
+			res.json(errorResInfo.SUCCESS.code, []);
 		}
 
 	});
