@@ -272,6 +272,7 @@ if(!String.prototype.formatNum) {
 		var holidays_def = getExtentedOption(cal, 'holidays');
 		for(var k in holidays_def) {
 			hash.push(k + ':' + holidays_def[k]);
+
 		}
 		hash.push(year);
 		hash = hash.join('|');
@@ -371,6 +372,7 @@ if(!String.prototype.formatNum) {
 		context.css('width', this.options.width).addClass('cal-context');
 
 		this.view();
+
 		return this;
 	}
 
@@ -945,7 +947,9 @@ if(!String.prototype.formatNum) {
 		$('*[data-cal-date]').click(function() {
 			var view = $(this).data('cal-view');
 			self.options.day = $(this).data('cal-date');
-			self.view(view);
+			self.view(view);			
+			// show add button(add by frank hsu)
+			$("#addPoiEventButton").fadeIn();
 		});
 		$('.cal-cell').dblclick(function() {
 			var view = $('[data-cal-date]', this).data('cal-view');
@@ -963,6 +967,7 @@ if(!String.prototype.formatNum) {
 		var self = this;
 
 		$('a[data-event-id]', this.context).unbind('click');
+		$('span[data-event-id]', this.context).unbind('click');
 
 		if(!self.options.modal) {
 			return;
@@ -983,7 +988,7 @@ if(!String.prototype.formatNum) {
 				});
 		}
 
-
+		// Show and set update modal dialog
 		$('a[data-event-id]', this.context).on('click', function(event) {
 			event.preventDefault();
 			event.stopPropagation();
@@ -1053,6 +1058,23 @@ if(!String.prototype.formatNum) {
 			}
 			modal.modal('show');
 		});
+
+
+		// Show and set delete modal dialog		
+		$('span[data-event-id]', this.context).on('click', function(event) {
+			var id = $(this).data("event-id"),
+				deleteModal = $(self.options.deleteModal),
+				$scope = self.options.$scope,			
+				event = _.find(self.options.events, function(event) {
+					return event.id == id
+				});
+			// Set selected delete event and show dialog	
+			$scope.$apply(function () {
+	            $scope.selectedDeleteEvent = event;
+				deleteModal.modal('show');
+			});			
+		});
+
 	};
 
 	Calendar.prototype._update_day = function() {
