@@ -449,7 +449,7 @@ exports.getPoiTags = function(req, res){
 
         } else {
 
-        	// Test data
+        	// Test data(TODO)
         	/*
         	var test = ["Apple","Orange","Banana","Watermelon","Grape","Lemon"];
         	if(poiTags.length == 0)
