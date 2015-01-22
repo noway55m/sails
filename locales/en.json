@@ -1,0 +1,263 @@
+{
+	"header": {
+		"home": "Home",
+		"support": "Support",
+		"knowledgeBase": "Knowledge Base",
+		"blog": "Blog",
+		"terms": "Terms",
+		"downloadSDK": "Download SDK",
+		"cms": "CMS",
+		"profile": "Profile",
+		"developer": "Developer",
+		"logout": "Logout"
+	},
+	"footer": {},
+	"buttons": {
+		"change": "buttons.change",
+		"changing": "buttons.changing",
+		"create": "Create",
+		"creating": "Creating",
+		"confirm": "Confirm",
+		"confirming": "Confirming",
+		"cancel": "Cancel",
+		"canceling": "canceling",
+		"close": "Close",
+		"add": "Add",
+		"adding": "Adding",
+		"package": "Package",
+		"packaging": "Packaging",
+		"update": "Update",
+		"updating": "Updating",
+		"upload": "Upload",
+		"uploading": "Uploading",
+		"remove": "Remove",
+		"Removing": "Removing",
+		"delete": "Delete",
+		"deleting": "Deleting",
+		"copy": "Copy",
+		"copyTemplate": "T-Copy",
+		"copying": "Copying",
+		"submit": "Submit",
+		"submiting": "Submiting",
+		"inform": "Inform",
+		"informing": "Informing",
+		"editing": "buttons.editing",
+		"edit": "buttons.edit"
+	},
+	"others": {
+		"download": {
+			"title": "download",
+			"downloadSailsSDK": "Download Sails SDK",
+			"downloadSailsSDKDesc": "Here are SDKs on different plaform, click following link for download.",
+			"androidSDK": "Android SDK",
+			"sampleCode": "Sample Code",
+			"javaDoc": "Java Doc",
+			"iosSDK": "IOS SDK"
+		}
+	},
+	"feedback": {
+		"title": "Feedback",
+		"thanks": "Thanks, We have received your comment!!",
+		"fields": {
+			"name": "Name",
+			"email": "Email",
+			"comment": "Comment"
+		}
+	},
+	"developer": {
+		"title": "Developer",
+		"publicAPIAccess": "Public API Access",
+		"publicAPIAccessDesc": "Use of this key does not require any user action or consent, does not grant access to any account information, and is not used for authorization",
+		"APIKey": "API Key",
+		"androidApp": "Android App",
+		"iosApp": "IOS App",
+		"ips": "IPs",
+		"referes": "Referes",
+		"createdDate": "Created Date",
+		"editAllowedAndroidApp": "Edit Allowed Android App",
+		"editAllowedIOSApp": "Edit Allowed IOS App",
+		"editAllowedIPs": "Edit Allowed IPs",
+		"editAllowedRefers": "Edit Allowed Referes",
+		"regenerateKey": "Regenerate Key",
+		"example": "Example:",
+		"andorid": {
+			"title": "Edit allowed Android applications",
+			"deployDesc": "This API key will be deployed into Sails Android SDK using in your Android application.",
+			"verifyDesc": "API requests are sent directly to Sails from your client Android device. Sails verifies that each request originates from an Android application that matches one of the certificate SHA1 fingerprints and package names listed below. You can discover the SHA1 fingerprint with base64 encode of your developer certificate by keytool using the following command:",
+			"certificateFingerprintDesc": "One SHA1 certificate fingerprint with base64 encode and package name (separated by a semicolon) per line."
+		},
+		"ios": {
+			"title": "Edit allowed IOS applications",
+			"deployDesc": "This key will be deployed into Sails IOS SDK using in your IOS application.",
+			"verifyDesc": "API requests are sent directly to Sails from your clients' iOS devices. Sails verifies that each request originates from an iOS application that matches one of the bundle identifiers listed below.",
+			"identifierDesc": "One bundle identifier per line."
+		},
+		"android": {
+			"title": "developer.android.title",
+			"deployDesc": "developer.android.deployDesc",
+			"verifyDesc": "developer.android.verifyDesc",
+			"certificateFingerprintDesc": "developer.android.certificateFingerprintDesc"
+		}
+	},
+	"navbar": {
+		"buildings": "Buildings",
+		"poiEvents": "navbar.poiEvents"
+	},
+	"index": {
+		"title": "Sails - Login",
+		"username": "username",
+		"usernameFieldPlaceHolder": "Email Address",
+		"password": "password",
+		"passwordFieldPlaceHolder": "Password",
+		"rememberMe": "Remember me",
+		"signIn": "Sign In",
+		"register": "Register",
+		"forgetPassword": "Forget Password"
+	},
+	"forgetPasswordDialog": {
+		"title": "Forget Password",
+		"desc": "Please enter your registered email address.",
+		"emailAddress": "Email Address"
+	},
+	"resetPassword": {
+		"title": "Reset Password",
+		"desc": "Please reset your password<.",
+		"originalPassword": "Original Password",
+		"newPassword": "New Password",
+		"confirmNewPassword": "Confirm New Password"
+	},
+	"error": {
+		"title": "Error",
+		"success": "Success",
+		"loginMissingFieldMsg": "Missing username or credential!!",
+		"loginNotActiveErrorMsg": "User account not activate yet!!",
+		"loginIncorretUsernameOrPasswordErrorMsg": "Incorrect username or password!!",
+		"unavailableApiKeyOrVerifier": "Unavailable api key or verifier",
+		"unavailableSDKVersion": "Sdk version is too old, please update to latest one",
+		"404Error": "404 not found",
+		"500Error": "500 Server error, please try again later"
+	},
+	"building": {
+		"add": {
+			"addBuildingTitle": "Add Building",
+			"createHint": "Enter a name for create new building"
+		},
+		"list": {
+			"buildings": "Buildings",
+			"totalCount": "Total Count:"
+		},
+		"show": {
+			"buildings": "Buildings",
+			"uploadIconImage": "Upload icon image"
+		},
+		"fields": {
+			"name": "Name",
+			"pub": "Public",
+			"desc": "Description",
+			"address": "Address",
+			"lastPackageTime": "Last package time"
+		},
+		"msg": {}
+	},
+	"poi": {
+		"add": {
+			"addPoiTitle": "Add POI"
+		},
+		"list": {
+			"pois": "POIs",
+			"totalCount": "Total Count:"
+		},
+		"show": {},
+		"types": {
+			"text": "Text",
+			"link": "Link",
+			"image": "Image",
+			"video": "Video",
+			"audio": "Audio",
+			"file": "File"
+		},
+		"fields": {
+			"name": "Name",
+			"startTime": "poi.fields.startTime",
+			"endTime": "poi.fields.endTime"
+		},
+		"copies": {
+			"title": "Copied POIs",
+			"copyToHere": "Copy to here"
+		},
+		"templateCopies": {
+			"title": "Copied POI Templates",
+			"copyToHere": "Copy to here"
+		},
+		"event": {
+			"title": "POI Event",
+			"calendar": "Calendar",
+			"prev": "<< Prev",
+			"today": "Today",
+			"next": "Next >>",
+			"year": "Year",
+			"month": "Month",
+			"week": "Week",
+			"day": "Day",
+			"add": {
+				"title": "Add POI Event"
+			},
+			"fields": {
+				"title": "Title",
+				"desc": "Description",
+				"startTime": "Start Time",
+				"endTime": "End Time"
+			},
+			"update": {
+				"title": "Update POI Event"
+			}
+		}
+	},
+	"floor": {
+		"add": {},
+		"list": {
+			"floors": "Floors",
+			"totalCount": "Total Count:",
+			"addFloor": "Add Floor",
+			"addBasement": "Add Basement",
+			"details": "Details"
+		},
+		"show": {
+			"lastXMLUpdateTime": "Last Xml update time:",
+			"uploadMapHere": "Upload Map file here",
+			"howCanStart": "How can I get started on the map?",
+			"uploadPathHere": "Upload Path file here"
+		},
+		"fields": {
+			"name": "Name",
+			"layer": "Layer",
+			"desc": "Description",
+			"mapXML": "Map.xml",
+			"pathXML": "Path.xml"
+		}
+	},
+	"user": {
+		"index": {
+			"title": "Index"
+		},
+		"profile": {
+			"title": "Profile",
+			"usernameEmail": "Username(Email)",
+			"administrator": "Administrator",
+			"developer": "Developer",
+			"freeUser": "Free User",
+			"upgradeDeveloper": "Upgrade Developer",
+			"contactUs": "Contact Us",
+			"email": "Email",
+			"message": "Message",
+			"password": "Password",
+			"changePassword": "Change Password",
+			"originalPassword": "Original Password",
+			"newPassword": "New Password",
+			"confirmPassword": "Confirm Password"
+		}
+	},
+	"deleteDialog": {
+		"title": "Are you sure to remove"
+	}
+}

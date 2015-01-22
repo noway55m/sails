@@ -1,0 +1,17 @@
+{
+	// index(login) page
+	"username": "username",
+	"usernameFieldPlaceHolder": "Email Address",	
+	"password": "password",
+	"passwordFieldPlaceHolder": "Password",		
+	"password": "password",
+	"rememberMe": "Remember me",
+	"signIn": "Sign In",
+	"register": "Register",
+	"forgetPassword": "Forget Password",
+
+	"bbb": {
+
+		"ffff": "操你媽的"
+	}	
+}

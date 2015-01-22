@@ -1,7 +1,7 @@
 var utility = Utility.getInstance();
 
 // List poi controller
-function PoiListCtrl($scope, Area, $compile, $rootScope, Poi) {
+function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
 
 	// Show and hide remove button
 	$scope.showRemoveButton = function(e){
@@ -17,10 +17,10 @@ function PoiListCtrl($scope, Area, $compile, $rootScope, Poi) {
 	$scope.hasPagination = true;
 
 	// Load floor after building finish load
-	$rootScope.$on('areaFinishLoad', function(e, area) {
+	$rootScope.$on('buildingFinishLoad', function(e, building) {
 
-		$scope.area = area;
-		Poi.list({ areaId: area._id }, function(obj){
+		$scope.building = building;
+		Poi.list({ buildingId: building._id }, function(obj){
 			
 			var page = obj.page,
 				offset = obj.offset,
@@ -90,7 +90,7 @@ function PoiListCtrl($scope, Area, $compile, $rootScope, Poi) {
 			Poi.create({
 
 				name : name.val(),
-				areaId : $scope.area._id
+				buildingId : $scope.building._id
 
 			}, function(poi) {
 
@@ -128,20 +128,20 @@ function PoiListCtrl($scope, Area, $compile, $rootScope, Poi) {
 	};
 
 	// Function for setup delete dialog
-	var deleteObj, deleteModal;
+	var deleteObj3,
+		deleteModal3 = $("#deleteModalPoi");	
 	$scope.deleteDialogSetup = function(e){
-		deleteObj = this.poi;
-		deleteModal = $(e.currentTarget).parent().parent().next().next();
-		deleteModal.find("#removeContent").html(deleteObj.name);
-		deleteModal.modal("show");;
+		deleteObj3 = this.poi;
+		deleteModal3.find(".removeContent").html(deleteObj3.name);
+		deleteModal3.modal("show");
 	};
 	
 	// Function for delete ad obj
 	$scope.deleteObj = function(e){
 		
 		// Hide modal
-		deleteModal.modal('hide');
-		
+		deleteModal3.modal('hide');
+
 		// Delete poi
 		Poi.delete({
 			
@@ -193,9 +193,9 @@ function PoiListCtrl($scope, Area, $compile, $rootScope, Poi) {
 	};
 
 	// Get poi copy and copy template
-	$scope.isAreaShowPage = false;
-	if(window.location.toString().indexOf("/area/show")!=-1)
-		$scope.isAreaShowPage = true;		
+	$scope.isBuildingShowPage = false;
+	if(window.location.toString().indexOf("/building/show")!=-1)
+		$scope.isBuildingShowPage = true;		
 	Poi.getCopies(function(copyPoiList){
 		$scope.copyPoiList = copyPoiList;
 	});
@@ -214,11 +214,11 @@ function PoiListCtrl($scope, Area, $compile, $rootScope, Poi) {
 		copyPoiTemplate(e, $scope, Poi, this.poi);		
 	}
 
-	// Function for copy on current area
+	// Function for copy on current building
 	$scope.copyPoiHere = function(e, poi){
 
-      	var areaId = $scope.area._id,
-      		areaName = $scope.area.name,
+      	var buildingId = $scope.building._id,
+      		buildingName = $scope.building.name,
       		poiId = angular.element(e.currentTarget).parent().parent().attr("id"),
       		selectPoi = {};
 
@@ -234,14 +234,14 @@ function PoiListCtrl($scope, Area, $compile, $rootScope, Poi) {
 				}
 			}
       	}
-      	selectPoi.areaId = areaId;
+      	selectPoi.buildingId = buildingId;
       	Poi.create(selectPoi, function(thePoi){
 
       		// Update poi list
 			$scope.pois.push(thePoi);
 	    	
 	    	// Show success msg
-			$().toastmessage('showSuccessToast', "Copy POI to " +  areaName + " successfully");				
+			$().toastmessage('showSuccessToast', "Copy POI to " +  buildingName + " successfully");				
 
       	}, function(res){
 
@@ -300,7 +300,7 @@ function PoiListCtrl($scope, Area, $compile, $rootScope, Poi) {
 }
 
 // Show specific poi controller
-function PoiShowCtrl($rootScope, $scope, $location, $compile, Poi, Area, Building, User) {
+function PoiShowCtrl($rootScope, $scope, $location, $compile, Poi, Building, User) {
 	var url = $location.absUrl(),
 		id = url.substring(url.lastIndexOf("/") + 1, url.length) || $rootScope.selectedBuilding.id;	
 	$scope.loadingPoi = true;
@@ -326,23 +326,22 @@ function PoiShowCtrl($rootScope, $scope, $location, $compile, Poi, Area, Buildin
         $scope.poiClone = angular.copy(poi); // Clone area for future rollback        
     	$scope.loadingPoi = false;
 
-		// Get area of poi
-		Area.get({ _id: poi.areaId }, function(area){
-			$scope.area = area;
+		// Get building of poi
+		Building.get({ _id: poi.buildingId }, function(building){
+			$scope.building = building;
 		});
 
 		// Get building of poi and user's building
-		Building.get({ _id: $scope.poi.buildingId }, function(building){
-			$scope.poiBuilding = building;
-			$scope.poiBuildingClone = building;
-		}, function(){
-			$scope.poiBuilding = { name: "Binding Building 2222" };
-			$scope.poiBuildingClone = $scope.poiBuilding;
-		});
-
-		Building.list(function(obj){
-			$scope.buildings = obj.buildings ? obj.buildings : [];
-		});		
+		$scope.poiBuilding = { name: "Binding Building" };
+		$scope.poiBuildingClone = $scope.poiBuilding;
+		if($scope.poi.buildingId){
+			Building.get({ _id: $scope.poi.buildingId }, function(building){
+				$scope.poiBuilding = building;
+				$scope.poiBuildingClone = building;
+			}, function(){
+				$scope.poiBuildingClone = $scope.poiBuilding;
+			});
+		}
 
 		// Get user's tags for poi tag autocomplete
 		User.poiTags({}, function(poiTags){
@@ -401,6 +400,8 @@ function PoiShowCtrl($rootScope, $scope, $location, $compile, Poi, Area, Buildin
 
 			// Event handler for check tags value change
 		    $("input[name=hidden-" + tagApi.attr("name") + "]").on('change', function(v, nv){
+				// Start other fields edit first
+				unEditFields();			    	
 		    	$(".tagsButtonSave").show();
 		    	$(".tagsButtonCancel").show();
 		    });
@@ -430,10 +431,12 @@ function PoiShowCtrl($rootScope, $scope, $location, $compile, Poi, Area, Buildin
 
 	// Function for toogle name block
 	$scope.toogleNameBlock = function(mode){
-		if(mode) {
+		if(mode) {				
 			$(".nameDisplayBlock").fadeIn();
 			$(".nameEditBlock").hide();		
 		} else {
+			// Start other fields edit first
+			unEditFields();	
 			$(".nameDisplayBlock").hide();
 			$(".nameEditBlock").fadeIn();					
 		}
@@ -458,17 +461,6 @@ function PoiShowCtrl($rootScope, $scope, $location, $compile, Poi, Area, Buildin
 	$scope.cancelUpdate = function(){
 		angular.copy($scope.poiClone, $scope.poi);
 		$scope.toogleNameBlock(1);
-	}
-
-	// Function for bind building
-	$scope.bindBuilding = function(e, building){
-		var poi = this.poi;
-		poi.buildingId = building._id;
-		$scope.update(poi, function(){
-			$scope.poiBuilding = building;
-		}, function(){
-			angular.copy($scope.poiClone, poi);
-		});
 	}
 
 	// Function for cancel update poi tags
@@ -584,7 +576,7 @@ function clipboardSetup(){
 				});	
 			}, 10)
 	  });
-	});	
+	});		
 }
 
 // Function for setup tooltip
@@ -600,5 +592,22 @@ function tooltipSetup(){
 
 
 }
+
+// Function for stop fields edit while specific field start to edit
+function unEditFields(){
+	
+	// Stop name field edit
+	$(".nameDisplayBlock").fadeIn();
+	$(".nameEditBlock").hide();
+
+	// Stop tag field edit
+	$(".tagsButtonSave").hide();
+	$(".tagsButtonCancel").hide();
+
+	// Stop custom fields edit
+	$(".templateCustomField > .templateCustomFieldsDisplay").fadeIn();
+	$(".templateCustomField > .templateCustomFieldsEdit").hide();		
+
+}	
 
 // PoiShowCtrl.$inject = ['$scope', 'Poi'];

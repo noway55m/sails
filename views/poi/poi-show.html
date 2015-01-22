@@ -6,7 +6,7 @@
 		<% include ../layout/head-include.html %>
 		
 		<!-- Title -->
-		<title>{{area.name}}</title>
+		<title ng-bind="poi.name"></title>
 
 		<!-- bootstrap tag manager library -->
 		<script src="/js/jquery/typeahead.js"></script>
@@ -29,11 +29,11 @@
 
 		<!-- Navigator bar to display current store of floor of specific area -->
 		<ol class="breadcrumb">
-		  <li><a href="/user">My Areas</a></li>
+		  <li><a href="/user"><%= __("navbar.buildings") %></a></li>
 		  <li class="ng-hide" ng-hide="loadingPoi">
-		  	<a href="/area/show/{{area._id}}">
+		  	<a href="/building/show/{{building._id}}">
 				<span class="glyphicon glyphicon-globe"></span>
-				<span ng-bind="area.name"></span>
+				<span ng-bind="building.name"></span>
 		  	</a>
 		  </li>	
 		  <li class="active ng-hide" ng-hide="loadingPoi">
@@ -55,9 +55,17 @@
 				<div class="col-xs-12 col-sm-12 col-md-12 ng-hide" style="padding:15px 5px;" ng-hide="loadingPoi">
 					<div class="ng-hide" ng-hide="loadingPoi" style="text-align:left;">
 						<!-- ID -->
-						<span id="poiId" ng-bind="poi._id" data-clipboard-text="{{poi._id}}" data-toggle="tooltip" data-placement="top" class="label label-primary"></span><hr/>					    
+						<span id="poiId" ng-bind="poi._id" data-clipboard-text="{{poi._id}}" data-toggle="tooltip" data-placement="top" class="label label-primary"></span>
+
+						<!-- Add poi dialog and trigger button -->
+						<a href="/poi/event/index?poiId={{poi._id}}" class="btn btn-default">
+							<span class="glyphicon glyphicon-calendar"></span>
+							<span style="float:right;"><%= __('poi.event.calendar') %></span>							
+						</a>
+
+						<hr/>					    
 						<!-- Name -->
-						<div class="poi-title">Name</div>
+						<div class="poi-title"><%= __('poi.fields.name') %></div>
 						<div class="nameDisplayBlock" style="display:inline;">							
 							<span ng-bind="poi.name" ng-click="toogleNameBlock(0)"></span>
 						</div>
@@ -65,20 +73,6 @@
 							<input class="form-control col-xs-11 col-sm-12 col-md-3" style="width:150px" ng-model="poi.name"/>
 							<span class="nameButtonSave glyphicon glyphicon-floppy-disk" ng-click="update()"></span>
 							<span class="nameButtonCancel glyphicon glyphicon-ban-circle" ng-click="cancelUpdate()"></span>
-						</div>
-						<!-- Binding building -->						
-						<br/>
-						<div class="poi-title">Binding Building</div>
-						<div class="dropdown" style="display:inline;">
-						  <button class="btn btn-default dropdown-toggle" type="button" id="buildingDropdownMenu" data-toggle="dropdown">
-						    <span ng-bind="poiBuilding.name"></span>
-						    <span class="caret"></span>
-						  </button>
-						  <ul class="dropdown-menu" role="menu" aria-labelledby="buildingDropdownMenu">
-						    <li ng-repeat="building in buildings" role="presentation">
-						    	<a role="menuitem" tabindex="-1" href="#" ng-bind="building.name" ng-click="bindBuilding($event, building)"></a>
-						    </li>
-						  </ul>
 						</div>
 					</div>
 				</div>
@@ -104,12 +98,24 @@
 						
 						<!-- Button groups of field type\ -->
 						<div class="btn-group" style="display:none" id="customFieldsTypeMenu">
-						  <button id="customFieldsText" type="button" class="btn btn-default">Text</button>
-						  <button id="customFieldsLink" type="button" class="btn btn-default">Link</button>
-						  <button id="customFieldsImage" type="button" class="btn btn-default">Image</button>
-						  <button id="customFieldsVideo" type="button" class="btn btn-default">Video</button>
-						  <button id="customFieldsAudio" type="button" class="btn btn-default">Audio</button>
-						  <button id="customFieldsFile" type="button" class="btn btn-default">File</button>		
+						  <button id="customFieldsText" type="button" class="btn btn-default">
+						  	<%= __("poi.types.text") %>
+						  </button>
+						  <button id="customFieldsLink" type="button" class="btn btn-default">
+						  	<%= __("poi.types.link") %>
+						  </button>
+						  <button id="customFieldsImage" type="button" class="btn btn-default">
+						  	<%= __("poi.types.image") %>
+						  </button>
+						  <button id="customFieldsVideo" type="button" class="btn btn-default">
+						  	<%= __("poi.types.video") %>
+						  </button>
+						  <button id="customFieldsAudio" type="button" class="btn btn-default">
+						  	<%= __("poi.types.audio") %>
+						  </button>
+						  <button id="customFieldsFile" type="button" class="btn btn-default">
+						  	<%= __("poi.types.file") %>
+						  </button>		
 						</div>
 					</div>
 
@@ -146,7 +152,7 @@
 								<div class="templateCustomFieldsDisplay">
 									<!-- fields -->
 									<div class="customFieldsValue col-xs-11 col-sm-11 col-md-10">
-										<a href="{{field.value}}" ng-bind="field.key"></a>
+										<a href="{{field.value}}" target="_blank" ng-bind="field.key"></a>
 									</div>
 									<!-- buttons -->
 									<span class="customFieldsButtonEdit glyphicon glyphicon-edit"></span>
@@ -187,7 +193,7 @@
 											<input type="file" placeholder="Image" name="file"/>
 										</div>
 										<div class="alert alert-danger error-msg">
-											<span class="label label-danger">Error</span> <span class="errorText"></span>
+											<span class="label label-danger"><%= __("error.title") %></span> <span class="errorText"></span>
 										</div>										
 									</form>
 									<!-- buttons -->
@@ -249,7 +255,7 @@
 											<input type="file" placeholder="File" name="file"/>
 										</div>
 										<div class="alert alert-danger error-msg">
-											<span class="label label-danger">Error</span> <span class="errorText"></span>
+											<span class="label label-danger"><%= __("error.title") %></span> <span class="errorText"></span>
 										</div>										
 									</form>
 									<!-- buttons -->
@@ -285,7 +291,7 @@
 											<input type="file" placeholder="File" name="file"/>
 										</div>
 										<div class="alert alert-danger error-msg">
-											<span class="label label-danger">Error</span> <span class="errorText"></span>
+											<span class="label label-danger"><%= __("error.title") %></span> <span class="errorText"></span>
 										</div>										
 									</form>
 									<!-- buttons -->
@@ -317,6 +323,7 @@
 		
     <!-- Controller -->
     <script src="/js/controller/poiContrl.js"></script>
-    
+    <script src="/js/controller/poiEventContrl.js"></script>	
+
   </body>
 </html>

@@ -15,7 +15,9 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
     // List all buildings
 	$scope.loading = true;
 	$scope.hasPagination = true;
-	Building.list(function(obj){
+
+	// Load building list
+	Building.list( {}, function(obj){
 		
 		var page = obj.page,
 			offset = obj.offset,
@@ -52,7 +54,7 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 
 		}
 
-	});
+	});		
 
 	// Function for add new building
 	$scope.addBuilding = function(e) {
@@ -61,7 +63,6 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 		    form = addButton.parent(),
 			inputs = form.find("input"),
 			name = $(inputs[0]),
-			desc = $(inputs[1]),
 			errorMsgObj = form.find('.error-msg');
 
 		// Clean error msg
@@ -78,8 +79,7 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 			// Create new building
 			Building.create({
 
-				name : name.val(),
-				desc : desc.val()
+				name : name.val()
 
 			}, function(building) {
 
@@ -94,15 +94,21 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 					building.icon = "/img/no-image.png";					
 				$scope.buildings.push(building);
 				
+				// Close dialog
+				$("#add-building-dialog").modal("hide");
+
 		    	// Show success msg
 				$().toastmessage('showSuccessToast', "Create successfully");				
 
-			}, function(err) {
+			}, function(res) {
 
 				// Enable all fields and button
-				addButton.button("reset");				
 				inputs.removeAttr("disabled");
-				addButton.removeAttr("disabled");
+				addButton.button("reset");				
+
+				// Show error msg
+				var errorMsg = res && res.data && res.data.msg;
+				$().toastmessage('showErrorToast', errorMsg); 
 
 			});
 
@@ -111,11 +117,11 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 	};
 
 	// Function for setup delete dialog
-	var deleteObj,
-		deleteModal = $("#deleteModal");
-	$scope.deleteDialogSetup = function(){
+	var deleteObj, deleteModal;
+	$scope.deleteDialogSetup = function(e){
 		deleteObj = this.building;
-		$("#removeContent").html(deleteObj.name);
+		deleteModal = $(e.currentTarget).parent().parent().next().next();
+		deleteModal.find("#removeContent").html(deleteObj.name);
 		deleteModal.modal("show");
 	};
 	
@@ -200,6 +206,12 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
         $rootScope.buildingClone = angular.copy(building); // Clone building for future rollback        
     	$scope.loadingBuilding = false;
 	});
+
+	// Function for add active class on tab
+	$scope.addTabActiveClass = function(e) {
+		$(".tab-button").removeClass("active");
+		angular.element(e.currentTarget).addClass("active");
+	}
 
     // Function for rollback selected user info
     $scope.cancelUpdateBuilding = function(){

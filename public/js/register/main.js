@@ -14,8 +14,8 @@ function submit_form(){
             password = $("#password"),
             confirmPassword = $("#confirm-password"),
             acceptTerm = $("#acceptTerm"),
-            errorMsgObj = $("#error-dialog"),
-            recaptchaResponseObj = $("#recaptcha_response_field");
+            errorMsgObj = $("#error-dialog");
+            //recaptchaResponseObj = $("#recaptcha_response_field"); // TODO: hide for now since china people
 
         // Clean error msg
         errorMsgObj.css({display: "none"});
@@ -23,7 +23,7 @@ function submit_form(){
 
         // Check format
         if(utiliy.emailValidate(email, errorMsgObj) &&
-            utiliy.emptyValidate(recaptchaResponseObj, errorMsgObj) &&
+            //utiliy.emptyValidate(recaptchaResponseObj, errorMsgObj) && // TODO: hide for now since china people
             utiliy.passwordValidate(password, errorMsgObj) &&
             utiliy.newPasswordValidate(password, confirmPassword, errorMsgObj)){
 

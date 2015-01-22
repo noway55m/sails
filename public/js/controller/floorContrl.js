@@ -122,21 +122,21 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 	
 	
 	// Function for setup delete dialog
-	var deleteObj,
-		deleteModal = $("#deleteModal"),
+	var deleteObj2,
+		deleteModal2 = $("#deleteModalFloor"),
 		loadingModal = $("#loadingModal");
 	$scope.deleteDialogSetup = function(){
-		deleteObj = this.floor;
-		var content = deleteObj.layer > 0 ? deleteObj.layer + " F" : "B " + Math.abs(deleteObj.layer);
-		$("#removeContent").html(content);
-		deleteModal.modal("show");
+		deleteObj2 = this.floor;
+		var content = deleteObj2.layer > 0 ? deleteObj2.layer + " F" : "B " + Math.abs(deleteObj2.layer);
+		deleteModal2.find(".removeContent").html(content);
+		deleteModal2.modal("show");
 	};
 	
 	// Function for delete ad obj
 	$scope.deleteObj = function(e){
 		
 		// Hide delete confirm modal
-		deleteModal.modal('hide');
+		deleteModal2.modal('hide');
 
 		// Show loading modal
 		loadingModal.modal('show');

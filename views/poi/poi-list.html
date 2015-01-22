@@ -1,5 +1,5 @@
 <!-- Poi List include in page 'area/area-show.html' -->
-<div id="poi-list" class="tab-pane active" ng-controller="PoiListCtrl">
+<div id="poi-list" class="tab-pane" ng-controller="PoiListCtrl">
 
 	<!-- POI copy area -->
 	<div style="float:right; maring-right:300px;">
@@ -21,21 +21,21 @@
 
 		<!-- Title and total count -->
 		<div class="ng-hide" ng-hide="loadingPoi">
-			<h4 style="display:inline;">POIs</h4>
-			<h6 style="display:inline;">Total Count: <span ng-bind="pois.length"></span></h6>
+			<h4 style="display:inline;"><%= __('poi.list.pois') %></h4>
+			<h6 style="display:inline;"><%= __('poi.list.totalCount') %><span ng-bind="pois.length"></span></h6>
 		</div>
 
 		<!-- POI list -->
 		<div class="belement ng-hide" ng-repeat="poi in pois" ng-mouseenter="showRemoveButton($event)" ng-mouseleave="hideRemoveButton($event)" ng-hide="loadingPoi">
-			<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup()"></span>				
-			<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup()"></span>
+			<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup($event)"></span>				
+			<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup($event)"></span>
 			<a href="/poi/show/{{poi._id}}">
 				<img ng-src="{{poi.icon}}" alt="Image Icon" class="default-icon"/>
 				<span ng-bind="poi.name"></span>				
 			</a>
 			<br/>
-			<span class="label label-primary copy" data-toggle="tooltip" data-placement="bottom" ng-click="copyPoi($event)">Copy</span>
-			<span class="label label-warning copy-template" data-toggle="tooltip" data-placement="bottom" ng-click="copyPoiTemplate($event)">T-Copy</span>
+			<span class="label label-primary copy" data-toggle="tooltip" data-placement="bottom" ng-click="copyPoi($event)"><%= __('buttons.copy') %></span>
+			<span class="label label-warning copy-template" data-toggle="tooltip" data-placement="bottom" ng-click="copyPoiTemplate($event)"><%= __('buttons.copyTemplate') %></span>
 			
 		</div>
 	</div>
@@ -43,7 +43,7 @@
 	<div id="pagination"></div>
 	
 	<!-- Delete Confirm Dialog -->
-	<% include ../layout/delete-confirm-dialog.html %>	
+	<% include ../poi/delete-confirm-dialog.html %>	
 
     <!-- Controller -->
     <script src="/js/controller/poiContrl.js"></script>

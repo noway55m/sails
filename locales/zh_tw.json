@@ -1,0 +1,73 @@
+{
+	"Hello": "幹幹站",
+	"bbb.ffff": "bbb.ffff",
+	"bbb": "bbb",
+	"usernameFieldPlaceHolder": "usernameFieldPlaceHolder",
+	"index": {
+		"title": "index.title",
+		"username": "index.username",
+		"usernameFieldPlaceHolder": "index.usernameFieldPlaceHolder",
+		"password": "index.password",
+		"passwordFieldPlaceHolder": "index.passwordFieldPlaceHolder",
+		"rememberMe": "index.rememberMe",
+		"signIn": "index.signIn",
+		"register": "index.register",
+		"forgetPassword": "index.forgetPassword"
+	},
+	"header": {
+		"home": "header.home",
+		"support": "header.support",
+		"knowledgeBase": "header.knowledgeBase",
+		"blog": "header.blog",
+		"terms": "header.terms",
+		"downloadSDK": "header.downloadSDK",
+		"profile": "header.profile",
+		"developer": "header.developer",
+		"logout": "header.logout"
+	},
+	"error": {
+		"title": "error.title",
+		"404Error": "error.404Error",
+		"loginMissingFieldMsg": "error.loginMissingFieldMsg",
+		"500Error": "error.500Error"
+	},
+	"forgetPasswordDialog": {
+		"title": "forgetPasswordDialog.title",
+		"desc": "forgetPasswordDialog.desc",
+		"emailAddress": "forgetPasswordDialog.emailAddress"
+	},
+	"buttons": {
+		"close": "buttons.close",
+		"confirming": "buttons.confirming",
+		"confirm": "buttons.confirm",
+		"remove": "buttons.remove",
+		"creating": "buttons.creating",
+		"create": "buttons.create",
+		"cancel": "buttons.cancel"
+	},
+	"user": {
+		"index": {
+			"title": "user.index.title"
+		}
+	},
+	"building": {
+		"list": {
+			"buildings": "building.list.buildings",
+			"totalCount": "building.list.totalCount"
+		},
+		"add": {
+			"createHint": "building.add.createHint"
+		}
+	},
+	"poi": {
+		"templateCopies": {
+			"title": "poi.templateCopies.title"
+		},
+		"copies": {
+			"copyToHere": "poi.copies.copyToHere"
+		}
+	},
+	"deleteDialog": {
+		"title": "deleteDialog.title"
+	}
+}

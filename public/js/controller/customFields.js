@@ -65,7 +65,9 @@ function CustomFieldsGenerator(setting, $scope, $compile, Poi) {
 	// Event Handler for toogle display and edit mode
 	$(document).on('click', 
 		".customFieldsButtonEdit, .templateCustomFieldsDisplay .customFieldsKey," +
-		 ".templateCustomFieldsDisplay .customFieldsValue", function(){
+		 ".templateCustomFieldsDisplay .customFieldsValue", function(){		
+		// Start other fields edit first
+		unEditFields();	
 		$(this).parent().hide();
 		$(this).parent().next().fadeIn();
 	}).on('click', ".customFieldsButtonCancel", function(){
