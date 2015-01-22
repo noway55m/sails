@@ -184,9 +184,8 @@ function CustomFieldsGenerator(setting, $scope, $compile, Poi) {
 		$scope.$apply(function(){
 			poi.customFields.push({ 
 				key: "key" + currentCuout, 
-				value:"", 
-				type: 3,
-				displayValue :  "/img/no-image.png"
+				value: "", 
+				type: 3
 			});
 			syncToServer(poi);
 		});
@@ -208,15 +207,11 @@ function CustomFieldsGenerator(setting, $scope, $compile, Poi) {
 			beforeSend : function(){ // pre-submit callback
 				inputFields.attr('disabled');
 				errorMsgObj.hide();
-				//saveButton.button("loading");
 				return true;
 			},
 			uploadProgress : function(event, position, total, percent){},
 			success : function(res, statusText){ // post-submit callback
 					
-				// Reset button
-				//saveButton.button("reset");
-
 				// Update field 
 				$scope.$apply(function () {
 					field.value = res;
@@ -226,11 +221,6 @@ function CustomFieldsGenerator(setting, $scope, $compile, Poi) {
 				return true;
 			},
 			error : function(res, status){
-
-				console.log("33333");
-
-				// Reset button
-				//saveButton.button("reset");
 
 				// Show error msg
 				var resText = ( res.responseJSON && res.responseJSON.msg ) || "Fail to upload";
