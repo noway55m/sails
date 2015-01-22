@@ -19,7 +19,7 @@ var userSchema = new Schema({
     role: {
     	
     	type: Number, // 1: admin, 2: developer(has pay money to us), 3: free user 
-    	default: 2
+    	default: 2 // set default to developer(original is free)
     	
     },
     

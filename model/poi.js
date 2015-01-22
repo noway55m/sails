@@ -3,21 +3,49 @@ var mongoose = require("./dataSource.js"),
 
 
 /**
+ * Custom fields model
+ */
+var customFields = new Schema({ 
+
+    key: String,
+
+    value: String,
+
+    type: Number
+
+});
+
+/**
  * Poi model
  */
 var poiSchema = new Schema({
 	
     name: String, 
     
-    customFields: Schema.Types.Mixed, // same as set => {} , example: { buildingName: "dddd", isShow: true }
+    // Schema.Types.Mixed is same as Object {}
+    // There are some predefined types about custom fields:
+    // type => 1: string, 2: link, 3: image, 4: video, 5: audio , 6: file    
+    customFields: [customFields],//Schema.Types.Mixed,
 
-    tags: String, // for easy to response, not execute second query on table PoiTags
+    tags: [], // todo array better for easy to response, not execute second query on table PoiTags
 
-	areaId: String,
+    buildingId: {
 
-	createdDate: Date,
+        type: String,
+        index: true
 
-	updatedDate: Date
+    },
+
+    userId: {
+
+        type: String,
+        index: true
+
+    },
+
+	createdTime: Date,
+
+	updatedTime: Date
 
 });
 

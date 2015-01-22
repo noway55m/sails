@@ -11,9 +11,11 @@ var poiEventSchema = new Schema({
     
     desc: String, 
 
-    startTime: Date,
+    start: Date,
 
-    endTime: Date,
+    end: Date,
+
+    poiId: Schema.Types.ObjectId,
 
 	createdTime: Date,
 

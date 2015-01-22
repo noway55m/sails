@@ -40,8 +40,13 @@ var buildingSchema = new Schema({
     
     mapzipUpdateTime: Date, // *require       
     
-    userId: String,
-    
+    userId: { // Not nomalize userId for easy to query user's building    
+
+        type: String,
+        index: true
+
+    }, 
+
     address: String,
 
     createdTime: Date
