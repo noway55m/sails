@@ -75,6 +75,13 @@ function CustomFieldsGenerator(setting, $scope, $compile, Poi) {
 		$(this).parent().prev().fadeIn();
 	});
 
+	// Event Handler for select text content while click edit input fields
+	$(document).on('click', 
+		".templateCustomFieldsEdit .customFieldsKey," +
+		 ".templateCustomFieldsEdit .customFieldsValue", function(){
+		 $(this).select();		
+	});
+
 	// Function for get key number
 	function getNextKeyNumber(){
 		var result = poi.customFields.length; 
