@@ -216,6 +216,9 @@ body {
 .form-signin a{
 	color: #ffffff;
 }
+.form-signin label{
+	width:70px;
+}
 .form-signin #register-link{
 	margin-left: 80px;
 }
