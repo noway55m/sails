@@ -99,7 +99,7 @@
 	},
 	"index": {
 		"title": "登入",
-		"username": "使用者",
+		"username": "帳號",
 		"usernameFieldPlaceHolder": "信箱邮件",
 		"password": "密码",
 		"passwordFieldPlaceHolder": "密码",
