@@ -67,7 +67,7 @@
 	"developer": {
 		"title": "開發者",
 		"publicAPIAccess": "公開API存取",
-		"publicAPIAccessDesc": "Use of this key does not require any user action or consent, does not grant access to any account information, and is not used for authorization",
+		"publicAPIAccessDesc": "使用此key不需要做任何使用者的同意以及相關的認證程序.",
 		"APIKey": "API Key",
 		"androidApp": "Android App",
 		"iosApp": "IOS App",
@@ -158,7 +158,7 @@
 			"addPoiTitle": "新增POI"
 		},
 		"list": {
-			"pois": "POIs",
+			"pois": "POI",
 			"totalCount": "總數:"
 		},
 		"show": {},

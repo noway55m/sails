@@ -1,17 +1,257 @@
 {
-	// index(login) page
-	"username": "username",
-	"usernameFieldPlaceHolder": "Email Address",	
-	"password": "password",
-	"passwordFieldPlaceHolder": "Password",		
-	"password": "password",
-	"rememberMe": "Remember me",
-	"signIn": "Sign In",
-	"register": "Register",
-	"forgetPassword": "Forget Password",
-
-	"bbb": {
-
-		"ffff": "操你媽的"
-	}	
+	"header": {
+		"home": "主页",
+		"support": "支援",
+		"knowledgeBase": "相关知识",
+		"blog": "博客",
+		"terms": "条款",
+		"downloadSDK": "下载SDK",
+		"cms": "CMS",
+		"profile": "个人资讯",
+		"developer": "开发者",
+		"logout": "登出"
+	},
+	"footer": {},
+	"buttons": {
+		"change": "改变",
+		"changing": "改变中...",
+		"create": "建立",
+		"creating": "建立中...",
+		"confirm": "确认",
+		"confirming": "确认中...",
+		"cancel": "取消",
+		"canceling": "取消中...",
+		"close": "关闭",
+		"add": "新增",
+		"adding": "新增中...",
+		"package": "打包",
+		"packaging": "打包中...",
+		"update": "更新",
+		"updating": "更新中...",
+		"upload": "上传",
+		"uploading": "上传中...",
+		"remove": "移除",
+		"Removing": "移除中...",
+		"delete": "删除",
+		"deleting": "删除中...",
+		"copy": "复制",
+		"copyTemplate": "复制样板",
+		"copying": "复制中...",
+		"submit": "提交",
+		"submiting": "提交中...",
+		"inform": "通知",
+		"informing": "通知中...",
+		"editing": "编辑中...",
+		"edit": "编辑"
+	},
+	"others": {
+		"download": {
+			"title": "下载",
+			"downloadSailsSDK": "下載Sails SDK",
+			"downloadSailsSDKDesc": "点选下方连结下载各平台开发套件.",
+			"androidSDK": "Android SDK",
+			"sampleCode": "范例程式",
+			"javaDoc": "Java文档",
+			"iosSDK": "IOS SDK"
+		}
+	},
+	"feedback": {
+		"title": "建议回馈",
+		"thanks": "谢谢,我们已收到你的回馈!",
+		"fields": {
+			"name": "名字",
+			"email": "信箱",
+			"comment": "评论内容"
+		}
+	},
+	"developer": {
+		"title": "开发者",
+		"publicAPIAccess": "公开API存取",
+		"publicAPIAccessDesc": "使用此key不需要做任何使用者的同意以及相关的认证程序.",
+		"APIKey": "API Key",
+		"androidApp": "Android App",
+		"iosApp": "IOS App",
+		"ips": "IPs",
+		"referes": "Referes",
+		"createdDate": "建立日期",
+		"editAllowedAndroidApp": "编辑所允许的Andr​​oid App",
+		"editAllowedIOSApp": "编辑所允许的IOS App",
+		"editAllowedIPs": "编辑所允许的IP",
+		"editAllowedRefers": "编辑所允许的参考",
+		"regenerateKey": "重新产生Key",
+		"example": "范例:",
+		"andorid": {
+			"title": "编辑所允许的Andr​​oid App",
+			"deployDesc": "当您的App使用Android SDK开发套件时,需将Key设定取代为此.",
+			"verifyDesc": "所有来自您App所发送的要求,Sails系统皆会验证来源端是否为以下所允许的SHA1指纹凭证.你可以藉由'keytool'取得SHA1指纹凭证.",
+			"certificateFingerprintDesc": "一行请输入一个Base64 encoded的指纹凭证和Package名称的SHA1(以分号区分)."
+		},
+		"ios": {
+			"title": "编辑所允许的IOS App",
+			"deployDesc": "当您的App使用IOS SDK开发套件时,需将Key设定取代为此.",
+			"verifyDesc": "所有来自您App所发送的要求,Sails系统皆会验证来源端是否为以下所允许的Bundle ID.",
+			"identifierDesc": "一个Bundle ID一行."
+		}
+	},
+	"navbar": {
+		"buildings": "建筑物",
+		"poiEvents": "POI事件"
+	},
+	"index": {
+		"title": "登入",
+		"username": "使用者",
+		"usernameFieldPlaceHolder": "信箱邮件",
+		"password": "密码",
+		"passwordFieldPlaceHolder": "密码",
+		"rememberMe": "记住密码",
+		"signIn": "登入",
+		"register": "注册",
+		"forgetPassword": "忘记密码"
+	},
+	"forgetPasswordDialog": {
+		"title": "忘记密码",
+		"desc": "请输入您所注册的信箱邮件.",
+		"emailAddress": "信箱邮件"
+	},
+	"resetPassword": {
+		"title": "重设密码",
+		"desc": "请重新输入您的密码.",
+		"originalPassword": "原始密码",
+		"newPassword": "新密码",
+		"confirmNewPassword": "确认新密码"
+	},
+	"error": {
+		"title": "错误",
+		"success": "成功",
+		"loginMissingFieldMsg": "帐号或密码为空白!",
+		"loginNotActiveErrorMsg": "您的帐号尚未被激活!",
+		"loginIncorretUsernameOrPasswordErrorMsg": "不正确的帐号或密码!",
+		"unavailableApiKeyOrVerifier": "不正确的API金钥或验证码!",
+		"unavailableSDKVersion": "SDK套件版本过旧,请更新最新版本!",
+		"404Error": "404找不到网页! ",
+		"500Error": "500系统错误,请稍后再试!"
+	},
+	"building": {
+		"add": {
+			"addBuildingTitle": "新增建筑物",
+			"createHint": "请输入所创建的建筑物名称"
+		},
+		"list": {
+			"buildings": "建筑物",
+			"totalCount": "总数:"
+		},
+		"show": {
+			"buildings": "建筑物",
+			"uploadIconImage": "上传ICON"
+		},
+		"fields": {
+			"name": "名字",
+			"pub": "是否公开",
+			"desc": "描述",
+			"address": "地址",
+			"lastPackageTime": "上次打包时间"
+		},
+		"msg": {}
+	},
+	"poi": {
+		"add": {
+			"addPoiTitle": "新增POI"
+		},
+		"list": {
+			"pois": "POI",
+			"totalCount": "总数:"
+		},
+		"show": {},
+		"types": {
+			"text": "文字",
+			"link": "连结",
+			"image": "图片",
+			"video": "影片",
+			"audio": "声音",
+			"file": "档案"
+		},
+		"fields": {
+			"name": "名字",
+			"startTime": "开始时间",
+			"endTime": "结束时间"
+		},
+		"copies": {
+			"title": "已复制的POI",
+			"copyToHere": "复制POI到此"
+		},
+		"templateCopies": {
+			"title": "已复制的POI样板",
+			"copyToHere": "复制POI样板到此"
+		},
+		"event": {
+			"title": "POI事件",
+			"calendar": "行事历",
+			"prev": "<< 前一个月",
+			"today": "今天",
+			"next": "下一个月 >>",
+			"year": "年",
+			"month": "月",
+			"week": "周",
+			"day": "日",
+			"add": {
+				"title": "新增POI事件"
+			},
+			"fields": {
+				"title": "标题",
+				"desc": "描述",
+				"startTime": "开始时间",
+				"endTime": "结束时间"
+			},
+			"update": {
+				"title": "更新POI事件"
+			}
+		}
+	},
+	"floor": {
+		"add": {},
+		"list": {
+			"floors": "楼层",
+			"totalCount": "总数:",
+			"addFloor": "新增楼层(上)",
+			"addBasement": "新增楼层(下)",
+			"details": "内容"
+		},
+		"show": {
+			"lastXMLUpdateTime": "上次XML更新时间:",
+			"uploadMapHere": "上传Map图资档案",
+			"howCanStart": "如何开始建置图资?",
+			"uploadPathHere": "上传Path图资档案"
+		},
+		"fields": {
+			"name": "名字",
+			"layer": "楼层",
+			"desc": "描述",
+			"mapXML": "Map.xml",
+			"pathXML": "Path.xml"
+		}
+	},
+	"user": {
+		"index": {
+			"title": "主页"
+		},
+		"profile": {
+			"title": "个人资讯",
+			"usernameEmail": "帐号(信箱邮件)",
+			"administrator": "管理者",
+			"developer": "开法者",
+			"freeUser": "一般帐号",
+			"upgradeDeveloper": "升级开发者",
+			"contactUs": "联络我们",
+			"email": "信箱",
+			"message": "讯息",
+			"password": "密码",
+			"changePassword": "修改密码",
+			"originalPassword": "原始密码",
+			"newPassword": "新密码",
+			"confirmPassword": "确认新密码"
+		}
+	},
+	"deleteDialog": {
+		"title": "确认移除"
+	}
 }
