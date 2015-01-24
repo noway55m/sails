@@ -933,104 +933,132 @@ Utility.packageMapzip = function(buildingId, next){
 													
 													log.info("index.xml has been created or updated");
 				
-													var locationMapzipPath = folderPath + "/" + building.id + ".zip",
-											 			targetPath = building.userId + "/" + building.id + ".zip",
-											 			output = fs.createWriteStream(locationMapzipPath),
-											 			archive = archiver('zip');
-												
-													output.on('close', function() {
-													  log.info('archiver finish package map.zip');
-													});
+													// Construct poi.json
+													Utility.poiJSONInfo(building, function(err, obj){
 
-													archive.on('error', function(err) {
-													  if(err)
-													  	log.error(err);
-													});
+														if(err) {
 
-													archive.pipe(output);
-													
-													// Start to package map.zip
-													fs.readdir(buildingFolderPath, function(err, files){
-														
-														if(err){
-															
 															log.error(err);
-															
-														}else{
-															
-															for(var i=0; i<files.length; i++){
-																
-																var filePath = buildingFolderPath + "/" + files[i];
-																var isFolder = fs.statSync(filePath).isDirectory();
-																
-																log.info(filePath);
-																log.info(isFolder);
-																if(isFolder){
-																		
-																	(function(filePathF, layer){
 
-																		fs.readdir(filePathF, function(err, filesI){
-																			
-																			if(err){
-																				
-																				log.error(err);
-																				
-																			}else{
-																				
-																				for(var j=0; j<filesI.length; j++){
-																					
-																					var filePathInner = filePathF + "/" + filesI[j];
-																					if( filesI[j].indexOf("temp") != -1 )
-																						continue;
-																					else																		
-																						archive.append(fs.createReadStream(filePathInner), { name: "/" + layer + "/" + filesI[j] });
-																																										
-																				}
+														} else {
 
-																				// if(filesI.length == 0)
-																				//	archive.append(fs.createReadStream(filePath), { name: "/" + layer + "/.tmp" });
-																				
-																			}
-																																						
-																		});																		
-																		
-																	}(filePath, files[i]));
+															var poiTargetPath = buildingFolderPath + "/poi.json";
+															fs.writeFile(poiTargetPath, JSON.stringify(obj), function(err) {
+																
+																if(err) {
+
+																	log.error(err)
+
+																} else {
+
+																	log.info("poi.json has been created or updated");
+
+																	var locationMapzipPath = folderPath + "/" + building.id + ".zip",
+															 			targetPath = building.userId + "/" + building.id + ".zip",
+															 			output = fs.createWriteStream(locationMapzipPath),
+															 			archive = archiver('zip');
+																
+																	output.on('close', function() {
+																	  log.info('archiver finish package map.zip');
+																	});
+
+																	archive.on('error', function(err) {
+																	  if(err)
+																	  	log.error(err);
+																	});
+
+																	archive.pipe(output);
 																	
-																}else{
-																	archive.append(fs.createReadStream(filePath), { name: files[i] });																		
-																}
+																	// Start to package map.zip
+																	fs.readdir(buildingFolderPath, function(err, files){
+																		
+																		if(err){
+																			
+																			log.error(err);
+																			
+																		}else{
+																			
+																			for(var i=0; i<files.length; i++){
+																				
+																				var filePath = buildingFolderPath + "/" + files[i];
+																				var isFolder = fs.statSync(filePath).isDirectory();
+																				
+																				log.info(filePath);
+																				log.info(isFolder);
+																				if(isFolder){
+																						
+																					(function(filePathF, layer){
+
+																						fs.readdir(filePathF, function(err, filesI){
+																							
+																							if(err){
+																								
+																								log.error(err);
+																								
+																							}else{
+																								
+																								for(var j=0; j<filesI.length; j++){
+																									
+																									var filePathInner = filePathF + "/" + filesI[j];
+																									if( filesI[j].indexOf("temp") != -1 )
+																										continue;
+																									else																		
+																										archive.append(fs.createReadStream(filePathInner), { name: "/" + layer + "/" + filesI[j] });
+																																														
+																								}
+
+																								// if(filesI.length == 0)
+																								//	archive.append(fs.createReadStream(filePath), { name: "/" + layer + "/.tmp" });
+																								
+																							}
+																																										
+																						});																		
+																						
+																					}(filePath, files[i]));
+																					
+																				}else{
+																					archive.append(fs.createReadStream(filePath), { name: files[i] });																		
+																				}
+																																				
+																			}
+																			
+																			archive.finalize(function(err, bytes) {
+																				  if (err)
+																				    throw err;
+
+																				  log.info(bytes + ' total bytes');
+																			});	
+																																		
+																		}
 																																
-															}
-															
-															archive.finalize(function(err, bytes) {
-																  if (err)
-																    throw err;
+																	});
+																	
+																	building.mapzip = targetPath;
+																	building.mapzipUpdateTime = new Date();				
+																	building.save(function(err, building){
+																		
+																		if(err){
+																			log.error(err);
+																			errorOjb.code = errorResInfo.INTERNAL_SERVER_ERROR.code;
+																			errorOjb.msg = errorResInfo.INTERNAL_SERVER_ERROR.msg;
+															    			next(errorOjb);																
+																		}
 
-																  log.info(bytes + ' total bytes');
-															});	
-																														
-														}
-																												
-													});
-													
-													building.mapzip = targetPath;
-													building.mapzipUpdateTime = new Date();				
-													building.save(function(err, building){
-														
-														if(err){
-															log.error(err);
-															errorOjb.code = errorResInfo.INTERNAL_SERVER_ERROR.code;
-															errorOjb.msg = errorResInfo.INTERNAL_SERVER_ERROR.msg;
-											    			next(errorOjb);																
-														}
+																		if(building){
+																			errorOjb.code = errorResInfo.SUCCESS.code;
+																			errorOjb.building = building;
+																			next(errorOjb);				
+																		}
 
-														if(building){
-															errorOjb.code = errorResInfo.SUCCESS.code;
-															errorOjb.building = building;
-															next(errorOjb);				
+																	});	
+
+																}
+
+															});
+
 														}
 
-													});																										
+													});																									
 													
 												}
 												
@@ -1381,6 +1409,31 @@ Utility.packiageMapzipAchiver = function(building, isAdminSample, next){
 
 // Function for construct poi json file
 Utility.poiJSONInfo = function(building, next) {
+
+	var poisObj = {
+		pois: []
+	}
+
+	// Get all pois of specific building
+	Poi.find({
+
+		buildingId: building.id
+	
+	}, function(err, pois) {
+
+		if(err) {
+
+			log.error(err);
+			next(err, poisObj);
+
+		} else {
+
+			poisObj.pois = pois;
+			next(null, poisObj);
+
+		}
+
+	});
 
 }
 
