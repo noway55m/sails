@@ -133,7 +133,7 @@ exports.list = function(req, res) {
 	var page = ( req.query.page && req.query.page > 0 ? req.query.page - 1 : 0 ) || 0;
 
     // Check user role for check with administration permission
-    var queryJson = null;
+    var queryJson = { name: { $ne: config.sampleBuildingName } };
     Building.find(queryJson)
 		.sort({ createdTime: -1 })
 		.limit(config.pageOffset)

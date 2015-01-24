@@ -45,7 +45,7 @@ function createDefaultUser() {
 			// Generate default 'MyHome' building
 			Building.findOne({
 
-				name: 'MyHome',
+				name: config.sampleBuildingName,
 				userId: user._id
 
 			}, function(err, building){
@@ -113,7 +113,7 @@ function createSampleBuilding(user, area){
 
 	new Building({
 
-		name: "MyHome",						
+		name: config.sampleBuildingName,						
 		desc: "This is sample building.",
 		downfloor: 0,
 		upfloor: 1,

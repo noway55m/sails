@@ -52,6 +52,9 @@ var configuration = {
 	/******** Maximum upload size ********/
 	maximumUploadSize: 5000, // kbytes
 
+	/******** Sample building name ********/
+	sampleBuildingName: "MyHome",
+
 	/******** Develop environment ********/
 	dev: {
 

@@ -63,6 +63,8 @@ exports.list = function(req, res) {
     var queryJson = null;
     if(req.user.role !== User.ROLES.ADMIN)
         queryJson = { userId: req.user.id };
+    else
+    	queryJson = { name: { $ne: config.sampleBuildingName } };  // Parse all sample building
 
     Building.find(queryJson, function(err, buildings){
 
@@ -135,6 +137,8 @@ exports.listPage = function(req, res) {
     var queryJson = null;
     if(req.user.role !== User.ROLES.ADMIN)
         queryJson = { userId: req.user.id };
+    else
+    	queryJson = { name: { $ne: config.sampleBuildingName } }; // Parse all sample building
 
     Building.find(queryJson)
 		.sort({ createdTime: -1 })
