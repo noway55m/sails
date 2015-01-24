@@ -175,8 +175,8 @@
 								<!-- Display Block -->
 								<div class="templateCustomFieldsDisplay">
 									<!-- fields -->
-									<div class="customFieldsKey cimage col-xs-11 col-sm-12 col-md-10">										
-										<img ng-src="/poi/getFile?filePath={{field.value}}&type=image" width=150 alt="Image" />
+									<div class="customFieldsKey cimage col-xs-11 col-sm-12 col-md-10">
+										<img ng-src="/poi/getFile?filePath={{field.value}}&type={{field.type}}" width=150 alt="Image" />
 										<span ng-bind="field.key"></span>
 									</div>														<!-- buttons -->
 									<span class="customFieldsButtonEdit glyphicon glyphicon-edit"></span>
@@ -197,7 +197,7 @@
 										</div>										
 									</form>
 									<!-- buttons -->
-									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.submitPoiFile($event, field, 'image')"></span>
+									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.submitPoiFile($event, field)"></span>
 									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.cancelField()"></span>
 								</div>
 								<div style="float:left;clear:both;"></div>
@@ -210,19 +210,32 @@
 
 									<!-- fields -->
 									<div class="customFieldsKey cvideo col-xs-11 col-sm-12 col-md-10">
-										<iframe ng-src="{{field.value}}" width="100%" height="215"  frameborder="0" ></iframe>
+										<span class="glyphicon glyphicon-facetime-video"></span>
 										<span ng-bind="field.key"></span>
-									</div>														<!-- buttons -->
+										<video controls style="overflow:auto;padding:0px; margin: 0px auto;">
+										     <source src="" dynamic-url dynamic-url-src="/poi/getFile?filePath={{field.value}}&type={{field.type}}" type="video/mp4">
+										 </video>
+									</div>														
+									<!-- buttons -->
 									<span class="customFieldsButtonEdit glyphicon glyphicon-edit"></span>
 									<span class="customFieldsButtonRemove glyphicon glyphicon-remove" ng-click="cfg.removeField($index)"></span>
 								</div>
 								<!-- Edit Block -->
 								<div class="templateCustomFieldsEdit">
 									<!-- fields -->
-									<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key"/>
-									<input class="customFieldsValue col-xs-11 col-sm-12 col-md-7" ng-model="field.value"/>								
+									<form action="/poi/uploadFile" method="POST" enctype="multipart/form-data">
+										<input type="hidden" name="_id" value="{{poi._id}}"/>
+										<input type="hidden" name="type" value="{{field.type}}"/>
+										<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key" name="fileName"/>
+										<div class="customFieldsValue col-xs-11 col-sm-12 col-md-7">
+											<input type="file" placeholder="File" name="file"/>
+										</div>
+										<div class="alert alert-danger error-msg">
+											<span class="label label-danger"><%= __("error.title") %></span> <span class="errorText"></span>
+										</div>										
+									</form>
 									<!-- buttons -->
-									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.updateField()"></span>
+									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" data-loading-text="Loading..." ng-click="cfg.submitPoiFile($event, field)"></span>
 									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.cancelField()"></span>
 								</div>
 								<div style="float:left;clear:both;"></div>
@@ -234,10 +247,10 @@
 								<div class="templateCustomFieldsDisplay">
 									<!-- fields -->
 									<div class="customFieldsKey col-xs-11 col-sm-12 col-md-10">
-										<span class="glyphicon glyphicon-music" ng-bind="field.key"></span>
+										<span class="glyphicon glyphicon-music"></span>
+										<span ng-bind="field.key"></span>										
 										<audio controls>
-										  <source src="{{field.value}}" type="audio/mpeg"/>
-										  <embed height="50" width="100" src="{{field.value}}"/>
+										  <source src="" dynamic-url dynamic-url-src="/poi/getFile?filePath={{field.value}}&type={{field.type}}" type="audio/mpeg"/>			
 										</audio>
 									</div>														
 									<!-- buttons -->
@@ -249,7 +262,7 @@
 									<!-- fields -->
 									<form action="/poi/uploadFile" method="POST" enctype="multipart/form-data">
 										<input type="hidden" name="_id" value="{{poi._id}}"/>
-										<input type="hidden" name="type" value="audio"/>
+										<input type="hidden" name="type" value="{{field.type}}"/>
 										<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key" name="fileName"/>
 										<div class="customFieldsValue col-xs-11 col-sm-12 col-md-7">
 											<input type="file" placeholder="File" name="file"/>
@@ -259,7 +272,7 @@
 										</div>										
 									</form>
 									<!-- buttons -->
-									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" data-loading-text="Loading..." ng-click="cfg.submitPoiFile($event, field, 'file')"></span>
+									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" data-loading-text="Loading..." ng-click="cfg.submitPoiFile($event, field)"></span>
 									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.cancelField()"></span>
 
 								</div>
@@ -272,7 +285,7 @@
 								<div class="templateCustomFieldsDisplay">
 									<!-- fields -->
 									<div class="customFieldsKey col-xs-11 col-sm-12 col-md-10">
-										<a href="{{field.value}}"/>
+										<a href="/poi/getFile?filePath={{field.value}}&type={{field.type}}"/>
 											<span class="glyphicon glyphicon-download" ng-bind="field.key"></span>
 										</a>										
 									</div>														
@@ -285,7 +298,7 @@
 									<!-- fields -->
 									<form action="/poi/uploadFile" method="POST" enctype="multipart/form-data">
 										<input type="hidden" name="_id" value="{{poi._id}}"/>
-										<input type="hidden" name="type" value="file"/>
+										<input type="hidden" name="type" value="{{field.type}}"/>
 										<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key" name="fileName"/>
 										<div class="customFieldsValue col-xs-11 col-sm-12 col-md-7">
 											<input type="file" placeholder="File" name="file"/>
@@ -295,18 +308,15 @@
 										</div>										
 									</form>
 									<!-- buttons -->
-									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.submitPoiFile($event, field, 'file')"></span>
+									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.submitPoiFile($event, field)"></span>
 									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.cancelField()"></span>
-
-
-
 								</div>
 								<div style="float:left;clear:both;"></div>
-							</div>
 
 
 						</div>
 					</div>
+							</div>
 
 				</div>	
 

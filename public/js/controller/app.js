@@ -2,6 +2,17 @@
 var app = angular.module('sails', ['ngResource', 'ngSanitize', 'poiServices', 'poiEventServices', 'buildingServices', 'floorServices',
                                    'storeServices', 'adServices', 'userServices', 'developerApplicationServices']);
 
+// Custom angular directive for handle "ng-src" is not work on video tag
+app.directive('dynamicUrl', function () {
+    return {
+        restrict: 'A',
+        link: function postLink(scope, element, attr) {
+            element.attr('src', attr.dynamicUrlSrc);
+        }
+    };
+});
+
+
 // REST API of Poi
 angular.module('poiServices', [ 'ngResource' ]).factory('Poi', function($resource) {
     return $resource('/poi/:action/:_id', { _id : "@id"}, {

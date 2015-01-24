@@ -271,7 +271,6 @@ function CustomFieldsGenerator(setting, $scope, $compile, Poi) {
 
 	// Function for create audio field
 	me.createAudioField = function(){
-		console.log("fffee")
 		var currentCuout = getNextKeyNumber();
 		$scope.$apply(function(){
 			poi.customFields.push({ 
