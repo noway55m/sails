@@ -5,8 +5,8 @@ var database = {
 
 		uri: "mongodb://localhost:27017/sails",
 		options: {
-		  user: 'USERNAME',
-		  pass: 'PASSWORD'
+		  user: 'test',
+		  pass: 'test'
 		}
 
 	},
@@ -15,8 +15,8 @@ var database = {
 
 		uri: "mongodb://localhost:27017/sails",
 		options: {
-		  user: 'USERNAME',
-		  pass: 'PASSWORD'
+		  user: 'test',
+		  pass: 'test'
 		}
 
 	},
@@ -25,8 +25,8 @@ var database = {
 
 		uri: "mongodb://localhost:27017/sails",
 		options: {
-		  user: 'USERNAME',
-		  pass: 'PASSWORD'
+		  user: 'test',
+		  pass: 'test'
 		}
 
 	}
