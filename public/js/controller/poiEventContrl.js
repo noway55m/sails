@@ -324,7 +324,19 @@ var utility = Utility.getInstance(),
 
 	// Function for delete poi event
 	$scope.deletePoiEvent = function(){		
-		PoiEvent.delete({ _id: this.selectedDeleteEvent.id }, function(){
+		
+		var deleteId = this.selectedDeleteEvent.id;
+		PoiEvent.delete({ _id: deleteId  }, function(){
+
+			// Update event list
+			var event_source = calendar.options.events_source, i;
+			for(i=0; i<event_source.length; i++) {
+				if(event_source[i].id == deleteId)
+					event_source.splice(i, 1);		
+			}
+
+			// Update calendar view
+			calendar.view();			
 
 			// Show success msg
 			$().toastmessage('showSuccessToast', "success"); 
