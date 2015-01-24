@@ -264,6 +264,8 @@
 }
 #cal-day-box .cal-hours {
   font-weight: bolder;
+  font-size: 0.9em;
+  padding-left: 5px;
 }
 #cal-day-box .cal-day-hour:nth-child(odd) {
   background-color: #fafafa;
@@ -281,6 +283,9 @@
   position: relative;
   max-width: 200px;
   overflow: hidden;
+  width:155px;
+  border-radius: 10px;
+  color:#d9534f;
 }
 #cal-day-box .day-highlight {
   line-height: 30px;
@@ -295,7 +300,7 @@
   text-overflow: ellipsis;
 }
 #cal-day-box .day-highlight.dh-event-important {
-  border: 1px solid #ad2121;
+  border: 1px solid #d9534f;
 }
 #cal-day-box .day-highlight.dh-event-warning {
   border: 1px solid #e3bc08;
@@ -515,4 +520,13 @@ a.cal-event-week {
 }
 .badge-important {
   background-color: #b94a48;
+}
+
+/********* Add by frank hsu *********/
+.event-remove{
+  cursor:pointer;
+  color:#d9534f;
+  position:absolute;
+  top:0px;
+  right:0px;
 }

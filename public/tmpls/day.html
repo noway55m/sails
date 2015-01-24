@@ -46,9 +46,12 @@
 			<% }; %>
 		</div>
 		
+		<!-- Default event for solve layout issue(frank hsu) -->
+		<div class="pull-left day-event day-highlight dh-event-important" style="max-width:10px;"></div>
 		<% _.each(by_hour, function(event){ %>
-			<div class="pull-left day-event day-highlight dh-<%= event['class'] %>" style="margin-top: <%= (event.top * 30) %>px; height: <%= (event.lines * 30) %>px">
+			<div class="pull-left day-event day-highlight dh-<%= event['class'] %>" style="margin-top: <%= (event.top * 30) %>px; height: <%= (event.lines * 30) %>px;">
 				<span class="cal-hours"><%= event.start_hour %> - <%= event.end_hour %></span>
+				<span class="glyphicon glyphicon-remove event-remove" data-event-id="<%= event.id %>" ></span>				
 				<a href="<%= event.url ? event.url : 'javascript:void(0)' %>" data-event-id="<%= event.id %>"
 				   data-event-class="<%= event['class'] %>" class="event-item">
 					<%= event.title %></a>
