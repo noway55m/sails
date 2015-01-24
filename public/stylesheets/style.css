@@ -228,6 +228,10 @@ body {
 	margin-bottom: 0px;
 }
 
+#rememberMe{
+	vertical-align: text-bottom;	
+}
+
 /******************* biilding-show.html ********************/
 .poisAndBuildingsTab{
 	padding: 10px 30px 0px 30px;
