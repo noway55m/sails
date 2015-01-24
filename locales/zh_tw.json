@@ -44,6 +44,16 @@
 		"editing": "編輯中...",
 		"edit": "編輯"
 	},
+	"register": {
+		"title": "註冊",
+		"fields": {
+			"emailAddress": "信箱郵件",
+			"password": "密碼",
+			"confirmPassword": "確認密碼"						
+		},
+		"acceptTerm": "請接受下方條款",
+		"memberAdnConditions": "帆船科技會員條款與細則"						
+	},		
 	"others": {
 		"download": {
 			"title": "下載",

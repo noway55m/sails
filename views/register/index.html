@@ -22,7 +22,7 @@
 	</script>
 
 	<!-- Title -->	  
-    <title>Register</title>
+    <title><%= __('register.title') %></title>
 
   </head>
   <body>
@@ -48,7 +48,7 @@
 		  	</script>
 		  </div>
 
-  			<h1>Register</h1>
+  			<h1><%= __('register.title') %></h1>
   			<hr>
 
 	  		<!-- Register Form -->
@@ -56,24 +56,24 @@
 
 			  <!-- Form fields -->
 			  <div class="form-group">
-			    <label for="email">Email address</label>
-			    <input type="text" class="form-control" id="email" placeholder="Please enter the email address" name="email" value="" maxlength="60">
+			    <label for="email"><%= __('register.fields.emailAddress') %></label>
+			    <input type="text" class="form-control" id="email" placeholder="<%= __('register.fields.emailAddress') %>" name="email" value="" maxlength="60">
 			  </div>
 			  <div class="form-group">
-			    <label for="password">Password</label>
-			    <input type="password" class="form-control" id="password" placeholder="Password" name="password" value="" maxlength="60">
+			    <label for="password"><%= __('register.fields.password') %></label>
+			    <input type="password" class="form-control" id="password" placeholder="<%= __('register.fields.password') %>" name="password" value="" maxlength="60">
 			  </div>
 
 			  <div class="form-group">
-			    <label for="confirmPassword">Confirm Password</label>
-			    <input type="password" class="form-control" id="confirm-password" placeholder="Confirm Password" name="confirmPassword" value="" maxlength="60">
+			    <label for="confirmPassword"><%= __('register.fields.confirmPassword') %></label>
+			    <input type="password" class="form-control" id="confirm-password" placeholder="<%= __('register.fields.confirmPassword') %>" name="confirmPassword" value="" maxlength="60">
 			  </div>
 
 			  <div class="form-group">
 			    <input type="checkbox" class="form-control" id="acceptTerm" name="acceptTerm" style="width:20px;display:inline-block;margin-right:5px;">
-			    <span for="acceptTerm">Acception following term</span>	
+			    <span for="acceptTerm"><%= __('register.acceptTerm') %></span>	
 			    <div class="jumbotron" style="height:300px;overflow-y:scroll;padding-top:5px;font-size:12px">
-				<h3>SAILS Cloud Membership Terms and Conditions</h3>
+				<h3><%= __('register.memberAdnConditions') %></h3>
 				<ul>
 					<li>SAILS Cloud is a multimedia platform presented, supplied, made available and/or distributed by SAILS Technology (hereinafter referred to as “Company”, “we”, “us” or “our”). By signing up as a member of SAILS Cloud or downloading, accessing or using any game, video, application, tools or other content on SAILS Cloud (collectively, the “Content”), you represent that you have read, understood and agree to be bound by our terms and conditions set forth below (the“Terms”). Please read all these Terms. If you agree and accept all of these Terms, please click the “Agree and Accept” button of this page to continue using SAILS Cloud. If you do not agree and accept all of these Terms, please do not sign up as a member of SAILS Cloud and do not use our services.</li>
 
@@ -313,7 +313,7 @@
 			  <hr>
 
 			  <!-- Submit button -->
-			  <button type="submit" class="btn btn-default" id="submit">Submit</button>
+			  <button type="submit" class="btn btn-default" id="submit"><%= __('buttons.submit') %></button>
 
 			</form>
 

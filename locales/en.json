@@ -44,6 +44,16 @@
 		"editing": "Editing",
 		"edit": "Edit"
 	},
+	"register": {
+		"title": "Register",
+		"fields": {
+			"emailAddress": "Email address",
+			"password": "Password",
+			"confirmPassword": "Confirm Password"						
+		},
+		"acceptTerm": "Acception following term",
+		"memberAdnConditions": "SAILS Cloud Membership Terms and Conditions"						
+	},
 	"others": {
 		"download": {
 			"title": "download",

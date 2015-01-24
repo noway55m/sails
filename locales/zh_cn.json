@@ -44,6 +44,16 @@
 		"editing": "编辑中...",
 		"edit": "编辑"
 	},
+	"register": {
+		"title": "注册",
+		"fields": {
+			"emailAddress": "信箱邮件",
+			"password": "密码",
+			"confirmPassword": "确认密码"						
+		},
+		"acceptTerm": "请接受下方条款",
+		"memberAdnConditions": "帆船科技会员条款与细则"						
+	},	
 	"others": {
 		"download": {
 			"title": "下载",
