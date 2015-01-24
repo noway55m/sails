@@ -412,10 +412,7 @@ exports.update = function(req, res) {
 
 										}else{
 
-											//res.json(errorObj.code, errorObj.building);
-						        			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-						        				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-						        			});  
+											res.json(errorObj.code, errorObj.building);
 
 										}
 
