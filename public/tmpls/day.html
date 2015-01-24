@@ -47,7 +47,7 @@
 		</div>
 		
 		<!-- Default event for solve layout issue(frank hsu) -->
-		<div class="pull-left day-event day-highlight dh-event-important" style="max-width:10px;"></div>
+		<div class="pull-left day-event day-highlight dh-event-important" style="max-width:10px;border:none;"></div>
 		<% _.each(by_hour, function(event){ %>
 			<div class="pull-left day-event day-highlight dh-<%= event['class'] %>" style="margin-top: <%= (event.top * 30) %>px; height: <%= (event.lines * 30) %>px;">
 				<span class="cal-hours"><%= event.start_hour %> - <%= event.end_hour %></span>
