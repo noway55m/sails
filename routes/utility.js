@@ -36,7 +36,12 @@ Utility.errorResInfo = {
 	SUCCESS : {
 		msg: {},
 		code: 200					
-	},	
+	},
+
+	PARTIAL_DOWNLOAD_SUCCESS : {
+		msg: {},
+		code: 206					
+	},
 				
 	ERROR_PERMISSION_DENY : {		
 		msg: "You have no permission to access",
@@ -75,6 +80,16 @@ Utility.errorResInfo = {
 	
 	INCORRECT_FILE_TYPE : {
 		msg: "Incorrect file type",
+		code: 400				
+	},
+
+	FILE_NOT_EXIST : {
+		msg: "File not exist",
+		code: 400				
+	},
+
+	OVER_UPLOAD_MAXIMUM_SIZE : {
+		msg: "Over maximum upload size",
 		code: 400				
 	},
 
@@ -1033,6 +1048,12 @@ Utility.packageMapzip = function(buildingId, next){
 						
 					});
 					
+				} else {
+
+					errorOjb.code = errorResInfo.INCORRECT_PARAMS.code;
+					errorOjb.msg = errorResInfo.INCORRECT_PARAMS.msg;
+	    			next(errorOjb);			 
+
 				}
 				
 			}
@@ -1358,5 +1379,9 @@ Utility.packiageMapzipAchiver = function(building, isAdminSample, next){
 
 }
 
+// Function for construct poi json file
+Utility.poiJSONInfo = function(building, next) {
+
+}
 
 module.exports = Utility;

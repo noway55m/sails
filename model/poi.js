@@ -51,4 +51,16 @@ var poiSchema = new Schema({
 
 var poi = mongoose.model( 'Poi', poiSchema );
 
+// POI types
+poi.CUSTOM_FIELDS = {
+    TYPE: {
+        TEXT: 1,
+        LINK: 2,
+        IMAGE: 3,
+        VIDEO: 4,
+        AUDIO: 5,
+        FILE: 6
+    }        
+};
+
 module.exports = poi;

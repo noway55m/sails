@@ -806,126 +806,185 @@ exports.uploadFile = function(req, res) {
 	if(req.body._id && req.body.type && req.files.file) {
 
 		// Get file name and extension
-		var fileName = req.files.file.name;
+		var file = req.files.file;
+		var fileName = file.name;
 		var extension = path.extname(fileName).toLowerCase();
-		var tmpPath = req.files.file.path;
+		var fileSize = file.size;
+		var tmpPath = file.path;
+
+		log.info("file name: " + fileName);
+		log.info("file extension: " + extension);
+		log.info("file size: " + fileSize);		
 		log.info("tmpPath: " + tmpPath);
 
-		// Check file format by extension
-		if(req.body.type == "image") {
+		// Check file format by extension(mimeType)
+		if(req.body.type == Poi.CUSTOM_FIELDS.TYPE.IMAGE) {
 
 			extension = extension === '.png' ? ".png" : null ||
 						extension === '.jpg' ? ".jpg" : null ||
 						extension === '.gif' ? ".gif" : null;
 
-		} else if(req.body.type == "audio") {
+		} else if(req.body.type == Poi.CUSTOM_FIELDS.TYPE.VIDEO){
+
+			extension = extension === '.mp4' ? ".mp4" : null;
+
+		} else if(req.body.type == Poi.CUSTOM_FIELDS.TYPE.AUDIO) {
 
 			extension = extension === '.mp3' ? ".mp3" : null ||
 						extension === '.ogg' ? ".ogg" : null;
 
-		} else {}
+		} else if (req.body.type == Poi.CUSTOM_FIELDS.TYPE.FILE) {
 
-		if(extension) {
+			extension = extension ? extension : null;
 
-			// Read file and prepare hash
-			var md5sum = crypto.createHash('md5'),
-				stream = fs.ReadStream(tmpPath);
+		} else {
+			
+			extension = null;
 
-			stream.on('data', function(d) {
-				md5sum.update(d);
-			});
+		}
 
-			stream.on('end', function() {
+		// Check file size
+		if(fileSize < config.maximumUploadSize) {
 
-				Poi.findById(req.body._id, function(error, poi){
+			if(extension) {
 
-					if(error) {
+				// Read file and prepare hash
+				var md5sum = crypto.createHash('md5'),
+					stream = fs.ReadStream(tmpPath);
 
-		                log.error(err);
-						res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-							msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-						});
+				stream.on('data', function(d) {
+					md5sum.update(d);
+				});
 
-					} else {
+				stream.on('end', function() {
 
-						if( poi ) {
+					Poi.findById(req.body._id, function(error, poi){
 
-			    			// Check permisssion
-			    			utilityS.validatePermission(req.user, poi, Poi.modelName, function(result){
+						if(error) {
 
-			    				if(result) {
-
-									// Set target file name by hash the file mapInfoResourcePath
-									var targetFileName = md5sum.digest('hex')  + extension,
-										folderPath =  config.mapInfoPath + "/" + poi.userId + "/" + config.mapInfoResourcePath,
-										targetPath =  folderPath + "/" + targetFileName,
-										targetWebPath = poi.userId + "/" + config.mapInfoResourcePath + "/" + targetFileName;
-									
-									log.info("targetPath: " + targetPath);
-
-									// Check folder exist
-									mkdirp(folderPath, function(err) {
-
-										if(err) {
-
-											log.error(err);
-
-										} else {
-
-											log.info("targetName: " + targetFileName);
-											log.info("targetWebPath: " + targetWebPath);
-											fs.rename(tmpPath, targetPath, function(err) {
-												if(err){
-
-													log.error(err);
-									    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-									    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-									    			});  
-
-												}else{
-
-													res.send( errorResInfo.SUCCESS.code, targetWebPath );
-
-													// Delete the temporary file
-						                            fs.unlink(tmpPath, function(err){
-						                            	log.error(err);
-						                            });										
-													
-												}
-											});		
-
-										}
-
-									});						
-																			
-			    				} else {
-
-		                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
-		                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
-		                			});		    					
-
-			    				}
-
-			    			});
+			                log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							});
 
 						} else {
 
-		        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-		        				msg: errorResInfo.INCORRECT_PARAMS.msg
-		        			});  						
+							if( poi ) {
 
-						}//end if
+								Building.findById(poi.buildingId, function(err, building){
 
-					}
+									if(err) {
+
+						                log.error(err);
+										res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+											msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+										});
+
+									} else {
+
+										if(building) {
+
+							    			// Check permisssion
+							    			utilityS.validatePermission(req.user, building, Building.modelName, function(result){
+
+							    				if(result) {
+
+													// Set target file name by hash the file mapInfoResourcePath
+													var targetFileName = md5sum.digest('hex')  + extension,
+														folderPath =  config.mapInfoPath + "/" + building.userId + "/" + config.mapInfoResourcePath,
+														targetPath =  folderPath + "/" + targetFileName,
+														targetWebPath = building.userId + "/" + config.mapInfoResourcePath + "/" + targetFileName;
+													
+													log.info("targetPath: " + targetPath);
+
+													// Check folder exist
+													mkdirp(folderPath, function(err) {
+
+														if(err) {
+
+															log.error(err);
+															res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+																msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+															});														
+
+														} else {
+
+															log.info("targetName: " + targetFileName);
+															log.info("targetWebPath: " + targetWebPath);
+															fs.rename(tmpPath, targetPath, function(err) {
+																if(err){
+
+																	log.error(err);
+													    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+													    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+													    			});  
+
+																}else{
+
+																	res.send( errorResInfo.SUCCESS.code, targetWebPath );
+
+																	// Delete the temporary file
+										                            fs.unlink(tmpPath, function(err){
+										                            	if(err)
+										                            		log.error(err);
+										                            });										
+																	
+																}
+															});		
+
+														}
+
+													});						
+																							
+							    				} else {
+
+						                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
+						                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+						                			});		    					
+
+							    				}
+
+							    			});
+
+										} else {
+
+							                log.error(err);
+											res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+												msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+											});
+
+										}
+
+									}
+
+								});
+
+							} else {
+
+			        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			        				msg: errorResInfo.INCORRECT_PARAMS.msg
+			        			});  						
+
+							}//end if
+
+						}
+
+					});
 
 				});
 
-			});
+			} else {
+
+				res.json( errorResInfo.INCORRECT_FILE_TYPE.code , { 
+					msg: errorResInfo.INCORRECT_FILE_TYPE.msg
+				});
+
+			}
 
 		} else {
 
-			res.json( errorResInfo.INCORRECT_FILE_TYPE.code , { 
-				msg: errorResInfo.INCORRECT_FILE_TYPE.msg
+			res.json( errorResInfo.OVER_UPLOAD_MAXIMUM_SIZE.code , { 
+				msg: errorResInfo.OVER_UPLOAD_MAXIMUM_SIZE.msg
 			});
 
 		}
@@ -950,45 +1009,84 @@ exports.getFile = function(req, res) {
             var fileName = req.query.filePath,
             	filePath = path.dirname() + "/" + config.mapInfoPath + '/' + fileName,
             	stat = fs.statSync(filePath),
+            	total = stat.size,
             	type = req.query.type,
-            	contentType;
+            	readStream = fs.createReadStream(filePath);
 
 
-            if(type == "image") {
+            if(type == Poi.CUSTOM_FIELDS.TYPE.IMAGE) {
 
 	            res.writeHead( errorResInfo.SUCCESS.code, {
-	                "Content-type": "image/png",
-	                'Content-Length': stat.size
+	                "Content-Type": "image/png",
+	                'Content-Length': total
 	            });
+		    	readStream.pipe(res);
 
-            } else if(type == "audio") {
+            } else if(type == Poi.CUSTOM_FIELDS.TYPE.AUDIO) {
 
 	            res.writeHead( errorResInfo.SUCCESS.code, {
-	                "Content-type": "audio/mpeg",
-	                'Content-Length': stat.size
+	                "Content-Type": "audio/mpeg",
+	                'Content-Length': total
+	            });
+		    	readStream.pipe(res);
+
+            } else if(type == Poi.CUSTOM_FIELDS.TYPE.VIDEO) {
+
+				// Check 'range' header for handle the partial download 	
+				if (req.headers['range']) {
+					
+					// Parse the start, end and chunk size
+					var range = req.headers.range;
+					var parts = range.replace(/bytes=/, "").split("-");
+					var partialstart = parts[0];
+					var partialend = parts[1];
+
+					// Transfer to integer
+					var start = parseInt(partialstart, 10);
+					var end = partialend ? parseInt(partialend, 10) : total-1;
+					var chunksize = (end-start)+1;
+					log.info('RANGE: ' + start + ' - ' + end + ' = ' + chunksize);
+
+					var readStream = fs.createReadStream(filePath, {start: start, end: end});
+					res.writeHead( errorResInfo.PARTIAL_DOWNLOAD_SUCCESS.code, { 
+						'Content-Range': 'bytes ' + start + '-' + end + '/' + total, 
+						'Accept-Ranges': 'bytes', 
+						'Content-Length': chunksize, 
+						'Content-Type': 'video/mp4' 
+					});
+					readStream.pipe(res);
+
+				} else {
+
+					log.info('Custom fields of video streaming  of POI - all: ' + total);
+					res.writeHead( errorResInfo.SUCCESS.code, { 
+						'Content-Length': total, 
+						'Content-Type': 'video/mp4' 
+					});
+					readStream.pipe(res);
+
+				}
+
+            } else if(type == Poi.CUSTOM_FIELDS.TYPE.FILE) {
+
+	            res.writeHead( errorResInfo.SUCCESS.code, {
+	                "Content-Type": "application/octet-stream",
+	                "Content-Disposition": "attachment; filename=file",
+	                "Content-Length": stat.size
 	            });
 
             } else {
 
-	            res.writeHead( errorResInfo.SUCCESS.code, {
-	                "Content-type": "application/octet-stream",
-	                "Content-disposition": "attachment; filename=map.zip",
-	                "Content-Length": stat.size
-	            });
+            	throw new Error("Type not support");
 
-            }            	           
+            }           	           
 
-		    var readStream = fs.createReadStream(filePath);
+        } catch(e) {
 
-		    // We replaced all the event handlers with a simple call to util.pump()
-		    readStream.pipe(res);
-
-
-        }catch(e){
-
+        	log.error("Get video, audio or file of custom fields error");
             log.error(e);
-            res.json(400, {
-            	msg: "file doesn't exist"
+            res.json( errorResInfo.FILE_NOT_EXIST.code, {
+            	msg: errorResInfo.FILE_NOT_EXIST.msg
             });            
 
         }

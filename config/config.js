@@ -49,6 +49,9 @@ var configuration = {
 
 	recaptchaPrivateKey: "6Lco-u0SAAAAAASO_2mDmdc4aaHP2p4jFBa6hhZ9",
 
+	/******** Maximum upload size ********/
+	maximumUploadSize: 5000, // kbytes
+
 	/******** Develop environment ********/
 	dev: {
 
