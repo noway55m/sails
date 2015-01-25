@@ -102,7 +102,9 @@ function CustomFieldsGenerator(setting, $scope, $compile, Poi) {
 	// Function for show error message
 	function showSuccessMsg(type){
 		if(type == 'remove')
-			$().toastmessage('showSuccessToast', "Remove successfully");						
+			$().toastmessage('showSuccessToast', "Remove successfully");		
+		else if(type == 'update')
+			$().toastmessage('showSuccessToast', "Update successfully");									
 		else 	
 			$().toastmessage('showSuccessToast', "Create successfully");			
 	}
@@ -132,8 +134,15 @@ function CustomFieldsGenerator(setting, $scope, $compile, Poi) {
 	}
 
 	// Functon for update field
-	me.updateField = function(){
-		syncToServer(poi);
+	me.updateField = function(e){
+		var updateButton = angular.element(e.currentTarget),
+			wrapper = updateButton.parent(),
+			fieldKeyInput = wrapper.find('input[name=fieldKey]'),
+			errorMsgObj = wrapper.find('.error-msg')
+
+		// Check key is empty or not	
+		if(utility.emptyValidate(fieldKeyInput, errorMsgObj))
+			syncToServer(poi, 'update');
 	}
 
 	// ------------------------------------------------------------------------

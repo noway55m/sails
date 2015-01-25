@@ -137,10 +137,10 @@
 								<!-- Edit Block -->
 								<div class="templateCustomFieldsEdit">
 									<!-- fields -->
-									<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key"/>
+									<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key" name="fieldKey"/>
 									<textarea class="customFieldsValue col-xs-11 col-sm-12 col-md-7" ng-model="field.value"></textarea>
 									<!-- buttons -->
-									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.updateField()"></span>
+									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.updateField($event)"></span>
 									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.toggleMultipleLineMode($event, 1, field)"></span>
 									<!-- error msg -->
 									<div class="alert alert-danger error-msg">
@@ -165,10 +165,10 @@
 								<!-- Edit Block -->
 								<div class="templateCustomFieldsEdit">
 									<!-- fields -->
-									<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key"/>
+									<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key" name="fieldKey"/>
 									<input class="customFieldsValue col-xs-11 col-sm-12 col-md-7" ng-model="field.value"/>
 									<!-- buttons -->
-									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.updateField()"></span>									
+									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.updateField($event)"></span>									
 									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.cancelField()"></span>
 									<!-- error msg -->
 									<div class="alert alert-danger error-msg">
