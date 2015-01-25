@@ -1,7 +1,12 @@
+var utility = Utility.getInstance();
+
 function CustomFieldsGenerator(setting, $scope, $compile, Poi) {
 
 	var poi = $scope.poi,
 		poiClone = $scope.poiClone;
+
+	// Loading modal
+	var loadingModal = $("#loadingModal");	
 
 	// Default setting
 	var defaultSetting = {
@@ -199,28 +204,63 @@ function CustomFieldsGenerator(setting, $scope, $compile, Poi) {
 			saveButton = angular.element(e.currentTarget),
 			form = saveButton.prev(),
 			inputFields = form.find("input"),
+			fileValueInput = form.find("input[name='file']"),
+			fileKeyInput = form.find("input[name='fieldKey']"),
 			errorMsgObj = form.find('.error-msg');
 
 		// Ajax from setup
 		var options = {
 
-			beforeSend : function(){ // pre-submit callback
-				inputFields.attr('disabled');
-				errorMsgObj.hide();
-				return true;
-			},
-			uploadProgress : function(event, position, total, percent){},
-			success : function(res, statusText){ // post-submit callback
+			beforeSubmit : function(){ // pre-submit callback
+
+				if(utility.emptyValidate(fileKeyInput, errorMsgObj)) {
+
+					// Update key only if no file upload
+					if(!fileValueInput.val()){
+						
+						// Update field key directly
+						syncToServer(poi);				
+						return false;						
 					
+					} else {
+
+						// Disable
+						inputFields.attr('disabled');
+						errorMsgObj.hide();
+						return true;
+
+					}
+
+				} else {
+
+					return false;
+
+				}
+
+			},
+			uploadProgress : function(event, position, total, percent){
+
+				// Show upload loading effect
+				loadingModal.modal("show");
+			
+			},
+			success : function(res, statusText){ // post-submit callback
+
 				// Update field 
 				$scope.$apply(function () {
 					field.value = res;
 					syncToServer(poi);						
 				});
 
+				// Show upload loading effect
+				loadingModal.modal("hide");
+
 				return true;
 			},
 			error : function(res, status){
+
+				// Show upload loading effect
+				loadingModal.modal("hide");
 
 				// Show error msg
 				var resText = ( res.responseJSON && res.responseJSON.msg ) || "Fail to upload";

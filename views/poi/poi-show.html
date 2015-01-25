@@ -96,7 +96,7 @@
 						<!-- Create button --> 
 						<span id="customFieldsCreateButton" class="glyphicon glyphicon-plus" ng-click="cfg.toogleTypeMenu()"></span>
 						
-						<!-- Button groups of field type\ -->
+						<!-- Button groups of field type -->
 						<div class="btn-group" style="display:none" id="customFieldsTypeMenu">
 						  <button id="customFieldsText" type="button" class="btn btn-default">
 						  	<%= __("poi.types.text") %>
@@ -176,8 +176,9 @@
 								<div class="templateCustomFieldsDisplay">
 									<!-- fields -->
 									<div class="customFieldsKey cimage col-xs-11 col-sm-12 col-md-10">
+										<span class="glyphicon glyphicon-picture"></span>
+										<span ng-bind="field.key"></span>	
 										<img ng-src="/poi/getFile?filePath={{field.value}}&type={{field.type}}" width=150 alt="Image" />
-										<span ng-bind="field.key"></span>
 									</div>														<!-- buttons -->
 									<span class="customFieldsButtonEdit glyphicon glyphicon-edit"></span>
 									<span class="customFieldsButtonRemove glyphicon glyphicon-remove" ng-click="cfg.removeField($index)"></span>
@@ -187,14 +188,16 @@
 									<!-- fields -->
 									<form action="/poi/uploadFile" method="POST" enctype="multipart/form-data">
 										<input type="hidden" name="_id" value="{{poi._id}}"/>
-										<input type="hidden" name="type" value="image"/>
-										<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key" name="imageName"/>
-										<div class="customFieldsValue cimage col-xs-11 col-sm-12 col-md-7" style="background:url() no-repeat;height:300px;">
+										<input type="hidden" name="type" value="{{field.type}}"/>
+										<input type="hidden" name="fieldId" value="{{field._id}}"/>
+										<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key" name="fieldKey"/>
+										<div class="customFieldsValue cimage col-xs-11 col-sm-12 col-md-7" style="background:url() no-repeat;background-position:center top; height:300px;">
 											<input type="file" placeholder="Image" name="file"/>
 										</div>
 										<div class="alert alert-danger error-msg">
-											<span class="label label-danger"><%= __("error.title") %></span> <span class="errorText"></span>
-										</div>										
+											<span class="label label-danger"><%= __("error.title") %></span> 
+											<span class="errorText"></span>
+										</div>																			
 									</form>
 									<!-- buttons -->
 									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.submitPoiFile($event, field)"></span>
@@ -210,7 +213,7 @@
 
 									<!-- fields -->
 									<div class="customFieldsKey cvideo col-xs-11 col-sm-12 col-md-10">
-										<span class="glyphicon glyphicon-facetime-video"></span>
+										<span class="glyphicon glyphicon-film"></span>
 										<span ng-bind="field.key"></span>
 										<video controls style="overflow:auto;padding:0px; margin: 0px auto;">
 										     <source src="" dynamic-url dynamic-url-src="/poi/getFile?filePath={{field.value}}&type={{field.type}}" type="video/mp4">
@@ -226,7 +229,8 @@
 									<form action="/poi/uploadFile" method="POST" enctype="multipart/form-data">
 										<input type="hidden" name="_id" value="{{poi._id}}"/>
 										<input type="hidden" name="type" value="{{field.type}}"/>
-										<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key" name="fileName"/>
+										<input type="hidden" name="fieldId" value="{{field._id}}"/>					
+										<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key" name="fieldKey"/>
 										<div class="customFieldsValue col-xs-11 col-sm-12 col-md-7">
 											<input type="file" placeholder="File" name="file"/>
 										</div>
@@ -263,7 +267,8 @@
 									<form action="/poi/uploadFile" method="POST" enctype="multipart/form-data">
 										<input type="hidden" name="_id" value="{{poi._id}}"/>
 										<input type="hidden" name="type" value="{{field.type}}"/>
-										<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key" name="fileName"/>
+										<input type="hidden" name="fieldId" value="{{field._id}}"/>
+										<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key" name="fieldKey"/>
 										<div class="customFieldsValue col-xs-11 col-sm-12 col-md-7">
 											<input type="file" placeholder="File" name="file"/>
 										</div>
@@ -286,7 +291,8 @@
 									<!-- fields -->
 									<div class="customFieldsKey col-xs-11 col-sm-12 col-md-10">
 										<a href="/poi/getFile?filePath={{field.value}}&type={{field.type}}"/>
-											<span class="glyphicon glyphicon-download" ng-bind="field.key"></span>
+											<span class="glyphicon glyphicon-download"></span>
+											<span ng-bind="field.key"></span>
 										</a>										
 									</div>														
 									<!-- buttons -->
@@ -328,6 +334,9 @@
 	</div>
 	<!-- /container -->
 	
+	<!-- Loading Dialog -->
+	<% include ../layout/loading-dialog.html %>
+
 	<!-- Body library include -->
 	<% include ../layout/body-include.html	%>
 		

@@ -661,10 +661,7 @@ exports.update = function(req, res) {
 
 						    poi.name = req.body.name;
 						    poi.buildingId = req.body.buildingId;
-						    console.log(req.body.tags);
-						    poi.tags = req.body.tags;
-						    console.log(poi.tags);
-						    
+						    poi.tags = req.body.tags;						    
 						    poi.customFields = req.body.customFields;
 						    poi.markModified('customFields');
 						    poi.updatedTime = new Date();
@@ -722,7 +719,6 @@ exports.update = function(req, res) {
 
 };
 
-
 // POST Interface of delete specific poi 
 exports.del = function(req, res){
 	
@@ -744,7 +740,6 @@ exports.del = function(req, res){
 					// check permission
 					utilityS.validatePermission(req.user, poi, Poi.modelName, function(result) {
 	    						
-	    				console.log(result);		
 						if(result) {
 
 	    					// Remove poi
@@ -799,52 +794,34 @@ exports.del = function(req, res){
 		
 };
 
-
 // POST Interface for upload file
 exports.uploadFile = function(req, res) {
 
-	if(req.body._id && req.body.type && req.files.file) {
+	if(req.body._id && req.body.type && req.body.fieldId && req.files.file) {
 
-		// Get file name and extension
+		// Get relative params
+		var poiId = req.body._id;
+		var type = req.body.type;
+		var fieldId = req.body.fieldId;		
 		var file = req.files.file;
 		var fileName = file.name;
 		var extension = path.extname(fileName).toLowerCase();
 		var fileSize = file.size;
 		var tmpPath = file.path;
 
+		log.info("poiId: " + poiId);
+		log.info("type: " + type);		
+		log.info("fieldId: " + fieldId);
 		log.info("file name: " + fileName);
 		log.info("file extension: " + extension);
 		log.info("file size: " + fileSize);		
 		log.info("tmpPath: " + tmpPath);
 
 		// Check file format by extension(mimeType)
-		if(req.body.type == Poi.CUSTOM_FIELDS.TYPE.IMAGE) {
+		extension = checkExtensionOfUploadFile(type, extension);		
 
-			extension = extension === '.png' ? ".png" : null ||
-						extension === '.jpg' ? ".jpg" : null ||
-						extension === '.gif' ? ".gif" : null;
-
-		} else if(req.body.type == Poi.CUSTOM_FIELDS.TYPE.VIDEO){
-
-			extension = extension === '.mp4' ? ".mp4" : null;
-
-		} else if(req.body.type == Poi.CUSTOM_FIELDS.TYPE.AUDIO) {
-
-			extension = extension === '.mp3' ? ".mp3" : null ||
-						extension === '.ogg' ? ".ogg" : null;
-
-		} else if (req.body.type == Poi.CUSTOM_FIELDS.TYPE.FILE) {
-
-			extension = extension ? extension : null;
-
-		} else {
-			
-			extension = null;
-
-		}
-
-		// Check file size
-		if(fileSize < config.maximumUploadSize) {
+		// Check file size is over maximum or not
+		if(fileSize <= config.maximumUploadSize) {
 
 			if(extension) {
 
@@ -858,7 +835,7 @@ exports.uploadFile = function(req, res) {
 
 				stream.on('end', function() {
 
-					Poi.findById(req.body._id, function(error, poi){
+					Poi.findById(poiId, function(error, poi){
 
 						if(error) {
 
@@ -911,26 +888,65 @@ exports.uploadFile = function(req, res) {
 
 															log.info("targetName: " + targetFileName);
 															log.info("targetWebPath: " + targetWebPath);
-															fs.rename(tmpPath, targetPath, function(err) {
-																if(err){
 
-																	log.error(err);
-													    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-													    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
-													    			});  
+															// Find the specific field in custom fields
+															var theField = null;
+															for(var i=0; i<poi.customFields.length; i++) {
+																if(poi.customFields[i]._id.toString() == fieldId)
+																	theField = poi.customFields[i];	
+															}
 
-																}else{
+															// Check the upload file is the same as before or not
+															if(theField.value.indexOf(targetFileName) == -1) {
 
-																	res.send( errorResInfo.SUCCESS.code, targetWebPath );
+																fs.rename(tmpPath, targetPath, function(err) {
+																	if(err) {
 
-																	// Delete the temporary file
-										                            fs.unlink(tmpPath, function(err){
-										                            	if(err)
-										                            		log.error(err);
-										                            });										
-																	
-																}
-															});		
+																		log.error(err);
+														    			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+														    				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+														    			});  
+
+																	} else {
+
+																		res.send( errorResInfo.SUCCESS.code, targetWebPath );
+																		poi.save(function(err, poi){
+																			if(err) {
+																            
+																                log.error(err);
+																				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+																					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+																				});
+																			
+																			} else {
+
+																				res.send( errorResInfo.SUCCESS.code, targetWebPath );
+																			
+																			}
+																		});
+
+																		// Delete the temporary file
+																		fs.exists(tmpPath, function(exists){
+																			console.log("is temp file exists: " + exists);
+																			if(exists){
+													                            fs.unlink(tmpPath, function(err){
+													                            	if(err)
+													                            		log.error(err);
+													                            	else
+													                            		console.log("Remove temp file successfully");
+													                            });										
+																			}
+																		});
+																		
+																	}
+																});		
+
+															} else {
+
+																log.info("Same");
+																res.send( errorResInfo.SUCCESS.code, targetWebPath );																
+
+															}
 
 														}
 
@@ -1008,16 +1024,16 @@ exports.getFile = function(req, res) {
         	
             var fileName = req.query.filePath,
             	filePath = path.dirname() + "/" + config.mapInfoPath + '/' + fileName,
+            	extension = path.extname(filePath).toLowerCase(),
             	stat = fs.statSync(filePath),
             	total = stat.size,
             	type = req.query.type,
             	readStream = fs.createReadStream(filePath);
 
-
             if(type == Poi.CUSTOM_FIELDS.TYPE.IMAGE) {
 
 	            res.writeHead( errorResInfo.SUCCESS.code, {
-	                "Content-Type": "image/png",
+	                "Content-Type": "image/" + extension.replace(".",""),
 	                'Content-Length': total
 	            });
 		    	readStream.pipe(res);
@@ -1054,7 +1070,6 @@ exports.getFile = function(req, res) {
 						'Content-Length': chunksize, 
 						'Content-Type': 'video/mp4' 
 					});
-					readStream.pipe(res);
 
 				} else {
 
@@ -1063,9 +1078,10 @@ exports.getFile = function(req, res) {
 						'Content-Length': total, 
 						'Content-Type': 'video/mp4' 
 					});
-					readStream.pipe(res);
 
 				}
+
+				readStream.pipe(res);
 
             } else if(type == Poi.CUSTOM_FIELDS.TYPE.FILE) {
 
@@ -1091,6 +1107,12 @@ exports.getFile = function(req, res) {
 
         }
         
+		// This catches any errors that happen while creating the readable stream (usually invalid names)
+		readStream.on('error', function(err) {
+			console.log(err);
+			res.end(err);
+		});
+
     } else {
 
 		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
@@ -1178,4 +1200,33 @@ function formatObjectDate(ibd){
 	ibdObj.updatedTime = moment(ibd.updatedTime).format("YYYY/MM/DD HH:mm Z").toString();		
 	return ibdObj;
 	
+}
+
+// Function for check the upload file extension, retrun the extension if exist, else return null
+function checkExtensionOfUploadFile(type, extension){
+
+	var ext = null;
+	if(type == Poi.CUSTOM_FIELDS.TYPE.IMAGE) {
+
+		ext = extension === '.png' ? ".png" : null ||
+					extension === '.jpg' ? ".jpg" : null ||
+					extension === '.gif' ? ".gif" : null;
+
+	} else if(type == Poi.CUSTOM_FIELDS.TYPE.VIDEO){
+
+		ext = extension === '.mp4' ? ".mp4" : null;
+
+	} else if(type == Poi.CUSTOM_FIELDS.TYPE.AUDIO) {
+
+		ext = extension === '.mp3' ? ".mp3" : null ||
+					extension === '.ogg' ? ".ogg" : null;
+
+	} else if (type == Poi.CUSTOM_FIELDS.TYPE.FILE) {
+
+		ext = extension ? extension : null;
+
+	}
+
+	return ext;
+
 }
