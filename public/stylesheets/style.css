@@ -489,6 +489,16 @@ body {
 	margin:0px auto;
 }
 
+.customFieldsKey a{
+	text-align: center;
+}
+
+.templateCustomField .error-msg{
+	float:left;
+	width: 100%;
+}
+
+
 
 /******************* poi-list.html *********************/
 .copy-poi,

@@ -206,7 +206,7 @@ function CustomFieldsGenerator(setting, $scope, $compile, Poi) {
 			inputFields = form.find("input"),
 			fileValueInput = form.find("input[name='file']"),
 			fileKeyInput = form.find("input[name='fieldKey']"),
-			errorMsgObj = form.find('.error-msg');
+			errorMsgObj = form.parent().find('.error-msg');
 
 		// Ajax from setup
 		var options = {

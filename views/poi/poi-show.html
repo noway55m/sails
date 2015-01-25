@@ -142,6 +142,10 @@
 									<!-- buttons -->
 									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.updateField()"></span>
 									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.toggleMultipleLineMode($event, 1, field)"></span>
+									<!-- error msg -->
+									<div class="alert alert-danger error-msg">
+										<span class="label label-danger"><%= __("error.title") %></span> <span class="errorText"></span>
+									</div>									
 								</div>
 								<div style="float:left;clear:both;"></div>
 							</div>
@@ -166,6 +170,10 @@
 									<!-- buttons -->
 									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.updateField()"></span>									
 									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.cancelField()"></span>
+									<!-- error msg -->
+									<div class="alert alert-danger error-msg">
+										<span class="label label-danger"><%= __("error.title") %></span> <span class="errorText"></span>
+									</div>									
 								</div>
 								<div style="float:left;clear:both;"></div>
 							</div>	
@@ -193,15 +201,15 @@
 										<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key" name="fieldKey"/>
 										<div class="customFieldsValue cimage col-xs-11 col-sm-12 col-md-7" style="background:url() no-repeat;background-position:center top; height:300px;">
 											<input type="file" placeholder="Image" name="file"/>
-										</div>
-										<div class="alert alert-danger error-msg">
-											<span class="label label-danger"><%= __("error.title") %></span> 
-											<span class="errorText"></span>
-										</div>																			
+										</div>																		
 									</form>
 									<!-- buttons -->
 									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.submitPoiFile($event, field)"></span>
 									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.cancelField()"></span>
+									<!-- error msg -->
+									<div class="alert alert-danger error-msg">
+										<span class="label label-danger"><%= __("error.title") %></span> <span class="errorText"></span>
+									</div>									
 								</div>
 								<div style="float:left;clear:both;"></div>
 							</div>
@@ -234,13 +242,14 @@
 										<div class="customFieldsValue col-xs-11 col-sm-12 col-md-7">
 											<input type="file" placeholder="File" name="file"/>
 										</div>
-										<div class="alert alert-danger error-msg">
-											<span class="label label-danger"><%= __("error.title") %></span> <span class="errorText"></span>
-										</div>										
 									</form>
 									<!-- buttons -->
 									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" data-loading-text="Loading..." ng-click="cfg.submitPoiFile($event, field)"></span>
 									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.cancelField()"></span>
+									<!-- error msg -->
+									<div class="alert alert-danger error-msg">
+										<span class="label label-danger"><%= __("error.title") %></span> <span class="errorText"></span>
+									</div>									
 								</div>
 								<div style="float:left;clear:both;"></div>
 							</div>
@@ -272,14 +281,14 @@
 										<div class="customFieldsValue col-xs-11 col-sm-12 col-md-7">
 											<input type="file" placeholder="File" name="file"/>
 										</div>
-										<div class="alert alert-danger error-msg">
-											<span class="label label-danger"><%= __("error.title") %></span> <span class="errorText"></span>
-										</div>										
 									</form>
 									<!-- buttons -->
 									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" data-loading-text="Loading..." ng-click="cfg.submitPoiFile($event, field)"></span>
 									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.cancelField()"></span>
-
+									<!-- error msg -->
+									<div class="alert alert-danger error-msg">
+										<span class="label label-danger"><%= __("error.title") %></span> <span class="errorText"></span>
+									</div>
 								</div>
 								<div style="float:left;clear:both;"></div>
 							</div>
@@ -305,21 +314,21 @@
 									<form action="/poi/uploadFile" method="POST" enctype="multipart/form-data">
 										<input type="hidden" name="_id" value="{{poi._id}}"/>
 										<input type="hidden" name="type" value="{{field.type}}"/>
-										<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key" name="fileName"/>
+										<input type="hidden" name="fieldId" value="{{field._id}}"/>
+										<input class="customFieldsKey col-xs-11 col-sm-12 col-md-3" ng-model="field.key" name="fieldKey"/>
 										<div class="customFieldsValue col-xs-11 col-sm-12 col-md-7">
 											<input type="file" placeholder="File" name="file"/>
 										</div>
-										<div class="alert alert-danger error-msg">
-											<span class="label label-danger"><%= __("error.title") %></span> <span class="errorText"></span>
-										</div>										
 									</form>
 									<!-- buttons -->
 									<span class="customFieldsButtonSave glyphicon glyphicon-floppy-disk" ng-click="cfg.submitPoiFile($event, field)"></span>
 									<span class="customFieldsButtonCancel glyphicon glyphicon-ban-circle" ng-click="cfg.cancelField()"></span>
+									<!-- error msg -->
+									<div class="alert alert-danger error-msg">
+										<span class="label label-danger"><%= __("error.title") %></span> <span class="errorText"></span>
+									</div>									
 								</div>
 								<div style="float:left;clear:both;"></div>
-
-
 						</div>
 					</div>
 							</div>
