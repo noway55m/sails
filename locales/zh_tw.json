@@ -271,7 +271,9 @@
 			"originalPassword": "原始密碼",
 			"newPassword": "新密碼",
 			"confirmPassword": "確認新密碼"
-		}
+		},
+		"resetPasswordNotify": "請檢察您所註冊的信箱,我們已發送重新設定密碼的信件給您!",
+		"emailNotExist": "信箱不存在!"			
 	},
 	"deleteDialog": {
 		"title": "確認移除"

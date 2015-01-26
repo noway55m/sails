@@ -270,7 +270,9 @@
 			"originalPassword": "原始密码",
 			"newPassword": "新密码",
 			"confirmPassword": "确认新密码"
-		}
+		},
+		"resetPasswordNotify": "请检察您所注册的信箱,我们已发送重新设定密码的信件给您!",
+		"emailNotExist": "信箱不存在!"			
 	},
 	"deleteDialog": {
 		"title": "确认移除"

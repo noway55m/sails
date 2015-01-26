@@ -271,7 +271,9 @@
 			"originalPassword": "Original Password",
 			"newPassword": "New Password",
 			"confirmPassword": "Confirm Password"
-		}
+		},
+		"resetPasswordNotify": "Please check your email address, we have sent the reset password email to you!",
+		"emailNotExist": "This email address does not exist in system!"
 	},
 	"deleteDialog": {
 		"title": "Are you sure to remove"
