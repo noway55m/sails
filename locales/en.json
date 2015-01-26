@@ -146,6 +146,9 @@
 		"400BasementOverLimitationDeny": "Basement number is over limitation.",
 		"400IncorrectParams": "Incorrect params",
 		"400IncorrectFileType": "Incorrect file type.",
+		"400IncorrectFileTypeImage": "File extension should be .png or .jpg or gif!",
+		"400IncorrectFileTypeVideo": "File extension should be .mp4!",
+		"400IncorrectFileTypeAudio": "File extension should be .mp3!",
 		"400FileNotExist": "File not exist.",
 		"400OverMaximumUploadSize": "Over maximum upload size!",
 		"204EmptyResult": "Empty result"

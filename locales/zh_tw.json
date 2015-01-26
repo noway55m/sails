@@ -146,6 +146,9 @@
 		"400BasementOverLimitationDeny": "地下室數量超過限制.",
 		"400IncorrectParams": "參數不正確!",
 		"400IncorrectFileType": "檔案類型錯誤.",
+		"400IncorrectFileTypeImage": "檔案類型必須是.png 或是 .jpg或是.gif!",
+		"400IncorrectFileTypeVideo": "檔案類型必須是.mp4!",
+		"400IncorrectFileTypeAudio": "檔案類型必須是.mp3!",		
 		"400FileNotExist": "檔案不存在.",
 		"400OverMaximumUploadSize": "超過最大檔案大小限制!",
 		"204EmptyResult": "沒有找到資料!"		
