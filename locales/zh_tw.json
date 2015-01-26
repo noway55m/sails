@@ -52,7 +52,17 @@
 			"confirmPassword": "確認密碼"						
 		},
 		"acceptTerm": "請接受下方條款",
-		"memberAdnConditions": "帆船科技會員條款與細則"						
+		"memberAdnConditions": "帆船科技會員條款與細則",
+		"errorMsg": {
+			"serverError": "系統錯誤,請稍後再試!",
+			"duplicateEmail": "此信箱已被註冊!",
+			"activeEmailNotify": "請確認您所註冊的信箱,系統已激活您的帳號!",
+			"verificationCodeIncorrect": "驗證碼錯誤!"
+		},
+		"activeEmail": {
+			"title": "歡迎加入帆船科技雲端服務",
+			"content": "<b>歡迎加入帆船科技雲端服務.請點擊下方連結以激活您的帳號:</b><a href='{{domainUrl}}/register/activate/{{token}}'>激活</a></br><p>如果您有任何問題,請在我們的支援平台留下資訊: (<a href='http://support.sailstech.com'>http://support.sailstech.com</a>.)</br>另外,也請讀閱我們的相關知識(<a href='http://support.sailstech.com/kb'>http://support.sailstech.com/kb</a>)以了解如何繪製向量室內圖,建立指紋以及開發您的APP.</p>"
+		}						
 	},		
 	"others": {
 		"download": {
@@ -273,7 +283,11 @@
 			"confirmPassword": "確認新密碼"
 		},
 		"resetPasswordNotify": "請檢察您所註冊的信箱,我們已發送重新設定密碼的信件給您!",
-		"emailNotExist": "信箱不存在!"			
+		"emailNotExist": "信箱不存在!",
+		"resetPasswordEmail": {
+			"title": "帆船科技雲端服務通知",
+			"content": "<b>請點選下方連結以重設密碼:</b><a href='{{domainUrl}}/user/resetPassword/{{token}}'>重設密碼</a>"
+		}					
 	},
 	"deleteDialog": {
 		"title": "確認移除"
