@@ -6,7 +6,8 @@ var log = require('log4js').getLogger(),
     config = require('../config/config'),
     fs = require('fs'),
 	path = require('path'),
-	util = require('util');
+	util = require('util'),
+    i18n = require("i18n");
 
 // Static variable
 var errorResInfo = utilityS.errorResInfo,
@@ -22,7 +23,7 @@ exports.getGlobalVersion = function(req, res){
 
             log.error(err);
             res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-                msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+                msg: i18n.__('error.500Error')
             });  
 
         } else {

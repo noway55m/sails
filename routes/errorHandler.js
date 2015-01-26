@@ -1,7 +1,8 @@
 var log = require('log4js').getLogger("User"),
 	crypto = require('crypto'),
     config = require('../config/config.js'),
-    utilityS = require("./utility.js");
+    utilityS = require("./utility.js"),
+    i18n = require("i18n");
 
 // Static variable
 var errorResInfo = utilityS.errorResInfo;
@@ -9,10 +10,10 @@ var errorResInfo = utilityS.errorResInfo;
 // GET Interface for 404 error
 exports.error404 = function(req, res){
 
-	console.log("--- error 404 ---");
+	// console.log("--- error 404 ---");
 
 	var acceptType = req.accepts('html, json, text');
-	console.log("acceptType: " + acceptType);
+	// console.log("acceptType: " + acceptType);
 
 	// Respond with json
 	if ( acceptType == 'json' ) {
@@ -33,7 +34,7 @@ exports.error404 = function(req, res){
 	} else {
 
 		// Default text
-		res.send(errorResInfo.NOT_FOUND.code, errorResInfo.NOT_FOUND.msg);
+		res.send(errorResInfo.NOT_FOUND.code, i18n.__('error.404Error'));
 		return;
 
 	}
@@ -43,13 +44,13 @@ exports.error404 = function(req, res){
 // GET Interface for 500 error
 exports.error500 = function(err, req, res, next){
 
-	console.log("--- error 500 ---");
-	console.log(err.status);
-	console.log(err);
+	// console.log("--- error 500 ---");
+	// console.log(err.status);
+	// console.log(err);
 
 	var errorStatus = err.status || errorResInfo.INTERNAL_SERVER_ERROR.code;
 	var acceptType = req.accepts('html, json, text');
-	console.log("acceptType: " + acceptType);
+	// console.log("acceptType: " + acceptType);
 
 	// Respond with html page
 	if( acceptType =='json') {
@@ -70,7 +71,7 @@ exports.error500 = function(err, req, res, next){
 	} else {
 
 		// Default text
-		res.send(errorStatus, errorResInfo.INTERNAL_SERVER_ERROR.msg);
+		res.send(errorStatus, i18n.__('error.500Error'));
 		return;
 
 	}

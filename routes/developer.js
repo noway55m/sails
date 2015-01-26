@@ -4,7 +4,8 @@ var log = require('log4js').getLogger(),
 	DeveloperApplication = require("../model/developerApplication"),
 	path = require('path'),
 	util = require('util'),
-	config = require('../config/config');
+	config = require('../config/config'),
+	i18n = require("i18n");
 
 // Static variable
 var	errorResInfo = utilityS.errorResInfo,
@@ -34,7 +35,7 @@ exports.appList = function(req, res) {
 
 			log.error(error);
 			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				msg: i18n.__('error.500Error')
 			}); 
 
 		} else {
@@ -46,7 +47,7 @@ exports.appList = function(req, res) {
 
 		            log.error(err);
 					res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-						msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+						msg: i18n.__('error.500Error')
 					});  		
 
 				} else {
@@ -88,7 +89,7 @@ exports.appCreate = function(req, res) {
 
 				log.error(error);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					msg: i18n.__('error.500Error')
 				}); 				
 
 			} else {
@@ -102,7 +103,7 @@ exports.appCreate = function(req, res) {
 	} else {
 
 		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-			msg: errorResInfo.INCORRECT_PARAMS.msg
+			msg: i18n.__('error.400IncorrectParams')
 		}); 
 
 	}
@@ -120,7 +121,7 @@ exports.appUpdate = function(req, res) {
 
 				log.error(error);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					msg: i18n.__('error.500Error')
 				}); 
 
 			} else {
@@ -132,7 +133,7 @@ exports.appUpdate = function(req, res) {
 
 						log.error(error);
 						res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-							msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							msg: i18n.__('error.500Error')
 						}); 
 
 					} else {
@@ -151,7 +152,7 @@ exports.appUpdate = function(req, res) {
 	} else {
 
 		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-			msg: errorResInfo.INCORRECT_PARAMS.msg
+			msg: i18n.__('error.400IncorrectParams')
 		});
 
 	}
@@ -169,7 +170,7 @@ exports.appDelete = function(req, res) {
 
 				log.error(error);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					msg: i18n.__('error.500Error')
 				}); 
 
 			} else {
@@ -180,7 +181,7 @@ exports.appDelete = function(req, res) {
 
 						log.error(error);
 						res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-							msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							msg: i18n.__('error.500Error')
 						}); 
 
 					} else {
@@ -199,7 +200,7 @@ exports.appDelete = function(req, res) {
 	} else {
 
 		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-			msg: errorResInfo.INCORRECT_PARAMS.msg
+			msg: i18n.__('error.400IncorrectParams')
 		}); 
 
 	}
@@ -217,7 +218,7 @@ exports.appRegenerateKey = function(req, res) {
 
 				log.error(error);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					msg: i18n.__('error.500Error')
 				}); 
 
 			} else {
@@ -229,7 +230,7 @@ exports.appRegenerateKey = function(req, res) {
 
 						log.error(error);
 						res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-							msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							msg: i18n.__('error.500Error')
 						}); 
 
 					} else {
@@ -247,7 +248,7 @@ exports.appRegenerateKey = function(req, res) {
 	} else {
 
 		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-			msg: errorResInfo.INCORRECT_PARAMS.msg
+			msg: i18n.__('error.400IncorrectParams')
 		}); 
 
 	}

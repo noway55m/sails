@@ -9,7 +9,8 @@ var log = require('log4js').getLogger("Register"),
 	mkdirp = require("mkdirp"),
 	config = require('../config/config.js'),
 	utilityS = require("./utility.js"),
-	recaptcha = require("./googleRecaptcha.js");
+	recaptcha = require("./googleRecaptcha.js"),
+	i18n = require("i18n");
 
 
 // GET Register page
@@ -50,7 +51,7 @@ exports.auth = function(req, res) {
 		        
 		            if(err) {
 
-		                req.flash('msg', "Server error, please try again later");
+		                req.flash('msg', i18n.__('register.errorMsg.serverError'));
 		                res.redirect("/register");
 
 		            } else {
@@ -58,7 +59,7 @@ exports.auth = function(req, res) {
 			            if(user) {
 
 			            	log.error(err);
-			                req.flash('msg', "The email has been registered already.");
+			                req.flash('msg', i18n.__('register.errorMsg.duplicateEmail'));
 			                res.redirect("/register");
 
 			            } else {
@@ -74,7 +75,7 @@ exports.auth = function(req, res) {
 								if (err) {
 
 									log.error(err);
-					                req.flash('msg', "Server error, please try again later");
+					                req.flash('msg', i18n.__('register.errorMsg.serverError'));
 					                res.redirect("/register");
 
 								} else {
@@ -98,19 +99,9 @@ exports.auth = function(req, res) {
 												var mailOptions = {
 													from : mailer.defaultOptions.from, // sender address
 													to : email, // list of receivers
-													subject : "Welcome join to Sails Cloud Service", // Subject line
-													text : "Welcome join to Sails Cloud Service", // plaintext body
-													html : "<b>Welcome join to Sails Cloud Service. Please click following link to activate your account:</b>" +
-															"<a href='" + config.domainUrl + "/register/activate/" + atoken.token + "'>Activate</a>" +
-															"</br>" +
-															"<p>" +
-															"If you have any problems, please leave the message in our support platform" +
-															"(<a href='http://support.sailstech.com'>http://support.sailstech.com</a>.)" +
-															"</br>" + 
-															"Please also see our knowledge base" +
-															"(<a href='http://support.sailstech.com/kb'>http://support.sailstech.com/kb</a>)" + 
-															" to understand how to draw and upload the vector-typed indoor map, build fingerprint, and using sdk to develop your own app."+
-															"</p>" // html body// html body
+													subject : i18n.__('register.activeEmail.title'), // Subject line
+													text : i18n.__('register.activeEmail.title'), // plaintext body
+													html : i18n.__('register.activeEmail.title', { domainUrl: config.domainUrl, token: atoken.token }) // html body// html body
 												};
 
 												mailer.sendMail(mailOptions, function(error, response) {
@@ -122,7 +113,7 @@ exports.auth = function(req, res) {
 												});
 												
 												// Redirect to index page
-												req.flash('activate', "Please check your email address for activate your user account.");
+												req.flash('activate', i18n.__('register.errorMsg.activeEmailNotify'));
 												res.redirect("/");
 												
 												// Create mapinfo resource folder
@@ -151,7 +142,7 @@ exports.auth = function(req, res) {
 
 			} else {
 
-                req.flash('msg', "Verification code is incorrect.");
+                req.flash('msg', i18n.__('register.errorMsg.verificationCodeIncorrect'));
                 res.redirect("/register");
 
 			}
@@ -173,43 +164,82 @@ exports.activate = function(req, res) {
 			
 		}, function(err, token){
 			
-			if(err)
+			if(err) {
+
 				log.error(err);
+				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+					msg: i18n.__('error.500Error')
+				});					
 			
-			if(token){
-				
-				User.findById(token.userId, function(err, user){
+			} else {
+
+				if(token){
 					
-					if(err)
-						log.error(err);
-					
-					if(user){
+					User.findById(token.userId, function(err, user){
 						
-						user.enabled = true;
-						user.save(function(err){
-							
-							if(err){
-								log.error(err);
-							}else{
+						if(err) {
+
+							log.error(err);
+							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+								msg: i18n.__('error.500Error')
+							});					
+
+						} else {
+
+							if(user) {
 								
-								token.remove(function(err){
-									log.error(err);
+								user.enabled = true;
+								user.save(function(err){
+									
+									if(err) {
+
+										log.error(err);
+										res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
+											msg: i18n.__('error.500Error')
+										});										
+
+									} else {
+										
+										token.remove(function(err){
+											log.error(err);
+										});
+										
+										req.flash('activate', "Activate Successfully");
+										res.redirect('/');
+									}
+									
 								});
 								
-								req.flash('activate', "Activate Successfully");
-								res.redirect('/');
+							} else {
+
+								res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+									msg: i18n.__('error.400IncorrectParams')
+								});  
+
 							}
-							
-						});
+
+						}
 						
-					}
+					});
 					
-				});
-				
-			}
+				} else {
+
+					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+						msg: i18n.__('error.400IncorrectParams')
+					});  
+
+				}
+
+			}	
 			
 		});
 				
+	} else {
+
+		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
+			msg: i18n.__('error.400IncorrectParams')
+		});  
+
 	}
 	
 };

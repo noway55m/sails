@@ -6,7 +6,8 @@ var log = require('log4js').getLogger(),
 	fs = require('fs'),
 	path = require('path'),
 	moment = require('moment'),
-	config = require('../config/config');
+	config = require('../config/config'),
+	i18n = require("i18n");
 
 // Static variable
 var	errorResInfo = utilityS.errorResInfo,
@@ -28,7 +29,7 @@ exports.list = function(req, res) {
 
 				log.error(err);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					msg: i18n.__('error.500Error')
 				}); 
 
 			} else {
@@ -50,7 +51,7 @@ exports.list = function(req, res) {
 
 									log.error(err);
 									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+										msg: i18n.__('error.500Error')
 									});  				
 
 						        } else {
@@ -67,7 +68,7 @@ exports.list = function(req, res) {
 		            	} else {
 
 		        			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
-		        				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+		        				msg: i18n.__('error.403PermissionDeny')
 		        			});
 
 		            	}
@@ -77,7 +78,7 @@ exports.list = function(req, res) {
 				} else {
 
 					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-						msg: errorResInfo.INCORRECT_PARAMS.msg
+						msg: i18n.__('error.400IncorrectParams')
 					}); 
 
 				}
@@ -89,7 +90,7 @@ exports.list = function(req, res) {
 	} else {
 
 		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-			msg: errorResInfo.INCORRECT_PARAMS.msg
+			msg: i18n.__('error.400IncorrectParams')
 		}); 
 
 	}
@@ -107,7 +108,7 @@ exports.read = function(req, res){
 
 				log.error(err);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					msg: i18n.__('error.500Error')
 				});	
 
 			} else {
@@ -124,7 +125,7 @@ exports.read = function(req, res){
 			    		} else {
 
                 			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
-                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+                				msg: i18n.__('error.403PermissionDeny')
                 			});
 
 			    		}
@@ -134,7 +135,7 @@ exports.read = function(req, res){
 				} else {
 
         			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-        				msg: errorResInfo.INCORRECT_PARAMS.msg
+        				msg: i18n.__('error.400IncorrectParams')
         			});
 
 				}
@@ -146,7 +147,7 @@ exports.read = function(req, res){
 	} else {
 
 		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-			msg: errorResInfo.INCORRECT_PARAMS.msg
+			msg: i18n.__('error.400IncorrectParams')
 		}); 
 
 	}
@@ -165,7 +166,7 @@ exports.create = function(req, res) {
 
 				log.error(error);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					msg: i18n.__('error.500Error')
 				}); 				
 
 			} else {
@@ -193,7 +194,7 @@ exports.create = function(req, res) {
 
 									log.error(err);
 									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+										msg: i18n.__('error.500Error')
 									});
 
 								} else {
@@ -212,7 +213,7 @@ exports.create = function(req, res) {
 	    				} else {
 
                 			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
-                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+                				msg: i18n.__('error.403PermissionDeny')
                 			});
 
 	    				}
@@ -222,7 +223,7 @@ exports.create = function(req, res) {
 				} else {
 
         			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-        				msg: errorResInfo.INCORRECT_PARAMS.msg
+        				msg: i18n.__('error.400IncorrectParams')
         			});  
 
 				}
@@ -234,7 +235,7 @@ exports.create = function(req, res) {
 	} else {
 
 		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-			msg: errorResInfo.INCORRECT_PARAMS.msg
+			msg: i18n.__('error.400IncorrectParams')
 		}); 
 
 	}
@@ -252,7 +253,7 @@ exports.update = function(req, res){
 
 				log.error(error);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					msg: i18n.__('error.500Error')
 				}); 	
 
 			} else {
@@ -276,7 +277,7 @@ exports.update = function(req, res){
 
 									log.error(error);
 									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+										msg: i18n.__('error.500Error')
 									}); 
 
 								} else {
@@ -291,7 +292,7 @@ exports.update = function(req, res){
 	    				} else {
 
                 			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
-                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+                				msg: i18n.__('error.403PermissionDeny')
                 			});
 
 	    				}	    					
@@ -301,7 +302,7 @@ exports.update = function(req, res){
 				} else {
 
         			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-        				msg: errorResInfo.INCORRECT_PARAMS.msg
+        				msg: i18n.__('error.400IncorrectParams')
         			}); 
 
 				}				
@@ -325,7 +326,7 @@ exports.del = function(req, res){
 
 				log.error(error);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					msg: i18n.__('error.500Error')
 				}); 
 
 			} else {
@@ -352,7 +353,7 @@ exports.del = function(req, res){
 
 									log.error(error);
 									res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-										msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+										msg: i18n.__('error.500Error')
 									}); 
 
 								} else {
@@ -368,7 +369,7 @@ exports.del = function(req, res){
 	    				} else {
 
                 			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
-                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+                				msg: i18n.__('error.403PermissionDeny')
                 			});
 
 	    				}	    					
@@ -378,7 +379,7 @@ exports.del = function(req, res){
 				} else {
 
 					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-						msg: errorResInfo.INCORRECT_PARAMS.msg
+						msg: i18n.__('error.400IncorrectParams')
 					}); 
 
 				}
@@ -430,7 +431,7 @@ exports.uploadImage = function(req, res) {
 
 		                log.error(err);
 						res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-							msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+							msg: i18n.__('error.500Error')
 						});
 
 					} else {
@@ -453,7 +454,7 @@ exports.uploadImage = function(req, res) {
 
 												log.error(err);
 												res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-													msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+													msg: i18n.__('error.500Error')
 												});
 
 											}else{									
@@ -474,7 +475,7 @@ exports.uploadImage = function(req, res) {
 
 														log.error(err);
 														res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-															msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+															msg: i18n.__('error.500Error')
 														});
 
 													} else {
@@ -503,7 +504,7 @@ exports.uploadImage = function(req, res) {
 			    				} else {
 
 		                			res.json( errorResInfo.ERROR_PERMISSION_DENY.code , { 
-		                				msg: errorResInfo.ERROR_PERMISSION_DENY.msg
+		                				msg: i18n.__('error.403PermissionDeny')
 		                			});	
 
 			    				}
@@ -513,7 +514,7 @@ exports.uploadImage = function(req, res) {
 						} else {
 							
 		        			res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-		        				msg: errorResInfo.INCORRECT_PARAMS.msg
+		        				msg: i18n.__('error.400IncorrectParams')
 		        			});  						
 							
 						}//end if
@@ -535,7 +536,7 @@ exports.uploadImage = function(req, res) {
 	} else {
 
 		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-			msg: errorResInfo.INCORRECT_PARAMS.msg
+			msg: i18n.__('error.400IncorrectParams')
 		}); 
 
 	}	

@@ -5,7 +5,8 @@ var log = require('log4js').getLogger(),
     Sdk = require("../model/sdk"),
     SdkDownloadLog = require("../model/admin/sdkDownloadLog"),           
 	config = require('../config/config'),
-    ga = require('./googleAnalytics');
+    ga = require('./googleAnalytics'),
+    i18n = require("i18n");
 
 
 // Static variable
@@ -34,7 +35,7 @@ exports.download = function(req, res) {
 
             log.error(err);
             res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-                msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+                msg: i18n.__('error.500Error')
             });         
 
         } else {

@@ -7,7 +7,8 @@ var log = require('log4js').getLogger("User"),
     PoiTag = require("../model/poiTag"),
     mailer = require('../config/nodemailerSetup'),
     config = require('../config/config.js'),
-    utilityS = require("./utility.js");
+    utilityS = require("./utility.js"),
+    i18n = require("i18n");
 
 // Static variable
 var errorResInfo = utilityS.errorResInfo,
@@ -35,7 +36,7 @@ exports.read = function(req, res){
 
 	            log.error(err);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					msg: i18n.__('error.500Error')
 				});  	
 			
 			} else {
@@ -47,7 +48,7 @@ exports.read = function(req, res){
 				} else {
 
 					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-						msg: errorResInfo.INCORRECT_PARAMS.msg
+						msg: i18n.__('error.400IncorrectParams')
 					}); 
 
 				}
@@ -59,7 +60,7 @@ exports.read = function(req, res){
 	} else {
 
 		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-			msg: errorResInfo.INCORRECT_PARAMS.msg
+			msg: i18n.__('error.400IncorrectParams')
 		}); 
 
 	}	
@@ -99,7 +100,7 @@ exports.forgetPassword = function(req, res){
 
 	            log.error(err);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					msg: i18n.__('error.500Error')
 				});
 
 			} else {
@@ -118,7 +119,7 @@ exports.forgetPassword = function(req, res){
 
 				            log.error(err);
 							res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-								msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+								msg: i18n.__('error.500Error')
 							});
 
 						} else {
@@ -129,10 +130,9 @@ exports.forgetPassword = function(req, res){
 								var mailOptions = {
 									from : mailer.defaultOptions.from, // sender address
 									to : email, // list of receivers
-									subject : "Sails Cloud Service Notification", // Subject line
-									text : "Please Click following link to reset your password", // plaintext body
-									html : "<b>Welcome join to Sails Cloud Service</b>" + 
-											"<a href='" + config.domainUrl + "/user/resetPassword/" + rtoken.token + "'>Reset Password</a>" // html body
+									subject : i18n.__('user.resetPasswordEmail.title'), // Subject line
+									text : i18n.__('user.resetPasswordEmail.title'), // plaintext body
+									html : i18n.__('user.resetPasswordEmail.content', { domainUrl: config.domainUrl, token: atoken.token })// html body
 								};
 
 								mailer.sendMail(mailOptions, function(error, response) {
@@ -145,7 +145,7 @@ exports.forgetPassword = function(req, res){
 
 										log.error("Message sent: " + response.message);
 										res.json(errorResInfo.SUCCESS.code,{
-											msg: "Please check your email address, we have sent the reset password email to you"
+											msg: i18n.__('user.resetPasswordNotify')
 										});
 
 									}
@@ -161,7 +161,7 @@ exports.forgetPassword = function(req, res){
 				}else{
 					
 					res.json(errorResInfo.INCORRECT_PARAMS.code, { 
-						msg: "This email address does not exist in system" 
+						msg: i18n.__('user.emailNotExist') 
 					});
 					
 				}
@@ -173,7 +173,7 @@ exports.forgetPassword = function(req, res){
 	} else {
 
 		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-			msg: errorResInfo.INCORRECT_PARAMS.msg
+			msg: i18n.__('error.400IncorrectParams')
 		}); 
 
 	}
@@ -201,7 +201,7 @@ exports.resetPassword = function(req, res){
 
 	            log.error(err);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					msg: i18n.__('error.500Error')
 				});
 
 			} else {
@@ -228,7 +228,7 @@ exports.resetPassword = function(req, res){
 	} else {
 
 		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-			msg: errorResInfo.INCORRECT_PARAMS.msg
+			msg: i18n.__('error.400IncorrectParams')
 		}); 
 
 	}
@@ -246,7 +246,7 @@ exports.resetPasswordAuth = function(req, res){
 
 	            log.error(err);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					msg: i18n.__('error.500Error')
 				});
 
 			} else {
@@ -263,7 +263,7 @@ exports.resetPasswordAuth = function(req, res){
 
 					            log.error(err);
 								res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-									msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									msg: i18n.__('error.500Error')
 								});
 
 							} else {
@@ -301,7 +301,7 @@ exports.resetPasswordAuth = function(req, res){
 				} else {
 
 					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-						msg: errorResInfo.INCORRECT_PARAMS.msg
+						msg: i18n.__('error.400IncorrectParams')
 					}); 
 
 				}
@@ -313,7 +313,7 @@ exports.resetPasswordAuth = function(req, res){
 	} else {
 
 		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-			msg: errorResInfo.INCORRECT_PARAMS.msg
+			msg: i18n.__('error.400IncorrectParams')
 		}); 
 
 	}
@@ -331,7 +331,7 @@ exports.changePassword = function(req, res){
 
 	            log.error(err);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					msg: i18n.__('error.500Error')
 				});
 
 			} else {
@@ -348,7 +348,7 @@ exports.changePassword = function(req, res){
 
 					            log.error(err);
 								res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-									msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+									msg: i18n.__('error.500Error')
 								});
 
 							} else {
@@ -371,7 +371,7 @@ exports.changePassword = function(req, res){
 				} else {
 
 					res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-						msg: errorResInfo.INCORRECT_PARAMS.msg
+						msg: i18n.__('error.400IncorrectParams')
 					}); 
 
 				}
@@ -383,7 +383,7 @@ exports.changePassword = function(req, res){
 	} else {
 
 		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-			msg: errorResInfo.INCORRECT_PARAMS.msg
+			msg: i18n.__('error.400IncorrectParams')
 		}); 
 
 	}
@@ -410,7 +410,7 @@ exports.upgradeDeveloper = function(req, res){
 
 	            log.error(err);
 				res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-					msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+					msg: i18n.__('error.500Error')
 				});
 
 			} else {
@@ -424,7 +424,7 @@ exports.upgradeDeveloper = function(req, res){
 	} else {
 
 		res.json( errorResInfo.INCORRECT_PARAMS.code , { 
-			msg: errorResInfo.INCORRECT_PARAMS.msg
+			msg: i18n.__('error.400IncorrectParams')
 		}); 
 
 	}
@@ -444,7 +444,7 @@ exports.getPoiTags = function(req, res){
 		if(err) {
 
 			res.json( errorResInfo.INTERNAL_SERVER_ERROR.code , { 
-				msg: errorResInfo.INTERNAL_SERVER_ERROR.msg
+				msg: i18n.__('error.500Error')
 			});  				
 
         } else {
