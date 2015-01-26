@@ -139,8 +139,16 @@
 		"unavailableApiKeyOrVerifier": "不正确的API金钥或验证码!",
 		"unavailableSDKVersion": "SDK套件版本过旧,请更新最新版本!",
 		"404Error": "404找不到网页! ",
-		"500Error": "500系统错误,请稍后再试!"
-	},
+		"500Error": "500系统错误,请稍后再试!",
+		"403PermissionDeny": "无存取权限!",
+		"400BuildingOverLimitationDeny": "建筑物数量超过限制.",
+		"400FloorOverLimitationDeny": "楼层数量超过限制.",
+		"400BasementOverLimitationDeny": "地下室数量超过限制.",
+		"400IncorrectParams": "参数不正确!",
+		"400IncorrectFileType": "档案类型错误.",
+		"400FileNotExist": "档案不存在.",
+		"400OverMaximumUploadSize": "超过最大档案大小限制!",
+		"204EmptyResult": "没有找到资料!"		},
 	"building": {
 		"add": {
 			"addBuildingTitle": "新增建筑物",

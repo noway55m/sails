@@ -139,7 +139,16 @@
 		"unavailableApiKeyOrVerifier": "不正確的API金鑰或驗證碼!",
 		"unavailableSDKVersion": "SDK套件版本過舊,請更新最新版本!",
 		"404Error": "404找不到網頁! ",
-		"500Error": "500系統錯誤,請稍後再試!"
+		"500Error": "500系統錯誤,請稍後再試!",
+		"403PermissionDeny": "無存取權限!",
+		"400BuildingOverLimitationDeny": "建築物數量超過限制.",
+		"400FloorOverLimitationDeny": "樓層數量超過限制.",
+		"400BasementOverLimitationDeny": "地下室數量超過限制.",
+		"400IncorrectParams": "參數不正確!",
+		"400IncorrectFileType": "檔案類型錯誤.",
+		"400FileNotExist": "檔案不存在.",
+		"400OverMaximumUploadSize": "超過最大檔案大小限制!",
+		"204EmptyResult": "沒有找到資料!"		
 	},
 	"building": {
 		"add": {

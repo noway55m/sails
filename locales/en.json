@@ -136,10 +136,19 @@
 		"loginMissingFieldMsg": "Missing username or credential!!",
 		"loginNotActiveErrorMsg": "User account not activate yet!!",
 		"loginIncorretUsernameOrPasswordErrorMsg": "Incorrect username or password!!",
-		"unavailableApiKeyOrVerifier": "Unavailable api key or verifier",
-		"unavailableSDKVersion": "Sdk version is too old, please update to latest one",
+		"unavailableApiKeyOrVerifier": "Unavailable api key or verifier!",
+		"unavailableSDKVersion": "Sdk version is too old, please update to latest one!",
 		"404Error": "404 not found",
-		"500Error": "500 Server error, please try again later"
+		"500Error": "500 Server error, please try again later!",
+		"403PermissionDeny": "You have no permission to access!",
+		"400BuildingOverLimitationDeny": "Building number is over limitation.",
+		"400FloorOverLimitationDeny": "Floor number is over limitation.",
+		"400BasementOverLimitationDeny": "Basement number is over limitation.",
+		"400IncorrectParams": "Incorrect params",
+		"400IncorrectFileType": "Incorrect file type.",
+		"400FileNotExist": "File not exist.",
+		"400OverMaximumUploadSize": "Over maximum upload size!",
+		"204EmptyResult": "Empty result"
 	},
 	"building": {
 		"add": {
