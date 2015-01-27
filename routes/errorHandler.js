@@ -44,9 +44,9 @@ exports.error404 = function(req, res){
 // GET Interface for 500 error
 exports.error500 = function(err, req, res, next){
 
-	// console.log("--- error 500 ---");
-	// console.log(err.status);
-	// console.log(err);
+	console.log("--- error 500 ---");
+	console.log(err.status);
+	console.log(err);
 
 	var errorStatus = err.status || errorResInfo.INTERNAL_SERVER_ERROR.code;
 	var acceptType = req.accepts('html, json, text');

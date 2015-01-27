@@ -131,8 +131,6 @@ exports.list = function(req, res) {
 // GET Interface of list buildings or buildings of specific user (new support pagination)
 exports.listPage = function(req, res) {
 
-	console.log(i18n.__('register.test', { name: "frank hsu", male: "boy" }));
-
 	// Pagination params
 	var page = ( req.query.page && req.query.page > 0 ? req.query.page - 1 : 0 ) || 0;
 
