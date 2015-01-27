@@ -46,9 +46,9 @@
 	},
 	"frontEndHintMessage": {
 		"createSuccess": "Create successfully!",
-		"addSuccess": "Add successfully!",	
+		"addSuccess": "Add successfully!",
 		"updateSuccess": "Update successfully!",
-		"uploadSuccess": "Upload successfully!",		
+		"uploadSuccess": "Upload successfully!",
 		"removeSuccess": "Remove successfully!",
 		"packageSuccess": "Package Successfully!",
 		"failToUpload": "Fail to upload!",
@@ -61,7 +61,7 @@
 		"copyId": "Copy ID",
 		"copied": "Copied",
 		"copyPoiToSuccess": "Copy POI sucessfully to",
-		"regenerateSuccess": "Regenerate Successfully" 		
+		"regenerateSuccess": "Regenerate Successfully"
 	},
 	"register": {
 		"title": "Register",

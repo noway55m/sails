@@ -46,7 +46,7 @@
 	},
 	"frontEndHintMessage": {
 		"createSuccess": "建立成功!",
-		"addSuccess": "新增成功!",	
+		"addSuccess": "新增成功!",
 		"updateSuccess": "更新成功!",
 		"uploadSuccess": "上傳成功!",
 		"removeSuccess": "移除成功!",
@@ -61,14 +61,14 @@
 		"copyId": "複製ID",
 		"copied": "已複製",
 		"copyPoiToSuccess": "成功複製POI到",
-		"regenerateSuccess": "重新產生成功" 				 																																		
-	},	
+		"regenerateSuccess": "重新產生成功"
+	},
 	"register": {
 		"title": "註冊",
 		"fields": {
 			"emailAddress": "信箱郵件",
 			"password": "密碼",
-			"confirmPassword": "確認密碼"						
+			"confirmPassword": "確認密碼"
 		},
 		"acceptTerm": "請接受下方條款",
 		"memberAdnConditions": "帆船科技會員條款與細則",
@@ -81,8 +81,8 @@
 		"activeEmail": {
 			"title": "歡迎加入帆船科技雲端服務",
 			"content": "<b>歡迎加入帆船科技雲端服務.請點擊下方連結以激活您的帳號:</b><a href='{{domainUrl}}/register/activate/{{token}}'>激活</a></br><p>如果您有任何問題,請在我們的支援平台留下資訊: (<a href='http://support.sailstech.com'>http://support.sailstech.com</a>.)</br>另外,也請讀閱我們的相關知識(<a href='http://support.sailstech.com/kb'>http://support.sailstech.com/kb</a>)以了解如何繪製向量室內圖,建立指紋以及開發您的APP.</p>"
-		}						
-	},		
+		}
+	},
 	"others": {
 		"download": {
 			"title": "下載",
@@ -177,10 +177,10 @@
 		"400IncorrectFileType": "檔案類型錯誤.",
 		"400IncorrectFileTypeImage": "檔案類型必須是.png 或是 .jpg或是.gif!",
 		"400IncorrectFileTypeVideo": "檔案類型必須是.mp4!",
-		"400IncorrectFileTypeAudio": "檔案類型必須是.mp3!",		
+		"400IncorrectFileTypeAudio": "檔案類型必須是.mp3!",
 		"400FileNotExist": "檔案不存在.",
 		"400OverMaximumUploadSize": "超過最大檔案大小限制!",
-		"204EmptyResult": "沒有找到資料!"		
+		"204EmptyResult": "沒有找到資料!"
 	},
 	"building": {
 		"add": {
@@ -306,7 +306,7 @@
 		"resetPasswordEmail": {
 			"title": "帆船科技雲端服務通知",
 			"content": "<b>請點選下方連結以重設密碼:</b><a href='{{domainUrl}}/user/resetPassword/{{token}}'>重設密碼</a>"
-		}					
+		}
 	},
 	"deleteDialog": {
 		"title": "確認移除"
