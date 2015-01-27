@@ -131,7 +131,7 @@ function DeveloperListCtrl($scope, DeveloperApplication, $compile, $rootScope) {
 				$scope.count++;				
 
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Create successfully");				
+				$().toastmessage('showSuccessToast', dialogInfo.createSuccess);				
 
 				// Hide dialog
 				$("#add-app-androidKey-dialog").modal('hide');
@@ -191,7 +191,7 @@ function DeveloperListCtrl($scope, DeveloperApplication, $compile, $rootScope) {
 			$("#regenerate-key-alert-dialog").modal('hide');
 
 	    	// Show success msg
-			$().toastmessage('showSuccessToast', "Regenerate successfully");				
+			$().toastmessage('showSuccessToast', dialogInfo.regenerateSuccess);				
 
 		}, function(res){
 
@@ -245,7 +245,7 @@ function DeveloperListCtrl($scope, DeveloperApplication, $compile, $rootScope) {
 				$scope.count--;
 
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Remove successfully");
+				$().toastmessage('showSuccessToast', dialogInfo.removeSuccess);
 				
 			}			
 			
@@ -303,7 +303,7 @@ function DeveloperListCtrl($scope, DeveloperApplication, $compile, $rootScope) {
 			$("#edit-app-browser-verifier-dialog").modal('hide');
 
 	    	// Show success msg
-			$().toastmessage('showSuccessToast', "Create successfully");				
+			$().toastmessage('showSuccessToast', dialogInfo.createSuccess);				
 
 		}, function(res){
 

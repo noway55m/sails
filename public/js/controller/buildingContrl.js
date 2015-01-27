@@ -98,7 +98,7 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 				$("#add-building-dialog").modal("hide");
 
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Create successfully");				
+				$().toastmessage('showSuccessToast', dialogInfo.createSuccess);				
 
 			}, function(res) {
 
@@ -149,7 +149,7 @@ function BuildingListCtrl($scope, Building, $compile, $rootScope, Floor) {
 		    	}
 		    	
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Remove successfully");
+				$().toastmessage('showSuccessToast', dialogInfo.removeSuccess);
 				
 			}			
 			
@@ -261,7 +261,7 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 		        $rootScope.buildingClone = angular.copy(building);
 
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Update successfully");						        
+				$().toastmessage('showSuccessToast', dialogInfo.updateSuccess);						        
 		        
 			}, function(res){
 
@@ -364,7 +364,7 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 				});
 				
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Upload successfully");									
+				$().toastmessage('showSuccessToast', dialogInfo.uploadSuccess);									
 
 				// Hide button
 				uploadButton.button("reset");
@@ -377,7 +377,7 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 				uploadButton.button("reset");
 
 				// Show error msg
-				var resText = ( res.responseJSON && res.responseJSON.msg ) || "Fail to upload image"
+				var resText = ( res.responseJSON && res.responseJSON.msg ) || dialogInfo.failToUpload
 				$().toastmessage('showErrorToast', resText );		        
 
 			},			
@@ -412,12 +412,12 @@ function BuildingShowCtrl($scope, $location, Building, $rootScope) {
 			updateButton.button('reset');
 			
 	    	// Show success msg
-			$().toastmessage('showSuccessToast', "Package successfully");							
+			$().toastmessage('showSuccessToast', dialogInfo.packageSuccess);							
 			
 		}, function(res){
 
 			// Show error msg
-			var resText = ( res.responseJSON && res.responseJSON.msg ) || "Fail to upload image"
+			var resText = ( res.responseJSON && res.responseJSON.msg ) || dialogInfo.failToUpload
 			$().toastmessage('showErrorToast', resText );		        			
 
 		});		

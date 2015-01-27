@@ -109,7 +109,7 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
 				$("#add-poi-dialog").modal("hide");
 
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Create successfully");				
+				$().toastmessage('showSuccessToast', dialogInfo.createSuccess);				
 
 			}, function(res) {
 
@@ -161,7 +161,7 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
 		    	}
 		    	
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Remove successfully");
+				$().toastmessage('showSuccessToast', dialogInfo.removeSuccess);
 				
 			}			
 			
@@ -237,11 +237,17 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
       	selectPoi.buildingId = buildingId;
       	Poi.create(selectPoi, function(thePoi){
 
+      		// Set image path
+			if(thePoi.icon)
+				thePoi.icon = "/" + imagePath + "/" + thePoi.icon;
+			else
+				thePoi.icon = "/img/no-image.png";					
+
       		// Update poi list
 			$scope.pois.push(thePoi);
 	    	
 	    	// Show success msg
-			$().toastmessage('showSuccessToast', "Copy POI to " +  buildingName + " successfully");				
+			$().toastmessage('showSuccessToast', dialogInfo.copyPoiToSuccess + " " +  buildingName);				
 
       	}, function(res){
 
@@ -265,7 +271,7 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
       			$scope.copyPoiTemplateList = copyPoi;
 
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Remove copy poi successfully");
+				$().toastmessage('showSuccessToast', dialogInfo.removeSuccess);
 
       		}, function(res) {
 
@@ -283,7 +289,7 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
       			$scope.copyPoiList = copyPoi;
 
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Remove copy poi template successfully");
+				$().toastmessage('showSuccessToast', dialogInfo.removeSuccess);
 
       		}, function(res) {
 
@@ -426,7 +432,7 @@ function PoiShowCtrl($rootScope, $scope, $location, $compile, Poi, Building, Use
 
 	// Function for show error message
 	function showSuccessMsg(){
-		$().toastmessage('showSuccessToast', "Update successfully");			
+		$().toastmessage('showSuccessToast', dialogInfo.updateSuccess);			
 	}
 
 	// Function for toogle name block
@@ -532,10 +538,10 @@ function copyPoiTemplate(e, $scope, Poi, poi){
 
 		// Change tooltip title
   		var poiId = angular.element(e.currentTarget),
-  			poiIdCopyTooltipTitle = "Copy poi template";
+  			poiIdCopyTooltipTitle = dialogInfo.copyPoiTemplateTitle;
   		poiId.tooltip("destroy");
   		poiId.tooltip({
-  			title: "Copied"
+  			title: dialogInfo.copied
   		});
 		poiId.tooltip("show");
 		setTimeout(function(){
@@ -554,16 +560,16 @@ function copyPoiTemplate(e, $scope, Poi, poi){
 }
 
 // Function for setup poi id copy clipboard by zeroclipboard
-var poiIdCopyTooltipTitle = "Copy id to tooltip";
+var poiIdCopyTooltipTitle = dialogInfo.copyId;
 function clipboardSetup(){
 	var client = new ZeroClipboard( document.getElementById("poiId") );
 	client.on( "ready", function( readyEvent ) {
 	  client.on( "aftercopy", function( event ) {
 	  		var poiId = $('#poiId'),
-	  			poiIdCopyTooltipTitle = "Copy id to tooltip";
+	  			poiIdCopyTooltipTitle = dialogInfo.copyId;
 	  		poiId.tooltip("destroy");
 	  		poiId.tooltip({
-	  			title: "Copied"
+	  			title: dialogInfo.copied
 	  		});
 			poiId.tooltip("show");
 			setTimeout(function(){
@@ -583,8 +589,8 @@ function clipboardSetup(){
 function tooltipSetup(){
 
 	// Tooltip of copy poi and copy poi template
-	$('.copy:not(#copy-poi-trigger-button span)').tooltip( { title: "Copy poi" } );
-	$('.copy-template:not(#copy-poi-template-trigger-button span)').tooltip( { title: "Copy poi template" } );
+	$('.copy:not(#copy-poi-trigger-button span)').tooltip( { title: dialogInfo.copyPoiTitle } );
+	$('.copy-template:not(#copy-poi-template-trigger-button span)').tooltip( { title: dialogInfo.copyPoiTemplateTitle } );
 
 
 	// Tooltip of copy poi id to clipboard 

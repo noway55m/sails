@@ -59,7 +59,7 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 			addButton.button('reset');
 
 	    	// Show success msg
-			$().toastmessage('showSuccessToast', "Add floor successfully");
+			$().toastmessage('showSuccessToast', dialogInfo.addSuccess);
 			
 		}, function(err) {
 
@@ -101,7 +101,7 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 			addButton.button('reset');
 
 	    	// Show success msg
-			$().toastmessage('showSuccessToast', "Add basement successfully");			
+			$().toastmessage('showSuccessToast', dialogInfo.addSuccess);			
 			
 		}, function(err) {
 
@@ -184,7 +184,7 @@ function FloorListCtrl($scope, Floor, $rootScope) {
 		    	}
 		    	
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Remove successfully");
+				$().toastmessage('showSuccessToast', dialogInfo.removeSuccess);
 				
 			} else {
 
@@ -320,7 +320,7 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 		        $rootScope.floorClone.stores = stores;
 		        
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Update successfully");		        
+				$().toastmessage('showSuccessToast', dialogInfo.updateSuccess);		        
 		        
 			}, function(res){
 	
@@ -360,7 +360,7 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 				// Check both file upload
 				if(!$(inputFields[1]).val()){
 					
-					errorMsgObj.find('.errorText').text("Map file is empty!");	
+					errorMsgObj.find('.errorText').text(dialogInfo.uploadFileIsEmpty);	
 					errorMsgObj.show();	
 					return false
 					
@@ -394,7 +394,7 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 				});
 				
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Upload map file successfully");		        
+				$().toastmessage('showSuccessToast', dialogInfo.uploadSuccess);		        
 
 				return true;
 				
@@ -406,7 +406,7 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 				uploadButton.button("reset");
 
 				// Show error msg
-				$().toastmessage('showErrorToast', "Fail to upload map file");		        
+				$().toastmessage('showErrorToast', dialogInfo.failToUpload);		        
 
 			},
 	
@@ -442,7 +442,7 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 				// Check both file upload
 				if(!$(inputFields[1]).val()){
 					
-					errorMsgObj.find('.errorText').text("Path file is empty!");	
+					errorMsgObj.find('.errorText').text(dialogInfo.uploadFileIsEmpty);	
 					errorMsgObj.show();	
 					return false
 					
@@ -476,7 +476,7 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 				});
 				
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Upload path file successfully");		        
+				$().toastmessage('showSuccessToast', dialogInfo.uploadSuccess);		        
 
 				return true;
 				
@@ -488,7 +488,7 @@ function FloorShowCtrl($scope, $location, Floor, Building, $rootScope) {
 				uploadButton.button("reset");
 
 				// Show error msg
-				$().toastmessage('showErrorToast', "Fail to upload path file");		        
+				$().toastmessage('showErrorToast', dialogInfo.failToUpload);		        
 
 			},
 

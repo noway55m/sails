@@ -63,7 +63,7 @@ function UserShowCtrl($scope, User, $rootScope) {
 				// Clean all fields and close dialog
 				inputFields.val("");
 				$scope.hideChangePasswordBlock();
-				$().toastmessage('showSuccessToast', "Change password successfully");
+				$().toastmessage('showSuccessToast', dialogInfo.changeSuccess);
 	
 			}, function(res){
 
@@ -148,7 +148,7 @@ function UserShowCtrl($scope, User, $rootScope) {
 					// Clean all fields and close dialog
 					emailObj.val("");
 					msgObj.val("");
-					$().toastmessage('showSuccessToast', "We have received your request, will reply as soon as posible.");
+					$().toastmessage('showSuccessToast', dialogInfo.receiveRequest);
 				}
 	
 			});			

@@ -94,7 +94,7 @@ function AdListCtrl($scope, Ad, $rootScope) {
 		    	}
 		    	
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Update successfully");		    	
+				$().toastmessage('showSuccessToast', dialogInfo.updateSuccess);		    	
 				
 			}, function(res){
 
@@ -155,7 +155,7 @@ function AdListCtrl($scope, Ad, $rootScope) {
 			    	}
 			    	
 			    	// Show success msg
-					$().toastmessage('showSuccessToast', "Upload successfully");			    	
+					$().toastmessage('showSuccessToast', dialogInfo.uploadSuccess);			    	
 					
 				}
 
@@ -232,7 +232,7 @@ function AdListCtrl($scope, Ad, $rootScope) {
 				form.parent().parent().parent().modal('hide');
 
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Create successfully");					
+				$().toastmessage('showSuccessToast', dialogInfo.createSuccess);					
 
 			}, function(res){
 
@@ -289,7 +289,7 @@ function AdListCtrl($scope, Ad, $rootScope) {
 		    	}
 		    	
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Remove successfully");
+				$().toastmessage('showSuccessToast', dialogInfo.removeSuccess);
 				
 			}			
 			

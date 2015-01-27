@@ -102,11 +102,11 @@ function CustomFieldsGenerator(setting, $scope, $compile, Poi) {
 	// Function for show error message
 	function showSuccessMsg(type){
 		if(type == 'remove')
-			$().toastmessage('showSuccessToast', "Remove successfully");		
+			$().toastmessage('showSuccessToast', dialogInfo.removeSuccess);		
 		else if(type == 'update')
-			$().toastmessage('showSuccessToast', "Update successfully");									
+			$().toastmessage('showSuccessToast', dialogInfo.updateSuccess);									
 		else 	
-			$().toastmessage('showSuccessToast', "Create successfully");			
+			$().toastmessage('showSuccessToast', dialogInfo.createSuccess);			
 	}
 
 	// Function for sync to server

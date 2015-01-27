@@ -198,7 +198,7 @@ var utility = Utility.getInstance(),
 				$("#add-poi-event-dialog").modal("hide");
 
 				// Show success msg
-				$().toastmessage('showSuccessToast', "success"); 
+				$().toastmessage('showSuccessToast', dialogInfo.createSuccess); 
 
 			}, function(res) {
 

@@ -136,7 +136,7 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 				form.parent().parent().parent().modal('hide');
 				
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Create successfully");					
+				$().toastmessage('showSuccessToast', dialogInfo.createSuccess);					
 						
 			}, function(res){
 
@@ -198,7 +198,7 @@ function StoreListCtrl($scope, Store, $scope, $rootScope) {
 				$rootScope.floor.stores.size--; 		    	
 		    	
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Remove successfully");
+				$().toastmessage('showSuccessToast', dialogInfo.removeSuccess);
 				
 			}			
 			
@@ -320,7 +320,7 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
 		        $rootScope.storeClone = angular.copy(store);                
 
 		    	// Show success msg
-				$().toastmessage('showSuccessToast', "Update successfully");	                		        
+				$().toastmessage('showSuccessToast', dialogInfo.updateSuccess);	                		        
 		        
     		}, function(responseText){
 
@@ -376,7 +376,7 @@ function StoreShowCtrl($scope, $location, Store, $rootScope, Building, Floor){
 			        $rootScope.storeClone = angular.copy(store); 
 			        
 			    	// Show success msg
-					$().toastmessage('showSuccessToast', "Upload successfully");				        
+					$().toastmessage('showSuccessToast', dialogInfo.uploadSuccess);				        
 			        
 				}
 
