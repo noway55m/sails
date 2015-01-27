@@ -28,7 +28,6 @@
 		<!-- POI list -->
 		<div class="belement ng-hide" ng-repeat="poi in pois" ng-mouseenter="showRemoveButton($event)" ng-mouseleave="hideRemoveButton($event)" ng-hide="loadingPoi">
 			<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup($event)"></span>				
-			<span class="glyphicon glyphicon-remove remove-button-list" ng-click="deleteDialogSetup($event)"></span>
 			<a href="/poi/show/{{poi._id}}">
 				<img ng-src="{{poi.icon}}" alt="Image Icon" class="default-icon"/>
 				<span ng-bind="poi.name"></span>				
