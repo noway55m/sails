@@ -25,11 +25,22 @@
 		<!-- Navigation bar to display current floor of specific building -->
 		<ol class="breadcrumb">		
 			<!-- Loading -->
-			<div class="loading" ng-show="loadingFloor">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>		
-			<li><a href="/user"><%= __("navbar.buildings") %></a></li>
+			<div class="loading" ng-show="loadingFloor">&nbsp;<img src="/img/loading.gif" alt="loading.."/></div>
+			<!-- All Buildings -->
 			<li>
-				<a href="/building/show/{{floor.buildingId}}" class="ng-hide" ng-hide="loadingFloor" ng-bind="building.name"></a>
+				<a href="/user">
+					<span class="glyphicon glyphicon-home"></span>
+					<span><%= __("navbar.buildings") %></span>
+				</a>
 			</li>
+			<!-- Building -->
+			<li>
+				<a href="/building/show/{{floor.buildingId}}" class="ng-hide" ng-hide="loadingFloor">
+					<span class="glyphicon glyphicon-tower"></span>
+					<span ng-bind="building.name"></span>
+				</a>
+			</li>
+			<!-- Floor -->
 			<li class="active ng-hide" ng-hide="loadingFloor">
 				<span ng-show="up">
 					<span ng-bind="floor.layer"></span> F

@@ -29,13 +29,21 @@
 
 		<!-- Navigator bar to display current store of floor of specific area -->
 		<ol class="breadcrumb">
-		  <li><a href="/user"><%= __("navbar.buildings") %></a></li>
+		  <!-- All Buildings -->
+		  <li>
+		  	<a href="/user">
+		  		<span class="glyphicon glyphicon-home"></span>
+		  		<span><%= __("navbar.buildings") %></span>
+		  	</a>
+		  </li>
+		  <!-- Building -->
 		  <li class="ng-hide" ng-hide="loadingPoi">
 		  	<a href="/building/show/{{building._id}}">
-				<span class="glyphicon glyphicon-globe"></span>
+				<span class="glyphicon glyphicon-tower"></span>
 				<span ng-bind="building.name"></span>
 		  	</a>
 		  </li>	
+		  <!-- POI -->
 		  <li class="active ng-hide" ng-hide="loadingPoi">
 		  	<span class="glyphicon glyphicon-pushpin"></span>
 		  	<span ng-bind="poi.name"></span>

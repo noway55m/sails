@@ -19,10 +19,18 @@
 
 		<!-- Navigator bar to display current store of floor of specific building -->
 		<ol class="breadcrumb">
-		  <li><a href="/user"><%= __('navbar.buildings') %></a></li>
-		  <li class="active ng-hide" ng-hide="loadingBuilding">
-			<span ng-bind="building.name"></span>
-		  </li>		  
+			<!-- All Buildings -->
+			<li>
+				<a href="/user">
+					<span class="glyphicon glyphicon-home"></span>
+					<span><%= __('navbar.buildings') %></span>
+				</a>
+			</li>
+			<!-- Building -->
+			<li class="active ng-hide" ng-hide="loadingBuilding">
+				<span class="glyphicon glyphicon-tower"></span>
+				<span ng-bind="building.name"></span>
+			</li>		  
 		</ol>
 
 		<!-- Main component for a primary marketing message or call to action -->

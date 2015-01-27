@@ -25,7 +25,7 @@
 
 		<!-- Navigator bar -->
 		<ol class="breadcrumb">
-		  <!-- Buildings -->
+		  <!-- All Buildings -->
 		  <li>
 		  	<a href="/user">
 				<span class="glyphicon glyphicon-home"></span>		  		
@@ -46,10 +46,9 @@
 		  		<span ng-bind="poi.name"></span>
 		  	</a>		  	
 		  </li>
-		  <!-- POI events -->
-		  <li class="active ng-hide" ng-hide="loadingPoiEvent">
+		  <!-- Calendar -->
+		  <li class="active">
 		  	<span class="glyphicon glyphicon-calendar"></span>
-		  	<span><%= __('navbar.poiEvents') %></span>
 		  </li>		  		  		  
 		</ol>
 
