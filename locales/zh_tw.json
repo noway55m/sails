@@ -44,6 +44,25 @@
 		"editing": "編輯中...",
 		"edit": "編輯"
 	},
+	"frontEndHintMessage": {
+		"createSuccess": "建立成功!",
+		"addSuccess": "新增成功!",	
+		"updateSuccess": "更新成功!",
+		"uploadSuccess": "上傳成功!",
+		"removeSuccess": "移除成功!",
+		"packageSuccess": "打包成功!",
+		"failToUpload": "上傳失敗!",
+		"uploadFileIsEmpty": "上傳檔案為空!",
+		"changeSuccess": "更改成功!",
+		"copySuccess": "複製成功!",
+		"receiveRequest": "我們已經收到您的請求,會盡快與您聯繫.",
+		"copyPoiTitle": "複製POI",
+		"copyPoiTemplateTitle": "複製POI樣板",
+		"copyId": "複製ID",
+		"copied": "已複製",
+		"copyPoiToSuccess": "成功複製POI到",
+		"regenerateSuccess": "重新產生成功" 				 																																		
+	},	
 	"register": {
 		"title": "註冊",
 		"fields": {
