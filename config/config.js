@@ -1,6 +1,8 @@
 
 var configuration = {
 
+	chinaVersion: true, // config for check build code for china area or not
+
 	domainUrl : "https://cloud.sailstech.com",
 
 	/******** Main resource folder  ********/		
@@ -75,6 +77,9 @@ var configuration = {
 
 		/******** Google Analystic Relative ********/	
 		gaAccountId: "UA-50387624-1", // chewinggun.net - frank.hsu
+
+		/******** Baidu Statistic Relative ********/	
+
 
 	},
 
