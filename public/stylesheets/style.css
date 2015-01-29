@@ -339,12 +339,13 @@ body {
 	margin-left:10px;	
 }
 
-/******************* poi-show.html *********************/
+/******************* poi-list.html *********************/
 .copy,.copy-template{
 	font-size:50%;
 	cursor: pointer;
 	margin:5px 5px;
 }
+
 /******************* poi-show.html *********************/
 .poi-title{
   float:left;
@@ -371,12 +372,21 @@ body {
 	padding: 10px 10px;
 	-webkit-border-radius: 50px;
 	-moz-border-radius: 50px;
-	border-radius: 50px;	
+	border-radius: 50px;
+	height:50px;	
 }
 .nameDisplayBlock:hover{
 	border: 1px solid #555;
     -moz-box-shadow: 0 0 8px rgba(24,24,24,.6);
     box-shadow: 0 0 8px rgba(24,24,24,.6) !important;
+}
+/* avoid layout corrupt */
+.nameEditBlock{
+	height:50px;
+	margin:auto auto;	
+}
+.nameEditBlock input{
+	height: 45px;
 }
 .nameButtonCancel,
 .nameButtonSave{
