@@ -3,9 +3,24 @@ var configuration = {
 
 	chinaVersion: true, // config for check build code for china area or not
 
+	/******** Mailer Relative ********/
+	mailer: {
+		user: "admin@sailstech.com",
+		pass: "",
+		from: "admin@sailstech.com",
+	},
+
+	mailerChina: {
+		user: "noway55m@163.com",
+		pass: "",
+		from: "noway55m@163.com",
+	},
+
+	/******** Mailer Relative ********/
+
 	domainUrl : "https://cloud.sailstech.com",
 
-	/******** Main resource folder  ********/		
+	/******** Main resource folder ********/		
 	resourcePath : "./resource/",
 
 	/******** Folder path of Building and floor files  ********/
