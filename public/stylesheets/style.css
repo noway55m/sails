@@ -509,6 +509,16 @@ body {
 .copy-poi-template{
 	text-align: center;
 	line-height: 20px;
+	margin: 5px 7px 7px 7px; 
+	padding: 5px;
+	border: 1px dashed #777;
+	width: 165px;
+	max-width:300px;
+}
+
+.copy-poi .id-hint,
+.copy-poi-template .id-hint{
+	font-size:70%;
 }
 
 .copy-poi img,
@@ -525,12 +535,6 @@ body {
 	-moz-border-radius: 35px;
 	border-radius: 35px;
 }
-
-.copy-poi .content,
-.copy-poi-template .content{
-	float: left;
-}
-
 
 /******************* poi-show.html *********************/
 

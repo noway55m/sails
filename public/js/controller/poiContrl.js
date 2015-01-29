@@ -28,13 +28,6 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
 				totalPages = Math.ceil(count/offset),
 				pois = obj.pois;
 
-			// Set icon url
-			pois.forEach(function(poi){
-				if(poi.icon)
-					poi.icon = "/" + imagePath + "/" + poi.icon;
-				else
-					poi.icon = "/img/no-image.png";
-			});		
 			$scope.pois = pois;
 			$scope.loading = false;
 			
@@ -97,13 +90,6 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
 				// Enable all fields and button
 				inputs.removeAttr("disabled").val("");
 				addButton.button("reset");
-
-				// Update local pois
-				if(poi.icon)
-					poi.icon = "/" + imagePath + "/" + poi.icon;
-				else
-					poi.icon = "/img/no-image.png";					
-				$scope.pois.push(poi);
 				
 				// Close dialog
 				$("#add-poi-dialog").modal("hide");
@@ -236,12 +222,6 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
       	}
       	selectPoi.buildingId = buildingId;
       	Poi.create(selectPoi, function(thePoi){
-
-      		// Set image path
-			if(thePoi.icon)
-				thePoi.icon = "/" + imagePath + "/" + thePoi.icon;
-			else
-				thePoi.icon = "/img/no-image.png";					
 
       		// Update poi list
 			$scope.pois.push(thePoi);
