@@ -555,7 +555,6 @@ exports.read = function(req, res){
 // POST Interface for create the new poi
 exports.create = function(req, res) {
 
-	console.log(req.body);
 	if (req.body.name && req.body.buildingId) {
 
 		Building.findById(req.body.buildingId, function(err, building){
@@ -582,6 +581,7 @@ exports.create = function(req, res) {
 								name: req.body.name,
 								tags: req.body.tags ? req.body.tags : [],
 							    buildingId: req.body.buildingId,
+							    customFields: req.body.customFields,
 							    createdTime: theDate,
 							    updatedTime: theDate 			
 
@@ -659,7 +659,7 @@ exports.update = function(req, res) {
 						if(result) {
 
 						    poi.name = req.body.name;
-						    poi.buildingId = req.body.buildingId;
+						    //poi.buildingId = req.body.buildingId;
 						    poi.tags = req.body.tags;						    
 						    poi.customFields = req.body.customFields;
 						    poi.markModified('customFields');
