@@ -24,10 +24,10 @@ Utility.prototype.fieldValidate = function(value, fieldObj, errorMsgObj, regExpr
     	
     // Check format
     if(!value){
-        errorMsgObj.children(".errorText").html("Field '" + fieldName + "' is empty");
+        errorMsgObj.children(".errorText").html(dialogInfo.field +  " '" + fieldName + "' " + dialogInfo.isEmpty);
         result = false;
     }else if(!format.test(value)){
-        errorMsgObj.children(".errorText").html("Format of field '" + fieldName + "' is incorrect");
+        errorMsgObj.children(".errorText").html(dialogInfo.field +  " '" + fieldName + "' " + dialogInfo.formatIncorrect);
         result = false;
     }else{
         result = true;
@@ -74,11 +74,11 @@ Utility.prototype.passwordValidate = function(fieldObj, errorMsgObj){
 		
 	// Check format
 	if(!value){
-	    errorMsgObj.children(".errorText").html("Field '" + fieldName + "' is empty");
+	    errorMsgObj.children(".errorText").html(dialogInfo.field + " '"  + fieldName + "' " + dialogInfo.isEmpty);
 	    result = false;
 	}else if(!format.test(value)){
-	    errorMsgObj.children(".errorText").html("Format of field '" + fieldName + "' is incorrect. " + 
-	    		"Password must be at least 4 characters and must include at least one upper case letter, one lower case letter, and one numeric digit.");
+	    errorMsgObj.children(".errorText").html(dialogInfo.field + " '"  + fieldName + "' " + 
+                dialogInfo.formatIncorrect + ". " + dialogInfo.passwdRule);
 	    result = false;
 	}else{
 	    result = true;
@@ -109,7 +109,7 @@ Utility.prototype.newPasswordValidate = function(passwdObj, confirmPasswdObj, er
 
 	// Check format
 	if(value1 != value2){
-	    errorMsgObj.children(".errorText").html("New password and confirm password is not identical.");
+	    errorMsgObj.children(".errorText").html(dialogInfo.newPasswdAndConfirmPasswdNotIdentical);
 	    result = false;
 	}else{
 	    result = true;

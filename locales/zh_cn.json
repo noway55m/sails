@@ -61,7 +61,12 @@
 		"copyId": "复制ID",
 		"copied": "已复制",
 		"copyPoiToSuccess": "成功复制POI到",
-		"regenerateSuccess": "重新产生成功"
+		"regenerateSuccess": "重新产生成功",
+		"field": "栏位",
+		"isEmpty": "为空白",
+		"formatIncorrect": "格式不正确",
+		"newPasswdAndConfirmPasswdNotIdentical": "新密码和确认密码不一致。",
+		"passwdRule": "密碼必須包含至少四個字母,且至少一個字母為大寫,一個字母為小寫以及一個字母為數字."				
 	},	
 	"register": {
 		"title": "注册",

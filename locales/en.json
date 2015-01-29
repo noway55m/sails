@@ -61,7 +61,12 @@
 		"copyId": "Copy ID",
 		"copied": "Copied",
 		"copyPoiToSuccess": "Copy POI sucessfully to",
-		"regenerateSuccess": "Regenerate Successfully"
+		"regenerateSuccess": "Regenerate Successfully",
+		"field": "Field",
+		"isEmpty": "is empty",
+		"formatIncorrect": "format is incorrect",
+		"newPasswdAndConfirmPasswdNotIdentical": "New password and confirm password is not identical.",
+		"passwdRule": "Password must be at least 4 characters and must include at least one upper case letter, one lower case letter, and one numeric digit."
 	},
 	"register": {
 		"title": "Register",
