@@ -265,24 +265,16 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
 
       	// Check come from copy or copy template and clone the POI
      	angular.copy(poi, selectPoi);
-     	console.log(selectPoi); 	      		
       	if(poiId.indexOf("copy-template")!=-1) {
 			for(var key in selectPoi) {
-				console.log(typeof selectPoi[key]);
-				console.log(selectPoi[key]);
-				if(typeof selectPoi[key] == "string" && key != "name") {
-					selectPoi[key] = ""
-				} else if(typeof selectPoi[key] == "object") {
-					if(key == "customFields") {
-						for(var key2 in selectPoi[key]) {
-							console.log(key2);
-						}
-					} else {
-						selectPoi[key] = [];
+				if(key == "customFields") {
+					for(var key2 in selectPoi[key]) {
+						selectPoi[key][key2].value = ""; 
 					}
 				}
-			}
+			}			
       	}
+
       	selectPoi.buildingId = buildingId;
       	Poi.create(selectPoi, function(thePoi){
 
