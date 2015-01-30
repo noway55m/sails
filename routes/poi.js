@@ -381,9 +381,15 @@ exports.getCopyTemplates = function(req, res){
 
 // POST Interface for remove copy poi
 exports.removeCopy = function(req, res){
-	if(req.body.index || req.body.index == 0) {
+	if(req.body._id) {
 
-		req.session.copyPois.splice(req.body.index, 1);
+		var _id = req.body._id;
+		for(var i=0; i<req.session.copyPois.length; i++) {
+			if(_id == req.session.copyPois[i]){
+				req.session.copyPois.splice(i, 1);
+				break;
+			}
+		}
 		res.json(errorResInfo.SUCCESS.code, req.session.copyPois);
 	
 	} else {
@@ -397,9 +403,15 @@ exports.removeCopy = function(req, res){
 
 // POST Interface for remove copy poi template
 exports.removeCopyTemplate = function(req, res){
-	if(req.body.index || req.body.index == 0) {
+	if(req.body._id) {
 
-		req.session.copyTemplatePois.splice(req.body.index, 1);
+		var _id = req.body._id;
+		for(var i=0; i<req.session.copyTemplatePois.length; i++) {
+			if(_id == req.session.copyTemplatePois[i]){
+				req.session.copyTemplatePois.splice(i, 1);
+				break;
+			}
+		}
 		res.json(errorResInfo.SUCCESS.code, req.session.copyTemplatePois);
 	
 	} else {

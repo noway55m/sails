@@ -127,6 +127,9 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
 
 			}, function(poi) {
 
+				// Update local pois
+				$scope.pois.push(poi);
+
 				// Enable all fields and button
 				inputs.removeAttr("disabled").val("");
 				addButton.button("reset");
@@ -162,7 +165,7 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
 		deleteModal3.modal("show");
 	};
 	
-	// Function for delete ad obj
+	// Function for delete poi obj
 	$scope.deleteObj = function(e){
 		
 		// Hide modal
@@ -177,13 +180,37 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
 
 			if(res._id){
 				
-				// Remove store from view
+				// Remove poi from view
 		    	var id = res._id;
 		    	for(var i=0; i<$scope.pois.length; i++){			
 					if($scope.pois[i]._id == id){    			
 						$scope.pois.splice(i, 1);
 						break;
 					}
+		    	}
+
+		    	// Remove poi copyif exist
+		    	for(var n=0; n<$scope.copyPoiList.length; n++) {
+					if($scope.copyPoiList[n]._id == id){
+						Poi.removeCopy({ _id: $scope.copyPoiList[n]._id }, function(){
+							$scope.copyPoiList.splice(n, 1);
+						}, function(){
+							console.log("remove copy error");
+						});  			
+						break;
+					}
+		    	}
+
+		    	// Remove poi copy template if exist
+		    	for(var m=0; m<$scope.copyPoiTemplateList.length; m++) {
+					if($scope.copyPoiTemplateList[m]._id == id){    			
+						Poi.removeCopyTemplate({ _id: $scope.copyPoiTemplateList[m]._id }, function(){
+							$scope.copyPoiTemplateList.splice(m, 1);
+						}, function(){
+							console.log("remove copy template error");
+						});  									
+						break;
+					}		    		
 		    	}
 		    	
 		    	// Show success msg
@@ -246,7 +273,13 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
 				if(typeof selectPoi[key] == "string" && key != "name") {
 					selectPoi[key] = ""
 				} else if(typeof selectPoi[key] == "object") {
-					selectPoi[key] = [];
+					if(key == "customFields") {
+						for(var key2 in selectPoi[key]) {
+							console.log(key2);
+						}
+					} else {
+						selectPoi[key] = [];
+					}
 				}
 			}
       	}
@@ -275,10 +308,13 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
 		var poiId = angular.element(e.currentTarget).parent().parent().attr("id");
       	if(poiId.indexOf("copy-template")!=-1) {
 
-      		Poi.removeCopyTemplate({ index: index }, function(copyPoi){
+      		Poi.removeCopyTemplate({ _id: poi._id }, function(copyPoi){
 
       			// Update copy poi list
-      			$scope.copyPoiTemplateList = copyPoi;
+      			for(var m=0; m<$scope.copyPoiTemplateList.length; m++) {
+      				if($scope.copyPoiTemplateList[m]._id == poi._id)
+		      			$scope.copyPoiTemplateList.splice(m, 1);
+      			}
 
 		    	// Show success msg
 				$().toastmessage('showSuccessToast', dialogInfo.removeSuccess);
@@ -293,10 +329,13 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
 
       	} else {
 
-      		Poi.removeCopy({ index: index }, function(copyPoi){
+      		Poi.removeCopy({ _id: poi._id }, function(copyPoi){
 
       			// Update copy poi list
-      			$scope.copyPoiList = copyPoi;
+      			for(var n=0; n<$scope.copyPoiList.length; n++) {
+      				if($scope.copyPoiList[n]._id == poi._id)
+		      			$scope.copyPoiList.splice(n, 1);
+      			}
 
 		    	// Show success msg
 				$().toastmessage('showSuccessToast', dialogInfo.removeSuccess);
