@@ -318,13 +318,13 @@ exports.copy = function(req, res){
 
 		var isDuplicate = false;
 		for(var i=0; i<req.session.copyPois.length; i++) {
-			if(req.session.copyPois[i]._id == req.body._id){
+			if(req.session.copyPois[i] == req.body._id){
 				isDuplicate = true;
 				break;
 			}
 		}
 		if(!isDuplicate)			
-			req.session.copyPois.push(req.body);
+			req.session.copyPois.push(req.body._id);
 		
 		res.json(errorResInfo.SUCCESS.code, req.session.copyPois);
 	
@@ -353,13 +353,13 @@ exports.copyTemplate = function(req, res){
 
 		var isDuplicate = false;
 		for(var i=0; i<req.session.copyTemplatePois.length; i++) {
-			if(req.session.copyTemplatePois[i]._id == req.body._id){
+			if(req.session.copyTemplatePois[i] == req.body._id){
 				isDuplicate = true;
 				break;
 			}
 		}
 		if(!isDuplicate)			
-			req.session.copyTemplatePois.push(req.body);
+			req.session.copyTemplatePois.push(req.body._id);
 
 		res.json(errorResInfo.SUCCESS.code, req.session.copyTemplatePois);
 	

@@ -50,6 +50,46 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
 
 			}
 
+			// Get poi copy and copy template
+			$scope.isBuildingShowPage = false;
+			if(window.location.toString().indexOf("/building/show")!=-1)
+				$scope.isBuildingShowPage = true;		
+			
+			// Get current copied pois
+			Poi.getCopies(function(copyPoiList){
+				// Get reference poi in copy poi list 
+				var cpList = [], i, j;
+				for(j=0; j<copyPoiList.length; j++) {
+					var cpoi_id = copyPoiList[j]
+					for(i=0; i<$scope.pois.length; i++){
+						var tpoi = $scope.pois[i];
+						if(cpoi_id == tpoi._id){
+							cpList.push(tpoi);
+							break;
+						}
+					}
+				}
+				$scope.copyPoiList = cpList;
+			});
+
+			// Get current copied poi templates
+			Poi.getCopyTemplates(function(copyPoiTemplateList){		
+				// Get reference poi in copy poi list 
+				var cpList = [], i, j;
+				for(j=0; j<copyPoiTemplateList.length; j++) {
+					var cpoi_id = copyPoiTemplateList[j]
+					for(i=0; i<$scope.pois.length; i++){
+						var tpoi = $scope.pois[i];
+						if(cpoi_id == tpoi._id){
+							cpList.push(tpoi);
+							break;
+						}
+					}
+				}		
+				$scope.copyPoiTemplateList = cpList;	
+			});
+
+
 			// Setup tooltip
 			setTimeout(function(){
 				tooltipSetup();
@@ -178,18 +218,6 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
 
 	};
 
-	// Get poi copy and copy template
-	$scope.isBuildingShowPage = false;
-	if(window.location.toString().indexOf("/building/show")!=-1)
-		$scope.isBuildingShowPage = true;		
-	Poi.getCopies(function(copyPoiList){
-		$scope.copyPoiList = copyPoiList;
-	});
-	Poi.getCopyTemplates(function(copyPoiTemplateList){
-		$scope.copyPoiTemplateList = copyPoiTemplateList;		
-	});
-
-
 	// Function for load specific page		
 	$scope.copyPoi = function(e){
 		copyPoi(e, $scope, Poi, this.poi);
@@ -209,10 +237,12 @@ function PoiListCtrl($scope, Building, $compile, $rootScope, Poi) {
       		selectPoi = {};
 
       	// Check come from copy or copy template and clone the POI
-     	angular.copy(poi, selectPoi);      		
+     	angular.copy(poi, selectPoi);
+     	console.log(selectPoi); 	      		
       	if(poiId.indexOf("copy-template")!=-1) {
 			for(var key in selectPoi) {
 				console.log(typeof selectPoi[key]);
+				console.log(selectPoi[key]);
 				if(typeof selectPoi[key] == "string" && key != "name") {
 					selectPoi[key] = ""
 				} else if(typeof selectPoi[key] == "object") {
@@ -483,8 +513,21 @@ function PoiShowCtrl($rootScope, $scope, $location, $compile, Poi, Building, Use
 function copyPoi(e, $scope, Poi, poi){
 	Poi.copy( poi, function(copyPoi) {
 
-		// Put copy list		
-		$scope.copyPoiList = copyPoi;
+		// Get reference poi in copy poi list 
+		var copyPoiList = [], i, j;
+		for(j=0; j<copyPoi.length; j++) {
+			var cpoi_id = copyPoi[j]
+			for(i=0; i<$scope.pois.length; i++){
+				var tpoi = $scope.pois[i];
+				if(cpoi_id == tpoi._id){
+					copyPoiList.push(tpoi);
+					break;
+				}
+			}
+		}
+
+		// Set copy poi list
+		$scope.copyPoiList = copyPoiList;
 
 		// Change tooltip title
   		var poiId = angular.element(e.currentTarget),
@@ -513,8 +556,20 @@ function copyPoi(e, $scope, Poi, poi){
 function copyPoiTemplate(e, $scope, Poi, poi){
 	Poi.copyTemplate( poi, function(copyPoi) {		
 		
+		// Get reference poi in copy poi list 
+		var copyPoiTemplateList = [], i, j;
+		for(j=0; j<copyPoi.length; j++) {
+			var cpoi_id = copyPoi[j]
+			for(i=0; i<$scope.pois.length; i++){
+				var tpoi = $scope.pois[i];
+				if(cpoi_id == tpoi._id){
+					copyPoiTemplateList.push(tpoi);
+					break;
+				}
+			}
+		}
 		// Put copy template list
-		$scope.copyPoiTemplateList = copyPoi;
+		$scope.copyPoiTemplateList = copyPoiTemplateList;
 
 		// Change tooltip title
   		var poiId = angular.element(e.currentTarget),
