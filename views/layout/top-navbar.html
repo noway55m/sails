@@ -12,9 +12,26 @@
 		<div class="navbar-collapse collapse">
 			<ul class="nav navbar-nav">
 				<li class="active"><a href="/"><%= __('header.home') %></a></li>
-				<li><a href="http://support.sailstech.com" target="_blank"><%= __('header.support') %></a></li>						
-				<li><a href="http://support.sailstech.com/kb" target="_blank"><%= __('header.knowledgeBase') %></a></li>
-				<li><a href="http://blog1.sailstech.com" target="_blank"><%= __('header.blog') %></a></li>
+				
+				<!-- Different support in china version and others -->
+				<% if(config.chinaVersion) { %>				
+					<li><a href="http://support.sailstech.com" target="_blank"><%= __('header.support') %></a></li>
+				<% } else { %>
+					<li><a href="http://support.sailstech.com" target="_blank"><%= __('header.support') %></a></li>
+				<% } %>
+				
+				<!-- Different knowledge bases in china version and others -->
+				<% if(config.chinaVersion) { %>														
+					<li><a href="http://support.sailstech.com/kb" target="_blank"><%= __('header.knowledgeBase') %></a></li>
+				<% } else { %>
+					<li><a href="http://support.sailstech.com/kb" target="_blank"><%= __('header.knowledgeBase') %></a></li>				
+				<% } %>
+
+				<!-- China Version does not show blog -->
+				<% if(!config.chinaVersion) { %>
+					<li><a href="http://blog1.sailstech.com" target="_blank"><%= __('header.blog') %></a></li>
+				<% } %>
+				
 				<li><a href="./terms" target="_blank"><%= __('header.terms') %></a></li>
 				
 				<!-- Use support.cloudtech.com feedback -->

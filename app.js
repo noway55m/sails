@@ -104,6 +104,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/sails-resource/download/doc/android', express.static(path.join(__dirname, '/resource/sails-relative-res/android/doc')));
 app.use('/sails-resource/download/doc/ios', express.static(path.join(__dirname, '/resource/sails-relative-res/ios/doc')));
 
+// Set all config and set roles to global variables
+app.locals.config = config;
+app.locals.roles = UserModel.ROLES;
+
 // Custom  Error Handler
 app.use(errorHandler.error500);
 app.use(errorHandler.error404);

@@ -275,7 +275,6 @@ passport.configSecureHttpRequest = function(app){
     	
     	// set local variables
     	res.locals.user = req.user;
-    	res.locals.roles = User.ROLES;
     	res.locals.url = req.url.toString();
     	res.locals.imagePath = public_image_path;
     	
@@ -406,7 +405,6 @@ passport.configSecureHttpRequest = function(app){
     	
     	// set local variables
     	res.locals.user = req.user;
-    	res.locals.roles = User.ROLES;
     	res.locals.url = req.url.toString();
     	res.locals.imagePath = public_image_path;
     	
