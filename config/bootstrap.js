@@ -250,7 +250,7 @@ function createSampleBuilding(user, area){
 
 													}																															
 													
-													// Find sample floor
+													// Create sample floor
 													new Floor({
 														
 														name: "Sample",
@@ -272,112 +272,151 @@ function createSampleBuilding(user, area){
 
 															floors.push(floor);
 
-															// Generate index.xml and floorlist.xml
-															var limit = Math.abs(building.downfloor) > building.upfloor ? building.downfloor : building.upfloor;
-															log.info("limit: " + limit);
-															log.info("theLayer: " + theLayer);
-															if( theLayer == limit ){
-																log.info("Get in ....");
-																utilityS.genIndexXmlOfBuilding(building, function(err){
+															// Create sample poi
+															var theDate = new Date();
+															Poi.create({
 
-																	if(err){
+																name: "Sample",
+																customFields: [{
+																	"key": "myKey",
+																	"value": "myValue",
+																	"type": Poi.CUSTOM_FIELDS.TYPE.TEXT
+																}],
+																tags: ["mytag"],
+																buildingId: building.id,
+																createdTime: theDate,
+																updatedTime: theDate
 
-																		log.error("utilityS.genIndexXmlOfBuilding ~ Generate index.xml of building error");
-																		log.error(err);
+															}, function(err, poi){
 
-																	} else {
+																if(err) {
 
-																		utilityS.genFloorlistXmlOfBuilding(building, floors, function(err){
+																	log.error(err);
+
+																} else {
+
+																	// Generate index.xml and floorlist.xml
+																	var limit = Math.abs(building.downfloor) > building.upfloor ? building.downfloor : building.upfloor;
+																	log.info("limit: " + limit);
+																	log.info("theLayer: " + theLayer);
+																	if( theLayer == limit ){
+																		log.info("Get in ....");
+																		utilityS.genIndexXmlOfBuilding(building, function(err){
 
 																			if(err){
 
-																				log.error("utilityS.genFloorlistXmlOfBuilding ~ Generate floorlist.xml of building error");
+																				log.error("utilityS.genIndexXmlOfBuilding ~ Generate index.xml of building error");
 																				log.error(err);
 
 																			} else {
 
-																				var archive = archiver('zip'),
-																					output = fs.createWriteStream( folderPath + "/" + building.id +'.zip');													
+																				utilityS.genFloorlistXmlOfBuilding(building, floors, function(err){
 
-																				output.on('close', function() {
-																				  log.info('archiver finish package map.zip');
-																				});
-
-																				archive.on('error', function(err) {
-																					if(err)
-																						log.error(err);
-																				});
-
-																				archive.pipe(output);
-
-																				// Start to package map.zip													
-																				fs.readdir(buildingFolderPath, function(err, files3){
-																					
 																					if(err){
-																						
+
+																						log.error("utilityS.genFloorlistXmlOfBuilding ~ Generate floorlist.xml of building error");
 																						log.error(err);
-																						
-																					}else{
-																						
-																						for(var n=0; n<files3.length; n++){
-																							
-																							var filePath = buildingFolderPath + "/" + files3[n];
-																							var isFolder = fs.statSync(filePath).isDirectory();
-																							
-																							if(isFolder){
-																									
-																								(function(filePathF, layer){
 
-																									log.info(filePathF);
-																									fs.readdir(filePathF, function(err, filesI){
-																										
-																										if(err){
-																											
-																											log.error(err);
-																											
-																										}else{
-																											
-																											for(var m=0; m<filesI.length; m++){
-																												
-																												if(filesI[m].indexOf("index.xml") != -1 || filesI[m].indexOf("aplist.xml") != -1)
-																													continue;
-																												var filePathInner = filePathF + "/" + filesI[m];											
-																												archive.append(fs.createReadStream(filePathInner), { name: "/" + layer + "/" + filesI[m] });
-																																																	
-																											}
-																											
-																										}
-																																													
-																									});																		
-																									
-																								}(filePath, files3[n]));
-																								
-																							}else{
+																					} else {
 
-																								console.log(filePath);
-																								archive.append(fs.createReadStream(filePath), { name: files3[n] });
+																						utilityS.genPoiJSONOfBuilding(building, floors, function(err){
 
-																							}
-																																							
-																						}
+																							if(err) {
 
-																						archive.finalize(function(err, bytes) {
-																							
-																							if (err)
+																								log.error("utilityS.genPoiJSONOfBuilding ~ Generate poi.json of building error");
 																								log.error(err);
 
-																							  log.info(bytes + ' total bytes');
+																							} else {
 
-																							 building.mapzip =  buildingWebLocation + "/map.zip";
-																							 building.save(function(err, building){
-																							 	if(err)
-																							 		log.error(err);
-																							 });
+																								var archive = archiver('zip'),
+																									output = fs.createWriteStream( folderPath + "/" + building.id +'.zip');													
 
-																						});	
-																																					
+																								output.on('close', function() {
+																								  log.info('archiver finish package map.zip');
+																								});
+
+																								archive.on('error', function(err) {
+																									if(err)
+																										log.error(err);
+																								});
+
+																								archive.pipe(output);
+
+																								// Start to package map.zip													
+																								fs.readdir(buildingFolderPath, function(err, files3){
+																									
+																									if(err){
+																										
+																										log.error(err);
+																										
+																									}else{
+																										
+																										for(var n=0; n<files3.length; n++){
+																											
+																											var filePath = buildingFolderPath + "/" + files3[n];
+																											var isFolder = fs.statSync(filePath).isDirectory();
+																											
+																											if(isFolder){
+																													
+																												(function(filePathF, layer){
+
+																													log.info(filePathF);
+																													fs.readdir(filePathF, function(err, filesI){
+																														
+																														if(err){
+																															
+																															log.error(err);
+																															
+																														}else{
+																															
+																															for(var m=0; m<filesI.length; m++){
+																																
+																																if(filesI[m].indexOf("index.xml") != -1 || filesI[m].indexOf("aplist.xml") != -1)
+																																	continue;
+																																var filePathInner = filePathF + "/" + filesI[m];											
+																																archive.append(fs.createReadStream(filePathInner), { name: "/" + layer + "/" + filesI[m] });
+																																																					
+																															}
+																															
+																														}
+																																																	
+																													});																		
+																													
+																												}(filePath, files3[n]));
+																												
+																											}else{
+
+																												archive.append(fs.createReadStream(filePath), { name: files3[n] });
+
+																											}
+																																											
+																										}
+
+																										archive.finalize(function(err, bytes) {
+																											
+																											if (err)
+																												log.error(err);
+
+																											  log.info(bytes + ' total bytes');
+
+																											 building.mapzip =  buildingWebLocation + "/map.zip";
+																											 building.save(function(err, building){
+																											 	if(err)
+																											 		log.error(err);
+																											 });
+
+																										});	
+																																									
+																									}
+																																							
+																								});
+
+																							}
+
+																						});
+
 																					}
-																																			
+
 																				});
 
 																			}
@@ -386,14 +425,15 @@ function createSampleBuilding(user, area){
 
 																	}
 
-																});
+																}
 
-															}
+															});
+
 
 														}
 
-													});	
-																														
+													});													
+
 												}
 																																																							
 											});	
