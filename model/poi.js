@@ -36,13 +36,6 @@ var poiSchema = new Schema({
 
     },
 
-    userId: {
-
-        type: String,
-        index: true
-
-    },
-
 	createdTime: Date,
 
 	updatedTime: Date
