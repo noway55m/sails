@@ -604,14 +604,15 @@ Utility.createSampleBuilding = function(nuser, next){
 																							if(samplePoi) {
 
 																								// Create sample poi in specific sample building of user
+																								var theDate = new Date();
 																								Poi.create({
 
 																									name: samplePoi.name,
 																									customFields: samplePoi.customFields,																				
 																									tags: samplePoi.tags,
-																									buildingId: building._id,
-																									createdTime: new Date(),
-																									updatedTime: new Date()																					
+																									buildingId: building.id,
+																									createdTime: theDate,
+																									updatedTime: theDate																					
 
 																								}, function(err, poi){
 
