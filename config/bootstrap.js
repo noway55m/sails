@@ -463,52 +463,6 @@ function createSampleBuilding(user, area){
 
 }
 
-// Function for sample poi
-function createSamplePoi(user, area) {
-
-	//var sampleFolderName = config.sampleBuildingPath;
-	//sampleFolderName = sampleFolderName.substring(sampleFolderName.lastIndexOf('/')+1, sampleFolderName.length);
-	new Poi({
-
-	    name: "MyPOI", 
-	    customFields: [],
-	    tags: "",
-		areaId: area.id,
-	    userId: user.id,
-		createdTime: new Date(),
-		updatedTime: new Date()		
-
-	}).save(function(err, poi){
-
-		if(err) {
-
-			log.error(err);
-
-		} else {
-
-			// Load to application info
-			utilityS.applicationInfo.samplePoiId = poi.id;
-
-			var mainPath = user.id + "/" + area.id + "/poi",
-				folderPath = path.dirname() + "/" + config.mapInfoPath + "/" + mainPath, 
-				poiFolderPath = folderPath + "/" + poi.id,
-				poiWebLocation = mainPath + "/" + poi.id;
-				//sampleBuildingPath = path.dirname() + "/" + config.sampleBuildingPath;
-
-			// Make sure poi folder path exist, if not created
-			mkdirp(poiFolderPath, function(err, dd) {
-
-				if(err)
-					log.error(err);
-
-			});
-
-		}
-
-	});
-
-}
-
 // Function for create default sdk and sample code
 function createDefaultSdkAndSampleCode(){
 
